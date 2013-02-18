@@ -1,0 +1,6 @@
+; $Id$
+name = Weather information
+description = A block that shows current weather for a particular location.
+core = 7.x
+files[] = weather_info.module
+files[] = weather_info.inc
