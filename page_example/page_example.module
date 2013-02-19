@@ -1,0 +1,28 @@
+<?php
+
+/**
+ * Implements hook_menu().
+ */
+function page_example_menu() {
+  $items = array();
+
+  // Submissions listing.
+  $items['admin/content/page_example'] = array(
+    'title' => 'page_examples',
+    'access callback' => 'user_access',
+    'access arguments' => array('access all page_example results'),
+    'description' => 'View and edit all the available page_examples on your site.',
+    'type' => MENU_LOCAL_TASK,
+  );
+
+  // Admin Settings.
+  $items['admin/config/content/page_example'] = array(
+    'title' => 'page_example settings',
+    'access callback' => 'user_access',
+    'access arguments' => array('administer site configuration'),
+    'description' => 'Global configuration of page_example functionality.',
+    'type' => MENU_NORMAL_ITEM,
+  );
+  
+  return $items;
+}

@@ -1,0 +1,6 @@
+; $Id: $
+name = Page_example
+description = Doing module development
+core = 7.x
+package = Page_example
+configure = admin/config/content/page_example	//link naar configuratiepagina (in Modules)
