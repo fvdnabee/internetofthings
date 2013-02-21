@@ -1,5 +1,11 @@
 <?php
 
+/* OPGELET!!!!!!!!!!!!!!!!!!!!!!
+ *
+ * Als je op een url klikt: localhost/examples/page_example/simple => niet juist
+ * Je moet surfen naar 		localhost/?q=examples/page_example/simple
+ * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ */
 
 /**
  * Implements hook_permission().
