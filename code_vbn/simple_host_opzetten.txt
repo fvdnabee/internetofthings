@@ -1,0 +1,21 @@
+site die specifieke antwoorden geeft
+http://stackoverflow.com/questions/5725430/http-test-server-that-accepts-get-post-calls
+-----------------------------------------------------------------
+eigen host
+-vmware player installeren
+-ubuntu downloaden
+-open terminal
+  -sudo apt-get install apache2 => op 127.0.0.1:80 zie je je website in ubuntu
+-in ubuntu terminal doe ifconfig voor publiek ip
+-surf naar dit ip vanuit windows om server gehost op ubuntu te zien
+
+/var/www in ubuntu bervat getoonde pagina's
+=> zet hier php file die  dummy sensor nabootst
+
+OPM: activeer de root user door
+sudo passwd root
+geef dan je eigen pw in, dan het nieuwe root pw
+anders kan je de files in /var/www niet veranderen, dit doe je na
+su -l root
+
+je moet nog php installeren
