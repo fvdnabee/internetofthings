@@ -1,0 +1,29 @@
+<?php
+
+
+/**
+ * Implements hook_schema().
+ */
+function weather_info_schema() {
+	$schema['weather_info'] = array(
+		'description' => 'Table for storing history of weather info.',
+		'fields' => array(
+				'hid' => array(
+					'type' => 'serial',
+					'unsigned' => TRUE,
+					'not null' => TRUE,
+					'description' => 'Primary key, unique history entry ID',
+				),
+				'weather_xml' => array(
+					'description' => 'XML containing weather info.',
+					'type' => 'varchar',
+					'length' => '2000',
+					'not null' => TRUE,
+					'default' => '',
+				),
+			),
+			'primary key' => array('hid'),
+	);
+
+	return $schema;
+}

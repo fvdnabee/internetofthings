@@ -12,6 +12,12 @@ function weather_info_get_weather($location, $language) {
 		if(!$weather) {
 			throw new Exception ('weather failed');
 		}
+		$fields = array(
+			'weather_xml' => $weather->channel->description,
+		);
+		$hid = db_insert('weather_info')
+			->fields($fields)
+			->execute();
 	} catch (Exception $err) {
 		watchdog ('weather_info', 'Cannot get weather for %location: %message',
 			array('%location' => $location, '%message' => $err->getMessage()),
@@ -19,8 +25,4 @@ function weather_info_get_weather($location, $language) {
 		return null;
 	}
 	return $weather;
-}
-
-function weather_info_temp($in_temp, $unit, $unit_system) {
-	return sprintf('%s&deg;%s', $in_temp, $unit);
 }

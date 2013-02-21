@@ -1,0 +1,39 @@
+<?php
+
+
+/**
+ * Implements hook_schema().
+ */
+function temperatuursensor_schema() {
+	$schema['temperaturen'] = array(
+		'description' => 'Tabel om geschiedenis van opgevraagde temperaturen op te slaan',
+		'fields' => array(
+				'hid' => array(
+					'type' => 'serial',
+					'unsigned' => TRUE,
+					'not null' => TRUE,
+					'description' => 'Primary key, unique history entry ID',
+				),
+				'temperatuur' => array(
+					'description' => 'Waarde temperatuursensor',
+					'type' => 'float',
+					'unsigned' => FALSE,
+					'not null' => FALSE,
+				),
+				'timestamp' => array(
+					'description' => 'Tijd van opvraging',
+					'mysql_type' => 'timestamp',
+					'not null' => TRUE,
+				),
+				'max_age' => array(
+					'description' => 'Geldigheidsperiode in seconden',
+					'type' => 'int',
+					'unsigned' => TRUE,
+					'not null' => TRUE,
+				),
+			),
+			'primary key' => array('hid'),
+	);
+
+	return $schema;
+}
