@@ -1,0 +1,38 @@
+<?php
+ 
+function custom_ct_node_info() {
+  return array(
+      'custom_ct' => array(
+          'name' => t('custom_content_type'),
+          'base' => 'custom_ct',
+          'description' => t('A custom content type.'),
+          'has_title' => TRUE,
+          'title_label' => t('custom_ct Title'),
+          'locked' => FALSE,
+      ),
+  );
+}
+ 
+function custom_ct_form($node, $form_state) {
+  $type = node_type_get_type($node);
+  $form['title'] = array(
+    '#type' => 'textfield',
+    '#title' => check_plain($type->title_label),
+    '#default_value' => !empty($node->title) ? $node->title : '',
+    '#required' => TRUE, '#weight' => -5
+  );
+ 
+  return $form;
+}
+
+function custom_ct_form_alter(&$form, &$form_state, $form_id) {
+  if ($form_id == 'custom_content_type_node_form') {
+    dsm($form); // This function is available via Devel module. Here, it shows you the contents of $form in a structured manner, so that you know where to make the change to add a button.
+    // Add code here to add button in the form etc.
+	$form['submit'] = array(
+      '#type' => 'submit', 
+      '#value' => t('Fetch'), 
+      '#weight' => 19,
+    );
+  }
+}

@@ -1,0 +1,5 @@
+name = custom_ct
+description = Development for custom content-types.
+//dependencies[] = news_date
+package = zzz
+core = 7.x

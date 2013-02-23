@@ -2,4 +2,7 @@
 name = Page_example
 description = Doing module development
 core = 7.x
-package = Page_example
+package = zzz
+configure = admin/config/content/page_example
+//dependencies[] = ...
+//files[] = tests/file.test

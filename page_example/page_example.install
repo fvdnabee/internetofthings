@@ -1,0 +1,31 @@
+<?php
+
+//module installed
+function page_example_install(){
+}
+
+//wanneer module geenabled wordt
+function page_example_enable(){
+  if (!in_array('page_example', node_type_get_names())) {
+    $page_example_type = array(
+      'type' => 'page_example',
+      'name' => st('page_example'),
+      'base' => 'node_content',
+      'description' => st('Create a new form or questionnaire accessible to users. Submission results and statistics are recorded and accessible to privileged users.'),
+      'custom' => TRUE,
+      'modified' => TRUE,
+      'locked' => FALSE,
+    );
+  }
+
+  $page_example_type = node_type_set_defaults($page_example_type);
+  node_type_save($page_example_type);
+  node_add_body_field($page_example_type);
+}
+
+//wanneer module gedisabled wordt
+function page_example_disable(){
+  if (in_array('page_example', node_type_get_names())) {
+    node_type_delete('page_example');
+  }
+}

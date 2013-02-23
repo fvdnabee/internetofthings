@@ -1,0 +1,75 @@
+<?php
+function custom_ct_enable() {
+ 
+  // Ensure the forum node type is available.
+  node_types_rebuild();
+  $types = node_type_get_types();
+  //node_add_body_field($types['custom_ct']);
+ 
+  foreach (_custom_ct_installed_fields() as $field) {
+    field_create_field($field);
+  }
+ 
+  foreach (_custom_ct_installed_instances() as $instance) {
+    field_create_instance($instance);
+  }
+}
+ 
+function _custom_ct_installed_fields() {
+  $t = get_t();
+  return array(
+    'field_extra_text' => array(
+      'field_name' => 'field_extra_text',
+      'cardinality' => 1,
+      'type'        => 'text',
+    ),
+   ); 
+}
+
+function _custom_ct_installed_instances() {
+  $t = get_t();
+  return array( 
+   'field_extra_text' => array(
+      'field_name' => 'field_extra_text',
+      'label'       => $t('An extra textfield.'),
+      'bundle' => 'custom_ct',
+      'entity_type' => 'node',
+      'widget'      => array(
+        'type'    => 'text',
+      ),
+      'display' => array(
+        'default' => array(
+          'label' => 'above',
+          'type' => 'text_formatter',
+        ),
+      ),
+      'description' => 'Write something',
+    ),
+  );
+}
+ 
+function custom_ct_disable() { 
+  $sql = 'SELECT nid FROM {node} n WHERE n.type = :type';
+  $result = db_query($sql, array(':type' => 'custom_ct'));
+  $nids = array();
+  foreach ($result as $row) {
+    $nids[] = $row->nid;
+  }
+ 
+  // Delete all the nodes at once
+  node_delete_multiple($nids);
+ 
+  $instance = array('field_name' => 'comment_body','bundle' => 'comment_node_custom_ct','entity_type' => 'comment');
+  field_delete_instance($instance);
+ 
+  $instance = array('field_name' => 'body','bundle' => 'custom_ct','entity_type' => 'node');
+  field_delete_instance($instance);
+ 
+   $fields = array_keys(_custom_ct_installed_fields());
+   foreach ($fields as $field) {
+      field_delete_field($field);
+  }
+ 
+  // Purge all field infromation
+   field_purge_batch(1000);
+}
