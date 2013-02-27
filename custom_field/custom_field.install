@@ -1,0 +1,38 @@
+<?php
+ 
+//function custom_field_field_schema($field) {
+//  return array(
+//    'columns' => array(
+//      'news_date' => array(
+//        'type' => 'int',
+//        'not null' => TRUE,
+//        'default'  => 0,
+//      ),
+//    ),
+//  );
+//}
+
+/**
+ * Implements hook_field_schema().
+ */
+function custom_field_field_schema($field) {
+  $columns = array(
+    'url' => array(
+      'type' => 'text',
+      'size' => 'big',
+      'not null' => FALSE,
+    ),
+  );
+
+  //$columns += array(
+  //  'format' => array(
+  //    'type' => 'varchar',
+  //    'length' => 255,
+  //    'not null' => FALSE,
+  //  ),
+  //);
+  
+  return array(
+    'columns' => $columns,
+  );
+}

@@ -1,5 +1,5 @@
 <?php
-function newsletter_install() {
+function newsletter_enable() {
  
   // Ensure the forum node type is available.
   node_types_rebuild();
@@ -73,7 +73,7 @@ function _newsletter_installed_instances() {
   );
 }
  
-function newsletter_uninstall() {
+function newsletter_disable() {
  
   $sql = 'SELECT nid FROM {node} n WHERE n.type = :type';
   $result = db_query($sql, array(':type' => 'newsletter'));

@@ -1,4 +1,6 @@
 <?php
+
+//op het einde moet van enable install gemaakt worden
 function custom_ct_enable() {
  
   // Ensure the forum node type is available.
@@ -21,7 +23,7 @@ function _custom_ct_installed_fields() {
     'field_extra_text' => array(
       'field_name' => 'field_extra_text',
       'cardinality' => 1,
-      'type'        => 'text',
+      'type'        => 'url',
     ),
    ); 
 }
@@ -35,12 +37,12 @@ function _custom_ct_installed_instances() {
       'bundle' => 'custom_ct',
       'entity_type' => 'node',
       'widget'      => array(
-        'type'    => 'text',
+        'type'    => 'url',
       ),
       'display' => array(
         'default' => array(
           'label' => 'above',
-          'type' => 'text_formatter',
+          'type' => 'url_formatter',
         ),
       ),
       'description' => 'Write something',
@@ -48,6 +50,8 @@ function _custom_ct_installed_instances() {
   );
 }
  
+ 
+//op het einde moet van disable uninstall gemaakt worden
 function custom_ct_disable() { 
   $sql = 'SELECT nid FROM {node} n WHERE n.type = :type';
   $result = db_query($sql, array(':type' => 'custom_ct'));

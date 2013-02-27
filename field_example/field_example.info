@@ -1,0 +1,6 @@
+name = Field_example
+description = Field example
+package = zzz
+core = 7.x
+files[] = field_example.module
+files[] = field_example.install

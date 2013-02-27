@@ -4,5 +4,5 @@ description = Doing module development
 core = 7.x
 package = zzz
 configure = admin/config/content/page_example
-//dependencies[] = ...
+//dependencies[] = news_date
 //files[] = tests/file.test
