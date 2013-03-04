@@ -1,6 +1,6 @@
 $(document).ready(function(){
-	$('#invoer').val('970013');
-	$('#zoek').click();
+	//$('#invoer').val('970013');
+	//$('#zoek').click();
 });
 
 $(document).on('click', '#zoek', function(){

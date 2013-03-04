@@ -1,0 +1,4 @@
+name = Custom Field
+description = Development for a custom field.
+package = zzz
+core = 7.x
