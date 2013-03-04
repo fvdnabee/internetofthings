@@ -14,6 +14,13 @@ function temperatuursensor_schema() {
 					'not null' => TRUE,
 					'description' => 'Primary key, unique history entry ID',
 				),
+				'response' => array(
+					'type' => 'varchar',
+					'not null' => TRUE,
+					'length' => '2048',
+					'default' => 'empty',
+					'description' => 'De originele response van de aanvraag',
+				),
 				'temperatuur' => array(
 					'description' => 'Waarde temperatuursensor',
 					'type' => 'float',

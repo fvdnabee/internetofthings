@@ -28,8 +28,8 @@ function temperatuur_url_form($form_in, &$form_state) {
 function temperatuur_url_form_submit($form, $form_state) {
 	//$url = trim($form_state['values']['temperatuur_url']);
 	//variable_set('current_url', $url);
-	//$handle = background_process_start('check_validity_period'); ---------------------> UITZOEKEN, werkt niet!!
-	check_validity_period();
+	$handle = background_process_start('check_validity_period'); //---------------------> UITZOEKEN, werkt niet!!
+	//check_validity_period();
 }
 
 function temperatuursensor_block_view($delta='') {
@@ -109,6 +109,7 @@ function temperature_arrived($result){
 				->fields(array(
 					'temperatuur' => $temperature,
 					'max_age' => $max_age,
+					'response' => $result->data,
 				))
 				->execute();
 		}
