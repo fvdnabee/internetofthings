@@ -28,7 +28,8 @@ function temperatuur_url_form($form_in, &$form_state) {
 function temperatuur_url_form_submit($form, $form_state) {
 	//$url = trim($form_state['values']['temperatuur_url']);
 	//variable_set('current_url', $url);
-	$handle = background_process_start('check_validity_period'); //---------------------> UITZOEKEN, werkt niet!!
+	$handle = background_process_start('check_validity_period');
+	// $handle2 = background_process_start('test');
 	//check_validity_period();
 }
 
@@ -39,7 +40,7 @@ function temperatuursensor_block_view($delta='') {
 	$temperature = variable_get('current_temperature', null);
 	$max_age = variable_get('current_max_age', null);
 	if($temperature){
-		$block_content .= "<p>Temperatuur: " . $temperature . "</p><p>Max age: " . $max_age . "</p>";
+		$block_content .= "<p id='temperatuur' >Temperatuur: " . $temperature . "</p><p>Max age: " . $max_age . "</p>";
 	}
 	//HISTORY
 	$query = db_select('temperaturen', 'temperaturen');
@@ -57,8 +58,7 @@ function temperatuursensor_block_view($delta='') {
 		$block_content .= "<tr><td>" . $hid . "</td><td>" . $temperature . "</td><td>" . $max_age . "</td><td>" . $timestamp . "</td></tr>";
 	}
 	$block_content .= "</table>";
-	//drupal_add_js(drupal_get_path('module', 'weather_info') .'/js/jquery-1.9.1.min.js');
-	//drupal_add_js(drupal_get_path('module', 'weather_info') .'/js/temperatuur.js');
+	drupal_add_js(drupal_get_path('module', 'temperatuursensor') .'/js/temperatuursensor.js');
 	$temp = drupal_get_form('temperatuur_url_form');
 	$block_content .= drupal_render($temp);
 	$block['content'] = $block_content;
@@ -114,4 +114,27 @@ function temperature_arrived($result){
 				->execute();
 		}
 	}
+	// $commands[] = ajax_command_replace('#temperatuur', '<h2>waarde ontvangen: ' . variable_get('current_temperature', null) . '</h2>');
+	// $message = (object) array(
+		// 'channel' => 'temperatuursensor',
+		// 'commands' => $commands,
+		// 'callback' => 'waardeOntvangen',
+	// );
+	// nodejs_send_content_channel_message($message);
+}
+
+// function temperatuursensor_nodejs_user_channels($auth_user){
+	// $channels = array('temperatuursensor');
+	// return $channels;
+// }
+
+// function temperatuursensor_nodejs_handlers_info() {
+  // return array(
+    // drupal_get_path('module', 'temperatuursensor').'/js/temperatuursensor.js',
+  // );
+// }
+
+function test(){
+	time_nanosleep(10, 0);
+	variable_set('current_temperature', 'timer afgelopen');
 }

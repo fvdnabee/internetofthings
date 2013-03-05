@@ -51,7 +51,7 @@ function weather_info_block_view($delta='') {
 	$block = null;
 	$block_content = null;
 	$block_content .= "<p>Geef een WOEID op:</p><input type='text' id='invoer' /><input type='submit' id='zoek' value='Zoek' class='form-submit' ><div id='weerblok' ></div>";
-	drupal_add_js(drupal_get_path('module', 'weather_info') .'/js/jquery-1.9.1.min.js');
+	//drupal_add_js(drupal_get_path('module', 'weather_info') .'/js/jquery-1.9.1.min.js');
 	drupal_add_js(drupal_get_path('module', 'weather_info') .'/js/weather_info.js');
 	//$unit = 'F';
 	//$language = 'en';
