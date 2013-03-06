@@ -8,6 +8,35 @@ function temperatuursensor_block_info() {
 	return $blocks;
 }
 
+function temperatuursensor_menu() {
+  $items = array();
+  $items["temperatuur/ajax"] = array(
+    "title" => "Nieuwe temperatuur",
+    "page callback" => "temperatuur_page_callback",
+    "access callback" => true,
+    "type" => MENU_CALLBACK
+  );
+  return $items;
+}
+
+function temperatuur_page_callback(){
+	$query = db_select('temperaturen', 'temperaturen');
+	$query
+		->fields('temperaturen', array('hid', 'temperatuur', 'timestamp', 'max_age'))
+		->orderBy('hid', 'DESC')
+		->range(0,1);
+	$result = $query->execute();
+	$response = '<tr><td>';
+	foreach ($result as $record){
+		$temperature = $record->temperatuur;
+		$max_age = $record->max_age;
+		$hid = $record->hid;
+		$timestamp = $record->timestamp;
+		$response .= $hid . "</td><td>" . $temperature . "</td><td>" . $max_age . "</td><td>" . $timestamp . "</td></tr>";
+	}
+	print $response;
+}
+
 function temperatuur_url_form($form_in, &$form_state) {
 	$form['wx_info_title'] = array (
 		'#value' => t('Temperatuur'),
@@ -17,6 +46,13 @@ function temperatuur_url_form($form_in, &$form_state) {
 	//	'#size' => 20,
 	//	'#maxlength' => 20,
 	//);
+	$options = array('Observe');
+	$options_checked = array();
+	$form['wx_info']['temperatuur_url_checkbox'] = array (
+		'#type' => 'checkbox',
+		'#title' => t('Observe'),
+		'#default_value' => 0,
+		);
 	$form['wx_info']['temperatuur_url_submit'] = array (
 		'#type' => 'submit',
 		'#value' => t('Refresh'),
@@ -28,9 +64,22 @@ function temperatuur_url_form($form_in, &$form_state) {
 function temperatuur_url_form_submit($form, $form_state) {
 	//$url = trim($form_state['values']['temperatuur_url']);
 	//variable_set('current_url', $url);
+	variable_set('observe', $form_state['values']['temperatuur_url_checkbox']);
+	if(variable_get('observe', null) == '1'){
+		$handle_observe = background_process_start('start_observe');
+	}
 	$handle = background_process_start('check_validity_period');
 	// $handle2 = background_process_start('test');
 	//check_validity_period();
+}
+
+function start_observe(){
+	time_nanosleep(variable_get('current_max_age', null), 1000);
+	$r[] = background_process_http_request('http://coap.me/coap://[2001:6a8:1d80:200::2]/obs', array('postpone' => TRUE, 'callback' => 'temperature_arrived'));
+	background_process_http_request_process($r, array('limit' => 5));
+	if(variable_get('observe', null) == '1'){
+		$handle_observe = background_process_start('start_observe');
+	}
 }
 
 function temperatuursensor_block_view($delta='') {
@@ -39,8 +88,9 @@ function temperatuursensor_block_view($delta='') {
 	$block_content = null;
 	$temperature = variable_get('current_temperature', null);
 	$max_age = variable_get('current_max_age', null);
+	$block_content .= "<label>observe? --> " . variable_get('observe', null) . "</label>";
 	if($temperature){
-		$block_content .= "<p id='temperatuur' >Temperatuur: " . $temperature . "</p><p>Max age: " . $max_age . "</p>";
+		$block_content .= "<label>Temperatuur:</label><p id='temperatuur' >" . $temperature . "</p><label>Max age:</label><p id='max_age' >" . $max_age . "</p>";
 	}
 	//HISTORY
 	$query = db_select('temperaturen', 'temperaturen');
@@ -49,13 +99,15 @@ function temperatuursensor_block_view($delta='') {
 		->orderBy('hid', 'DESC')
 		->range(0,5);
 	$result = $query->execute();
-	$block_content .= "<table><tr><td>Hid</td><td>Temperatuur</td><td>Max age</td><td>Timestamp</td></tr>";
+	$block_content .= "<table id='historytable' ><tr><td>Hid</td><td>Temperatuur</td><td>Max age</td><td>Timestamp</td></tr>";
+	$nr = 1;
 	foreach ($result as $record){
 		$temperature = $record->temperatuur;
 		$max_age = $record->max_age;
 		$hid = $record->hid;
 		$timestamp = $record->timestamp;
-		$block_content .= "<tr><td>" . $hid . "</td><td>" . $temperature . "</td><td>" . $max_age . "</td><td>" . $timestamp . "</td></tr>";
+		$block_content .= "<tr><td id='hid" . $nr . "' >" . $hid . "</td><td id='temperature" . $nr . "' >" . $temperature . "</td><td id='max_age" . $nr . "' >" . $max_age . "</td><td id='timestamp" . $nr . "' >" . $timestamp . "</td></tr>";
+		$nr++;
 	}
 	$block_content .= "</table>";
 	drupal_add_js(drupal_get_path('module', 'temperatuursensor') .'/js/temperatuursensor.js');
