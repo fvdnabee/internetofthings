@@ -50,8 +50,8 @@ function temperatuur_url_form($form_in, &$form_state) {
 	$options_checked = array();
 	$form['wx_info']['temperatuur_url_checkbox'] = array (
 		'#type' => 'checkbox',
-		'#title' => t('Observe'),
-		'#default_value' => 0,
+		'#title' => t('Automatisch ophalen'),
+		'#default_value' => variable_get('observe', null),
 		);
 	$form['wx_info']['temperatuur_url_submit'] = array (
 		'#type' => 'submit',
@@ -74,11 +74,11 @@ function temperatuur_url_form_submit($form, $form_state) {
 }
 
 function start_observe(){
-	time_nanosleep(variable_get('current_max_age', null), 1000);
-	$r[] = background_process_http_request('http://coap.me/coap://[2001:6a8:1d80:200::2]/obs', array('postpone' => TRUE, 'callback' => 'temperature_arrived'));
-	background_process_http_request_process($r, array('limit' => 5));
+	sleep(variable_get('current_max_age', null));
 	if(variable_get('observe', null) == '1'){
 		$handle_observe = background_process_start('start_observe');
+		$r[] = background_process_http_request('http://coap.me/coap://[2001:6a8:1d80:200::2]/obs', array('postpone' => TRUE, 'callback' => 'temperature_arrived'));
+		background_process_http_request_process($r, array('limit' => 5));
 	}
 }
 
@@ -88,7 +88,8 @@ function temperatuursensor_block_view($delta='') {
 	$block_content = null;
 	$temperature = variable_get('current_temperature', null);
 	$max_age = variable_get('current_max_age', null);
-	$block_content .= "<label>observe? --> " . variable_get('observe', null) . "</label>";
+	$current_observe = variable_get('observe', null);
+	$block_content .= "<label>Automatisch ophalen is momenteel " . (!isset($current_observe) || variable_get('observe', null) == '0' ? 'niet ' : '') . " actief</label>";
 	if($temperature){
 		$block_content .= "<label>Temperatuur:</label><p id='temperatuur' >" . $temperature . "</p><label>Max age:</label><p id='max_age' >" . $max_age . "</p>";
 	}
@@ -185,8 +186,3 @@ function temperature_arrived($result){
     // drupal_get_path('module', 'temperatuursensor').'/js/temperatuursensor.js',
   // );
 // }
-
-function test(){
-	time_nanosleep(10, 0);
-	variable_set('current_temperature', 'timer afgelopen');
-}
