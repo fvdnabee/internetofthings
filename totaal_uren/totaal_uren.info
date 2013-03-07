@@ -1,0 +1,6 @@
+; $Id$
+name = Totaal uren
+description = Een block die de huidige stand van de uren van logging weergeeft
+core = 7.x
+package = custom
+files[] = totaal_uren.module
