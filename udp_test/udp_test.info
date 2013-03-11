@@ -1,0 +1,6 @@
+; $Id$
+name = UDP-test
+description = Testmodule voor UDP-sockets
+core = 7.x
+package = custom
+files[] = udp-test.module

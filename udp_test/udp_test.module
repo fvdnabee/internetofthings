@@ -1,0 +1,54 @@
+<?php
+
+///////////
+// BLOCK //
+///////////
+
+/**
+ * Implements hook_block_info().
+ * Geeft informatie over de block die de module aanbiedt
+ */
+function udp_test_block_info() {
+	$blocks['user_custom'] = array(
+		'info' => t('Blok om UDP-sockets te testen'),
+	);
+	return $blocks;
+}
+
+/**
+ * Implements hook_block_info().
+ * Definieert de titel en inhoud van de block
+ */
+function udp_test_block_view($delta='') {
+	$block = null;
+	$block['subject'] = 'UDP sockets';
+	$block_content = null;
+	$block_content .= get_value_from_socket();
+	$block['content'] = $block_content;
+	return $block;
+}
+
+/////////////
+// PRIVATE //
+/////////////
+
+function get_value_from_socket(){
+	$fp = fsockopen("udp://[2001:6a8:1d80:200::2]", 80, $errno, $errstr);
+	if (!$fp) {
+		echo "$errstr ($errno)<br />\n";
+	} else {
+		// $out = "GET / HTTP/1.1\r\n";
+		// $out .= "Host: [2001:6a8:1d80:200::5]\r\n";
+		// $out .= "Connection: Close\r\n\r\n";
+		$out = "41";
+		$out .= "01";
+		$out .= "0851";
+		$out .= "b4";
+		$out .= "74657374";
+		$binary = pack("H*", $out);
+		fwrite($fp, $binary);
+		$response = fread($fp, 128);
+		fclose($fp);
+	}
+	return $response;
+}
