@@ -1,125 +1,161 @@
 <?php
- 
+// $Id$
+
+
 /**
- * Implements hook_field_info().
+ * Implementation of hook_field_info().
  */
 function custom_field_field_info() {
   return array(
-    'url' => array(
-      'label' => t('Url'),
-      'description' => t('The resource url.'),
-      'default_widget' => 'url_widget',
-      'default_formatter' => 'url_formatter',
+    'custom_field' => array(
+      'label' => t('Custom Field'),
+      'description' => t('Custom Custom Fields field.'),
+      'default_widget' => 'custom_field_widget',
+      'default_formatter' => 'custom_field_formatter',
     ),
   );
 }
- 
+
+/**
+ * Implements hook_field_widget_info().
+ */
+function custom_field_field_widget_info() {
+  return array(
+    'custom_field_widget' => array(
+      'label' => t('custom_field form'),
+      'field types' => array('custom_field'),
+      'behaviors' => array(
+        'multiple values' => FIELD_BEHAVIOR_DEFAULT,
+        //Use FIELD_BEHAVIOR_NONE for no default value.
+        'default value' => FIELD_BEHAVIOR_DEFAULT,
+      ),
+    ),
+  );
+}
+
 /**
  * Implements hook_field_formatter_info().
  */
 function custom_field_field_formatter_info() {
   return array(
-      'url_formatter' => array(
-          'label' => t('Url'),
-          'field types' => array('url'),
-      ),
+    'custom_field_formatter' => array(
+      'label' => t('Default'),
+      'field types' => array('custom_field'),
+    ),
   );
 }
- 
- 
+
 /**
  * Implements hook_field_formatter_view().
  * opgeroepen als content toegevoegd is en de pagina gerenderd w
  */
 function custom_field_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
   $element = array();
-  echo "<script>alert('custom_field_field_formatter_view entered')</script>";
+
   switch ($display['type']) {
-    case 'url_formatter':
-	  echo "<script>alert('case url_formatter test')</script>";
+    case 'custom_field_formatter':
       foreach ($items as $delta => $item) {
-           if ($item['url']) {
-                //$formattedDate = _dateToString($item['custom_field']);
-                //$element[$delta]['#markup'] = '<span>' . $formattedDate .'</span>';
-				//$element[$delta]['#markup'] = '<span>' . $item['url'] .'</span>';
-				$element[$delta]['#markup'] = '<span>' . 'hallo' .'</span>';
-            }
+        $element[$delta]['#markup'] = theme('custom_field_formatter_default', $item);
       }
       break;
   }
+
   return $element;
 }
- 
+
 /**
  * Implements hook_field_widget_form().
  * wordt uitgevoerd nadat field toegevoegd wordt aan content type en er opties van het veld ingesteld worden
  * en als je op add content van dit nieuwe content type klikt
  */
 function custom_field_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
- 
-  echo "<script>alert('widget_form entered')</script>";
-  switch ($instance['widget']['type']) {
-    case 'url':
-	  echo "<script>alert('case url')</script>";
-      $element['url'] = array(
-          '#type' => 'text',
-          '#title' => $element['#title'],
-          '#description' => $element['#description'],
-          //'#default_value' => $news_data_value,
-          //'#required' => $element['#required'],
-		  '#required' => TRUE,
-          //'#weight' => isset($element['#weight']) ? $element['#weight'] : 0,
-          '#delta' => $delta,
-          //'#element_validate' => array('strToDateValidate'),
-      );
-	case 'custom_field':
-	  echo "<script>alert('case custom_field')</script>";
-      $element['url'] = array(
-          '#type' => 'text',
-          '#title' => $element['#title'],
-          '#description' => $element['#description'],
-          //'#default_value' => $news_data_value,
-          //'#required' => $element['#required'],
-		  '#required' => TRUE,
-          //'#weight' => isset($element['#weight']) ? $element['#weight'] : 0,
-          '#delta' => $delta,
-          //'#element_validate' => array('strToDateValidate'),
-      );
- 
-      break;
+  $base = $element;
+  if ($instance['widget']['type'] == 'custom_field_widget') {
+    $widget = $instance['widget'];
+    $settings = $widget['settings'];
+    
+    $element['name'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Name'),
+      '#default_value' => isset($items[$delta]['name']) ? $items[$delta]['name'] : NULL,
+    );
+    $element['role'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Role'),
+      '#default_value' => isset($items[$delta]['role']) ? $items[$delta]['role'] : NULL,
+    );
+    $element['link'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Link'),
+      '#default_value' => isset($items[$delta]['link']) ? $items[$delta]['link'] : NULL,
+      '#element_validate' => array('_custom_field_link_validate'),
+    );
+
   }
   return $element;
 }
- 
+
 /**
- * Implements hook_field_widget_error().
- */
-function custom_field_widget_error($element, $error, $form, &$form_state) {
-  switch ($error['error']) {
-    case 'url_invalid':
-      form_error($element, $error['message']);
-      break;
-  }
-}
- 
- 
-/**
- * Implements hook_field_is_empty().
+ * Implementation of hook_field_is_empty().
  */
 function custom_field_field_is_empty($item, $field) {
-   if (empty($item['url'])) {
-        return true;
-   }
+  if ($field['type'] == 'custom_field') {
+  
+    if (empty($item['name']) && empty($item['role']) && empty($item['link'])) {
+     return TRUE;
+	}
+	 
+  }
+  return FALSE;
 }
- 
+
 /**
- * Implements hook_field_widget_info().
+ * Implementation of hook_field_settings_form().
  */
-function custom_field_field_widget_info() {
+function custom_field_field_settings_form($field, $instance, $has_data) {
+  if ($field['type'] == 'custom_field') {
+    $settings = $field['settings'];
+    $form = array();
+    return $form;
+  }
+}
+
+/**
+ * Implementation of hook_field_validate().
+ */
+function custom_field_field_validate($obj_type, $object, $field, $instance, $langcode, &$items, &$errors) {
+  if ($field['type'] == 'custom_field') {
+
+  }
+}
+
+/**
+ * Validation callback for a custom_field link element.
+ */
+function _custom_field_link_validate($element, &$form_state, $form) {
+  $value = $element['#value'];
+  if (!empty($value) && !valid_url($value, TRUE)) {
+    form_error($element, t('Invalid URL.'));
+  }
+}
+
+function custom_field_theme($existing, $type, $theme, $path) {
   return array(
-    'custom_field_url' => array(
-      'label' => t('Url'),
-      'field types' => array('url'),
+    'custom_field_formatter_default' => array(
+      'variables' => array('item' => NULL),
     ),
   );
+}
+
+// hoe elementen tonen
+function theme_custom_field_formatter_default($item) {
+  
+  $output = '';
+  $output .= '<div class="custom_field-wrapper">';
+  $output .= 'Name: ' . $item['name'] . "<br>";
+  $output .= 'Role: ' . $item['role'] . "<br>";
+  $output .= 'Link: ' . l($item['link'], $item['link'], array('options' =>  array('absolute' => TRUE)));
+  $output .= '</div><br />';
+
+  return $output;
 }
