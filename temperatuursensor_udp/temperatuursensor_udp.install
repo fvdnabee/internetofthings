@@ -1,0 +1,29 @@
+<?php
+
+
+/**
+ * Implements hook_schema().
+ */
+function temperatuursensor_udp_schema() {
+	$schema['temperaturen_udp'] = array(
+		'description' => 'Tabel om geschiedenis van opgevraagde temperaturen op te slaan die opgevraagd zijn met udp-sockets',
+		'fields' => array(
+				'hid' => array(
+					'type' => 'serial',
+					'unsigned' => TRUE,
+					'not null' => TRUE,
+					'description' => 'Primary key, unique history entry ID',
+				),
+				'response' => array(
+					'type' => 'varchar',
+					'not null' => TRUE,
+					'length' => '2048',
+					'default' => 'empty',
+					'description' => 'De originele response van de aanvraag',
+				),
+			),
+			'primary key' => array('hid'),
+	);
+
+	return $schema;
+}

@@ -2,5 +2,5 @@
 name = Temperatuursensor
 description = Een block die de waarde van een temperatuurssensor ophaalt, opslaat en toont
 core = 7.x
-package = zzz
-files[] = weather_info.module
+package = custom
+files[] = temperatuursensor.module
