@@ -1,38 +1,72 @@
 <?php
  
+/**
+ * Implements hook_field_schema().
+ * 
+ */
 //function custom_field_field_schema($field) {
+//  $columns = array(
+//    'url' => array(
+//      'type' => 'text',
+//      'size' => 'big',
+//      'not null' => FALSE,
+//    ),
+//  );
+//
+//  //$columns += array(
+//  //  'format' => array(
+//  //    'type' => 'varchar',
+//  //    'length' => 255,
+//  //    'not null' => FALSE,
+//  //  ),
+//  //);
+//  
+//  return array(
+//    'columns' => $columns,
+//  );
+//}
+
+// alternatief:
+//function custom_field2_field_schema($field) {
 //  return array(
 //    'columns' => array(
-//      'news_date' => array(
-//        'type' => 'int',
-//        'not null' => TRUE,
-//        'default'  => 0,
+//      'custom_field2' => array(
+//        'type' => 'text',
+//        'size' => 'big',
+//        'not null' => FALSE,
 //      ),
 //    ),
 //  );
 //}
 
-/**
- * Implements hook_field_schema().
- */
 function custom_field_field_schema($field) {
-  $columns = array(
-    'url' => array(
-      'type' => 'text',
-      'size' => 'big',
-      'not null' => FALSE,
-    ),
-  );
 
-  //$columns += array(
-  //  'format' => array(
-  //    'type' => 'varchar',
-  //    'length' => 255,
-  //    'not null' => FALSE,
-  //  ),
-  //);
-  
-  return array(
-    'columns' => $columns,
-  );
+  if ($field['type'] == 'custom_field') {
+
+    $schema['columns']['name'] = array(
+      'type' => 'varchar',
+      'length' => '255',
+      'not null' => FALSE,
+    );
+
+    $schema['columns']['role'] = array(
+      'type' => 'varchar',
+      'length' => '255',
+      'not null' => FALSE,
+    );
+
+    $schema['columns']['link'] = array(
+      'type' => 'varchar',
+      'length' => '255',
+      'not null' => FALSE,
+    );
+
+    $schema['indexes'] = array(
+      'name' => array('name'),
+      'role' => array('role'),
+      'link' => array('link'),
+    );
+
+    return $schema;
+  }
 }

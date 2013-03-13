@@ -1,6 +1,5 @@
-name = Field_example
-description = Field example
+name = Field Example
+description = An implementation of a field to show the Field API
 package = zzz
 core = 7.x
-files[] = field_example.module
-files[] = field_example.install
+files[] = field_example.test

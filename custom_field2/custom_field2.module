@@ -1,0 +1,107 @@
+<?php
+ 
+/**
+ * Implements hook_field_info().
+ */
+function custom_field2_field_info() {
+  return array(
+    'custom_field2' => array(
+      'label' => t('Custom Field2'),
+      'description' => t('A Custom Field2'),
+      'default_widget' => 'custom_field2_widget',
+      'default_formatter' => 'custom_field2_formatter',
+    ),
+  );
+}
+ 
+ 
+/**
+ * Implements hook_field_formatter_info().
+ */
+function custom_field2_field_formatter_info() {
+  return array(
+      'custom_field2_formatter' => array(
+          'label' => t('Simple Custom Field 2 formatter'),
+          'field types' => array('custom_field2'),
+      ),
+  );
+}
+ 
+ 
+/**
+ * Implements hook_field_formatter_view().
+ * opgeroepen als content toegevoegd is en de pagina gerenderd w
+ */
+function custom_field2_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+  $element = array();
+  //echo "<script>alert('custom_field_field_formatter_view entered')</script>";
+  switch ($display['type']) {
+    case 'custom_field2_formatter':
+      foreach ($items as $delta => $item) {
+           if ($item['custom_field2']) {
+                //$formattedDate = _dateToString($item['custom_field2']);
+                $element[$delta]['#markup'] = '<span>' . $item['custom_field2'] .'</span>';
+            }
+      }
+      break;
+  }
+  return $element;
+}
+ 
+/**
+ * Implements hook_field_widget_form().
+ * wordt uitgevoerd nadat field toegevoegd wordt aan content type en er opties van het veld ingesteld worden
+ * en als je op add content van dit nieuwe content type klikt
+ */
+function custom_field2_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) { 
+  switch ($instance['widget']['type']) {
+    case 'custom_field2':
+ 
+      $element['custom_field2'] = array(
+          '#type' => 'textfield',
+          '#title' => $element['#title'],
+          '#description' => $element['#description'],
+          //'#default_value' => $news_data_value,
+          '#required' => $element['#required'],
+          '#weight' => isset($element['#weight']) ? $element['#weight'] : 0,
+          '#delta' => $delta,
+          //'#element_validate' => array('strToDateValidate'),
+      );
+ 
+      break;
+  }
+  return $element;
+}
+ 
+/**
+ * Implements hook_field_widget_error().
+ */
+function custom_field2_widget_error($element, $error, $form, &$form_state) {
+  switch ($error['error']) {
+    case 'custom_field2_invalid':
+      form_error($element, $error['message']);
+      break;
+  }
+}
+ 
+ 
+/**
+ * Implements hook_field_is_empty().
+ */
+function custom_field2_field_is_empty($item, $field) {
+   if (empty($item['custom_field2'])) {
+        return true;
+   }
+}
+ 
+/**
+ * Implements hook_field_widget_info().
+ */
+function custom_field2_field_widget_info() {
+  return array(
+    'custom_field2' => array(
+      'label' => t('Custom Field 2'),
+      'field types' => array('custom_field2'),
+    ),
+  );
+}
