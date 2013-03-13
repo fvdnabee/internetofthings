@@ -42,8 +42,11 @@ function get_value_from_socket(){
 		$out = "40"; // Version(01) + type(00 voor Confirmable) + Token Length(0000) --> 01000000 --> 40
 		$out .= "01"; // Code (00000001 voor GET) --> 00000001 --> 01
 		$out .= generate_message_id(); // Message id --> 2 bytes --> 4 hexadecimalen
-		$out .= "b4"; // Option Delta (1011 voor Path-URI) + Option Length (0100 bytes voor 'test') --> 10110100 --> b4
-		$out .= "74657374"; // Option value = 'test' --> 74657374
+		$out .= "60"; // Option Delta (1011 voor Path-URI) + Option Length (0100 bytes voor 'test') --> 10110100 --> b4
+		$out .= "53";
+		$out .= "6f6273"; // Option value = 'test' --> 74657374
+		// $out .= "13"; // Option Delta (1011 voor Path-URI) + Option Length (0100 bytes voor 'test') --> 10110100 --> b4
+		// $out .= "6f6273"; // Option value = 'test' --> 74657374
 		$binary = pack("H*", $out); // hexadecimaal omzetten naar binair
 		$returnvalue = fwrite($fp, $binary); // wegschrijven naar udp-socket
 		if($returnvalue != FALSE){
