@@ -1,0 +1,6 @@
+; $Id$
+name = Testmodule achtergrondproces stoppen
+description = Module om testen uit te voeren hoe een achtergrondproces te stoppen
+core = 7.x
+package = tests
+files[] = achtergrondproces_test.module

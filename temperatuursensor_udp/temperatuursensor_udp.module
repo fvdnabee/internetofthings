@@ -86,7 +86,7 @@ function temperatuur_udp_url_form($form_in, &$form_state) {
 	$form['wx_info']['temperatuur_udp_url_checkbox'] = array (
 		'#type' => 'checkbox',
 		'#title' => t('Observe'),
-		'#default_value' => variable_get('observe_udp', null),
+		'#default_value' => cache_get('observe')->data,
 		);
 	$form['wx_info']['temperatuur_udp_url_submit'] = array (
 		'#type' => 'submit',
@@ -101,13 +101,11 @@ function temperatuur_udp_url_form($form_in, &$form_state) {
  * functie die wordt uitgevoerd als het form ingediend wordt
  */
 function temperatuur_udp_url_form_submit($form, $form_state) {
-	//$url = trim($form_state['values']['temperatuur_url']);
-	//variable_set('current_url', $url);
-	variable_set('observe_udp', $form_state['values']['temperatuur_udp_url_checkbox']);
-	if(variable_get('observe_udp', null) == '1'){
-		$handle_observe = background_process_start('start_observing');
+	$observe = $form_state['values']['temperatuur_udp_url_checkbox'];
+	cache_set('observe', $observe, 'cache');
+	if($observe == '1' && cache_get('observing')->data != "yes"){
+		$handle = background_process_start('start_observing');
 	}
-	// $handle = background_process_start('check_validity_period');
 }
 
 
@@ -134,44 +132,44 @@ function temperatuur_udp_page_callback(){
 
 // Functie die wacht tot max age is verstreken, om dan een nieuwe waarde op te halen, roept zichzelf op als er nog steeds automatisch opgehaald moet worden
 function start_observing(){
-	variable_set('observing', TRUE);
-	$observe = variable_get('observe_udp', null);
+	cache_set('observing', "yes", 'cache');
 	$socket = pfsockopen("udp://[2001:6a8:1d80:200::2]", 5683, $errno, $errstr); // udp-socket openen
 	$response = 'empty';
+	$token = generate_token();
 	if (!$socket) {
 		echo "$errstr ($errno)<br />\n";
 	} else {
 		$out = "42";
 		$out .= "01";
 		$out .= generate_message_id_udp();
-		$out .= generate_token();
+		$out .= $token;
 		$out .= "60";
 		$out .= "53";
 		$out .= "6f6273";
 		$binary = pack("H*", $out); // hexadecimaal omzetten naar binair
 		$returnvalue = fwrite($socket, $binary); // wegschrijven naar udp-socket
 		if($returnvalue != FALSE){
-			variable_set('test', 'net voor inlezen socket');
 			$response = fread($socket, 128); // lezen van udp-socket
-			variable_set('test', 'net na inlezen socket');
 		}
 	}
-	while($observe == '1'){
+	while(cache_get('observe')->data == 1){
 		if($response != 'empty' && $response != ''){
+			variable_set('test', strToHex($response));
 			$hid = db_insert('temperaturen_udp')
 					->fields(array(
 						'response' => substr($response, -5),
 					))
 					->execute();
 		}
-		variable_set('test', 'net voor inlezen socket in while');
 		$response = fread($socket, 128); // lezen van udp-socket
-		variable_set('test', 'net na inlezen socket in while');
-		$observe = variable_get('observe_udp', null);
 	}
+	$out = "70";  // -------------------------------------> Reset message is juist maar message id moet die zijn van laatst ontvangen message van server
+	$out .= "00";
+	$out .= generate_message_id_udp();
+	$binary = pack("H*", $out); // hexadecimaal omzetten naar binair
+	$returnvalue = fwrite($socket, $binary); // wegschrijven naar udp-socket
 	fclose($socket);
-	variable_set('observing', FALSE);
-	variable_set('test', 'einde achtergrondproces');
+	cache_set('observing', "no", 'cache');
 }
 
 // Message id genereren dat nog niet gebruikt werd door telkens te incrementeren
@@ -206,4 +204,15 @@ function generate_token(){
 	$token_string = strval($token);
 	$token_string = str_pad($token_string, 4, "0", STR_PAD_LEFT);
 	return $token_string;
+}
+
+// karakterstring omzetten naar hexadecimalen
+function strToHex($string)
+{
+    $hex='';
+    for ($i=0; $i < strlen($string); $i++)
+    {
+        $hex .= dechex(ord($string[$i]));
+    }
+    return $hex;
 }
