@@ -35,6 +35,7 @@ function temperatuursensor_udp_block_info() {
  * Definieert de titel en inhoud van de block
  */
 function temperatuursensor_udp_block_view($delta='') {
+	// cache_set('observing', "no", 'cache');
 	$block = null;
 	$block['subject'] = 'Temperatuur via udp';
 	$block_content = null;
@@ -103,7 +104,7 @@ function temperatuur_udp_url_form($form_in, &$form_state) {
 function temperatuur_udp_url_form_submit($form, $form_state) {
 	$observe = $form_state['values']['temperatuur_udp_url_checkbox'];
 	cache_set('observe', $observe, 'cache');
-	if($observe == '1' && cache_get('observing')->data != "yes"){
+	if($observe == '1' /*&& cache_get('observing')->data != "yes"*/){
 		$handle = background_process_start('start_observing');
 	}
 }
@@ -137,6 +138,7 @@ function start_observing(){
 	$response = 'empty';
 	$token = generate_token();
 	if (!$socket) {
+		variable_set('test', "voor write");
 		echo "$errstr ($errno)<br />\n";
 	} else {
 		$out = "42";
@@ -147,25 +149,33 @@ function start_observing(){
 		$out .= "53";
 		$out .= "6f6273";
 		$binary = pack("H*", $out); // hexadecimaal omzetten naar binair
+		variable_set('test', "voor write");
 		$returnvalue = fwrite($socket, $binary); // wegschrijven naar udp-socket
+		variable_set('test', "na write");
 		if($returnvalue != FALSE){
+			variable_set('test', "return niet false");
 			$response = fread($socket, 128); // lezen van udp-socket
 		}
 	}
 	while(cache_get('observe')->data == 1){
 		if($response != 'empty' && $response != ''){
-			variable_set('test', strToHex($response));
+			variable_set('test', String2Hex($response));
 			$hid = db_insert('temperaturen_udp')
 					->fields(array(
 						'response' => substr($response, -5),
 					))
 					->execute();
+			$out = "60";
+			$out .= "00";
+			$out .= get_message_id($response);
+			$binary = pack("H*", $out); // hexadecimaal omzetten naar binair
+			$returnvalue = fwrite($socket, $binary); // wegschrijven naar udp-socket
 		}
 		$response = fread($socket, 128); // lezen van udp-socket
 	}
-	$out = "70";  // -------------------------------------> Reset message is juist maar message id moet die zijn van laatst ontvangen message van server
+	$out = "70";
 	$out .= "00";
-	$out .= generate_message_id_udp();
+	$out .= get_message_id($response);
 	$binary = pack("H*", $out); // hexadecimaal omzetten naar binair
 	$returnvalue = fwrite($socket, $binary); // wegschrijven naar udp-socket
 	fclose($socket);
@@ -207,12 +217,17 @@ function generate_token(){
 }
 
 // karakterstring omzetten naar hexadecimalen
-function strToHex($string)
-{
+function String2Hex($string){
     $hex='';
-    for ($i=0; $i < strlen($string); $i++)
-    {
+    for ($i=0; $i < strlen($string); $i++){
         $hex .= dechex(ord($string[$i]));
     }
     return $hex;
+}
+
+// Verwacht als parameter de input van de socket en geeft het message_id terug
+function get_message_id($input){
+	$hex = String2Hex($input);
+	$message_id = substr($hex, 4, 4);
+	return $message_id;
 }
