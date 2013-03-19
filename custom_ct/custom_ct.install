@@ -15,6 +15,14 @@ function custom_ct_enable() {
   foreach (_custom_ct_installed_instances() as $instance) {
     field_create_instance($instance);
   }
+  
+  //comments default disabled
+  variable_set('comment_custom_ct', COMMENT_NODE_DISABLED);
+  //promote to front page default unchecked
+  variable_set('node_options_custom_ct', array('status'));
+  //preview default disabled
+  variable_set('node_preview_custom_ct', 0);
+  variable_set('node_submitted_custom_ct', 0);
 }
  
 function _custom_ct_installed_fields() {
@@ -59,6 +67,12 @@ function custom_ct_disable() {
   foreach ($result as $row) {
     $nids[] = $row->nid;
   }
+  
+  //delete any  variables made by module
+  variable_del('comment_custom_ct');
+  variable_del('node_preview_custom_ct');
+  variable_del('node_submitted_custom_ct');
+  variable_del('node_options_custom_ct');
  
   // Delete all the nodes at once
   node_delete_multiple($nids);
