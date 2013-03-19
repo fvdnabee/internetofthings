@@ -35,30 +35,39 @@ function temperatuursensor_udp_block_info() {
  * Definieert de titel en inhoud van de block
  */
 function temperatuursensor_udp_block_view($delta='') {
-	// cache_set('observing', "no", 'cache');
 	$block = null;
 	$block['subject'] = 'Temperatuur via udp';
 	$block_content = null;
-	$current_observe = variable_get('observe_udp', null);
-	$block_content .= "<label>test: " . variable_get('test') . "</label>";
-	$block_content .= "<label>Automatisch ophalen is momenteel " . (!isset($current_observe) || variable_get('observe_udp', null) == '0' ? 'niet ' : '') . " actief</label>";
-	//HISTORY
+	$observe_cache = cache_get('observe');
+	if(!$observe_cache){
+		$current_observe = 0;
+		cache_set('observe', 0, 'cache');
+	}
+	else{
+		$current_observe = $observe_cache->data;
+	}
+	$block_content .= "<label>Observe is momenteel " . (!isset($current_observe) || variable_get('observe_udp', 0) == '0' ? 'niet ' : '') . " actief</label>";
+	
+	// Tabel met geschiedenis van opvragingen(5 laatste)
 	$query = db_select('temperaturen_udp', 'temperaturen_udp');
 	$query
-		->fields('temperaturen_udp', array('hid', 'response'))
+		->fields('temperaturen_udp', array('hid', 'temperatuur', 'max_age', 'timestamp'))
 		->orderBy('hid', 'DESC')
 		->range(0,5);
 	$result = $query->execute();
-	$block_content .= "<table id='historytable_udp' ><tr><td>Hid</td><td>Response</td></tr>";
+	$block_content .= "<table id='historytable_udp' ><tr><td>Hid</td><td>Temperatuur</td><td>Max age</td><td>Timestamp</td></tr>";
 	$nr = 1;
-	foreach ($result as $record){
+	foreach ($result as $record){ // voegt telkens een rij toe aan de tabel, waarbij de elementen een id met een rij-nr erna krijgen
+		$temperatuur = $record->temperatuur;
 		$hid = $record->hid;
-		$origin = $record->response;
-		$block_content .= "<tr><td id='hid_udp" . $nr . "' >" . $hid . "</td><td id='response_udp" . $nr . "' >" . $origin . "</td></tr>";
+		$max_age = $record->max_age;
+		$timestamp = $record->timestamp;
+		$block_content .= "<tr><td id='hid_udp" . $nr . "' >" . $hid . "</td><td id='temperatuur_udp" . $nr . "' >" . $temperatuur . "</td><td id='max_age_udp" . $nr . "' >" . $max_age . "</td><td id='timestamp_udp" . $nr . "' >" . $timestamp . "</td></tr>";
 		$nr++;
 	}
 	$block_content .= "</table>";
-	drupal_add_js(drupal_get_path('module', 'temperatuursensor_udp') .'/js/temperatuursensor_udp.js');
+	
+	drupal_add_js(drupal_get_path('module', 'temperatuursensor_udp') .'/js/temperatuursensor_udp.js'); // JavaScript bestand toevoegen
 	$temp = drupal_get_form('temperatuur_udp_url_form');
 	$block_content .= drupal_render($temp);
 	$block['content'] = $block_content;
@@ -74,35 +83,71 @@ function temperatuursensor_udp_block_view($delta='') {
  * Voegt componenten toe aan de form
  */
 function temperatuur_udp_url_form($form_in, &$form_state) {
+	// Titel van form
 	$form['wx_info_title'] = array (
 		'#value' => t('Temperatuur'),
 	);
-	//$form['wx_info']['temperatuur_url'] = array (
+	
+	// Tekstveld om ip-adres in te vullen van embedded device
+	//$form['wx_info']['temperatuur_ip'] = array (
 	//	'#type' => 'textfield',
 	//	'#size' => 20,
 	//	'#maxlength' => 20,
 	//);
-	$options = array('Observe');
-	$options_checked = array();
-	$form['wx_info']['temperatuur_udp_url_checkbox'] = array (
-		'#type' => 'checkbox',
-		'#title' => t('Observe'),
-		'#default_value' => cache_get('observe')->data,
-		);
+	
+	// Checkbox om observe aan- of uit te schakelen
+	// $options = array('Observe'); //
+	// $options_checked = array();
+	// $form['wx_info']['temperatuur_udp_url_checkbox'] = array (
+		// '#type' => 'checkbox',
+		// '#title' => t('Observe'),
+		// '#default_value' => cache_get('observe')->data,
+		// );
+	
+	// Submit-knop
+	$submit = '';
+	$observe_cache = cache_get('observe');
+	if(!$observe_cache){
+		$observe = 0;
+		cache_set('observe', 0, 'cache');
+	}
+	else{
+		$observe = $observe_cache->data;
+	}
+	if($observe == 1){
+		$submit = 'Stop met observen';
+	}
+	else{
+		$submit = 'Start met observen';
+	}
 	$form['wx_info']['temperatuur_udp_url_submit'] = array (
 		'#type' => 'submit',
-		'#value' => t('Refresh'),
+		'#value' => t($submit),
 		);
-	$form['#action'] = '/';
+		
+	$form['#action'] = '';
 	return $form;
 }
 
 /**
  * Implements hook_form_submit().
- * functie die wordt uitgevoerd als het form ingediend wordt
+ * functie die wordt uitgevoerd als het formulier ingediend wordt
  */
 function temperatuur_udp_url_form_submit($form, $form_state) {
-	$observe = $form_state['values']['temperatuur_udp_url_checkbox'];
+	$observe_cache = cache_get('observe');
+	if(!$observe_cache){
+		$observe = 0;
+		cache_set('observe', 0, 'cache');
+	}
+	else{
+		$observe = $observe_cache->data;
+	}
+	if($observe != 0){
+		$observe = 0;
+	}
+	else{
+		$observe = 1;
+	}
 	cache_set('observe', $observe, 'cache');
 	if($observe == '1' /*&& cache_get('observing')->data != "yes"*/){
 		$handle = background_process_start('start_observing');
@@ -116,70 +161,216 @@ function temperatuur_udp_url_form_submit($form, $form_state) {
 
 // Functie die wordt uitgevoerd als een ajax call wordt uitgevoerd naar /observe/ajax, geeft de laatste entry terug
 function temperatuur_udp_page_callback(){
+	// Laatste opvraging ophalen
 	$query = db_select('temperaturen_udp', 'temperaturen_udp');
 	$query
-		->fields('temperaturen_udp', array('hid', 'response'))
+		->fields('temperaturen_udp', array('hid', 'timestamp', 'max_age', 'temperatuur'))
 		->orderBy('hid', 'DESC')
 		->range(0,1);
 	$result = $query->execute();
-	$response = '<tr><td>';
+	
+	// print een rij uit in tabelformaat zodat jQuery die kan gebruiken om in de tabel te stoppen
+	$output = '<tr><td>';
 	foreach ($result as $record){
 		$hid = $record->hid;
-		$origin = $record->response;
-		$response .= $hid . "</td><td>" . $origin . "</td></tr>";
+		$timestamp = $record->timestamp;
+		$temperatuur = $record->temperatuur;
+		$max_age = $record->max_age;
+		$output .= $hid . "</td><td>" . $temperatuur . "</td><td>" . $max_age . "</td><td>" . $timestamp . "</td></tr>";
 	}
-	print $response;
+	print $output;
 }
 
 // Functie die wacht tot max age is verstreken, om dan een nieuwe waarde op te halen, roept zichzelf op als er nog steeds automatisch opgehaald moet worden
 function start_observing(){
-	cache_set('observing', "yes", 'cache');
-	$socket = pfsockopen("udp://[2001:6a8:1d80:200::2]", 5683, $errno, $errstr); // udp-socket openen
-	$response = 'empty';
-	$token = generate_token();
+	echo "<script>alert('De sensor kon niet worden bereikt')</script>";
+	cache_set('observing', "yes", 'cache'); // Wederzijds uitsluiten: als het formulier nog eens wordt ingediend met observe = 1, mag er geen nieuw achtergrondproces worden gestart
+	$ip = '2001:6a8:1d80:200::2';
+	$port = 5683;
+	$socket = pfsockopen("udp://[" . $ip . "]", $port, $errno, $errstr); // udp-socket openen
 	if (!$socket) {
-		variable_set('test', "voor write");
-		echo "$errstr ($errno)<br />\n";
+		echo "<script>alert('De sensor kon niet worden bereikt')</script>"; // popup kan niet want dit is een achtergrondproces --> mogelijke oplossing is variabele wijzigen en door jQuery laten ophalen met polling
 	} else {
-		$out = "42";
-		$out .= "01";
-		$out .= generate_message_id_udp();
-		$out .= $token;
-		$out .= "60";
-		$out .= "53";
-		$out .= "6f6273";
-		$binary = pack("H*", $out); // hexadecimaal omzetten naar binair
-		variable_set('test', "voor write");
-		$returnvalue = fwrite($socket, $binary); // wegschrijven naar udp-socket
-		variable_set('test', "na write");
+		stream_set_timeout($socket, 5);
+		$retries = 0;
+		$response = 'empty';
+		$returnvalue = FALSE;
+		while($retries < 5 && $returnvalue == FALSE){
+			if($retries == 0){
+				echo "<script>alert('Data ophalen duurt langer dan normaal')</script>";
+			}
+			$token = generate_token();
+			$message = generate_coap_get_request_observe($token);
+			$returnvalue = fwrite($socket, $message); // wegschrijven naar udp-socket
+			$retries++;
+		}
 		if($returnvalue != FALSE){
-			variable_set('test', "return niet false");
+			$retries = 0;
+			$response = 'empty';
 			$response = fread($socket, 128); // lezen van udp-socket
+			if($response != '' || $response != 'empty'){
+				stream_set_timeout($socket, get_max_age($response));
+			}
+			else{
+				echo "<script>alert('Data ophalen duurt langer dan normaal')</script>";
+				while($retries < 5 && ($response == '' or $response == 'empty')){
+					$response = fread($socket, 128); // lezen van udp-socket
+					$retries++;
+				}
+			}
+			if($response != '' && $response != 'empty'){
+				$retries = 0;
+				stream_set_timeout($socket, get_max_age($response));
+				while(cache_get('observe')->data == 1 && $response != '' && $response != 'empty' && $returnvalue != FALSE){
+					$retries = 0;
+					if($response != 'empty' && $response != ''){
+						insert_response_into_database($response);
+						$ack = generate_coap_acknowledgement($response);
+						$returnvalue = fwrite($socket, $ack); // Acknowledgement wegschrijven naar udp-socket
+						while($retries < 5 && $returnvalue == FALSE){
+							if($retries == 0){
+								echo "<script>alert('Data wegschrijven duurt langer dan normaal')</script>";
+							}
+							$ack = generate_coap_acknowledgement($response);
+							$returnvalue = fwrite($socket, $ack); // Acknowledgement wegschrijven naar udp-socket
+							$retries++;
+						}
+						if($returnvalue != FALSE){
+							$response = fread($socket, 128); // lezen van udp-socket
+						}
+						else{
+							echo "<script>alert('Sensor kan niet meer bereikt worden')</script>";
+						}
+					}
+					else{
+						echo "<script>alert('Data ophalen duurt langer dan normaal')</script>";
+						while($retries < 5 && ($response == '' || $response == 'empty')){
+							$response = fread($socket, 128); // lezen van udp-socket
+							$retries++;
+						}
+					}
+				}
+				if(cache_get('observe')->data == 1){
+					cache_set('observe', 0, 'cache');
+					echo "<script>alert('Sensor kan niet meer bereikt worden')</script>";
+					
+				}
+				$reset = generate_coap_reset($response);
+				$returnvalue = fwrite($socket, $reset); // Reset wegschrijven naar udp-socket
+			}
+			else{
+				echo "<script>alert('De sensor reageert niet meer')</script>";
+			}
 		}
-	}
-	while(cache_get('observe')->data == 1){
-		if($response != 'empty' && $response != ''){
-			variable_set('test', String2Hex($response));
-			$hid = db_insert('temperaturen_udp')
-					->fields(array(
-						'response' => substr($response, -5),
-					))
-					->execute();
-			$out = "60";
-			$out .= "00";
-			$out .= get_message_id($response);
-			$binary = pack("H*", $out); // hexadecimaal omzetten naar binair
-			$returnvalue = fwrite($socket, $binary); // wegschrijven naar udp-socket
+		else{
+			echo "<script>alert('De sensor kon niet worden bereikt')</script>";
 		}
-		$response = fread($socket, 128); // lezen van udp-socket
+		fclose($socket);
 	}
-	$out = "70";
-	$out .= "00";
-	$out .= get_message_id($response);
-	$binary = pack("H*", $out); // hexadecimaal omzetten naar binair
-	$returnvalue = fwrite($socket, $binary); // wegschrijven naar udp-socket
-	fclose($socket);
 	cache_set('observing', "no", 'cache');
+}
+
+// Stelt de binaire data op om een GET-request te sturen om te starten met observe
+function generate_coap_get_request_observe($token){
+	$out = "42"; // Versie = 1, Message Type = Confirmable, Token Length = 2
+	$out .= "01"; // Method = GET
+	$out .= generate_message_id_udp(); // Message ID
+	$out .= $token; // Token
+	$out .= "60"; // Lege observe optie
+	$out .= "536f6273"; // Uri-Path optie, Value = obs
+	$binary = pack("H*", $out); // hexadecimaal omzetten naar binair
+	return $binary;
+}
+
+// Response verwerken en naar databank schrijven
+function insert_response_into_database($response){
+	$max_age = intval(get_max_age($response));
+	$temperature = (double) get_temperature($response);
+	$hid = db_insert('temperaturen_udp')
+		->fields(array(
+			'response' => String2Hex($response),
+			'temperatuur' => $temperature,
+			'max_age' => $max_age,
+		))
+		->execute();
+}
+
+// Haalt max-age uit een response
+function get_max_age($response){
+	$max_age_hex = get_coap_option_value($response, 14);
+	return hexdec($max_age_hex);
+}
+
+// Haalt de inhoud van de optie met opgegeven nr uit de response
+function get_coap_option_value($response, $nr){
+	$hex_string = String2Hex($response);
+	$token_length = hexdec(substr($hex_string, 1, 1));
+	$position = 8 + $token_length*2;
+	$option_nr = hexdec(substr($hex_string, $position, 1));
+	while($position < strlen($hex_string) && $option_nr != $nr && substr($hex_string, $position, 2) != 'ff' && substr($hex_string, $position, 2) != 'FF'){
+		$option_length = hexdec(substr($hex_string, $position+1, 1));
+		$position += 2 + $option_length*2;
+		$option_nr += hexdec(substr($hex_string, $position, 1));
+	}
+	if($position >= strlen($hex_string) || substr($hex_string, $position, 2) == 'ff' || substr($hex_string, $position, 2) == 'FF'){
+		return 'optie niet gevonden --> ' . $response;
+	}
+	else{
+		$option_length = hexdec(substr($hex_string, $position+1, 1));
+		return substr($hex_string, $position+2, $option_length*2);
+	}
+}
+
+// Haalt de payload uit een response
+function get_coap_payload($response){
+	$hex_string = String2Hex($response);
+	$token_length = hexdec(substr($hex_string, 1, 1));
+	$position = 8 + $token_length*2;
+	while($position < strlen($hex_string) && substr($hex_string, $position, 2) != 'ff' && substr($hex_string, $position, 2) != 'FF'){
+		$position += 2;
+	}
+	if($position >= strlen($response)){
+		return FALSE;
+	}
+	else{
+		return substr($response, ($position/2)+2);
+	}
+}
+
+// Haalt de temperatuur uit de payload van een response
+function get_temperature($response){
+	$pos_temperature = get_coap_payload($response);
+	if($pos_temperature == FALSE){
+		return 'temperatuur niet gevonden';
+	}
+	else{
+		$pattern = '/value\s+(.*)C/i';
+		if(preg_match($pattern, $pos_temperature, $matches)){
+			$temperature = $matches[1];
+			return $temperature;
+		}
+		else{
+			return 'temperatuur niet gevonden';
+		}
+	}
+}
+
+// Stelt de binaire data op om een Acknowledgement terug te sturen naar de server
+function generate_coap_acknowledgement($response){
+	$out = "60"; // Versie = 1, Message Type = Acknowledgement, Token Length = 0
+	$out .= "00"; // Method = GET
+	$out .= get_message_id($response); // Message ID
+	$binary = pack("H*", $out); // hexadecimaal omzetten naar binair
+	return $binary;
+}
+
+// Stelt de binaire data op om een Acknowledgement terug te sturen naar de server
+function generate_coap_reset($response){
+	$out = "70"; // Versie = 1, Message Type = Reset, Token Length = 0
+	$out .= "00"; // Method = GET
+	$out .= get_message_id($response); // Message ID
+	$binary = pack("H*", $out); // hexadecimaal omzetten naar binair
+	return $binary;
 }
 
 // Message id genereren dat nog niet gebruikt werd door telkens te incrementeren
@@ -192,7 +383,6 @@ function generate_message_id_udp(){
 		$message_id++;
 		$message_id % 65536;
 	}
-	variable_set('current_message_id', $message_id);
 	$message_id = dechex($message_id);
 	$message_id_string = strval($message_id);
 	$message_id_string = str_pad($message_id_string, 4, "0", STR_PAD_LEFT);
@@ -209,23 +399,26 @@ function generate_token(){
 		$token++;
 		$token % 65536;
 	}
-	variable_set('current_token', $token);
 	$token = dechex($token);
 	$token_string = strval($token);
 	$token_string = str_pad($token_string, 4, "0", STR_PAD_LEFT);
 	return $token_string;
 }
 
-// karakterstring omzetten naar hexadecimalen
+// karakterstring omzetten naar string met hexadecimalen
 function String2Hex($string){
     $hex='';
     for ($i=0; $i < strlen($string); $i++){
-        $hex .= dechex(ord($string[$i]));
+		$byte = dechex(ord($string[$i]));
+		if(strlen($byte) == 1){
+			$byte = "0" . $byte;
+		}
+        $hex .= $byte;
     }
     return $hex;
 }
 
-// Verwacht als parameter de input van de socket en geeft het message_id terug
+// Verwacht als parameter de input van een socket en geeft het message_id terug
 function get_message_id($input){
 	$hex = String2Hex($input);
 	$message_id = substr($hex, 4, 4);

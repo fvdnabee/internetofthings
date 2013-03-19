@@ -14,7 +14,7 @@ Drupal.behaviors.temperatuursensor_udp = {
 };
 
 function tempReceived(html){
-	var regex = /<tr><td>(\d+)<\/td><td>(.*)<\/td><\/tr>/;
+	var regex = /<tr><td>(\d+)<\/td><td>(.*)<\/td><td>(.*)<\/td><td>(.*)<\/td><\/tr>/;
 	var matches = regex.exec(html);
 	console.log(html);
 	console.log('nieuwe hid: ' + matches[1] + ', oude hid: ' + $('#hid_udp1').html());
@@ -25,10 +25,14 @@ function tempReceived(html){
 		for (var i = 5; i >= 2; i--){
 			var nr = i-1;
 			$('#hid_udp' + i).html($('#hid_udp' + nr).html());
-			$('#response_udp' + i).html($('#response_udp' + nr).html());
+			$('#temperatuur_udp' + i).html($('#temperatuur_udp' + nr).html());
+			$('#max_age_udp' + i).html($('#max_age_udp' + nr).html());
+			$('#timestamp_udp' + i).html($('#timestamp_udp' + nr).html());
 		}
 		$('#hid_udp1').html(matches[1]);
-		$('#response_udp1').html(matches[2]);
+		$('#temperatuur_udp1').html(matches[2]);
+		$('#max_age_udp1').html(matches[3]);
+		$('#timestamp_udp1').html(matches[4]);
 		$('#historytable_udp').fadeIn('slow');
 	}
 }

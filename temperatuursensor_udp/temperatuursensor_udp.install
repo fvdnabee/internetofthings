@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  * Implements hook_schema().
  */
@@ -20,6 +19,23 @@ function temperatuursensor_udp_schema() {
 					'length' => '2048',
 					'default' => 'empty',
 					'description' => 'De originele response van de aanvraag',
+				),
+				'temperatuur' => array(
+					'description' => 'Waarde temperatuursensor',
+					'type' => 'float',
+					'unsigned' => FALSE,
+					'not null' => FALSE,
+				),
+				'timestamp' => array(
+					'description' => 'Tijd van opvraging',
+					'mysql_type' => 'timestamp',
+					'not null' => TRUE,
+				),
+				'max_age' => array(
+					'description' => 'Geldigheidsperiode in seconden',
+					'type' => 'int',
+					'unsigned' => TRUE,
+					'not null' => TRUE,
 				),
 			),
 			'primary key' => array('hid'),
