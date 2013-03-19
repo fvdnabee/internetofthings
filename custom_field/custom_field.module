@@ -79,10 +79,26 @@ function custom_field_field_widget_form(&$form, &$form_state, $field, $instance,
       '#title' => t('Name'),
       '#default_value' => isset($items[$delta]['name']) ? $items[$delta]['name'] : NULL,
     );
-    $element['role'] = array(
+    $element['value'] = array(
       '#type' => 'textfield',
-      '#title' => t('Role'),
-      '#default_value' => isset($items[$delta]['role']) ? $items[$delta]['role'] : NULL,
+      '#title' => t('Value'),
+      '#default_value' => isset($items[$delta]['value']) ? $items[$delta]['value'] : NULL,
+    );
+	$element['max_age'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Max age'),
+      '#default_value' => isset($items[$delta]['max_age']) ? $items[$delta]['max_age'] : NULL,
+      '#element_validate' => array('_custom_field_max_age_validate'),
+	);
+	$element['automatic'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Automatic refresh'),
+      '#default_value' => isset($items[$delta]['automatic']) ? $items[$delta]['automatic'] : NULL,
+    );
+	$element['forced'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Force refresh'),
+      '#default_value' => isset($items[$delta]['forced']) ? $items[$delta]['forced'] : NULL,
     );
     $element['link'] = array(
       '#type' => 'textfield',
@@ -101,7 +117,13 @@ function custom_field_field_widget_form(&$form, &$form_state, $field, $instance,
 function custom_field_field_is_empty($item, $field) {
   if ($field['type'] == 'custom_field') {
   
-    if (empty($item['name']) && empty($item['role']) && empty($item['link'])) {
+    if (empty($item['name'])
+	 && empty($item['value'])
+	 && empty($item['link'])
+	 && empty($item['max_age'])
+	 && empty($item['automatic'])
+	 && empty($item['forced'])
+	 ) {
      return TRUE;
 	}
 	 
@@ -130,6 +152,16 @@ function custom_field_field_validate($obj_type, $object, $field, $instance, $lan
 }
 
 /**
+ * Validation callback for a custom_field max_age element.
+ */
+function _custom_field_max_age_validate($element, &$form_state, $form) {
+  $value = $element['#value'];
+  if (!empty($value) && !is_numeric($value)) {
+    form_error($element, t('Submit an age in seconds.'));
+  }
+}
+
+/**
  * Validation callback for a custom_field link element.
  */
 function _custom_field_link_validate($element, &$form_state, $form) {
@@ -153,7 +185,10 @@ function theme_custom_field_formatter_default($item) {
   $output = '';
   $output .= '<div class="custom_field-wrapper">';
   $output .= 'Name: ' . $item['name'] . "<br>";
-  $output .= 'Role: ' . $item['role'] . "<br>";
+  $output .= 'Value: ' . $item['value'] . "<br>";
+  $output .= 'Max age: ' . $item['max_age'] . "<br>";
+  $output .= 'Automatic refresh: ' . $item['automatic'] . "<br>";
+  $output .= 'Forced refresh: ' . $item['forced'] . "<br>";
   $output .= 'Link: ' . l($item['link'], $item['link'], array('options' =>  array('absolute' => TRUE)));
   $output .= '</div><br />';
 
