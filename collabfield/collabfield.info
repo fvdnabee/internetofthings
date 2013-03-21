@@ -1,8 +1,0 @@
-; $Id$
-
-name = Collaborator field
-description = Custom collaborator field.
-
-dependencies[] = field_ui
-package = zzz
-core = 7.x
