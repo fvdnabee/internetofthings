@@ -1,0 +1,7 @@
+name = Sensor
+description = Form testing
+package = zzz
+core = 7.x
+
+files[] = views/sensor_handler_field_form_body.inc
+files[] = views/sensor.views.inc

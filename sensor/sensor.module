@@ -1,0 +1,168 @@
+<?php
+
+// function sensor_menu() {
+
+  // $items = array(); 
+  
+  // $items['sensor/form'] = array(
+    // 'title' => 'Sensor network',
+    // 'page callback' => 'drupal_get_form',
+    // 'page arguments' => array('sensor_form'),
+    // 'access callback' => TRUE,
+    // 'description' => 'Sensor network',
+    // 'type' => MENU_NORMAL_ITEM,
+    // 'weight' => 1,
+  // );
+  // return $items;
+//}
+
+function build_headers(){
+return array
+  (
+    'sensor_name' => t('Sensor name'),	
+	'sensor_type' => t('Sensor type'),
+	'max_age' => t('Max age'),
+	'supp_obs' => t('Supports observe'),
+  );
+}
+
+function build_options($users){
+  //empty array
+  $options = array();
+  // Next, loop through the $users array
+  foreach($users as $user)
+  {
+    $options[$user['uid']] = array // each element of the array is keyed with the UID
+    (
+      'sensor_name' => $user['sensor_name'], // 'first_name' was the key used in the header
+      'sensor_type' => $user['sensor_type'], // 'last_Name' was the key used in the header
+      'max_age' => $user['max_age'],
+	  'supp_obs' => $user['supp_obs'],
+	);
+  }
+  return $options;
+}
+
+function sensor_form($form, &$form_state) {
+  //echo '<script>alert("render form!");</script>';
+  //textfield for device url
+  $form['device_url'] = array
+  (
+    '#type' => 'textfield',
+	'#title' => t('Device url'),
+	'#size' => 60,
+	'#required' => TRUE,
+  );
+  
+  //geef default waarde op indien er al iets stond in tekstveld
+  if (isset($form_state['sensor']['device_url'])) {
+    $form['device_url']['#default_value'] = $form_state['sensor']['device_url'];
+  }
+  
+  //button to reload the well-know/core
+  $form['reload_device'] = array
+  (
+    '#type' => 'submit',
+    '#value' => t('Reload device'),
+	'#submit' => array('reload_device_core'),
+  );
+  //button to clear tableselect
+  $form['clear_tableselect'] = array
+  (
+    '#type' => 'submit',
+    '#value' => t('Clear'),
+	'#submit' => array('clear_tableselect'),
+  );
+  
+  //haal dingen op uit db
+  if (isset($form_state['sensor']['reload_core']) && $form_state['sensor']['reload_core'] == 1) {
+  //if (variable_get('reload_core', 0) == 1) {
+    $users = array
+    (
+      array('uid' => 1,
+			'sensor_name' => 'iMinds temp', 
+			'sensor_type' => 'temperature',
+			'max_age' => '30',
+			'supp_obs' => 1),
+      array('uid' => 2,
+			'sensor_name' => 'iMinds hum', 
+			'sensor_type' => 'humidity',
+			'max_age' => '30',
+			'supp_obs' => 1),
+      array('uid' => 3,
+			'sensor_name' => 'iMinds mov', 
+			'sensor_type' => 'movement',
+			'max_age' => '30',
+			'supp_obs' => 0),
+    );  
+  }
+  else {
+	$users = array();
+  }
+  
+  //build headers
+  $header = build_headers();
+  
+  //build options
+  $options = build_options($users);
+  
+  $form['table'] = array
+  (
+    '#type' => 'tableselect',
+    '#header' => $header,
+    '#options' => $options,
+    '#empty' => t('No sensors found'),
+	'#multiple' => FALSE,
+  );
+  //--------------------------------------------------------------------
+  
+  //button watch the selected sensor (like in cupper)
+  $form['select'] = array
+  (
+    '#type' => 'submit',
+    '#value' => t('Select'),
+	'#submit' => array('show_sensor'),
+  );
+  return $form;
+}
+
+//submit handler when clicked on reload device
+function reload_device_core($form, &$form_state) {
+  //echo '<script>alert("reload core!");</script>';
+  $form_state['sensor']['reload_core'] = 1;
+  $form_state['sensor']['device_url'] = $form_state['values']['device_url'];
+  $form_state['rebuild'] = TRUE;
+}
+
+//submit handler when clicked on reload device
+function clear_tableselect($form, &$form_state) {
+  $form_state['sensor']['reload_core'] = 0;
+  //$form_state['sensor']['device_url'] = 0;
+  $form_state['rebuild'] = TRUE;
+}
+
+//submit handler when clicked on select
+function show_sensor($form, &$form_state) {
+  //echo '<script>alert("show sensor!");</script>';
+  //$form_state['rebuild'] = TRUE;
+}
+
+function sensor_form_alter(&$form, &$form_state, $form_id) {
+  ////dpm($form_id);  // print form ID to messages
+  ////dpm($form);  // pretty print array using Krumo to messages
+}
+
+function node_content_view($node, $view_mode) {	
+  $node->content['sensor_form'] = drupal_get_form('sensor_form', $node);
+  return $node;
+}
+
+function sensor_field_extra_fields() {
+  $extra['sensor_form'] = array(
+    'form' => array(
+      'label' => t('abum'),
+    ),
+  );
+
+  return $extra;
+}

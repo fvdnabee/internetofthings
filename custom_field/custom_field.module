@@ -179,7 +179,7 @@ function custom_field_theme($existing, $type, $theme, $path) {
   );
 }
 
-// hoe elementen tonen
+
 function theme_custom_field_formatter_default($item) {
   
   $output = '';
