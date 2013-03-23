@@ -1,0 +1,67 @@
+<?php
+
+function sensor_node_info() {
+  return array(
+    'sensor' => array(
+      'name' => t('Sensor'),
+      'base' => 'node_content',
+	  'has_body' => FALSE,
+      'description' => t('Sensor Form'),
+    ),
+  );
+}
+
+function sensor_enable() {
+//deze manier mag je niet gebruiken, je moet _node_info gebruiken
+  // $sensor_type = array(
+    // 'type' => 'sensor',
+    // 'name' => st('Sensor'),
+    // 'base' => 'node_content',
+    // 'description' => st('Sensor form'),
+    // 'custom' => TRUE,
+    // 'modified' => TRUE,
+    // 'locked' => FALSE,
+  // );
+  // $sensor_type = node_type_set_defaults($sensor_type);
+  // node_type_save($sensor_type);
+  // node_add_body_field($sensor_type);
+  
+  //comments default disabled
+  variable_set('comment_sensor', COMMENT_NODE_DISABLED);
+  //promote to front page default unchecked
+  variable_set('node_options_sensor', array('status'));
+  //preview default disabled
+  variable_set('node_preview_sensor', 0);
+  variable_set('node_submitted_sensor', 0);
+}
+
+function sensor_disable(){
+  $sql = 'SELECT nid FROM {node} n WHERE n.type = :type';
+  $result = db_query($sql, array(':type' => 'sensor'));
+  $nids = array();
+  foreach ($result as $row) {
+    $nids[] = $row->nid;
+  }
+  
+  //delete any  variables made by module
+  variable_del('comment_sensor');
+  variable_del('node_preview_sensor');
+  variable_del('node_submitted_sensor');
+  variable_del('node_options_sensor');
+ 
+  // Delete all the nodes at once
+  node_delete_multiple($nids);
+ 
+  $instance = array('field_name' => 'comment_body','bundle' => 'comment_node_sensor','entity_type' => 'comment');
+  field_delete_instance($instance);
+ 
+  $instance = array('field_name' => 'body','bundle' => 'sensor','entity_type' => 'node');
+  field_delete_instance($instance);
+  
+  //deleting content type
+  node_type_delete('sensor');
+  node_types_rebuild();
+  
+  // Purge all field infromation
+   field_purge_batch(1000);
+}
