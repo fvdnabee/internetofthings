@@ -4,6 +4,8 @@
  * Implements hook_schema().
  */
 function temperatuursensor_udp_schema() {
+
+	// Tabel om opgevraagde waarden op te slaan
 	$schema['temperaturen_udp'] = array(
 		'description' => 'Tabel om geschiedenis van opgevraagde temperaturen op te slaan die opgevraagd zijn met udp-sockets',
 		'fields' => array(
@@ -12,6 +14,12 @@ function temperatuursensor_udp_schema() {
 					'unsigned' => TRUE,
 					'not null' => TRUE,
 					'description' => 'Primary key, unique history entry ID',
+				),
+				'uri' => array(
+					'type' => 'varchar',
+					'not null' => TRUE,
+					'length' => '128',
+					'description' => 'De URI van de resource',
 				),
 				'response' => array(
 					'type' => 'varchar',
@@ -39,6 +47,41 @@ function temperatuursensor_udp_schema() {
 				),
 			),
 			'primary key' => array('hid'),
+	);
+	
+	// Tabel om variabelen per user bij te houden
+	$schema['user_specifieke_variabelen'] = array(
+		'description' => 'Tabel om variabelen per user bij te houden',
+		'fields' => array(
+				'uid' => array(
+					'type' => 'int',
+					'unsigned' => TRUE,
+					'not null' => TRUE,
+					'description' => 'User ID',
+				),
+				'uri' => array(
+					'type' => 'varchar',
+					'not null' => TRUE,
+					'length' => '128',
+					'description' => 'Een URI van een embedded device',
+				),
+				'observing' => array(
+					'description' => 'Waarde om te bepalen of de gebruiker het device wil observen of niet --> 0 = niet observen, 1 = wel observen',
+					'type' => 'int',
+					'unsigned' => TRUE,
+					'not null' => TRUE,
+					'default' => 0,
+				),
+				
+				'bekijken' => array(
+					'description' => 'Waarde om te bepalen of de gebruiker de waardes wil zien verschijnen of niet --> 0 = niet verschijnen, 1 = wel verschijnen',
+					'type' => 'int',
+					'unsigned' => TRUE,
+					'not null' => TRUE,
+					'default' => 0,
+				),
+			),
+			'primary key' => array('uid', 'uri'),
 	);
 
 	return $schema;

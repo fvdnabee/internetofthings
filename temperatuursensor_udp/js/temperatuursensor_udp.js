@@ -24,12 +24,13 @@ function tempReceived(html){
 	var regex = /<error>(.*)<\/error><responded>(.*)<\/responded><get_response>(.*)<\/get_response><tr><td>(\d+)<\/td><td>(.*)<\/td><td>(.*)<\/td><td>(.*)<\/td><\/tr>/;
 	var matches = regex.exec(html);
 	console.log('input ajax call: ' + html);
-	if(matches[1] == 'none'){
+	if(matches && matches[1] == 'none'){
+		$('#error').hide();
+		$('#errorimg').hide();
 		console.log('nieuwe hid: ' + matches[4] + ', oude hid: ' + $('#hid_udp1').html());
 		var nieuw = parseInt(matches[4]);
 		var oud = parseInt($('#hid1').html());
 		if(matches[4] > $('#hid_udp1').html()){
-			$("#edit-submit").attr("value", "Stop met observen");
 			$('#errorimg').attr('style', 'visibility:hidden;');
 			$('#error').html('');
 			$('#historytable_udp').hide();
@@ -53,7 +54,7 @@ function tempReceived(html){
 			$('#get_response').fadeIn('slow');
 		}
 	}
-	else{
+	else if(matches){
 		if(matches[1] == 'unreachable'){
 			if($('#errorimg').attr('src') != 'sites/all/modules/custom/temperatuursensor_udp/images/error.ico'){
 				$('#errorimg').attr('src', 'sites/all/modules/custom/temperatuursensor_udp/images/error.ico');
