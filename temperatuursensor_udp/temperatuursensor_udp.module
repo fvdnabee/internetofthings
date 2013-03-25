@@ -37,11 +37,9 @@ function temperatuursensor_udp_block_info() {
 function temperatuursensor_udp_block_view($delta='') {
 	global $user;
 	
-	variable_set('error', 'none');
 	$block = null;
 	$block['subject'] = 'Sensoren bevragen met het CoAP protocol';
 	$block_content = null;
-	$block_content .= 'test: ' . variable_get('test', 'nothing');
 	
 	// URI form
 	$temp = drupal_get_form('uri_form');
@@ -54,11 +52,11 @@ function temperatuursensor_udp_block_view($delta='') {
 	$block_content .= "<img style = 'visibility:hidden;' src = '' id = 'errorimg' /><label id='error' ></label>"; // elementen om fouten te tonen
 	
 	// Te bekijken URI ophalen
-	$query = db_select('user_specifieke_variabelen', 'user');
+	$query = db_select('CoAP_users', 'users');
 	$query
-		->fields('user', array('uid', 'uri', 'observing', 'bekijken'))
+		->fields('users', array('uid', 'uri', 'watch'))
 		->condition('uid', $user->uid, '=')
-		->condition('bekijken', 1, '=');
+		->condition('watch', 1, '=');
 	$result = $query->execute();
 	$empty = TRUE;
 	foreach($result as $record){
@@ -68,21 +66,22 @@ function temperatuursensor_udp_block_view($delta='') {
 	
 	if(!$empty){
 		// Tabel met geschiedenis van opvragingen(5 laatste)
-		$query = db_select('temperaturen_udp', 'temperaturen_udp');
+		$query = db_select('CoAP_values', 'coap_values');
 		$query
-			->fields('temperaturen_udp', array('hid', 'temperatuur', 'max_age', 'timestamp', 'uri'))
+			->fields('coap_values', array('hid', 'value', 'max_age', 'timestamp', 'uri', 'uid'))
 			->condition('uri', $uri, '=')
+			->condition('uid', $user->uid, '=')
 			->orderBy('hid', 'DESC')
 			->range(0,5);
 		$result = $query->execute();
-		$block_content .= "<table id='historytable_udp' ><tr><td>Hid</td><td>Temperatuur</td><td>Max age</td><td>Timestamp</td></tr>";
+		$block_content .= "<table id='historytable' ><tr><td>Hid</td><td>Value</td><td>Max age</td><td>Timestamp</td></tr>";
 		$nr = 1;
 		foreach ($result as $record){ // voegt telkens een rij toe aan de tabel, waarbij de elementen een id met een rij-nr erna krijgen
-			$temperatuur = $record->temperatuur;
+			$value = $record->value;
 			$hid = $record->hid;
 			$max_age = $record->max_age;
 			$timestamp = $record->timestamp;
-			$block_content .= "<tr><td id='hid_udp" . $nr . "' >" . $hid . "</td><td id='temperatuur_udp" . $nr . "' >" . $temperatuur . "</td><td id='max_age_udp" . $nr . "' >" . $max_age . "</td><td id='timestamp_udp" . $nr . "' >" . $timestamp . "</td></tr>";
+			$block_content .= "<tr><td id='hid" . $nr . "' >" . $hid . "</td><td id='temperatuur" . $nr . "' >" . $value . "</td><td id='max_age" . $nr . "' >" . $max_age . "</td><td id='timestamp" . $nr . "' >" . $timestamp . "</td></tr>";
 			$nr++;
 		}
 		$block_content .= "</table>";
@@ -120,26 +119,30 @@ function bekijken_form($form_in, &$form_state) {
 	);
 	
 	global $user;
-	$query = db_select('user_specifieke_variabelen', 'user');
+	$query = db_select('CoAP_users', 'users');
 	$query
-		->fields('user', array('uid', 'uri', 'observing', 'bekijken'))
+		->fields('users', array('uid', 'uri', 'watch'))
 		->condition('uid', $user->uid,'=');
 	$result = $query->execute();
 	
 	// Radio buttons om URI te selecteren
-	$options = array();
-	foreach ($result as $record){
-		$options[$record->uri] = $record->uri;
-		if($record->bekijken == 1){
-			$uri = $record->uri;
+	if($result->rowCount() > 0){
+		$options = array();
+		foreach ($result as $record){
+			$options[$record->uri] = $record->uri;
+			if($record->watch == 1){
+				$uri = $record->uri;
+			}
 		}
+		$form['bekijken']['uri'] = array(
+			'#type' => 'radios',
+			'#title' => t('Selecteer een resource'),
+			'#default_value' => $uri, // Default value moet geselecteerde URI worden
+			'#options' => $options,
+		);
 	}
-	$form['bekijken']['uri'] = array(
-		'#type' => 'radios',
-		'#title' => t('Selecteer een resource'),
-		'#default_value' => $uri, // Default value moet geselecteerde URI worden
-		'#options' => $options,
-	);
+	
+	// Submit-knop
 	$form['bekijken']['submit'] = array (
 		'#type' => 'submit',
 		'#value' => t("Bekijken"),
@@ -157,17 +160,17 @@ function bekijken_form_submit($form, $form_state) {
 	global $user;
 	
 	// Variabele 'bekijken' van elk URI voor de user in de databank op 0 zetten
-	$num_updated = db_update('user_specifieke_variabelen')
+	$num_updated = db_update('CoAP_users')
 		->fields(array(
-			'bekijken' => 0,
+			'watch' => 0,
 		))
 		->condition('uid', $user->uid, '=')
 		->execute();
 	
 	// Als observen opgestart wordt, variabele 'bekijken' op 1 zetten voor de gekozen URI
-	$num_updated = db_update('user_specifieke_variabelen')
+	$num_updated = db_update('CoAP_users')
 		->fields(array(
-			'bekijken' => 1,
+			'watch' => 1,
 		))
 		->condition('uid', $user->uid, '=')
 		->condition('uri', $form_state['values']['uri'], '=')
@@ -220,6 +223,13 @@ function uri_form($form_in, &$form_state) {
 		'#value' => t('URI form'),
 	);
 	
+	// Eventuele fout
+	$form['uri']['error'] = array(
+		'#type' => 'item',
+		'#markup' => variable_get('bad_uri', ''),
+	);
+	variable_del('bad_uri');
+	
 	// Invoer textbox voor URI
 	$form['uri']['invoer'] = array(
 		'#type' => 'textfield',
@@ -244,13 +254,46 @@ function uri_form($form_in, &$form_state) {
  */
 function uri_form_submit($form, $form_state) {
 	global $user;
-	$hid = db_insert('user_specifieke_variabelen')
-		->fields(array(
-			'uid' => $user->uid,
-			'uri' => $form_state['values']['invoer'],
-			'observing' => 0,
-		))
-		->execute();
+	
+	$pattern = '/([^\/]+)\/(.*)/i';
+	if(preg_match($pattern, $form_state['values']['invoer'], $matches)){
+		$query = db_select('CoAP_resources', 'resources');
+		$query
+			->fields('resources', array('uri'))
+			->condition('uri', $form_state['values']['invoer'], '=');
+		$result = $query->execute();
+		
+		if($result->rowCount() == 0){
+			$id = db_insert('CoAP_resources')
+				->fields(array(
+					'uri' => $form_state['values']['invoer'],
+					'observable' => 1,
+					'last_error' => 'none',
+				))
+				->execute();
+		}
+		
+		// Watch bij alle rijen van de user op nul zetten
+		$num_updated = db_update('CoAP_users')
+			->fields(array(
+				'watch' => 0,
+			))
+			->condition('uid', $user->uid, '=')
+			->execute();
+		
+		// Watch van net toegevoegde URI op 1 zetten
+		$id = db_insert('CoAP_users')
+			->fields(array(
+				'uid' => $user->uid,
+				'uri' => $form_state['values']['invoer'],
+				'observe' => 0,
+				'watch' => 1,
+			))
+			->execute();
+	}
+	else{
+		variable_set('bad_uri', 'Er werd een ongeldige URI opgegeven.');
+	}
 }
 
 //////////////////////
@@ -270,16 +313,16 @@ function observe_form($form_in, &$form_state) {
 	global $user;
 	
 	// Checkbox per observable resource
-	$query = db_select('user_specifieke_variabelen', 'user');
+	$query = db_select('CoAP_users', 'users');
 	$query
-		->fields('user', array('uid', 'uri', 'observing', 'bekijken'))
+		->fields('users', array('uid', 'uri', 'observe'))
 		->condition('uid', $user->uid,'=');
 	$result = $query->execute();
 	foreach ($result as $record){
 		$form['observe'][$record->uri] = array(
 			'#type' => 'checkbox',
 			'#title' => $record->uri,
-			'#default_value' => $record->observing,
+			'#default_value' => $record->observe,
 		);
 	}
 	
@@ -299,21 +342,27 @@ function observe_form($form_in, &$form_state) {
  */
 function observe_form_submit($form, $form_state) {
 	global $user;
-	$query = db_select('user_specifieke_variabelen', 'user');
+	
+	$query = db_select('CoAP_users', 'users');
 	$query
-		->fields('user', array('uid', 'uri', 'observing', 'bekijken'))
-		->condition('uid', $user->uid,'=');
+		->fields('users', array('uid', 'uri'))
+		->condition('uid', $user->uid, '=');
 	$result = $query->execute();
 	foreach ($result as $record){
-		// variable_set('test', $form_state['values'][$record->uri]);
-		if($form_state['values'][$record->uri] != 0 && $record->observing == 0){
+		$observe_query = db_select('CoAP_users', 'users');
+		$observe_query
+			->fields('users', array('uid', 'uri', 'observe'))
+			->condition('uri', $record->uri, '=')
+			->condition('observe', 1, '=');
+		$observe_result = $observe_query->execute();
+	
+		if($form_state['values'][$record->uri] != 0 && $observe_result->rowCount() == 0){
 			background_process_start('start_observing', $record->uri);
 		}
-		$num_updated = db_update('user_specifieke_variabelen')
+		$num_updated = db_update('CoAP_users')
 			->fields(array(
-				'observing' => $form_state['values'][$record->uri],
+				'observe' => $form_state['values'][$record->uri],
 			))
-			->condition('uid', $user->uid, '=')
 			->condition('uri', $record->uri, '=')
 			->execute();
 	}
@@ -329,11 +378,11 @@ function temperatuur_udp_page_callback(){
 	global $user;
 	
 	// bekeken URI bepalen
-	$query = db_select('user_specifieke_variabelen', 'user');
+	$query = db_select('CoAP_users', 'users');
 	$query
-		->fields('user', array('uid', 'uri', 'observing', 'bekijken'))
+		->fields('users', array('uid', 'uri', 'watch'))
 		->condition('uid', $user->uid, '=')
-		->condition('bekijken', 1, '=')
+		->condition('watch', 1, '=')
 		->range(0,1);
 	$result = $query->execute();
 	$uri = '';
@@ -342,40 +391,89 @@ function temperatuur_udp_page_callback(){
 	}
 	
 	// Laatste opvraging ophalen
-	$query = db_select('temperaturen_udp', 'temperaturen_udp');
+	$query = db_select('CoAP_values', 'coap_values');
 	$query
-		->fields('temperaturen_udp', array('hid', 'timestamp', 'max_age', 'temperatuur', 'uri'))
-		// ->condition('uri', $uri, '=')
+		->fields('coap_values', array('hid', 'uid', 'timestamp', 'max_age', 'value', 'uri'))
+		->condition('uri', $uri, '=')
+		->condition('uid', $user->uid, '=')
 		->orderBy('hid', 'DESC')
 		->range(0,1);
 	$result = $query->execute();
 	
 	// print een rij uit in tabelformaat zodat jQuery die kan gebruiken om in de tabel te stoppen
-	$output = "<error>" . variable_get('error', 'none') . "</error><responded>" . variable_get('responded', 'no') . "</responded><get_response>" . variable_get('get_response', '') . "</get_response>";
 	foreach ($result as $record){
-		$hid = $record->hid;
-		$timestamp = $record->timestamp;
-		$temperatuur = $record->temperatuur;
-		$max_age = $record->max_age;
-		$output .= "<tr><td>" . $hid . "</td><td>" . $temperatuur . "</td><td>" . $max_age . "</td><td>" . $timestamp . "</td></tr>";
+		$resources_query = db_select('CoAP_resources', 'resources');
+		$resources_query
+			->fields('resources', array('uri', 'last_error'))
+			->condition('uri', $record->uri, '=');
+		$resources_result = $resources_query->execute();
+		
+		foreach($resources_result as $resources_record){
+			$output = "<error>" . $resources_record->last_error . "</error><responded>" . variable_get('responded', 'no') . "</responded><get_response>" . variable_get('get_response', '') . "</get_response>";
+			$hid = $record->hid;
+			$timestamp = $record->timestamp;
+			$temperatuur = $record->value;
+			$max_age = $record->max_age;
+			$output .= "<tr><td>" . $hid . "</td><td>" . $temperatuur . "</td><td>" . $max_age . "</td><td>" . $timestamp . "</td></tr>";
+		}
 	}
 	variable_set('responded', 'no');
+	if(!isset($output)){
+		$query = db_select('CoAP_resources', 'resources');
+		$query
+			->fields('resources', array('uri', 'last_error'))
+			->condition('uri', $uri, '=');
+		$result = $query->execute();
+		
+		if($result->rowCount() > 0){
+			foreach($result as $record){
+				$output = "<error>" . $record->last_error . "</error>";
+			}
+		}
+		else{
+			$output = "no values";
+		}
+	}
 	print $output;
 }
 
 // Functie die wacht tot max age is verstreken, om dan een nieuwe waarde op te halen, roept zichzelf op als er nog steeds automatisch opgehaald moet worden
 function start_observing($uri){
 	global $user;
+	
 	$pattern = '/([^\/]+)\/(.*)/i';
 	if(preg_match($pattern, $uri, $matches)){
+		$query = db_select('CoAP_users', 'users');
+		$query
+			->fields('users', array('uri', 'observe'))
+			->condition('uri', $uri, '=')
+			->condition('observe', 1, '=');
+		$result = $query->execute();
+		$num_observers = $result->rowCount();
+		
 		$ip = $matches[1];
 		$sensor = $matches[2];
 		$port = 5683;
 		$socket = pfsockopen("udp://[" . $ip . "]", $port, $errno, $errstr); // udp-socket openen
 		if (!$socket) {
-			variable_set('error', 'unreachable');
-		} else {
-			variable_set('error', 'none');
+			// Error zetten
+			$error = TRUE;
+			$num_updated = db_update('CoAP_resources')
+				->fields(array(
+					'last_error' => 'unreachable',
+				))
+				->condition('uri', $uri, '=')
+				->execute();
+		} else { 
+			// Error zetten
+			$error = FALSE;
+			$num_updated = db_update('CoAP_resources')
+				->fields(array(
+					'last_error' => 'none',
+				))
+				->condition('uri', $uri, '=')
+				->execute();
+			
 			stream_set_timeout($socket, 5, 0);
 			$retries = 0;
 			$response = 'empty';
@@ -385,9 +483,16 @@ function start_observing($uri){
 			if($returnvalue != FALSE){
 				$response = fread($socket, 128); // lezen van udp-socket
 			}
-			// variable_set('test', $response);
 			while($retries < 5 && ($response == '' || $response == 'empty')){
-				variable_set('error', 'delay');
+				// Error zetten
+				$error = TRUE;
+				$num_updated = db_update('CoAP_resources')
+					->fields(array(
+						'last_error' => 'delay',
+					))
+					->condition('uri', $uri, '=')
+					->execute();
+				
 				$token = generate_token();
 				$message = generate_coap_get_request_observe($token, $sensor);
 				$returnvalue = fwrite($socket, $message); // wegschrijven naar udp-socket
@@ -396,29 +501,37 @@ function start_observing($uri){
 				}
 				$retries++;
 			}
-			// variable_set('test', "retries: " . $retries);
+			
+			$query = db_select('CoAP_users', 'users');
+			$query
+				->fields('users', array('uri', 'observe'))
+				->condition('uri', $uri, '=')
+				->condition('observe', 1, '=');
+			$result = $query->execute();
+			$num_observers = $result->rowCount();
+			
 			if($response != '' && $response != 'empty'){
-				// variable_set('test', "gelukt");
-				variable_set('error', 'none');
-				stream_set_timeout($socket, intval(get_max_age($response)), 0);
-				$query = db_select('user_specifieke_variabelen', 'user');
-				$query
-					->fields('user', array('uid', 'uri', 'observing', 'bekijken'))
-					->condition('uid', $user->uid, '=')
+				// Error zetten
+				$error = FALSE;
+				$num_updated = db_update('CoAP_resources')
+					->fields(array(
+						'last_error' => 'none',
+					))
 					->condition('uri', $uri, '=')
-					->range(0,1);
-				$result = $query->execute();
-				$empty = TRUE;
-				foreach ($result as $record){
-					$empty = FALSE;
-					$observe = $record->observing;
-				}
-				if($empty){
-					$observe = 0;
-				}
-				variable_set('test', 'empty: ' . $empty);
-				while($observe == 1 && $response != '' && $response != 'empty'){
-					variable_set('error', 'none');
+					->execute();
+				
+				stream_set_timeout($socket, intval(get_max_age($response)), 0);
+				
+				while($num_observers > 0 && $response != '' && $response != 'empty'){
+					// Error zetten
+					$error = TRUE;
+					$num_updated = db_update('CoAP_resources')
+						->fields(array(
+							'last_error' => 'none',
+						))
+						->condition('uri', $uri, '=')
+						->execute();
+					
 					insert_response_into_database($response, $uri);
 					$ack = generate_coap_acknowledgement($response);
 					$returnvalue = fwrite($socket, $ack); // Acknowledgement wegschrijven naar udp-socket
@@ -426,7 +539,15 @@ function start_observing($uri){
 					$response = 'empty';
 					$response = fread($socket, 128); // lezen van udp-socket
 					while($retries < 3 && ($response == '' || $response == 'empty')){
-						variable_set('error', 'delay');
+						// Error zetten
+						$error = TRUE;
+						$num_updated = db_update('CoAP_resources')
+							->fields(array(
+								'last_error' => 'delay',
+							))
+							->condition('uri', $uri, '=')
+							->execute();
+						
 						$token = generate_token();
 						$message = generate_coap_get_request_observe($token, $sensor);
 						$returnvalue = fwrite($socket, $message); // wegschrijven naar udp-socket
@@ -435,35 +556,42 @@ function start_observing($uri){
 						}
 						$retries++;
 					}
-					$query = db_select('user_specifieke_variabelen', 'user');
+					
+					$query = db_select('CoAP_users', 'users');
 					$query
-						->fields('user', array('uid', 'uri', 'observing'))
-						->condition('uid', $user->uid, '=')
+						->fields('users', array('uri', 'observe'))
 						->condition('uri', $uri, '=')
-						->range(0,1);
+						->condition('observe', 1, '=');
 					$result = $query->execute();
-					$empty = TRUE;
-					foreach ($result as $record){
-						$empty = FALSE;
-						$observe = $record->observing;
-					}
-					if($empty){
-						$observe = 0;
-					}
+					$num_observers = $result->rowCount();
 				}
 			}
 			else{
-				variable_set('error', 'broken');
-			}
-			if($observe == 1){
-				$num_updated = db_update('user_specifieke_variabelen')
+				// Error zetten
+				$error = TRUE;
+				$num_updated = db_update('CoAP_resources')
 					->fields(array(
-						'observing' => 0,
+						'last_error' => 'broken',
 					))
-					->condition('uid', $user->uid, '=')
 					->condition('uri', $uri, '=')
 					->execute();
-				variable_set('error', 'broken');
+			}
+			if($num_observers > 0){
+				$num_updated = db_update('CoAP_users')
+					->fields(array(
+						'observe' => 0,
+					))
+					->condition('uri', $uri, '=')
+					->execute();
+				
+				// Error zetten
+				$error = TRUE;
+				$num_updated = db_update('CoAP_resources')
+					->fields(array(
+						'last_error' => 'broken',
+					))
+					->condition('uri', $uri, '=')
+					->execute();
 			}
 			else{
 				$reset = generate_coap_reset($response);
@@ -471,18 +599,41 @@ function start_observing($uri){
 			}
 			fclose($socket);
 		}
-		if($observe == 0){
-			variable_set('error', 'none');
-		}
-		if(variable_get('error', 'none') != 'none'){
-			$num_updated = db_update('user_specifieke_variabelen')
+		if($num_observers == 0){
+			// Error zetten
+			$error = FALSE;
+			$num_updated = db_update('CoAP_resources')
 				->fields(array(
-					'observing' => 0,
+					'last_error' => 'none',
 				))
-				->condition('uid', $user->uid, '=')
 				->condition('uri', $uri, '=')
 				->execute();
 		}
+		if($error){
+			$num_updated = db_update('CoAP_users')
+				->fields(array(
+					'observe' => 0,
+				))
+				->condition('uri', $uri, '=')
+				->execute();
+		}
+	}
+	else{
+		// Error zetten
+		$error = TRUE;
+		$num_updated = db_update('CoAP_resources')
+			->fields(array(
+				'last_error' => 'bad_uri',
+			))
+			->condition('uri', $uri, '=')
+			->execute();
+			
+		$num_updated = db_update('CoAP_users')
+			->fields(array(
+				'observe' => 0,
+			))
+			->condition('uri', $uri, '=')
+			->execute();
 	}
 }
 
@@ -548,14 +699,25 @@ function generate_coap_get_request_observe($token, $sensor){
 function insert_response_into_database($response, $uri){
 	$max_age = intval(get_max_age($response));
 	$temperature = (double) get_temperature($response);
-	$hid = db_insert('temperaturen_udp')
-		->fields(array(
-			'response' => String2Hex($response),
-			'temperatuur' => $temperature,
-			'max_age' => $max_age,
-			'uri' => $uri,
-		))
-		->execute();
+	
+	$query = db_select('CoAP_users', 'users');
+	$query
+		->fields('users', array('uri', 'uid', 'observe'))
+		->condition('uri', $uri, '=')
+		->condition('observe', 1, '=');
+	$result = $query->execute();
+	
+	foreach($result as $record){
+		$hid = db_insert('CoAP_values')
+			->fields(array(
+				'original_response' => String2Hex($response),
+				'value' => $temperature,
+				'max_age' => $max_age,
+				'uri' => $uri,
+				'uid' => $record->uid,
+			))
+			->execute();
+	}
 }
 
 // Haalt max-age uit een response

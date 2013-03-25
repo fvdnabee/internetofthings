@@ -26,26 +26,25 @@ function tempReceived(html){
 	console.log('input ajax call: ' + html);
 	if(matches && matches[1] == 'none'){
 		$('#error').hide();
-		$('#errorimg').hide();
-		console.log('nieuwe hid: ' + matches[4] + ', oude hid: ' + $('#hid_udp1').html());
+		$('#errorimg').attr('style', 'visibility:hidden;');
+		console.log('nieuwe hid: ' + matches[4] + ', oude hid: ' + $('#hid1').html());
 		var nieuw = parseInt(matches[4]);
 		var oud = parseInt($('#hid1').html());
-		if(matches[4] > $('#hid_udp1').html()){
-			$('#errorimg').attr('style', 'visibility:hidden;');
+		if(matches[4] > $('#hid1').html()){
 			$('#error').html('');
-			$('#historytable_udp').hide();
+			$('#historytable').hide();
 			for (var i = 5; i >= 2; i--){
 				var nr = i-1;
-				$('#hid_udp' + i).html($('#hid_udp' + nr).html());
-				$('#temperatuur_udp' + i).html($('#temperatuur_udp' + nr).html());
-				$('#max_age_udp' + i).html($('#max_age_udp' + nr).html());
-				$('#timestamp_udp' + i).html($('#timestamp_udp' + nr).html());
+				$('#hid' + i).html($('#hid' + nr).html());
+				$('#temperatuur' + i).html($('#temperatuur' + nr).html());
+				$('#max_age' + i).html($('#max_age' + nr).html());
+				$('#timestamp' + i).html($('#timestamp' + nr).html());
 			}
-			$('#hid_udp1').html(matches[4]);
-			$('#temperatuur_udp1').html(matches[5]);
-			$('#max_age_udp1').html(matches[6]);
-			$('#timestamp_udp1').html(matches[7]);
-			$('#historytable_udp').fadeIn('slow');
+			$('#hid1').html(matches[4]);
+			$('#temperatuur1').html(matches[5]);
+			$('#max_age1').html(matches[6]);
+			$('#timestamp1').html(matches[7]);
+			$('#historytable').fadeIn('slow');
 			drawChart();
 		}
 		if(matches[2] == 'yes'){
@@ -54,40 +53,50 @@ function tempReceived(html){
 			$('#get_response').fadeIn('slow');
 		}
 	}
-	else if(matches){
-		if(matches[1] == 'unreachable'){
-			if($('#errorimg').attr('src') != 'sites/all/modules/custom/temperatuursensor_udp/images/error.ico'){
-				$('#errorimg').attr('src', 'sites/all/modules/custom/temperatuursensor_udp/images/error.ico');
+	else{
+		var regex = /<error>(.*)<\/error>/;
+		var matches = regex.exec(html);
+		if(matches){
+			if(matches[1] == 'unreachable'){
+				if($('#errorimg').attr('src') != 'sites/all/modules/custom/temperatuursensor_udp/images/error.ico'){
+					$('#errorimg').attr('src', 'sites/all/modules/custom/temperatuursensor_udp/images/error.ico');
+				}
+				$('#errorimg').attr('style', 'visibility:visible;width:25px;height:25px;');
+				$('#error').html('De sensor kon niet worden bereikt');
 			}
-			$('#errorimg').attr('style', 'visibility:visible;width:25px;height:25px;');
-			$('#error').html('De sensor kon niet worden bereikt');
-		}
-		else if(matches[1] == 'delay'){
-			if($('#errorimg').attr('src') != 'sites/all/modules/custom/temperatuursensor_udp/images/delay.gif'){
-				$('#errorimg').attr('src', 'sites/all/modules/custom/temperatuursensor_udp/images/delay.gif');
+			else if(matches[1] == 'delay'){
+				if($('#errorimg').attr('src') != 'sites/all/modules/custom/temperatuursensor_udp/images/delay.gif'){
+					$('#errorimg').attr('src', 'sites/all/modules/custom/temperatuursensor_udp/images/delay.gif');
+				}
+				$('#errorimg').attr('style', 'visibility:visible;width:25px;height:25px;');
+				$('#error').html('De sensor reageert trager dan normaal');
 			}
-			$('#errorimg').attr('style', 'visibility:visible;width:25px;height:25px;');
-			$('#error').html('De sensor reageert trager dan normaal');
-		}
-		else if(matches[1] == 'broken'){
-			if($('#errorimg').attr('src') != 'sites/all/modules/custom/temperatuursensor_udp/images/error.ico'){
-				$('#errorimg').attr('src', 'sites/all/modules/custom/temperatuursensor_udp/images/error.ico');
+			else if(matches[1] == 'broken'){
+				if($('#errorimg').attr('src') != 'sites/all/modules/custom/temperatuursensor_udp/images/error.ico'){
+					$('#errorimg').attr('src', 'sites/all/modules/custom/temperatuursensor_udp/images/error.ico');
+				}
+				$('#errorimg').attr('style', 'visibility:visible;width:25px;height:25px;');
+				$('#error').html('De sensor reageert niet meer');
 			}
-			$('#errorimg').attr('style', 'visibility:visible;width:25px;height:25px;');
-			$('#error').html('De sensor reageert niet meer');
+			else if(matches[1] == 'bad_uri'){
+				if($('#errorimg').attr('src') != 'sites/all/modules/custom/temperatuursensor_udp/images/error.ico'){
+					$('#errorimg').attr('src', 'sites/all/modules/custom/temperatuursensor_udp/images/error.ico');
+				}
+				$('#errorimg').attr('style', 'visibility:visible;width:25px;height:25px;');
+				$('#error').html('Er werd een ongeldige URI opgegeven');
+			}
 		}
-		$("#edit-submit").attr("value", "Start met observen");
 	}
 }
 
 function drawChart() {
 	var data = google.visualization.arrayToDataTable([
 		['Timestamp', 'Temperatuur'],
-		[parseInt($('#hid_udp5').html()), parseFloat($('#temperatuur_udp5').html())],
-		[parseInt($('#hid_udp4').html()), parseFloat($('#temperatuur_udp4').html())],
-		[parseInt($('#hid_udp3').html()), parseFloat($('#temperatuur_udp3').html())],
-		[parseInt($('#hid_udp2').html()), parseFloat($('#temperatuur_udp2').html())],
-		[parseInt($('#hid_udp1').html()), parseFloat($('#temperatuur_udp1').html())]
+		[parseInt($('#hid5').html()), parseFloat($('#temperatuur5').html())],
+		[parseInt($('#hid4').html()), parseFloat($('#temperatuur4').html())],
+		[parseInt($('#hid3').html()), parseFloat($('#temperatuur3').html())],
+		[parseInt($('#hid2').html()), parseFloat($('#temperatuur2').html())],
+		[parseInt($('#hid1').html()), parseFloat($('#temperatuur1').html())]
     ]);
 
     var options = {
