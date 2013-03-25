@@ -437,7 +437,6 @@ function temperatuur_udp_page_callback(){
 	print $output;
 }
 
-// Functie die wacht tot max age is verstreken, om dan een nieuwe waarde op te halen, roept zichzelf op als er nog steeds automatisch opgehaald moet worden
 function start_observing($uri){
 	global $user;
 	
