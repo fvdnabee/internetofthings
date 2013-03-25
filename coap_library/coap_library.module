@@ -46,6 +46,7 @@ function coap_library_generate_header_and_token($type, $method, $token_length){
 		default:
 			return null;
 	}
+	$hex .= coap_library_generate_message_id();
 	$hex .= coap_library_generate_token($token_length);
 }
 
@@ -80,16 +81,87 @@ function add_option($message, $option_number, $value){
 	}
 	$pos = 8 + ($token_length*2);
 	$current_number = 0;
-	while($pos < strlen($message) && $option_number > $current_number + intval(substr($message, $pos, 1))){
-		$current_number += intval(substr($message, $pos, 1)); // nog rekening houden met eventueel extra option delta veld
-		$pos += (intval(substr($message, $pos+1, 1))*2); // nog rekening houden met eventueel extra option length veld
+	while($pos < strlen($message) && $option_number > $current_number + $option_delta){
+		$option_delta = intval(substr($message, $pos, 1));
+		$extra = 0;
+		if($option_delta == 13){
+			$option_delta = intval(substr($message, $pos+2, 2))-13;
+			$extra += 2;
+		}
+		else if($option_delta == 14){
+			$option_delta = intval(substr($message, $pos+2, 4))-269;
+			$extra += 4;
+		}
+		$option_length = intval(substr($message, $pos+1, 1));
+		if($option_length == 13){
+			$option_length = intval(substr($message, $pos+2+$extra, 2))-13;
+			$extra += 2;
+		}
+		else if($option_length == 14){
+			$option_length = intval(substr($message, $pos+2+$extra, 4))-269;
+			$extra += 4;
+		}
+		$option_length *= 2;
+		$current_number += $option_delta;
+		$pos += 2 + $extra + $option_length;
 	}
+	$value_length = strlen($value);
+	$mid = null;
+	// Add Option Delta
+	if($option_number > 268){
+		$mid .= "e";
+	}
+	else if($option_number > 13){
+		$mid .= "d";
+	}
+	else{
+		$mid .= $option_delta;
+	}
+	
+	// Add Option Length
+	if($value_length > 268){
+		$mid .= "e";
+	}
+	else if($value_length > 13){
+		$mid .= "d";
+	}
+	else{
+		$mid .= $option_delta;
+	}
+	
+	// Add optional extended Option Delta
+	if($option_number > 268){
+		$temp = coap_library_string_to_hex_with_padding($option_number-269);
+		str_pad($temp, 4, "0", STR_PAD_LEFT);
+		$mid .= $temp;
+	}
+	else if($option_number > 2){
+		$temp = coap_library_string_to_hex_with_padding($option_number-13);
+		str_pad($temp, 2, "0", STR_PAD_LEFT);
+		$mid .= $temp;
+	}
+	
+	// Add optional extended Option Length
+	if($value_length > 268){
+		$temp = coap_library_string_to_hex_with_padding($value_length-269);
+		str_pad($temp, 4, "0", STR_PAD_LEFT);
+		$mid .= $temp;
+	}
+	else if($value_length > 12){
+		$temp = coap_library_string_to_hex_with_padding($value_length-13);
+		str_pad($temp, 2, "0", STR_PAD_LEFT);
+		$mid .= $temp;
+	}
+	
+	// Add Option Value
+	$mid .= coap_library_string_to_hex_with_padding($value);
+	
 	if($pos >= strlen($message)){
-		return $message . coap_library_string_to_hex_without_padding($option_number-$current_number) . strlen($value) . coap_library_string_to_hex_with_padding($value); // nog rekening houden met eventueel extra option delta veld en extra option length veld
+		return $message . $mid;
 	}
 	$start = substr($message, 0, $pos);
 	$end = substr($message, $pos);
-	return $start . coap_library_string_to_hex_without_padding($option_number-$current_number) . strlen($value) . coap_library_string_to_hex_with_padding($value) . $end; // nog rekening houden met eventueel extra option delta veld en extra option length veld
+	return $start . $mid . $end; // nog rekening houden met eventueel extra option delta veld en extra option length veld
 }
 
 // Adds a payload to the given message, if not yet present
@@ -124,6 +196,32 @@ function coap_library_string_to_hex_without_padding($string){
 		$hex .= $byte;
     }
     return $hex;
+}
+
+// Generate observe GET request with given URI-path
+function coap_library_generate_observe_get_request($uri_path){
+    $message = null;
+	$message .= coap_library_generate_header_and_token("CON", "GET", 2);
+	$message = add_option($message, 6, '')
+	$message = add_option($message, 11, 'obs')
+	return $message;
+}
+
+// Generate message id, message id's get increment to prevent duplicates
+function coap_library_generate_message_id_udp(){
+	$message_id = variable_get('current_message_id', null);
+	if(!isset($message_id)){
+		$message_id = rand(0, 65535);
+	}
+	else{
+		$message_id++;
+		$message_id % 65536;
+	}
+	variable_set('current_message_id', $message_id);
+	$message_id = dechex($message_id);
+	$message_id_string = strval($message_id);
+	$message_id_string = str_pad($message_id_string, 4, "0", STR_PAD_LEFT);
+	return $message_id_string;
 }
 
 //---------------------------------------------------------------------------------------------------
@@ -227,22 +325,6 @@ function generate_coap_reset($response){
 	$out .= get_message_id($response); // Message ID
 	$binary = pack("H*", $out); // hexadecimaal omzetten naar binair
 	return $binary;
-}
-
-// Message id genereren dat nog niet gebruikt werd door telkens te incrementeren
-function generate_message_id_udp(){
-	$message_id = variable_get('current_message_id', null);
-	if(!isset($message_id)){
-		$message_id = rand(0, 65535);
-	}
-	else{
-		$message_id++;
-		$message_id % 65536;
-	}
-	$message_id = dechex($message_id);
-	$message_id_string = strval($message_id);
-	$message_id_string = str_pad($message_id_string, 4, "0", STR_PAD_LEFT);
-	return $message_id_string;
 }
 
 // Verwacht als parameter de input van een socket en geeft het message_id terug
