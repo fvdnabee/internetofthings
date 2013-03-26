@@ -3,3 +3,4 @@ description = Form testing
 package = zzz
 core = 7.x
 dependencies[] = background_process
+dependencies[] = coap_library

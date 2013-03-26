@@ -28,7 +28,7 @@
 //	- coap_library_generate_acknowledgement($message)									//
 //	- coap_library_generate_reset($response)											//
 //	- coap_library_hex_to_binary($hex)													//
-//	- coap_library_get_bit_from_hex($bit_number)													//
+//	- coap_library_get_bit_from_hex($hex, $bit_number)										//
 //																						//
 //////////////////////////////////////////////////////////////////////////////////////////
 

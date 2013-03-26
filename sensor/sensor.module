@@ -229,7 +229,8 @@ function start_discover($ip){
 			// +-+-+-+-+-+-+-+-+	the relative number of the block (NUM) within a sequence of blocks with the given size.
 			$opt23 = 'c102';
 			stream_set_timeout($socket, 5, 0);
-			while($first || $opt23){					
+			$has_next = false;
+			while($first || $has_next){			
 				$retries = 0;
 				$response = 'empty';				
 				$message = generate_coap_discovery_request($first,$opt23);
@@ -252,7 +253,7 @@ function start_discover($ip){
 					
 					$error = FALSE;				
 					//stream_set_timeout($socket, intval(get_max_age($response)), 0);				
-					$response_string .= parse_discovery_response(String2Hex($response),$opt23);
+					$response_string .= parse_discovery_response(String2Hex($response),$opt23,$has_next);
 					//variable_set('response_string','lengte response: ' . String2Hex($response) . ':');
 					$error = TRUE;
 				}
@@ -269,14 +270,28 @@ function start_discover($ip){
 	}
 }
 
-function parse_discovery_response($hex_response, &$opt23){
+function parse_discovery_response($hex_response, &$opt23, &$has_next){
 	$str_resp='';
 	$opt23_response = get_coap_option_value($hex_response,23);
-	variable_set('response_string',$block2);
+	if(substr($opt23_response,1,1) == 1 ){
+		$num = //nummer in orde zetten
+	}
+	else if(substr($opt23_response,1,1) == 2){
+	
+	}
+	else{
+	
+	}
+	variable_set('response_string', $opt23_response);
+	//$has_next = base_convert($opt23_response, 16, 2);
 	$szx= "010";
 	$m = "0";
-	$num = substr($opt23_response,-4);
+	//$num = substr($opt23_response,-4)+1; //jaja kweet tis een string
+	$num = "0001";
+	//$opt23 = bin2hex($num . $m . $szx);
 	$opt23 = $num . $m . $szx;
+	$opt23 = 'c1' . dechex(bindec($opt23));	
+	//variable_set('response_string','c1' . dechex(bindec($opt23)));
 	return str_resp;
 }
 
@@ -286,8 +301,8 @@ function generate_coap_discovery_request($first,$opt23){
 	$out .= "01"; // Method = GET
 	$out .= generate_message_id_udp(); // Message ID
 	$out .= "bb2e77656c6c2d6b6e6f776e04636f7265"; //vervanging onderste twee lijnen
-	//$out .= "bb" + String2Hex(well-known/);
-	//$out .= "04" + String2Hex(core);
+	//$out .= "bb" + String2Hex("well-known/");
+	//$out .= "04" + String2Hex("core");
 	if(!$first){
 	  $out .= $opt23; // optie 23 (11+12) met lengte 1 => value=02= 0000 0 010
 	}
