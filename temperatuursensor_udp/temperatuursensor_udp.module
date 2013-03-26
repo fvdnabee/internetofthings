@@ -41,6 +41,8 @@ function temperatuursensor_udp_block_view($delta='') {
 	$block['subject'] = 'Sensoren bevragen met het CoAP protocol';
 	$block_content = null;
 	
+	$block_content = "<label>Message: " . coap_library_get_payload('4245cdcee4f862f78f60211eff436f415020506c75677465737420694d696e6473202f6f6273202d3e2076616c75652032312e3143') . "</label>";
+	
 	// URI form
 	$temp = drupal_get_form('uri_form');
 	$block_content .= drupal_render($temp);
