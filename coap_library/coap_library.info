@@ -1,0 +1,5 @@
+name = CoAP library
+description = library met functies voor het CoAP protocol
+core = 7.x
+package = coap
+files[] = coap_library.module
