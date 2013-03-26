@@ -28,6 +28,7 @@
 //	- coap_library_generate_acknowledgement($message)									//
 //	- coap_library_generate_reset($response)											//
 //	- coap_library_hex_to_binary($hex)													//
+//	- coap_library_get_bit_from_hex($bit_number)													//
 //																						//
 //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -413,4 +414,27 @@ function coap_library_generate_reset($response){
 function coap_library_hex_to_binary($hex){
 	$binary = pack("H*", $hex);
 	return $binary;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Get bit with given number from a given hexadecimal value, returns null if bit number or hexadecimal value is invalid //
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function coap_library_get_bit_from_hex($hex, $bit_number){
+	if($bit_number > 3 || $bit_number < 0 || strlen($hex) != 1){
+		return null;
+	}
+	if($bit_number == 0){
+		return (hexdec($hex) % 2);
+	}
+	else if($bit_number == 1){
+		return (hexdec($hex) == 2 || hexdec($hex) == 3 || hexdec($hex) == 6 || hexdec($hex) == 7 || hexdec($hex) == 10 || hexdec($hex) == 11 || hexdec($hex) == 14 || hexdec($hex) == 15);
+	}
+	else if($bit_number == 2){
+		return ((hexdec($hex) > 3 && hexdec($hex) < 8) || (hexdec($hex) > 11 || hexdec($hex) < 16 ));
+	}
+	else if($bit_number == 3){
+		return (hexdec($hex) > 7);
+	}
+	return null;
 }
