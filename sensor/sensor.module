@@ -16,6 +16,17 @@
   // return $items;
 //}
 
+function sensor_menu() {
+  $items = array();
+  $items["discover/ajax"] = array(
+    "title" => "Discovery",
+    "page callback" => "sensor_page_callback",
+    "access callback" => true,
+    "type" => MENU_CALLBACK
+  );
+  return $items;
+}
+
 function build_headers(){
 return array
   (
@@ -43,8 +54,33 @@ function build_options($users){
   return $options;
 }
 
-function sensor_form($form, &$form_state) {
-  //echo '<script>alert("render form!");</script>';
+function sensor_form($form, &$form_state) {	
+	// global $user;
+	
+	// Checkbox per observable resource
+	// $query = db_select('CoAP_users', 'users');
+	// $query
+		// ->fields('users', array('uid', 'uri', 'observe'))
+		// ->condition('uid', $user->uid,'=');
+	// $result = $query->execute();
+	// foreach ($result as $record){
+		// $form['observe'][$record->uri] = array(
+			// '#type' => 'checkbox',
+			// '#title' => $record->uri,
+			// '#default_value' => $record->observe,
+		// );
+	// }
+	
+	// Submit-knop
+	// $form['observe']['temperatuur_udp_url_submit'] = array (
+		// '#type' => 'submit',
+		// '#value' => t('Observe'),
+		// );
+		
+	// $form['#action'] = '';
+	// return $form;
+
+
   //textfield for device url
   $form['device_url'] = array
   (
@@ -66,6 +102,7 @@ function sensor_form($form, &$form_state) {
     '#value' => t('Reload device'),
 	'#submit' => array('reload_device_core'),
   );
+  
   //button to clear tableselect
   $form['clear_tableselect'] = array
   (
@@ -74,9 +111,8 @@ function sensor_form($form, &$form_state) {
 	'#submit' => array('clear_tableselect'),
   );
   
-  //haal dingen op uit db
+  //haal dingen op uit db als reload_core=1
   if (isset($form_state['sensor']['reload_core']) && $form_state['sensor']['reload_core'] == 1) {
-  //if (variable_get('reload_core', 0) == 1) {
     $users = array
     (
       array('uid' => 1,
@@ -116,7 +152,7 @@ function sensor_form($form, &$form_state) {
   );
   //--------------------------------------------------------------------
   
-  //button watch the selected sensor (like in cupper)
+  //button to watch the selected sensor (like in cupper)
   $form['select'] = array
   (
     '#type' => 'submit',
@@ -128,7 +164,9 @@ function sensor_form($form, &$form_state) {
 
 //submit handler when clicked on reload device
 function reload_device_core($form, &$form_state) {
-  //echo '<script>alert("reload core!");</script>';
+  
+  background_process_start('start_discover', $form_state['values']['device_url']);  
+  
   $form_state['sensor']['reload_core'] = 1;
   $form_state['sensor']['device_url'] = $form_state['values']['device_url'];
   $form_state['rebuild'] = TRUE;
@@ -143,7 +181,6 @@ function clear_tableselect($form, &$form_state) {
 
 //submit handler when clicked on select
 function show_sensor($form, &$form_state) {
-  //echo '<script>alert("show sensor!");</script>';
   //$form_state['rebuild'] = TRUE;
 }
 
@@ -152,17 +189,208 @@ function sensor_form_alter(&$form, &$form_state, $form_id) {
   ////dpm($form);  // pretty print array using Krumo to messages
 }
 
+// Display a node.
+// This hook is invoked only on the module that defines the node's content type 
+// (use hook_node_view() to act on all node views).
+// This hook is invoked during node viewing after the node is fully loaded, 
+// so that the node type module can define a custom method for display, 
+// or add to the default display.
 function node_content_view($node, $view_mode) {	
   $node->content['sensor_form'] = drupal_get_form('sensor_form', $node);
   return $node;
 }
 
-function sensor_field_extra_fields() {
-  $extra['sensor_form'] = array(
-    'form' => array(
-      'label' => t('abum'),
-    ),
-  );
+// function sensor_field_extra_fields() {
+  // $extra['sensor_form'] = array(
+    // 'form' => array(
+      // 'label' => t('abum'),
+    // ),
+  // );
+  // return $extra;
+// }
 
-  return $extra;
+//stuurt 1 bericht en verwerkt 1 antwoord
+function start_discover($uri){
+global $user;
+	
+	$pattern = '/([^\/]+)\/(.*)/i';
+	if(preg_match($pattern, $uri, $matches)){		
+		$ip = $matches[1];
+		//$sensor = $matches[2];
+		$port = 5683;
+		$socket = pfsockopen("udp://[" . $ip . "]", $port, $errno, $errstr); // udp-socket openen
+		if (!$socket) {
+			$error = TRUE;
+		} else { 
+			$error = FALSE;			
+			$first = true;
+			stream_set_timeout($socket, 5, 0);
+			while($first || $response){			
+				$retries = 0;
+				$response = 'empty';
+				$message = generate_coap_discovery_request();
+				$returnvalue = fwrite($socket, $message); // wegschrijven naar udp-socket
+				if($returnvalue != FALSE){ //wegschrijven gelukt
+					$response = fread($socket, 128); // lezen van udp-socket
+				}
+				while($retries < 5 && ($response == '' || $response == 'empty')){ //5 keer herproberen
+					$error = TRUE;
+					$message =generate_coap_discovery_request();
+					$returnvalue = fwrite($socket, $message); // wegschrijven naar udp-socket
+					if($returnvalue != FALSE){
+						$response = fread($socket, 128); // lezen van udp-socket
+					}
+					$retries++;
+				}
+				
+				if($response != '' && $response != 'empty' && ){ //er is een antwoord
+					$error = FALSE;				
+					//stream_set_timeout($socket, intval(get_max_age($response)), 0);				
+					$response_string .= $response;
+					$error = TRUE;
+				}
+				else{ //na herhalen geen antwoord
+					$error = TRUE;
+					
+				}
+				
+			}
+			fclose($socket);
+			//verwerk $response_string
+			insert_response_into_database($response_string, $uri);
+		}
+	}
+}
+
+function generate_coap_discovery_request($first){
+	$out = "40"; // Versie = 1, Message Type = Confirmable, Token Length = 2
+	$out .= "01"; // Method = GET
+	$out .= generate_message_id_udp(); // Message ID
+	$out .= "bb2e77656c6c2d6b6e6f776e04636f7265"; //vervanging onderste twee lijnen
+	//$out .= "bb" + String2Hex(well-known/);
+	//$out .= "04" + String2Hex(core);
+	if(!$first){
+	  $out .= "c102"; // optie 23 (11+12) met lengte 1 => value=02= 0000 0 010
+	}
+	$binary = pack("H*", $out); // hexadecimaal omzetten naar binair
+	return $binary;
+}
+
+// Message id genereren dat nog niet gebruikt werd door telkens te incrementeren
+function generate_message_id_udp(){
+	$message_id = variable_get('current_message_id', null);
+	if(!isset($message_id)){
+		$message_id = rand(0, 65535);
+	}
+	else{
+		$message_id++;
+		$message_id % 65536;
+	}
+	$message_id = dechex($message_id);
+	$message_id_string = strval($message_id);
+	$message_id_string = str_pad($message_id_string, 4, "0", STR_PAD_LEFT);
+	return $message_id_string;
+}
+
+// Response verwerken en naar databank schrijven
+function insert_response_into_database($response, $uri){
+	$max_age = intval(get_max_age($response));
+	$temperature = (double) get_temperature($response);
+	
+	$query = db_select('CoAP_users', 'users');
+	$query
+		->fields('users', array('uri', 'uid', 'observe'))
+		->condition('uri', $uri, '=')
+		->condition('observe', 1, '=');
+	$result = $query->execute();
+	
+	foreach($result as $record){
+		$hid = db_insert('CoAP_values')
+			->fields(array(
+				'original_response' => String2Hex($response),
+				'value' => $temperature,
+				'max_age' => $max_age,
+				'uri' => $uri,
+				'uid' => $record->uid,
+			))
+			->execute();
+	}
+}
+
+// Haalt max-age uit een response
+function get_max_age($response){
+	$max_age_hex = get_coap_option_value($response, 14);
+	return hexdec($max_age_hex);
+}
+
+// Haalt de inhoud van de optie met opgegeven nr uit de response
+function get_coap_option_value($response, $nr){
+	$hex_string = String2Hex($response);
+	$token_length = hexdec(substr($hex_string, 1, 1));
+	$position = 8 + $token_length*2;
+	$option_nr = hexdec(substr($hex_string, $position, 1));
+	while($position < strlen($hex_string) && $option_nr != $nr && substr($hex_string, $position, 2) != 'ff' && substr($hex_string, $position, 2) != 'FF'){
+		$option_length = hexdec(substr($hex_string, $position+1, 1));
+		$position += 2 + $option_length*2;
+		$option_nr += hexdec(substr($hex_string, $position, 1));
+	}
+	if($position >= strlen($hex_string) || substr($hex_string, $position, 2) == 'ff' || substr($hex_string, $position, 2) == 'FF'){
+		return 'optie niet gevonden --> ' . $response;
+	}
+	else{
+		$option_length = hexdec(substr($hex_string, $position+1, 1));
+		return substr($hex_string, $position+2, $option_length*2);
+	}
+}
+
+// Haalt de payload uit een response
+function get_coap_payload($response){
+	$hex_string = String2Hex($response);
+	$token_length = hexdec(substr($hex_string, 1, 1));
+	$position = 8 + $token_length*2;
+	while($position < strlen($hex_string) && substr($hex_string, $position, 2) != 'ff' && substr($hex_string, $position, 2) != 'FF'){
+		$position += 2;
+	}
+	if($position >= strlen($response)){
+		return FALSE;
+	}
+	else{
+		return substr($response, ($position/2)+1);
+	}
+}
+
+// Haalt de temperatuur uit de payload van een response
+function get_temperature($response){
+	$pos_temperature = get_coap_payload($response);
+	if($pos_temperature == FALSE){
+		return 'temperatuur niet gevonden';
+	}
+	else{
+		$pattern = '/value\s+(.*)C/i';
+		if(preg_match($pattern, $pos_temperature, $matches)){
+			$temperature = $matches[1];
+			return $temperature;
+		}
+		else{
+			return 'temperatuur niet gevonden';
+		}
+	}
+}
+
+// Stelt de binaire data op om een Acknowledgement terug te sturen naar de server
+function generate_coap_acknowledgement($response){
+	$out = "60"; // Versie = 1, Message Type = Acknowledgement, Token Length = 0
+	$out .= "00"; // Method = GET
+	$out .= get_message_id($response); // Message ID
+	$binary = pack("H*", $out); // hexadecimaal omzetten naar binair
+	return $binary;
+}
+
+// Stelt de binaire data op om een Acknowledgement terug te sturen naar de server
+function generate_coap_reset($response){
+	$out = "70"; // Versie = 1, Message Type = Reset, Token Length = 0
+	$out .= "00"; // Method = GET
+	$out .= get_message_id($response); // Message ID
+	$binary = pack("H*", $out); // hexadecimaal omzetten naar binair
+	return $binary;
 }
