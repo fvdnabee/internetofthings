@@ -213,6 +213,7 @@ function node_content_view($node, $view_mode) {
 //stuurt 1 bericht en verwerkt 1 antwoord
 function start_discover($ip){
 	global $user;
+	$counter=0;
 	$regex = '/^(((?=(?>.*?(::))(?!.+\3)))\3?|([\dA-F]{1,4}(\3|:(?!$)|$)|\2))(?4){5}((?4){2}|(25[0-5]|(2[0-4]|1\d|[1-9])?\d)(\.(?7)){3})\z/i';
 	if(preg_match($regex, $ip, $matches)){
 		$port = 5683;
@@ -229,7 +230,8 @@ function start_discover($ip){
 			// +-+-+-+-+-+-+-+-+	the relative number of the block (NUM) within a sequence of blocks with the given size.
 			$opt23 = 'c102';
 			stream_set_timeout($socket, 5, 0);
-			while($first || $opt23){					
+			$has_next = false;
+			while($first || $has_next){			
 				$retries = 0;
 				$response = 'empty';				
 				$message = generate_coap_discovery_request($first,$opt23);
@@ -251,9 +253,10 @@ function start_discover($ip){
 				if($response != '' && $response != 'empty'){ //er is een antwoord
 					
 					$error = FALSE;				
-					//stream_set_timeout($socket, intval(get_max_age($response)), 0);				
-					$response_string .= parse_discovery_response(String2Hex($response),$opt23);
-					//variable_set('response_string','lengte response: ' . String2Hex($response) . ':');
+					//stream_set_timeout($socket, intval(get_max_age($response)), 0);
+					$counter++;
+					//$sum_payloads .= '|' . $counter . '|';
+					$sum_payloads .= parse_discovery_response($response,$opt23,$has_next);
 					$error = TRUE;
 				}
 				else{ //na herhalen geen antwoord
@@ -263,21 +266,43 @@ function start_discover($ip){
 			}
 			fclose($socket);
 			//verwerk $response_string
-			//variable_set('response_string',$response_string);
-			//insert_response_into_database($response_string, $uri);
+			//variable_set('response_string',$counter);
+			//insert_response_into_database($sum_payloads, $uri);
 		}
 	}
 }
 
-function parse_discovery_response($hex_response, &$opt23){
-	$str_resp='';
-	$opt23_response = get_coap_option_value($hex_response,23);
-	variable_set('response_string',$block2);
-	$szx= "010";
-	$m = "0";
-	$num = substr($opt23_response,-4);
-	$opt23 = $num . $m . $szx;
-	return str_resp;
+function parse_discovery_response($response, &$opt23, &$has_next){
+	//c112
+	//0001 0010
+
+	//onafhankelijk van lengte optie 23, halve byte
+	$last_hex_digit = 2; //szx and m
+	
+	$opt23_response_val = get_coap_option_value($response,23);
+	//variable_set('response_string', String2Hex($response));
+	if(strlen($opt23_response_val) == 2 ){ //optielengte = 1 dubbele hex
+		$has_next = coap_library_get_bit_from_hex(substr($opt23_response_val,1,1),3);
+		$first_hex_digit = substr($opt23_response_val,0,1);
+		if(coap_library_get_bit_from_hex(substr($opt23_response_val,1,1),0)==0
+		&& coap_library_get_bit_from_hex(substr($opt23_response_val,1,1),1)==1
+		&& coap_library_get_bit_from_hex(substr($opt23_response_val,1,1),2)==0){
+			$first_hex_digit = hexdec($first_hex_digit) + 1;
+		}
+		else {
+			$first_hex_digit = 0;
+		}
+		$num = dechex($first_hex_digit) . $last_hex_digit;
+		$opt23 = 'c1' . $num;	//c1 slaat op 12 bijtellen bij vorige optie, en value heeft lengte 1
+		variable_set('response_string',$opt23);
+	}
+	else if(strlen($opt23_response) == 4){ //optielengte =  weedubbele hexen
+		$has_next = false;
+	}
+	else{ //optielengte = 3 dubbele hexen
+		$has_next = false;
+	}
+	return get_coap_payload($response);
 }
 
 //helemaal nog niet af
@@ -286,8 +311,8 @@ function generate_coap_discovery_request($first,$opt23){
 	$out .= "01"; // Method = GET
 	$out .= generate_message_id_udp(); // Message ID
 	$out .= "bb2e77656c6c2d6b6e6f776e04636f7265"; //vervanging onderste twee lijnen
-	//$out .= "bb" + String2Hex(well-known/);
-	//$out .= "04" + String2Hex(core);
+	//$out .= "bb" + String2Hex("well-known/");
+	//$out .= "04" + String2Hex("core");
 	if(!$first){
 	  $out .= $opt23; // optie 23 (11+12) met lengte 1 => value=02= 0000 0 010
 	}
@@ -343,7 +368,7 @@ function get_max_age($response){
 }
 
 // Haalt de inhoud van de optie met opgegeven nr uit de response
-function get_coap_option_value($response, $nr){
+function get_coap_option_value($response, $nr){	
 	$hex_string = String2Hex($response);
 	$token_length = hexdec(substr($hex_string, 1, 1));
 	$position = 8 + $token_length*2;
