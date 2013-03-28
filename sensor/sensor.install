@@ -27,7 +27,7 @@ function sensor_enable() {
   // node_add_body_field($sensor_type);
   
   //comments default disabled
-  variable_set('comment_sensor', COMMENT_NODE_DISABLED);
+  variable_set('comment_sensor', 0);
   //promote to front page default unchecked
   variable_set('node_options_sensor', array('status'));
   //preview default disabled

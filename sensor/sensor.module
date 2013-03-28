@@ -228,7 +228,7 @@ function start_discover($ip){
 					$tries++;
 				}
 				variable_set('counter_val_' . $counter, $counter);
-				variable_set('response_hex_string_' . $counter, String2Hex($response));
+				variable_set('response_hex_string_' . $counter, coap_library_string_to_hex_with_padding($response));
 				variable_set('response_string_' . $counter, $response);				
 				
 				if($response != '' && $response != 'empty'){ //er is een antwoord					
@@ -256,10 +256,10 @@ function parse_discovery_response($response, &$has_next,$counter){
 	//of er een volgend pakket te verwachten is, zie je aan de meest linkse bit van de laatste halve byte
 	//0000
 	//^ 
-	$has_next = coap_library_get_bit_from_hex(substr(get_coap_option_value($response,23),-1),3);
+	$has_next = coap_library_get_bit_from_hex(substr(coap_library_get_option_value($response,23),-1),3);
 	variable_set("has_next_$counter", "nog?: $has_next");
 	//$has_next = false;
-	return get_coap_payload($response);
+	return coap_library_get_payload($response);
 }
 
 //helemaal nog niet af
@@ -267,31 +267,31 @@ function generate_coap_discovery_request($response,$counter){
 	$out = "40"; // Versie = 1, Message Type = Confirmable, Token Length = 2
 	$out .= "01"; // Method = GET
 	if($response == 'empty'){
-		$next_id = generate_message_id_udp(); // Message ID
+		$next_id = coap_library_generate_message_id(); // Message ID
 		$out .= $next_id;
 		variable_set("message_id_$counter", $next_id);
 		variable_set("message_id_next_$counter", '-----');
 	}
 	else{		
-		$next_id = get_message_id($response);
+		$next_id = coap_library_get_message_id_from_message($response);
 		variable_set("message_id_$counter", $next_id);
 		if(increment_hex($next_id)){
-			$next_id = generate_message_id_udp();
+			$next_id = coap_library_generate_message_id();
 		}
 		$out .= $next_id;
 		variable_set("message_id_next_$counter", $next_id);
 	}
 	$out .= "bb2e77656c6c2d6b6e6f776e04636f7265"; //vervanging volgende twee lijnen
-	//$out .= "bb" + String2Hex("well-known/");
-	//$out .= "04" + String2Hex("core");
+	//$out .= "bb" + coap_library_string_to_hex_with_padding("well-known/");
+	//$out .= "04" + coap_library_string_to_hex_with_padding("core");
 	if($response != '' && false){
 	  
 	  
 		//opstellen van optie 23
 		//onafhankelijk van lengte optie 23, halve byte
 		$last_hex_digit = 2; //szx and m	
-		$opt23_response_val = get_coap_option_value($response,23);
-		//variable_set('response_string', String2Hex($response) . '::::' . $opt23_response_val);
+		$opt23_response_val = coap_library_get_option_value($response,23);
+		//variable_set('response_string', coap_library_string_to_hex_with_padding($response) . '::::' . $opt23_response_val);
 		//variable_set('response_string', $opt23_response_val);
 		if(strlen($opt23_response_val) == 2 ){ //optielengte = 1 dubbele hex
 			$first_hex_digit = substr($opt23_response_val,0,1);
@@ -311,7 +311,7 @@ function generate_coap_discovery_request($response,$counter){
 				$opt23 = 'c1' . $num;
 			}
 			$opt23 = 'c1' . $num;	//c1 slaat op 12 bijtellen bij vorige optie, en value heeft lengte 1
-			//variable_set('response_string_1', String2Hex($response) . '::::' . $opt23_response_val);
+			//variable_set('response_string_1', coap_library_string_to_hex_with_padding($response) . '::::' . $opt23_response_val);
 		}
 		else if(strlen($opt23_response) == 4){ //optielengte = 2 dubbele hexen
 			
@@ -350,143 +350,4 @@ function increment_hex(&$hex){
 		return 1;
 	}
 	return 0;
-}
-
-// Message id genereren dat nog niet gebruikt werd door telkens te incrementeren
-function generate_message_id_udp(){
-	$message_id = variable_get('current_message_id', null);
-	if(!isset($message_id)){
-		$message_id = rand(0, 65535);
-	}
-	else{
-		$message_id++;
-		$message_id % 65536;
-	}
-	$message_id = dechex($message_id);
-	$message_id_string = strval($message_id);
-	$message_id_string = str_pad($message_id_string, 4, "0", STR_PAD_LEFT);
-	return $message_id_string;
-}
-
-// Response verwerken en naar databank schrijven
-function insert_response_into_database($response, $uri){
-	$max_age = intval(get_max_age($response));
-	$temperature = (double) get_temperature($response);
-	
-	$query = db_select('CoAP_users', 'users');
-	$query
-		->fields('users', array('uri', 'uid', 'observe'))
-		->condition('uri', $uri, '=')
-		->condition('observe', 1, '=');
-	$result = $query->execute();
-	
-	foreach($result as $record){
-		$hid = db_insert('CoAP_values')
-			->fields(array(
-				'original_response' => String2Hex($response),
-				'value' => $temperature,
-				'max_age' => $max_age,
-				'uri' => $uri,
-				'uid' => $record->uid,
-			))
-			->execute();
-	}
-}
-
-// Haalt max-age uit een response
-function get_max_age($response){
-	$max_age_hex = get_coap_option_value($response, 14);
-	return hexdec($max_age_hex);
-}
-
-// Haalt de inhoud van de optie met opgegeven nr uit de response
-function get_coap_option_value($response, $nr){	
-	$hex_string = String2Hex($response);
-	$token_length = hexdec(substr($hex_string, 1, 1));
-	$position = 8 + $token_length*2;
-	$option_nr = hexdec(substr($hex_string, $position, 1));
-	while($position < strlen($hex_string) && $option_nr != $nr && substr($hex_string, $position, 2) != 'ff' && substr($hex_string, $position, 2) != 'FF'){
-		$option_length = hexdec(substr($hex_string, $position+1, 1));
-		$position += 2 + $option_length*2;
-		$option_nr += hexdec(substr($hex_string, $position, 1));
-	}
-	if($position >= strlen($hex_string) || substr($hex_string, $position, 2) == 'ff' || substr($hex_string, $position, 2) == 'FF'){
-		return 'optie niet gevonden --> ' . $response;
-	}
-	else{
-		$option_length = hexdec(substr($hex_string, $position+1, 1));
-		return substr($hex_string, $position+2, $option_length*2);
-	}
-}
-
-// Haalt de payload uit een response
-function get_coap_payload($response){
-	$hex_string = String2Hex($response);
-	$token_length = hexdec(substr($hex_string, 1, 1));
-	$position = 8 + $token_length*2;
-	while($position < strlen($hex_string) && substr($hex_string, $position, 2) != 'ff' && substr($hex_string, $position, 2) != 'FF'){
-		$position += 2;
-	}
-	if($position >= strlen($response)){
-		return FALSE;
-	}
-	else{
-		return substr($response, ($position/2)+1);
-	}
-}
-
-// Haalt de temperatuur uit de payload van een response
-function get_temperature($response){
-	$pos_temperature = get_coap_payload($response);
-	if($pos_temperature == FALSE){
-		return 'temperatuur niet gevonden';
-	}
-	else{
-		$pattern = '/value\s+(.*)C/i';
-		if(preg_match($pattern, $pos_temperature, $matches)){
-			$temperature = $matches[1];
-			return $temperature;
-		}
-		else{
-			return 'temperatuur niet gevonden';
-		}
-	}
-}
-
-// Stelt de binaire data op om een Acknowledgement terug te sturen naar de server
-function generate_coap_acknowledgement($response){
-	$out = "60"; // Versie = 1, Message Type = Acknowledgement, Token Length = 0
-	$out .= "00"; // Method = GET
-	$out .= get_message_id($response); // Message ID
-	$binary = pack("H*", $out); // hexadecimaal omzetten naar binair
-	return $binary;
-}
-
-// Stelt de binaire data op om een Acknowledgement terug te sturen naar de server
-function generate_coap_reset($response){
-	$out = "70"; // Versie = 1, Message Type = Reset, Token Length = 0
-	$out .= "00"; // Method = GET
-	$out .= get_message_id($response); // Message ID
-	$binary = pack("H*", $out); // hexadecimaal omzetten naar binair
-	return $binary;
-}
-
-// karakterstring omzetten naar string met hexadecimalen
-function String2Hex($string){
-    $hex='';
-    for ($i=0; $i < strlen($string); $i++){
-		$byte = dechex(ord($string[$i]));
-		if(strlen($byte) == 1){
-			$byte = "0" . $byte;
-		}
-        $hex .= $byte;
-    }
-    return $hex;
-}
-
-// Verwacht als parameter de input van een socket en geeft het message_id terug
-function get_message_id($input){
-	$hex = String2Hex($input);
-	$message_id = substr($hex, 4, 4);
-	return $message_id;
 }
