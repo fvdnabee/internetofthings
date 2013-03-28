@@ -20,7 +20,7 @@
 //	- coap_library_string_to_hex_without_padding($string)								//
 //	- coap_library_hex_to_string($hex)													//
 //	- coap_library_generate_observe_get_request($uri_path)								//
-//	- coap_generate_basic_get_request($uri_path)										//
+//	- coap_library_generate_basic_get_request($uri_path)								//
 //	- coap_library_get_option_value($message, $option_number)							//
 //	- coap_library_get_max_age($message)												//
 //	- coap_library_get_payload($message)												//
@@ -28,7 +28,7 @@
 //	- coap_library_generate_acknowledgement($message)									//
 //	- coap_library_generate_reset($response)											//
 //	- coap_library_hex_to_binary($hex)													//
-//	- coap_library_get_bit_from_hex($hex, $bit_number)										//
+//	- coap_library_get_bit_from_hex($hex, $bit_number)									//
 //																						//
 //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -296,7 +296,7 @@ function coap_library_generate_observe_get_request($uri_path){
 /////////////////////////////////////////////////////////////////////
 // Generates a basic CoAP GET request with optional given URI path //
 /////////////////////////////////////////////////////////////////////
-function coap_generate_basic_get_request($uri_path){
+function coap_library_generate_basic_get_request($uri_path){
 	$hex = coap_library_generate_header_and_token("CON", "GET", 0);
 	if(isset($uri_path) && $uri_path != ''){
 		$hex = coap_library_add_option($hex, 11, 'obs');
@@ -309,6 +309,7 @@ function coap_generate_basic_get_request($uri_path){
 // Gets the value of the option with given number, if present. Returns null if not present. //
 //////////////////////////////////////////////////////////////////////////////////////////////
 function coap_library_get_option_value($message, $option_number){
+	$follow_up = $message . "\r\n";
 	if(strlen($message) < 8){
 		return null;
 	}
@@ -318,9 +319,9 @@ function coap_library_get_option_value($message, $option_number){
 	}
 	$pos = 8 + ($token_length*2);
 	$current_number = 0;
-	$option_delta = hexdec(substr($message, $pos, 1));
-	while($pos < strlen($message) && $option_number != $current_number + $option_delta){
+	if($pos < strlen($message)){
 		$extra = 0;
+		$option_delta = hexdec(substr($message, $pos, 1));
 		if($option_delta == 13){
 			$option_delta = hexdec(substr($message, $pos+2, 2))-13;
 			$extra += 2;
@@ -339,16 +340,39 @@ function coap_library_get_option_value($message, $option_number){
 			$extra += 4;
 		}
 		$option_length *= 2;
+	}
+	while($pos < strlen($message) && $option_number > $current_number + $option_delta){
+		$follow_up .= "nr: " . ($current_number + $option_delta) . ", length: " . $option_length . "; ";
 		$current_number += $option_delta;
 		$pos += 2 + $extra + $option_length;
 		if($pos < strlen($message)){
+			$extra = 0;
 			$option_delta = hexdec(substr($message, $pos, 1));
+			if($option_delta == 13){
+				$option_delta = hexdec(substr($message, $pos+2, 2))-13;
+				$extra += 2;
+			}
+			else if($option_delta == 14){
+				$option_delta = hexdec(substr($message, $pos+2, 4))-269;
+				$extra += 4;
+			}
+			$option_length = hexdec(substr($message, $pos+1, 1));
+			if($option_length == 13){
+				$option_length = hexdec(substr($message, $pos+2+$extra, 2))-13;
+				$extra += 2;
+			}
+			else if($option_length == 14){
+				$option_length = hexdec(substr($message, $pos+2+$extra, 4))-269;
+				$extra += 4;
+			}
+			$option_length *= 2;
 		}
 	}
-	if($option_number != $current_number + $option_delta){
+	$follow_up .= "nr: " . ($current_number + $option_delta) . ", length: " . $option_length;
+	if($pos > strlen($message) || $option_number != $current_number + $option_delta){
 		return null;
 	}
-	return substr($message, $pos+2, hexdec(substr($message, $pos+1, 1))*2);
+	return substr($message, $pos+2+$extra, $option_length);
 }
 
 
@@ -358,6 +382,7 @@ function coap_library_get_option_value($message, $option_number){
 function coap_library_get_max_age($message){
 	$max_age_hex = coap_library_get_option_value($message, 14);
 	return hexdec($max_age_hex);
+	return $max_age_hex;
 }
 
 
@@ -376,12 +401,11 @@ function coap_library_get_payload($message){
 }
 
 
-//////////////////////////////////////////////////////////////////////////////////
-// Retrieves the message id from a message, message is given as a normal string //
-//////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
+// Retrieves the message id from a message, message is given as a hexadecimal string //
+///////////////////////////////////////////////////////////////////////////////////////
 function coap_library_get_message_id_from_message($message){
-	$hex = coap_library_string_to_hex_with_padding($message);
-	$message_id = substr($hex, 4, 4);
+	$message_id = substr($message, 4, 4);
 	return $message_id;
 }
 
