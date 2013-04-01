@@ -29,6 +29,7 @@
 //	- coap_library_generate_reset($response)											//
 //	- coap_library_hex_to_binary($hex)													//
 //	- coap_library_get_bit_from_hex($hex, $bit_number)									//
+//	- coap_library_send_get_request($ip, $resource)										//
 //																						//
 //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -175,7 +176,7 @@ function coap_library_add_option($message, $option_number, $value){
 		$mid .= "d";
 	}
 	else{
-		$mid .= $option_number-$current_number;
+		$mid .= dechex($option_number-$current_number);
 	}
 	
 	// Add Option Length
@@ -299,7 +300,7 @@ function coap_library_generate_observe_get_request($uri_path){
 function coap_library_generate_basic_get_request($uri_path){
 	$hex = coap_library_generate_header_and_token("CON", "GET", 0);
 	if(isset($uri_path) && $uri_path != ''){
-		$hex = coap_library_add_option($hex, 11, 'obs');
+		$hex = coap_library_add_option($hex, 11, $uri_path);
 	}
 	return $hex;
 }
@@ -459,6 +460,38 @@ function coap_library_get_bit_from_hex($hex, $bit_number){
 	}
 	else if($bit_number == 3){
 		return (hexdec($hex) > 7);
+	}
+	return null;
+}
+
+
+//////////////////////////////////////////////////////////////////////
+// Send CoAP GET request to given ip/resource. Returns the response //
+//////////////////////////////////////////////////////////////////////
+function coap_library_send_get_request($ip, $resource){
+	$response = 'empty';
+	$port = 5683;
+	$socket = pfsockopen("udp://[" . $ip . "]", $port, $errno, $errstr); // udp-socket openen
+	if ($socket) {
+		stream_set_timeout($socket, 5, 0);
+		$retries = 0;
+		$message = coap_library_generate_basic_get_request($resource);
+		$message = pack('H*', $message);
+		$returnvalue = fwrite($socket, $message); // wegschrijven naar udp-socket
+		if($returnvalue != FALSE){
+			$response = fread($socket, 128); // lezen van udp-socket
+		}
+		while($retries < 5 && ($response == '' || $response == 'empty')){
+			$returnvalue = fwrite($socket, $message); // wegschrijven naar udp-socket
+			if($returnvalue != FALSE){
+				$response = fread($socket, 128); // lezen van udp-socket
+			}
+			$retries++;
+		}
+		fclose($socket);
+	}
+	if($response != '' && $response != 'empty'){
+		return coap_library_get_payload(coap_library_string_to_hex_with_padding($response));
 	}
 	return null;
 }

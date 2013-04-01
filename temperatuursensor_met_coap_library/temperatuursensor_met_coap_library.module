@@ -41,8 +41,6 @@ function temperatuursensor_met_coap_library_block_view($delta='') {
 	$block['subject'] = 'Temperatuursensoren bevragen met het CoAP protocol';
 	$block_content = null;
 	
-	$block_content .= "<label>Test: " . variable_get('test', '') . "</label>";
-	
 	// URI form
 	$temp = drupal_get_form('uri_form');
 	$block_content .= drupal_render($temp);
@@ -76,7 +74,7 @@ function temperatuursensor_met_coap_library_block_view($delta='') {
 			->orderBy('hid', 'DESC')
 			->range(0,5);
 		$result = $query->execute();
-		$block_content .= "<table id='historytable' ><tr><td>Hid</td><td>Value</td><td>Max age</td><td>Timestamp</td></tr>";
+		$block_content .= "<table id='historytable' ><tr><th>Hid</th><th>Value</th><th>Max age</th><th>Timestamp</th></tr>";
 		$nr = 1;
 		foreach ($result as $record){ // voegt telkens een rij toe aan de tabel, waarbij de elementen een id met een rij-nr erna krijgen
 			$value = $record->value;
@@ -84,6 +82,10 @@ function temperatuursensor_met_coap_library_block_view($delta='') {
 			$max_age = $record->max_age;
 			$timestamp = $record->timestamp;
 			$block_content .= "<tr><td id='hid" . $nr . "' >" . $hid . "</td><td id='temperatuur" . $nr . "' >" . $value . "</td><td id='max_age" . $nr . "' >" . $max_age . "</td><td id='timestamp" . $nr . "' >" . $timestamp . "</td></tr>";
+			$nr++;
+		}
+		while($nr <= 5){ // voegt telkens een rij toe aan de tabel, waarbij de elementen een id met een rij-nr erna krijgen
+			$block_content .= "<tr><td id='hid" . $nr . "' >/</td><td id='temperatuur" . $nr . "' > </td><td id='max_age" . $nr . "' > </td><td id='timestamp" . $nr . "' > </td></tr>";
 			$nr++;
 		}
 		$block_content .= "</table>";
@@ -208,7 +210,7 @@ function get_request_form($form_in, &$form_state) {
  * functie die wordt uitgevoerd als het formulier ingediend wordt
  */
 function get_request_form_submit($form, $form_state) {
-	$handle = background_process_start('start_get_request');
+	$handle = background_process_start('start_get_request', '2001:6a8:1d80:200::2', 'test');
 }
 
 //////////////
@@ -366,6 +368,7 @@ function observe_form_submit($form, $form_state) {
 				'observe' => $form_state['values'][$record->uri],
 			))
 			->condition('uri', $record->uri, '=')
+			->condition('uid', $user->uid, '=')
 			->execute();
 	}
 }
@@ -570,41 +573,16 @@ function get_number_of_observers($ip, $resource){
 	return $result->rowCount();
 }
 
-function start_get_request(){
-	$ip = '2001:6a8:1d80:200::2';
-	$port = 5683;
-	$socket = pfsockopen("udp://[" . $ip . "]", $port, $errno, $errstr); // udp-socket openen
-	if (!$socket) {
-		variable_set('error', 'unreachable');
-	} else {
-		variable_set('error', 'none');
-		stream_set_timeout($socket, 5);
-		$retries = 0;
-		$response = 'empty';
-		$message = coap_library_generate_basic_get_request('obs');
-		$message = pack('H*', $message);
-		$returnvalue = fwrite($socket, $message); // wegschrijven naar udp-socket
-		if($returnvalue != FALSE){
-			$response = fread($socket, 128); // lezen van udp-socket
-		}
-		while($retries < 5 && ($response == '' || $response == 'empty')){
-			variable_set('error', 'delay');
-			$message = coap_library_generate_basic_get_request('obs');
-			$message = pack('H*', $message);
-			$returnvalue = fwrite($socket, $message); // wegschrijven naar udp-socket
-			if($returnvalue != FALSE){
-				$response = fread($socket, 128); // lezen van udp-socket
-			}
-			$retries++;
-		}
-		if($response != '' && $response != 'empty'){
-			variable_set('error', 'none');
-			variable_set('responded', 'yes');
-			variable_set('get_response', get_coap_payload($response));
-		}
-		else{
-			variable_set('error', 'broken');
-		}
+//
+function start_get_request($ip, $resource){
+	$response = coap_library_send_get_request($ip, $resource);
+	if($response != null){
+		variable_set('responded', 'yes');
+		variable_set('get_response', $response);
+	}
+	else{
+		variable_set('responded', 'yes');
+		variable_set('get_response', 'no response returned');
 	}
 }
 
