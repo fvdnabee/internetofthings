@@ -452,13 +452,13 @@ function coap_library_get_bit_from_hex($hex, $bit_number){
 		return (hexdec($hex) % 2);
 	}
 	else if($bit_number == 1){
-		return (hexdec($hex) == 2 || hexdec($hex) == 3 || hexdec($hex) == 6 || hexdec($hex) == 7 || hexdec($hex) == 10 || hexdec($hex) == 11 || hexdec($hex) == 14 || hexdec($hex) == 15);
+		return (hexdec($hex) == 2 || hexdec($hex) == 3 || hexdec($hex) == 6 || hexdec($hex) == 7 || hexdec($hex) == 10 || hexdec($hex) == 11 || hexdec($hex) == 14 || hexdec($hex) == 15) ? 1 : 0;
 	}
 	else if($bit_number == 2){
-		return ((hexdec($hex) > 3 && hexdec($hex) < 8) || (hexdec($hex) > 11 || hexdec($hex) < 16 ));
+		return ((hexdec($hex) > 3 && hexdec($hex) < 8) || (hexdec($hex) > 11 && hexdec($hex) < 16 )) ? 1 : 0;
 	}
 	else if($bit_number == 3){
-		return (hexdec($hex) > 7);
+		return (hexdec($hex) > 7) ? 1 : 0;
 	}
 	return null;
 }
