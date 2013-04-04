@@ -1,5 +1,7 @@
 <?php
 
+require_once(drupal_get_path('module', 'coap_library') . '/coap_library_classes.inc');
+
 /**
  * Implements hook_menu().
  * Creëert het pad waarnaar jQuery een ajax call kan uitvoeren en de callback-functie
@@ -41,8 +43,6 @@ function temperatuursensor_met_coap_library_block_view($delta='') {
 	$block['subject'] = 'Temperatuursensoren bevragen met het CoAP protocol';
 	$block_content = null;
 	
-	$block_content .= "<label>Test: " . variable_get('test', '') . "</label>";
-	
 	// URI form
 	$temp = drupal_get_form('uri_form');
 	$block_content .= drupal_render($temp);
@@ -76,7 +76,7 @@ function temperatuursensor_met_coap_library_block_view($delta='') {
 			->orderBy('hid', 'DESC')
 			->range(0,5);
 		$result = $query->execute();
-		$block_content .= "<table id='historytable' ><tr><td>Hid</td><td>Value</td><td>Max age</td><td>Timestamp</td></tr>";
+		$block_content .= "<table id='historytable' ><tr><th>Hid</th><th>Value</th><th>Max age</th><th>Timestamp</th></tr>";
 		$nr = 1;
 		foreach ($result as $record){ // voegt telkens een rij toe aan de tabel, waarbij de elementen een id met een rij-nr erna krijgen
 			$value = $record->value;
@@ -84,6 +84,10 @@ function temperatuursensor_met_coap_library_block_view($delta='') {
 			$max_age = $record->max_age;
 			$timestamp = $record->timestamp;
 			$block_content .= "<tr><td id='hid" . $nr . "' >" . $hid . "</td><td id='temperatuur" . $nr . "' >" . $value . "</td><td id='max_age" . $nr . "' >" . $max_age . "</td><td id='timestamp" . $nr . "' >" . $timestamp . "</td></tr>";
+			$nr++;
+		}
+		while($nr <= 5){ // voegt telkens een rij toe aan de tabel, waarbij de elementen een id met een rij-nr erna krijgen
+			$block_content .= "<tr><td id='hid" . $nr . "' >/</td><td id='temperatuur" . $nr . "' > </td><td id='max_age" . $nr . "' > </td><td id='timestamp" . $nr . "' > </td></tr>";
 			$nr++;
 		}
 		$block_content .= "</table>";
@@ -208,7 +212,7 @@ function get_request_form($form_in, &$form_state) {
  * functie die wordt uitgevoerd als het formulier ingediend wordt
  */
 function get_request_form_submit($form, $form_state) {
-	$handle = background_process_start('start_get_request');
+	$handle = background_process_start('start_get_request', '2001:6a8:1d80:200::2', 'test');
 }
 
 //////////////
@@ -357,8 +361,9 @@ function observe_form_submit($form, $form_state) {
 			->condition('uri', $record->uri, '=')
 			->condition('observe', 1, '=');
 		$observe_result = $observe_query->execute();
+		$num_observers = $observe_result->rowCount();
 	
-		if($form_state['values'][$record->uri] != 0 && $observe_result->rowCount() == 0){
+		if($form_state['values'][$record->uri] != 0 && $num_observers == 0){
 			background_process_start('start_observing', $record->uri);
 		}
 		$num_updated = db_update('CoAP_users')
@@ -366,7 +371,18 @@ function observe_form_submit($form, $form_state) {
 				'observe' => $form_state['values'][$record->uri],
 			))
 			->condition('uri', $record->uri, '=')
+			->condition('uid', $user->uid, '=')
 			->execute();
+			
+		$observe_query = db_select('CoAP_users', 'users');
+		$observe_query
+			->fields('users', array('uid', 'uri', 'observe'))
+			->condition('uri', $record->uri, '=')
+			->condition('observe', 1, '=');
+		$observe_result = $observe_query->execute();
+		if($observe_result->rowCount() == 0){
+			coap_library_stop_observing('temperatuursensor_met_coap_library', $record->uri);
+		}
 	}
 }
 
@@ -420,7 +436,6 @@ function temperatuur_met_coap_library_page_callback(){
 			$output .= "<tr><td>" . $hid . "</td><td>" . $temperatuur . "</td><td>" . $max_age . "</td><td>" . $timestamp . "</td></tr>";
 		}
 	}
-	variable_set('responded', 'no');
 	if(!isset($output)){
 		$query = db_select('CoAP_resources', 'resources');
 		$query
@@ -430,128 +445,30 @@ function temperatuur_met_coap_library_page_callback(){
 		
 		if($result->rowCount() > 0){
 			foreach($result as $record){
-				$output = "<error>" . $record->last_error . "</error>";
+				$output = "<error>" . $record->last_error . "</error><responded>" . variable_get('responded', 'no') . "</responded><get_response>" . variable_get('get_response', '') . "</get_response>";
 			}
 		}
 		else{
 			$output = "no values";
 		}
 	}
+	variable_set('responded', 'no');
 	print $output;
 }
 
 function start_observing($uri){
-	global $user;
-	$error = FALSE;
-	
 	$pattern = '/([^\/]+)\/(.*)/i';
 	if(preg_match($pattern, $uri, $matches)){
 		$ip = $matches[1];
 		$resource = $matches[2];
-		$port = 5683;
 		
-		$num_observers = get_number_of_observers($ip, $resource);
-		
-		$socket = pfsockopen("udp://[" . $ip . "]", $port, $errno, $errstr); // udp-socket openen
-		if (!$socket) {
-			insert_error_into_database("unreachable", $ip, $resource, $error);
-		} else { 
-			insert_error_into_database("none", $ip, $resource, $error);
-			
-			stream_set_timeout($socket, 5, 0);
-			$retries = 0;
-			$response = 'empty';
-			$message = coap_library_generate_observe_get_request($resource);
-			$message = pack('H*', $message);
-			$returnvalue = fwrite($socket, $message); // wegschrijven naar udp-socket
-			if($returnvalue != FALSE){
-				$response = fread($socket, 128); // lezen van udp-socket
-			}
-			while($retries < 5 && ($response == '' || $response == 'empty')){
-				insert_error_into_database("delay", $ip, $resource, $error);
-				
-				$message = coap_library_generate_observe_get_request($resource);
-				$message = pack('H*', $message);
-				$returnvalue = fwrite($socket, $message); // wegschrijven naar udp-socket
-				if($returnvalue != FALSE){
-					$response = fread($socket, 128); // lezen van udp-socket
-				}
-				$retries++;
-			}
-			
-			$num_observers = get_number_of_observers($ip, $resource);
-			
-			if($response != '' && $response != 'empty'){
-				insert_error_into_database("none", $ip, $resource, $error);
-				stream_set_timeout($socket, intval(coap_library_get_max_age(coap_library_string_to_hex_with_padding($response))), 0);
-				while($num_observers > 0 && $response != '' && $response != 'empty'){
-					$response_hex = coap_library_string_to_hex_with_padding($response);
-					insert_error_into_database("none", $ip, $resource, $error);
-					insert_response_into_database($response_hex, $ip, $resource);
-					$ack = coap_library_generate_acknowledgement($response_hex);
-					$ack = pack('H*', $ack);
-					$returnvalue = fwrite($socket, $ack); // Acknowledgement wegschrijven naar udp-socket
-					$retries = 0;
-					$response = 'empty';
-					$response = fread($socket, 128); // lezen van udp-socket
-					while($retries < 3 && ($response == '' || $response == 'empty')){
-						insert_error_into_database("delay", $ip, $resource, $error);
-						
-						$message = coap_library_generate_observe_get_request($resource);
-						$message = pack('H*', $message);
-						$returnvalue = fwrite($socket, $message); // wegschrijven naar udp-socket
-						if($returnvalue != FALSE){
-							$response = fread($socket, 128); // lezen van udp-socket
-						}
-						$retries++;
-					}
-					
-					$num_observers = get_number_of_observers($ip, $resource);
-				}
-			}
-			else{
-				insert_error_into_database("broken", $ip, $resource, $error);
-			}
-			if($num_observers > 0){
-				stop_observers($ip, $resource);
-				insert_error_into_database("broken", $ip, $resource, $error);
-			}
-			else{
-				$reset = coap_library_generate_reset(coap_library_string_to_hex_with_padding($response));
-				$reset = pack('H*', $reset);
-				$returnvalue = fwrite($socket, $reset); // wegschrijven naar udp-socket
-			}
-			fclose($socket);
-		}
-		if($num_observers == 0){
-			insert_error_into_database("none", $ip, $resource, $error);
-		}
-		if($error){
-			stop_observers($ip, $resource);
-		}
-	}
-	else{
-		insert_error_into_database("bad uri", $ip, $resource);
-		stop_observers($ip, $resource);
+		$coap_factory = new CoAPMessageFactory('temperatuursensor_met_coap_library', $ip, $resource);
+		$message = $coap_factory->create_observe_get_request($resource);
+		$message->send_message();
 	}
 }
 
-function insert_error_into_database($error_string, $ip, $resource, &$error){
-	if($error_string == 'none'){
-		$error = FALSE;
-	}
-	else{
-		$error = TRUE;
-	}
-	$num_updated = db_update('CoAP_resources')
-			->fields(array(
-				'last_error' => $error_string,
-			))
-			->condition('uri', $ip . "/" . $resource, '=')
-			->execute();
-}
-
-function stop_observers($ip, $resource){
+function temperatuursensor_met_coap_library_stop_observers($ip, $resource){
 	$num_updated = db_update('CoAP_users')
 			->fields(array(
 				'observe' => 0,
@@ -570,83 +487,62 @@ function get_number_of_observers($ip, $resource){
 	return $result->rowCount();
 }
 
-function start_get_request(){
-	$ip = '2001:6a8:1d80:200::2';
-	$port = 5683;
-	$socket = pfsockopen("udp://[" . $ip . "]", $port, $errno, $errstr); // udp-socket openen
-	if (!$socket) {
-		variable_set('error', 'unreachable');
-	} else {
-		variable_set('error', 'none');
-		stream_set_timeout($socket, 5);
-		$retries = 0;
-		$response = 'empty';
-		$message = coap_library_generate_basic_get_request('obs');
-		$message = pack('H*', $message);
-		$returnvalue = fwrite($socket, $message); // wegschrijven naar udp-socket
-		if($returnvalue != FALSE){
-			$response = fread($socket, 128); // lezen van udp-socket
-		}
-		while($retries < 5 && ($response == '' || $response == 'empty')){
-			variable_set('error', 'delay');
-			$message = coap_library_generate_basic_get_request('obs');
-			$message = pack('H*', $message);
-			$returnvalue = fwrite($socket, $message); // wegschrijven naar udp-socket
-			if($returnvalue != FALSE){
-				$response = fread($socket, 128); // lezen van udp-socket
-			}
-			$retries++;
-		}
-		if($response != '' && $response != 'empty'){
-			variable_set('error', 'none');
-			variable_set('responded', 'yes');
-			variable_set('get_response', get_coap_payload($response));
-		}
-		else{
-			variable_set('error', 'broken');
-		}
+//
+function start_get_request($ip, $resource){
+	$coap_factory = new CoAPMessageFactory('temperatuursensor_met_coap_library', $ip, $resource);
+	$coap_message = $coap_factory->create_basic_get_request('test');
+	$response_obj = $coap_message->send_message($ip, $resource);
+	if($response_obj != null){
+		variable_set('responded', 'yes');
+		variable_set('get_response', $response_obj->get_payload());
+	}
+	else{
+		variable_set('responded', 'yes');
+		variable_set('get_response', 'no response returned');
 	}
 }
 
-// Response verwerken en naar databank schrijven
-function insert_response_into_database($response, $ip, $resource){
-	$max_age = intval(coap_library_get_max_age($response));
-	$temperature = (double) get_temperature($response);
+// Haalt de temperatuur uit een volledige response
+function get_temperature($payload){
+	$pattern = '/value\s+(.*)C/i';
+	if(preg_match($pattern, $payload, $matches)){
+		$temperature = $matches[1];
+		return $temperature;
+	}
+	else{
+		return 'temperatuur niet gevonden';
+	}
+}
+
+function temperatuursensor_met_coap_library_receive_error($error_message, $ip, $resource){
+	$num_updated = db_update('CoAP_resources')
+			->fields(array(
+				'last_error' => $error_message,
+			))
+			->condition('uri', $ip . "/" . $resource, '=')
+			->execute();
+}
+
+function temperatuursensor_met_coap_library_receive_response($response_obj){
+	$max_age = intval($response_obj->get_max_age());
+	$temperature = (double) get_temperature($response_obj->get_payload());
 	
 	$query = db_select('CoAP_users', 'users');
 	$query
 		->fields('users', array('uri', 'uid', 'observe'))
-		->condition('uri', $ip . '/' . $resource, '=')
+		->condition('uri', $response_obj->get_ip() . '/' . $response_obj->get_resource(), '=')
 		->condition('observe', 1, '=');
 	$result = $query->execute();
 	
 	foreach($result as $record){
 		$hid = db_insert('CoAP_values')
 			->fields(array(
-				'original_response' => $response,
+				'original_response' => $response_obj->getHexMessage(),
 				'value' => $temperature,
 				'max_age' => $max_age,
-				'uri' => $ip . '/' . $resource,
+				'uri' => $response_obj->get_ip() . '/' . $response_obj->get_resource(),
 				'uid' => $record->uid,
 			))
 			->execute();
-	}
-}
-
-// Haalt de temperatuur uit de payload van een response
-function get_temperature($response){
-	$poss_temperature = coap_library_get_payload($response);
-	if($poss_temperature == null){
-		return 'temperatuur niet gevonden';
-	}
-	else{
-		$pattern = '/value\s+(.*)C/i';
-		if(preg_match($pattern, $poss_temperature, $matches)){
-			$temperature = $matches[1];
-			return $temperature;
-		}
-		else{
-			return 'temperatuur niet gevonden';
-		}
 	}
 }
