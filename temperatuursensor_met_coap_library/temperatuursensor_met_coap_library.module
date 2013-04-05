@@ -491,7 +491,7 @@ function get_number_of_observers($ip, $resource){
 function start_get_request($ip, $resource){
 	$coap_factory = new CoAPMessageFactory('temperatuursensor_met_coap_library', $ip, $resource);
 	$coap_message = $coap_factory->create_basic_get_request('test');
-	$response_obj = $coap_message->send_message($ip, $resource);
+	$response_obj = $coap_message->send_message();
 	if($response_obj != null){
 		variable_set('responded', 'yes');
 		variable_set('get_response', $response_obj->get_payload());
