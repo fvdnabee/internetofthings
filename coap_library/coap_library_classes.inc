@@ -146,6 +146,7 @@ class CoAPMessage {
 			$start = substr($this->message_hex, 0, $pos);
 			$end = substr($this->message_hex, $pos);
 			$this->message_hex = $start . $mid . $end; // nog rekening houden met eventueel extra option delta veld en extra option length veld
+			//variable_set('response_string_0',$start . ',,,' . $mid . ',,,' . $end);
 		}
 	}
 	
@@ -246,6 +247,8 @@ class CoAPMessage {
 		return coap_library_hex_to_string(substr($this->message_hex, $pos+2));
 	}
 	
+	// Returns response in binary form or null if there was no response or sending failed
+	// Using this function requires implementation of the hook module_name_receive_error().
 	public function send_message(){
 		$observe = ($this->get_option_value(6) == -1) ? 0 : 1;
 		if($observe){
@@ -507,5 +510,38 @@ class CoAPMessageFactory{
 		return new CoAPMessage($this->module, $this->ip, $this->resource, $message);
 	}
 	
-	
+	// Creates a discovery request which depends on response
+	public function create_discovery_request($response){
+		$coap_message = $this->create_message_with_header_and_token("CON", "GET", 0);
+		$coap_message->add_option(11,'.well-known');
+		$coap_message->add_option(11,'core');
+		
+		if($response){
+			$response_option_value = $response->get_option_value(23);
+			$option_value_length = strlen($response_option_value);
+			//2 => xx
+			//4 => xx xx
+			//6 => xx xx xx
+			//...
+			
+			$first_hex_digits = substr($response_option_value, 0, $option_value_length-1);
+			$carry = coap_library_increment_hex($first_hex_digits);
+			
+			$last_hex_digit = substr($response_option_value, $option_value_length-1, 1);			
+			$size = 0;			
+			if(coap_library_get_bit_from_hex($last_hex_digit,2) == 1) $size += 4;
+			if(coap_library_get_bit_from_hex($last_hex_digit,1) == 1) $size += 2;
+			if(coap_library_get_bit_from_hex($last_hex_digit,0) == 1) $size += 1;
+			//variable_set("response_string_0", $size);			
+			$last_hex_digit = dechex($size);
+			
+			//build option 23 value for request
+			$request_option_value = '';
+			if($carry) $request_option_value .= '01';
+			$request_option_value .= $first_hex_digits . $last_hex_digit;
+			variable_set("response_string_0", $request_option_value);
+			$coap_message->add_option(23,$request_option_value);
+		}
+		return $coap_message;
+	}
 }  

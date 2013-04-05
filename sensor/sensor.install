@@ -11,6 +11,82 @@ function sensor_node_info() {
   );
 }
 
+function sensor_schema(){
+	$schema['core_links'] = array(
+		'description' => "Tabel om core links bij te houden",
+		'fields' => array(
+				'device_url' => array(
+					'type' => 'varchar',
+					'not null' => TRUE,
+					'length' => '128',
+					'description' => 'ip device',
+				),		
+				'link_name' => array(
+					'type' => 'varchar',
+					'not null' => TRUE,
+					'length' => '128',
+					'description' => 'Een relatieve uri van een resource',
+				),
+				'obs' => array(					
+					'type' => 'int',
+					'unsigned' => TRUE,
+					'not null' => TRUE,
+					'default' => 0,
+					'description' => 'Observer --> 0 = no, 1 = yes',
+				),
+				'rt' => array(
+					'type' => 'varchar',
+					'not null' => FALSE,
+					'length' => '128',
+					'description' => 'application-specific semantic type',
+				),
+				'ct' => array(
+					'type' => 'varchar',
+					'not null' => FALSE,
+					'length' => '128',
+					'description' => 'content-type',
+				),
+				'ifd' => array(
+					'type' => 'varchar',
+					'not null' => FALSE,
+					'length' => '128',
+					'description' => 'interface desciption',
+				),
+				'sz' => array(
+					'type' => 'varchar',
+					'not null' => FALSE,
+					'length' => '128',
+					'description' => 'maximum size',
+				),
+				'title' => array(
+					'type' => 'varchar',
+					'not null' => FALSE,
+					'length' => '128',
+					'description' => 'human-readable name of resource',
+				),
+				'anchor' => array(
+					'type' => 'varchar',
+					'not null' => FALSE,
+					'length' => '128',
+					'description' => 'anchoring into other resource',
+				),
+				'rel' => array(
+					'type' => 'varchar',
+					'not null' => FALSE,
+					'length' => '128',
+					'description' => 'relation between source entered in anchor',
+				),
+			),
+			'primary key' => array('device_url','link_name'),
+	);
+	
+	return $schema;
+}
+
+function sensor_uninstall(){
+	db_drop_table('core_links');
+}
+
 function sensor_enable() {
 //deze manier mag je niet gebruiken, je moet _node_info gebruiken
   // $sensor_type = array(

@@ -30,6 +30,7 @@
 //	- coap_library_hex_to_binary($hex)													//
 //	- coap_library_get_bit_from_hex($hex, $bit_number)									//
 //	- coap_library_send_get_request($ip, $resource)										//
+// 	- coap_library_increment_hex(&$hex)													//
 //																						//
 //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -133,4 +134,26 @@ function coap_library_generate_reset($response){
 function coap_library_get_message_id_from_message($response){
 	$message_id = substr($response, 4, 4);
 	return $message_id;
+}
+//////////////////////////////////////////
+// Increments hex value.				//
+// return:								//
+//			1 if length hex increases	//
+//			0 if length stays the same	//
+//////////////////////////////////////////
+function coap_library_increment_hex(&$hex){
+	$hex_length =  strlen($hex);
+	$hex = dechex(hexdec($hex) + 1);
+	$new_hex_length = strlen($hex);
+	$dif = $hex_length - $new_hex_length;
+	if($dif > 0){
+		for ($i = 0; $i < $dif; $i++) {
+			$hex = '0' . $hex;
+		}
+	}
+	else if($dif < 0){
+		$hex = substr($hex,1);
+		return 1;
+	}
+	return 0;
 }
