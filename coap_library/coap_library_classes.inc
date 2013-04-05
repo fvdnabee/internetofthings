@@ -63,7 +63,7 @@ class CoAPMessage {
 		$pos = 8 + ($token_length*2);
 		$current_number = 0;
 		$option_delta = hexdec(substr($this->message_hex, $pos, 1));
-		while($pos < strlen($this->message_hex) && $option_number > $current_number + $option_delta){
+		while($pos < strlen($this->message_hex) && $option_number >= $current_number + $option_delta){
 			$extra = 0;
 			if($option_delta == 13){
 				$option_delta = hexdec(substr($this->message_hex, $pos+2, 2))-13;
@@ -110,7 +110,7 @@ class CoAPMessage {
 			$mid .= "d";
 		}
 		else{
-			$mid .= $value_length;
+			$mid .= dechex($value_length);
 		}
 		
 		// Add optional extended Option Delta
@@ -142,8 +142,7 @@ class CoAPMessage {
 		
 		if($pos >= strlen($this->message_hex)){
 			$this->message_hex .= $mid;
-		}
-		else{
+		}else{
 			$start = substr($this->message_hex, 0, $pos);
 			$end = substr($this->message_hex, $pos);
 			$this->message_hex = $start . $mid . $end; // nog rekening houden met eventueel extra option delta veld en extra option length veld
