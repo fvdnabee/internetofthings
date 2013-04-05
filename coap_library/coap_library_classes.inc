@@ -114,12 +114,12 @@ class CoAPMessage {
 		}
 		
 		// Add optional extended Option Delta
-		if($option_number > 268){
+		if($option_number-$current_number > 268){
 			$temp = coap_library_string_to_hex_with_padding($option_number-269-$current_number);
 			str_pad($temp, 4, "0", STR_PAD_LEFT);
 			$mid .= $temp;
 		}
-		else if($option_number > 12){
+		else if($option_number-$current_number > 12){
 			$temp = coap_library_string_to_hex_with_padding($option_number-13-$current_number);
 			str_pad($temp, 2, "0", STR_PAD_LEFT);
 			$mid .= $temp;
