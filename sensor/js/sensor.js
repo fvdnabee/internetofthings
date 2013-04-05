@@ -1,17 +1,17 @@
 (function ($) {
 
-// $(document).ready(function() {
-	// setTimeout(function(){google.load('visualization', '1', {'callback':'', 'packages':['corechart']})}, 10);
-	// google.setOnLoadCallback(drawChart);
-	// setTimeout(function(){drawChart()}, 1000);
-// });
+$(document).ready(function() {
+	setTimeout(function(){google.load('visualization', '1', {'callback':'', 'packages':['corechart']})}, 10);
+	google.setOnLoadCallback(drawChart);
+	setTimeout(function(){drawChart()}, 1000);
+});
 
 Drupal.behaviors.temperatuursensor_udp = {
   attach: 	function(context) {
 				var refreshId = setInterval(function(){
 					$.ajax({
 						type: "GET",
-						url: "/discover/ajax",
+						url: "/temperatuursensor/poll",
 						dataType: "text",
 						success: tempReceived
 					});
@@ -30,7 +30,7 @@ function tempReceived(html){
 		console.log('nieuwe hid: ' + matches[4] + ', oude hid: ' + $('#hid1').html());
 		var nieuw = parseInt(matches[4]);
 		var oud = parseInt($('#hid1').html());
-		if(matches[4] > $('#hid1').html()){
+		if(nieuw > oud){
 			$('#error').html('');
 			$('#historytable').hide();
 			for (var i = 5; i >= 2; i--){
@@ -54,7 +54,7 @@ function tempReceived(html){
 		}
 	}
 	else{
-		var regex = /<error>(.*)<\/error>/;
+		var regex = /<error>(.*)<\/error><responded>(.*)<\/responded><get_response>(.*)<\/get_response>/;
 		var matches = regex.exec(html);
 		if(matches){
 			if(matches[1] == 'unreachable'){
@@ -85,27 +85,66 @@ function tempReceived(html){
 				$('#errorimg').attr('style', 'visibility:visible;width:25px;height:25px;');
 				$('#error').html('Er werd een ongeldige URI opgegeven');
 			}
+				if(matches[2] == 'yes'){
+				$('#get_response').hide();
+				$('#get_response').html("Response: " + matches[3]);
+				$('#get_response').fadeIn('slow');
+			}
+		}
+		else{
+			var regex = /<error>(.*)<\/error>/;
+			var matches = regex.exec(html);
+			if(matches){
+				if(matches[1] == 'unreachable'){
+					if($('#errorimg').attr('src') != 'sites/all/modules/custom/temperatuursensor_udp/images/error.ico'){
+						$('#errorimg').attr('src', 'sites/all/modules/custom/temperatuursensor_udp/images/error.ico');
+					}
+					$('#errorimg').attr('style', 'visibility:visible;width:25px;height:25px;');
+					$('#error').html('De sensor kon niet worden bereikt');
+				}
+				else if(matches[1] == 'delay'){
+					if($('#errorimg').attr('src') != 'sites/all/modules/custom/temperatuursensor_udp/images/delay.gif'){
+						$('#errorimg').attr('src', 'sites/all/modules/custom/temperatuursensor_udp/images/delay.gif');
+					}
+					$('#errorimg').attr('style', 'visibility:visible;width:25px;height:25px;');
+					$('#error').html('De sensor reageert trager dan normaal');
+				}
+				else if(matches[1] == 'broken'){
+					if($('#errorimg').attr('src') != 'sites/all/modules/custom/temperatuursensor_udp/images/error.ico'){
+						$('#errorimg').attr('src', 'sites/all/modules/custom/temperatuursensor_udp/images/error.ico');
+					}
+					$('#errorimg').attr('style', 'visibility:visible;width:25px;height:25px;');
+					$('#error').html('De sensor reageert niet meer');
+				}
+				else if(matches[1] == 'bad_uri'){
+					if($('#errorimg').attr('src') != 'sites/all/modules/custom/temperatuursensor_udp/images/error.ico'){
+						$('#errorimg').attr('src', 'sites/all/modules/custom/temperatuursensor_udp/images/error.ico');
+					}
+					$('#errorimg').attr('style', 'visibility:visible;width:25px;height:25px;');
+					$('#error').html('Er werd een ongeldige URI opgegeven');
+				}
+			}
 		}
 	}
 }
 
-// function drawChart() {
-	// var data = google.visualization.arrayToDataTable([
-		// ['Timestamp', 'Temperatuur'],
-		// [parseInt($('#hid5').html()), parseFloat($('#temperatuur5').html())],
-		// [parseInt($('#hid4').html()), parseFloat($('#temperatuur4').html())],
-		// [parseInt($('#hid3').html()), parseFloat($('#temperatuur3').html())],
-		// [parseInt($('#hid2').html()), parseFloat($('#temperatuur2').html())],
-		// [parseInt($('#hid1').html()), parseFloat($('#temperatuur1').html())]
-    // ]);
+function drawChart() {
+	var data = google.visualization.arrayToDataTable([
+		['Timestamp', 'Temperatuur'],
+		[parseInt($('#hid5').html()), parseFloat($('#temperatuur5').html())],
+		[parseInt($('#hid4').html()), parseFloat($('#temperatuur4').html())],
+		[parseInt($('#hid3').html()), parseFloat($('#temperatuur3').html())],
+		[parseInt($('#hid2').html()), parseFloat($('#temperatuur2').html())],
+		[parseInt($('#hid1').html()), parseFloat($('#temperatuur1').html())]
+    ]);
 
-    // var options = {
-      // title: 'Geschiedenis temperatuur',
-	  // legend: {position: 'top', alignment: 'end'}
-    // };
+    var options = {
+      title: 'Geschiedenis temperatuur',
+	  legend: {position: 'top', alignment: 'end'}
+    };
 
-    // var chart = new google.visualization.LineChart(document.getElementById('grafiek'));
-    // chart.draw(data, options);
-// }
+    var chart = new google.visualization.LineChart(document.getElementById('grafiek'));
+    chart.draw(data, options);
+}
 
 })(jQuery);
