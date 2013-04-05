@@ -92,10 +92,10 @@ class CoAPMessage {
 		$value_length = strlen($value);
 		$mid = null;
 		// Add Option Delta
-		if($option_number > 268){
+		if($option_number-$current_number > 268){
 			$mid .= "e";
 		}
-		else if($option_number > 13){
+		else if($option_number-$current_number > 13){
 			$mid .= "d";
 		}
 		else{
