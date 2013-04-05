@@ -297,7 +297,7 @@ function parse_discovery_payloads($ip,$payloads){
 					$attributes[$attribute] = (count($keyvalues)>2 ? ($keyvalues[4] ? $keyvalues[4] : $keyvalues[5]) : 1);
 					
 				}
-				variable_set("response_string_$i",$attributes);
+				//variable_set("response_string_$i",$attributes);
 			}
 			
 			// $id = db_insert('core_links')
@@ -305,7 +305,7 @@ function parse_discovery_payloads($ip,$payloads){
 			// ->execute();
 		}
 		else{
-			variable_set("response_string_$i", 'no match');
+			//variable_set("response_string_$i", 'no match');
 		}		
 	}	
 }

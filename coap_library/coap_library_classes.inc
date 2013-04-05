@@ -146,7 +146,7 @@ class CoAPMessage {
 			$start = substr($this->message_hex, 0, $pos);
 			$end = substr($this->message_hex, $pos);
 			$this->message_hex = $start . $mid . $end; // nog rekening houden met eventueel extra option delta veld en extra option length veld
-			variable_set('response_string_0',$start . ',,,' . $mid . ',,,' . $end);
+			//variable_set('response_string_0',$start . ',,,' . $mid . ',,,' . $end);
 		}
 	}
 	
@@ -513,7 +513,7 @@ class CoAPMessageFactory{
 	// Creates a discovery request which depends on response
 	public function create_discovery_request($response){
 		$coap_message = $this->create_message_with_header_and_token("CON", "GET", 0);
-		$coap_message->add_option(11,'.well-known/');
+		$coap_message->add_option(11,'.well-known');
 		$coap_message->add_option(11,'core');
 		
 		if($response){
@@ -525,13 +525,13 @@ class CoAPMessageFactory{
 			//...
 			
 			$first_hex_digits = substr($response_option_value, 0, $option_value_length-1);
-			$carry = $increment_hex($first_hex_digits);
+			$carry = coap_library_increment_hex($first_hex_digits);
 			
 			$last_hex_digit = substr($response_option_value, $option_value_length-1, 1);			
 			$size = 0;			
-			if(coap_library_get_bit_from_hex($hex_digits[$option_value_length-1],2) == 1) $size += 4;
-			if(coap_library_get_bit_from_hex($hex_digits[$option_value_length-1],1) == 1) $size += 2;
-			if(coap_library_get_bit_from_hex($hex_digits[$option_value_length-1],0) == 1) $size += 1;
+			if(coap_library_get_bit_from_hex($last_hex_digit,2) == 1) $size += 4;
+			if(coap_library_get_bit_from_hex($last_hex_digit,1) == 1) $size += 2;
+			if(coap_library_get_bit_from_hex($last_hex_digit,0) == 1) $size += 1;
 			//variable_set("response_string_0", $size);			
 			$last_hex_digit = dechex($size);
 			
@@ -539,6 +539,7 @@ class CoAPMessageFactory{
 			$request_option_value = '';
 			if($carry) $request_option_value .= '01';
 			$request_option_value .= $first_hex_digits . $last_hex_digit;
+			variable_set("response_string_0", $request_option_value);
 			$coap_message->add_option(23,$request_option_value);
 		}
 		return $coap_message;
