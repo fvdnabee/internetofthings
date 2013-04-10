@@ -51,6 +51,32 @@ function temperatuursensor_met_coap_library_block_view($delta='') {
 	$temp = drupal_get_form('observe_form');
 	$block_content .= drupal_render($temp);
 	
+	// Bekijken form
+	$temp = drupal_get_form('bekijken_form');
+	$block_content .= drupal_render($temp);
+	
+	// Table offering REST functionality
+	$block_content .= "<table id = 'requests' ><th colspan = '4' >REST methods</th><tr><td>";
+	
+	// GET form
+	$temp = drupal_get_form('get_request_form');
+	$block_content .= drupal_render($temp) . "</td><td>";
+	
+	// PUT form
+	$temp = drupal_get_form('put_request_form');
+	$block_content .= drupal_render($temp) . "</td><td>";
+	
+	// POST form
+	$temp = drupal_get_form('post_request_form');
+	$block_content .= drupal_render($temp) . "</td><td>";
+	
+	// DELETE form
+	$temp = drupal_get_form('delete_request_form');
+	$block_content .= drupal_render($temp) . "</td></tr>";
+	
+	$block_content .= "<tr><td colspan = '4' ><label id = 'response' >Response: </label></td><tr><td colspan = '4' ><label id = 'response_type' >Response type: </label></td></tr></table>";
+	
+	
 	$block_content .= "<img style = 'visibility:hidden;' src = '' id = 'errorimg' /><label id='error' ></label>"; // elementen om fouten te tonen
 	
 	// Te bekijken URI ophalen
@@ -70,7 +96,7 @@ function temperatuursensor_met_coap_library_block_view($delta='') {
 		// Tabel met geschiedenis van opvragingen(5 laatste)
 		$query = db_select('CoAP_values', 'coap_values');
 		$query
-			->fields('coap_values', array('hid', 'value', 'max_age', 'timestamp', 'uri', 'uid'))
+			->fields('coap_values', array('hid', 'parsed_value', 'max_age', 'timestamp', 'uri', 'uid'))
 			->condition('uri', $uri, '=')
 			->condition('uid', $user->uid, '=')
 			->orderBy('hid', 'DESC')
@@ -79,7 +105,7 @@ function temperatuursensor_met_coap_library_block_view($delta='') {
 		$block_content .= "<table id='historytable' ><tr><th>Hid</th><th>Value</th><th>Max age</th><th>Timestamp</th></tr>";
 		$nr = 1;
 		foreach ($result as $record){ // voegt telkens een rij toe aan de tabel, waarbij de elementen een id met een rij-nr erna krijgen
-			$value = $record->value;
+			$value = $record->parsed_value;
 			$hid = $record->hid;
 			$max_age = $record->max_age;
 			$timestamp = $record->timestamp;
@@ -94,15 +120,6 @@ function temperatuursensor_met_coap_library_block_view($delta='') {
 		
 		$block_content .= "<div id = 'grafiek' ></div>"; // Grafiek
 	}
-	
-	// Bekijken form
-	$temp = drupal_get_form('bekijken_form');
-	$block_content .= drupal_render($temp);
-	
-	// GET form
-	$block_content .= "<label id = 'get_response' >Response: </label>";
-	$temp = drupal_get_form('get_request_form');
-	$block_content .= drupal_render($temp);
 	
 	$block['content'] = $block_content;
 	drupal_add_js('https://www.google.com/jsapi'); // JavaScript bestand toevoegen
@@ -212,8 +229,122 @@ function get_request_form($form_in, &$form_state) {
  * functie die wordt uitgevoerd als het formulier ingediend wordt
  */
 function get_request_form_submit($form, $form_state) {
-	$handle = background_process_start('start_get_request', '2001:6a8:1d80:200::2', 'test');
+	$handle = background_process_start('start_request', 'GET');
 }
+
+
+//////////////////////
+// PUT REQUEST FORM //
+//////////////////////
+
+/**
+ * Implements hook_form().
+ * Voegt componenten toe aan de form
+ */
+function put_request_form($form_in, &$form_state) {
+	// Titel van form
+	$form['title'] = array (
+		'#value' => t('PUT Request'),
+	);
+	
+	// Invoer voor PUT
+	$form['wx_info']['put_request_input'] = array (
+		'#type' => 'textfield',
+		'#title' => 'input',
+		'#size' => 35,
+		);
+	
+	// Submit-knop
+	$form['wx_info']['put_request_submit'] = array (
+		'#type' => 'submit',
+		'#value' => t('PUT'),
+		);
+		
+	$form['#action'] = '';
+	return $form;
+}
+
+/**
+ * Implements hook_form_submit().
+ * functie die wordt uitgevoerd als het formulier ingediend wordt
+ */
+function put_request_form_submit($form, $form_state) {
+	$handle = background_process_start('start_request', 'PUT', $form_state['values']['put_request_input']);
+}
+
+
+///////////////////////
+// POST REQUEST FORM //
+///////////////////////
+
+/**
+ * Implements hook_form().
+ * Voegt componenten toe aan de form
+ */
+function post_request_form($form_in, &$form_state) {
+	// Titel van form
+	$form['title'] = array (
+		'#value' => t('POST Request'),
+	);
+	
+	// Invoer voor POST
+	$form['wx_info']['post_request_input'] = array (
+		'#type' => 'textfield',
+		'#title' => 'input',
+		'#size' => 35,
+		);
+	
+	// Submit-knop
+	$form['wx_info']['post_request_submit'] = array (
+		'#type' => 'submit',
+		'#value' => t('POST'),
+		);
+		
+	$form['#action'] = '';
+	return $form;
+}
+
+/**
+ * Implements hook_form_submit().
+ * functie die wordt uitgevoerd als het formulier ingediend wordt
+ */
+function post_request_form_submit($form, $form_state) {
+	$handle = background_process_start('start_request', 'POST', $form_state['values']['post_request_input']);
+}
+
+
+/////////////////////////
+// DELETE REQUEST FORM //
+/////////////////////////
+
+/**
+ * Implements hook_form().
+ * Voegt componenten toe aan de form
+ */
+function delete_request_form($form_in, &$form_state) {
+	// Titel van form
+	$form['title'] = array (
+		'#value' => t('DELETE Request'),
+	);
+	
+	// Submit-knop
+	$form['wx_info']['delete_request_submit'] = array (
+		'#type' => 'submit',
+		'#value' => t('DELETE'),
+		);
+		
+	$form['#action'] = '';
+	return $form;
+}
+
+/**
+ * Implements hook_form_submit().
+ * functie die wordt uitgevoerd als het formulier ingediend wordt
+ */
+function delete_request_form_submit($form, $form_state) {
+	$handle = background_process_start('start_request', 'DELETE');
+}
+
 
 //////////////
 // URI FORM //
@@ -294,6 +425,7 @@ function uri_form_submit($form, $form_state) {
 				'uri' => $form_state['values']['invoer'],
 				'observe' => 0,
 				'watch' => 1,
+				'responded' => 0,
 			))
 			->execute();
 	}
@@ -394,12 +526,11 @@ function observe_form_submit($form, $form_state) {
 // Functie die wordt uitgevoerd als een ajax call wordt uitgevoerd naar /temperatuursensor/poll, geeft de laatste entry terug
 function temperatuur_met_coap_library_page_callback(){
 	global $user;
-	variable_set('test', "opgeroepen");
 	
 	// bekeken URI bepalen
 	$query = db_select('CoAP_users', 'users');
 	$query
-		->fields('users', array('uid', 'uri', 'watch'))
+		->fields('users', array('uid', 'uri', 'watch', 'last_response', 'last_method', 'responded', 'response_type'))
 		->condition('uid', $user->uid, '=')
 		->condition('watch', 1, '=')
 		->range(0,1);
@@ -407,12 +538,16 @@ function temperatuur_met_coap_library_page_callback(){
 	$uri = '';
 	foreach($result as $record){
 		$uri = $record->uri;
+		$method = $record->last_method;
+		$response = $record->last_response;
+		$responded = $record->responded;
+		$response_type = $record->response_type;
 	}
 	
 	// Laatste opvraging ophalen
 	$query = db_select('CoAP_values', 'coap_values');
 	$query
-		->fields('coap_values', array('hid', 'uid', 'timestamp', 'max_age', 'value', 'uri'))
+		->fields('coap_values', array('hid', 'uid', 'timestamp', 'max_age', 'parsed_value', 'uri'))
 		->condition('uri', $uri, '=')
 		->condition('uid', $user->uid, '=')
 		->orderBy('hid', 'DESC')
@@ -428,10 +563,10 @@ function temperatuur_met_coap_library_page_callback(){
 		$resources_result = $resources_query->execute();
 		
 		foreach($resources_result as $resources_record){
-			$output = "<error>" . $resources_record->last_error . "</error><responded>" . variable_get('responded', 'no') . "</responded><get_response>" . variable_get('get_response', '') . "</get_response>";
+			$output = "<error>" . $resources_record->last_error . "</error><responded>" . $responded . "</responded><get_response>" . $response . "</get_response><method>" . $method . "</method><response_type>" . $response_type . "</response_type>";
 			$hid = $record->hid;
 			$timestamp = $record->timestamp;
-			$temperatuur = $record->value;
+			$temperatuur = $record->parsed_value;
 			$max_age = $record->max_age;
 			$output .= "<tr><td>" . $hid . "</td><td>" . $temperatuur . "</td><td>" . $max_age . "</td><td>" . $timestamp . "</td></tr>";
 		}
@@ -445,14 +580,22 @@ function temperatuur_met_coap_library_page_callback(){
 		
 		if($result->rowCount() > 0){
 			foreach($result as $record){
-				$output = "<error>" . $record->last_error . "</error><responded>" . variable_get('responded', 'no') . "</responded><get_response>" . variable_get('get_response', '') . "</get_response>";
+				$output = "<error>" . $record->last_error . "</error><responded>" . $responded . "</responded><get_response>" . $response . "</get_response><method>" . $method . "</method><response_type>" . $response_type . "</response_type>";
 			}
 		}
 		else{
 			$output = "no values";
 		}
 	}
-	variable_set('responded', 'no');
+	
+	// Responded op false zetten
+	$num_updated = db_update('CoAP_users')
+		->fields(array(
+			'responded' => 0,
+		))
+		->condition('uid', $user->uid, '=')
+		->execute();
+	
 	print $output;
 }
 
@@ -488,29 +631,60 @@ function get_number_of_observers($ip, $resource){
 }
 
 //
-function start_get_request($ip, $resource){
-	$coap_factory = new CoAPMessageFactory('temperatuursensor_met_coap_library', $ip, $resource);
-	$coap_message = $coap_factory->create_basic_get_request('test');
-	$response_obj = $coap_message->send_message();
-	if($response_obj != null){
-		variable_set('responded', 'yes');
-		variable_set('get_response', $response_obj->get_payload());
-	}
-	else{
-		variable_set('responded', 'yes');
-		variable_set('get_response', 'no response returned');
+function start_request($method, $payload=''){
+	global $user;
+	$query = db_select('CoAP_users', 'users');
+	$query
+		->fields('users', array('uid', 'uri', 'watch'))
+		->condition('watch', 1, '=')
+		->condition('uid', $user->uid, '=');
+	$result = $query->execute();
+	
+	foreach($result as $record){
+		$pattern = '/([^\/]+)\/(.*)/i';
+		if(preg_match($pattern, $record->uri, $matches)){
+			$coap_factory = new CoAPMessageFactory('temperatuursensor_met_coap_library', $matches[1], $matches[2]);
+			$coap_message = $coap_factory->create_message_with_header_and_token('CON', $method, 0);
+			$coap_message->add_option(11, $matches[2]);
+			if($payload != ''){
+				$coap_message->add_payload($payload);
+			}
+			$response_obj = $coap_message->send_message();
+			if($response_obj != null){
+				$num_updated = db_update('CoAP_users')
+				->fields(array(
+					'responded' => 1,
+					'last_method' => $method,
+					'last_response' => $response_obj->get_payload(),
+					'response_type' => $response_obj->get_message_code(),
+				))
+				->condition('uid', $user->uid, '=')
+				->execute();
+			}
+			else{
+				$num_updated = db_update('CoAP_users')
+				->fields(array(
+					'responded' => 1,
+					'last_method' => $method,
+					'last_response' => 'no response returned',
+				))
+				->condition('uid', $user->uid, '=')
+				->execute();
+			}
+		}
 	}
 }
 
-// Haalt de temperatuur uit een volledige response
-function get_temperature($payload){
+// Gets the temperature out of a payload (Celsius)
+// Return the original payload if temperature could not be parsed
+function temperatuursensor_met_coap_library_get_temperature($payload){
 	$pattern = '/value\s+(.*)C/i';
 	if(preg_match($pattern, $payload, $matches)){
 		$temperature = $matches[1];
 		return $temperature;
 	}
 	else{
-		return 'temperatuur niet gevonden';
+		return $payload;
 	}
 }
 
@@ -524,21 +698,44 @@ function temperatuursensor_met_coap_library_receive_error($error_message, $ip, $
 }
 
 function temperatuursensor_met_coap_library_receive_response($response_obj){
-	$max_age = intval($response_obj->get_max_age());
-	$temperature = (double) get_temperature($response_obj->get_payload());
+	$max_age = $response_obj->get_max_age();
+	$value = $response_obj->get_payload();
+	$format = $response_obj->get_content_format();
+	if($format == 'text/plain'){
+		$value = temperatuursensor_met_coap_library_get_temperature($value);
+	}
+	variable_set('test', $response_obj->get_ip() . '/' . $response_obj->get_resource());
+	
+	global $user;
+	variable_set('test', 'voor eerste insert');
+	$hid = db_insert('coap_values')
+		->fields(array(
+			'payload' => $response_obj->get_payload(),
+			'content_format' => $format,
+			'original_response' => $response_obj->getHexMessage(),
+			'parsed_value' => $value,
+			'max_age' => $max_age,
+			'uri' => ($response_obj->get_ip() . '/' . $response_obj->get_resource()),
+			'uid' => $user->uid,
+		))
+		->execute();
+	variable_set('test', 'na eerste insert');
 	
 	$query = db_select('CoAP_users', 'users');
 	$query
 		->fields('users', array('uri', 'uid', 'observe'))
 		->condition('uri', $response_obj->get_ip() . '/' . $response_obj->get_resource(), '=')
-		->condition('observe', 1, '=');
+		->condition('observe', 1, '=')
+		->condition('uid', $user->uid, '!=');
 	$result = $query->execute();
 	
 	foreach($result as $record){
 		$hid = db_insert('CoAP_values')
 			->fields(array(
+				'payload' => $response_obj->get_payload(),
+				'content_format' => $format,
 				'original_response' => $response_obj->getHexMessage(),
-				'value' => $temperature,
+				'parsed_value' => $value,
 				'max_age' => $max_age,
 				'uri' => $response_obj->get_ip() . '/' . $response_obj->get_resource(),
 				'uid' => $record->uid,

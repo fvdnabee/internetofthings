@@ -11,6 +11,8 @@ class CoAPMessage {
 	private $module = null;
 	private $ip;
 	private $resource;
+	private $format_mapping;
+	private $response_code_mapping;
 	
 	// Constructor with optional given message, expects hexadecimal message
 	public function __construct($module, $ip, $resource, $message = ''){
@@ -18,6 +20,37 @@ class CoAPMessage {
 		$this->module = $module;
 		$this->ip = $ip;
 		$this->resource = $resource;
+		$this->response_code_mapping = array(
+			65 => '2.01 Created',
+			66 => '2.02 Deleted',
+			67 => '2.03 Valid',
+			68 => '2.04 Changed',
+			69 => '2.05 Content',
+			128 => '4.00 Bad Request',
+			129 => '4.01 Unauthorized',
+			130 => '4.02 Bad Option',
+			131 => '4.03 Forbidden',
+			132 => '4.04 Not Found',
+			133 => '4.05 Method Not Allowed',
+			134 => '4.06 Not Acceptable',
+			140 => '4.12 Precondition Failed',
+			141 => '4.13 Request Entity Too Large',
+			143 => '4.15 Unsupported Content-Format',
+			160 => '5.00 Internal Server Error',
+			161 => '5.01 Not Implemented',
+			162 => '5.02 Bad Gateway',
+			163 => '5.03 Service Unavailable',
+			164 => '5.04 Gateway Timeout',
+			165 => '5.05 Proxying Not Supported'
+		);
+		$this->format_mapping = array(
+			0 => 'text/plain',
+			40 => 'application/link-format',
+			41 => 'application/xml',
+			42 => 'application/octet-stream',
+			47 => 'application/exi',
+			50 => 'application/json'
+		);
     }
 	
 	// Getter for the hexadecimal message
@@ -50,7 +83,8 @@ class CoAPMessage {
 		return $this->resource;
 	}
 	
-	// Adds an option with given number and value to the given message, returns null if message is smaller than 4 bytes
+	// Adds an option with given number and value to the given message
+	// Returns null if message is smaller than 4 bytes
 	public function add_option($option_number, $value){
 		
 		if(strlen($this->message_hex) < 8){
@@ -155,13 +189,14 @@ class CoAPMessage {
 		if(strlen($this->message_hex) < 8){
 			return null;
 		}
-		if(!strpos($this->message_hex, 'ff', 0)){
+		if(strpos($this->message_hex, 'ff', 0)){
 			return null;
 		}
-		return $message . 'ff' . coap_library_string_to_hex_with_padding($payload);
+		$this->message_hex .= 'ff' . coap_library_string_to_hex_with_padding($payload);
 	}
 	
-	// Gets the value of the option with given number, if present. Returns -1 if not present.
+	// Gets the value of the option with given number
+	// Returns -1 if the option with given number is not present
 	public function get_option_value($option_number){
 		$follow_up = $this->message_hex . "\r\n";
 		if(strlen($this->message_hex) < 8){
@@ -229,26 +264,31 @@ class CoAPMessage {
 		return substr($this->message_hex, $pos+2+$extra, $option_length);
 	}
 	
-	// Retrieves the max-age value, if present, from a message. Returns null if not present
+	// Retrieves the max-age value, if present, from a message
+	// Returns null if no max age option is included
 	public function get_max_age(){
 		$max_age_hex = $this->get_option_value(14);
+		if($max_age_hex == -1){
+			return 0;
+		}
 		return hexdec($max_age_hex);
 	}
 	
-	// Retrieves the payload, if present, from a message. Returns null if not present
+	// Retrieves the payload, if present, from a message
+	// Returns null if no payload is present
 	public function get_payload(){
 		if(strlen($this->message_hex) < 8){
 			return null;
 		}
-		$pos = strpos($this->message_hex, 'ff', 0);
+		$pos = strrpos($this->message_hex, 'ff', 0);
 		if(!$pos){
 			return null;
 		}
 		return coap_library_hex_to_string(substr($this->message_hex, $pos+2));
 	}
 	
-	// Returns response in binary form or null if there was no response or sending failed
-	// Using this function requires implementation of the hook module_name_receive_error().
+	// hook_stop_observing, must be implemented by modules using this library
+	// Returns response in binary form or null if the message has an observe option or there was no response
 	public function send_message(){
 		$observe = ($this->get_option_value(6) == -1) ? 0 : 1;
 		if($observe){
@@ -340,6 +380,8 @@ class CoAPMessage {
 					}
 				}
 				else{
+					$function_name = $this->module . '_receive_response';
+					$function_name($response_obj);
 					return $response_obj;
 				}
 			}
@@ -359,6 +401,7 @@ class CoAPMessage {
 		return null;
 	}
 	
+	// checks if there are still users observing the resource
 	private function observe_is_necessary(){
 		$query = db_select('coap_library_observe_resources', 'resources');
 		$query
@@ -369,6 +412,8 @@ class CoAPMessage {
 		return $result->rowCount();
 	}
 	
+	// hook_stop_observing, must be implemented by modules using this library
+	// Called when the observe stops, for whatever reason
 	public function stop_observing(){
 		$num_deleted = db_delete('coap_library_observe_resources')
 			->condition('uri', $this->ip . '/' . $this->resource, '=')
@@ -376,6 +421,23 @@ class CoAPMessage {
 			->execute();
 			
 		background_process_start($this->module . '_stop_observers', $this->ip, $this->resource);
+	}
+	
+	// Retrieves the content-format from the message
+	// Returns null if content-format option is not present
+	public function get_content_format(){
+		$format_nr = 0;
+		$format_nr += intval($this->get_option_value(12));
+		if($format_nr < 0){
+			$format_nr = 0;
+		}
+		return $this->format_mapping[$format_nr];
+	}
+	
+	// Retrieves the textual representation of the code of the message
+	public function get_message_code(){
+		$code_nr = hexdec(substr($this->message_hex, 2, 2));
+		return $this->response_code_mapping[$code_nr];
 	}
 	
 }

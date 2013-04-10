@@ -62,6 +62,31 @@ function temperatuursensor_met_coap_library_schema() {
 					'not null' => TRUE,
 					'default' => 0,
 				),
+				'last_method' => array(
+					'description' => 'Methode van laatste request --> {GET, PUT, POST, DELETE}',
+					'type' => 'varchar',
+					'not null' => FALSE,
+					'length' => '64',
+				),
+				'last_response' => array(
+					'description' => 'Laatst verkregen response',
+					'type' => 'varchar',
+					'not null' => FALSE,
+					'length' => '2048',
+				),
+				'responded' => array(
+					'description' => 'value indicating if server just responded',
+					'type' => 'int',
+					'unsigned' => TRUE,
+					'not null' => TRUE,
+					'default' => 0,
+				),
+				'response_type' => array(
+					'description' => 'Response type of last received response',
+					'type' => 'varchar',
+					'not null' => FALSE,
+					'length' => '2048',
+				),
 			),
 			'primary key' => array('uid', 'uri'),
 			'foreign keys' => array(
@@ -94,17 +119,30 @@ function temperatuursensor_met_coap_library_schema() {
 					'length' => '128',
 					'description' => 'Een URI van een embedded device',
 				),
-				'value' => array(
+				'content_format'=> array(
+					'type' => 'varchar',
+					'not null' => FALSE,
+					'length' => '256',
+					'description' => 'Het content-format van de response',
+				),
+				'payload'=> array(
+					'type' => 'varchar',
+					'not null' => FALSE,
+					'length' => '2048',
+					'description' => 'De inhoud van de payload',
+				),
+				'parsed_value' => array(
 					'description' => 'Opgevraagde waarde',
-					'type' => 'float',
-					'unsigned' => FALSE,
+					'type' => 'varchar',
+					'length' => '128',
+					'description' => 'Value that has been parsed out of the payload of the response, is original response if no value could be parsed',
 					'not null' => FALSE,
 				),
 				'max_age' => array(
 					'description' => 'Geldigheidsperiode in seconden',
 					'type' => 'int',
 					'unsigned' => TRUE,
-					'not null' => TRUE,
+					'not null' => FALSE,
 				),
 				'timestamp' => array(
 					'description' => 'Tijd van opvraging',
