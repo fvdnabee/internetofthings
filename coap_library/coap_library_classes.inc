@@ -13,6 +13,15 @@ class CoAPMessage {
 	private $resource;
 	private $format_mapping;
 	private $response_code_mapping;
+	private $retransmit_counter = 0;
+	
+	// CONSTANT
+	private $ACK_TIMEOUT = 2000; // 2 seconds
+	private $MAX_RETRANSMIT = 4;
+	private $RANDOM_FACTOR = 1.5;
+	private $NSTART = 1;
+	private $DEFAULT_LEISURE = 5000; // 5 seconds
+	private $PROBING_RATE = 5; // 1 Byte/second
 	
 	// Constructor with optional given message, expects hexadecimal message
 	public function __construct($module, $ip, $resource, $message = ''){
@@ -287,7 +296,6 @@ class CoAPMessage {
 		return coap_library_hex_to_string(substr($this->message_hex, $pos+2));
 	}
 	
-	// hook_stop_observing, must be implemented by modules using this library
 	// Returns response in binary form or null if the message has an observe option or there was no response
 	public function send_message(){
 		$observe = ($this->get_option_value(6) == -1) ? 0 : 1;

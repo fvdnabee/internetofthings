@@ -42,6 +42,44 @@ function totaal_uren_block_view($delta='') {
 	$block_content .= "</td></tr><tr><td>Totaal</td><td>";
 	$block_content .= $uren_kobe+$uren_stef;
 	$block_content .= "</td></tr></table>";
+	
+	// GRAFIEKDATA
+	$block_content .= "<div id = 'grafiek' >";
+	$block_content .= "<table id = 'grafiekdata' ><tbody>";
+	
+	$query = "SELECT datum FROM webform_views_logging_5 group by datum order by datum asc";
+	$result = db_query($query);
+	$current_date = '2012-09-10';
+	$last_sum_kobe = 0;
+	$last_sum_stef = 0;
+	foreach($result as $record){
+		$previous_date = $current_date;
+		$current_date = $record->datum;
+		while(floor((strtotime($current_date)-strtotime($previous_date))/(60*60*24)) > 1){
+			$previous_date = date('Y-m-d', strtotime($previous_date . "+1 day"));
+			$block_content .= "<tr><td>" . $previous_date . "</td><td>" . $last_sum_kobe . "</td><td>" . $last_sum_stef . "</td></tr>";
+		}
+		$kobe_query = "SELECT SUM(TIME_TO_SEC(TIMEDIFF(EIND, BEGIN)))/3600 'uren' FROM webform_views_logging_5 where naam = 'Kobe' and datum <= '" . $record->datum . "'";
+		$stef_query = "SELECT SUM(TIME_TO_SEC(TIMEDIFF(EIND, BEGIN)))/3600 'uren' FROM webform_views_logging_5 where naam = 'Stef' and datum <= '" . $record->datum . "'";
+		$kobe_result = db_query($kobe_query);
+		$stef_result = db_query($stef_query);
+		$kobe_uren = 0;
+		$stef_uren = 0;
+		foreach($kobe_result as $kobe_record){
+			$kobe_uren += $kobe_record->uren;
+		}
+		foreach($stef_result as $stef_record){
+			$stef_uren += $stef_record->uren;
+		}
+		$last_sum_kobe += $kobe_uren-$last_sum_kobe;
+		$last_sum_stef += $stef_uren-$last_sum_stef;
+		$block_content .= "<tr><td>" . $record->datum . "</td><td>" . $kobe_uren . "</td><td>" . $stef_uren . "</td></tr>";
+	}
+	
+	$block_content .= "</tbody></table>";
+	$block_content .= "</div>";
 	$block['content'] = $block_content;
+	drupal_add_js('https://www.google.com/jsapi'); // JavaScript bestand toevoegen
+	drupal_add_js(drupal_get_path('module', 'totaal_uren') . '/totaal_uren.js'); // JavaScript bestand toevoegen
 	return $block;
 }
