@@ -12,10 +12,10 @@ function sensor_node_info() {
 }
 
 function sensor_schema(){
-	$schema['core_links'] = array(
+	$schema['sensor_CoAP_core_links'] = array(
 		'description' => "Tabel om core links bij te houden",
 		'fields' => array(
-				'device_url' => array(
+				'device_uri' => array(
 					'type' => 'varchar',
 					'not null' => TRUE,
 					'length' => '128',
@@ -77,7 +77,32 @@ function sensor_schema(){
 					'description' => 'relation between source entered in anchor',
 				),
 			),
-			'primary key' => array('device_url','link_name'),
+			'primary key' => array('device_uri','link_name'),
+	);
+	
+	$schema['sensor_CoAP_users'] = array(
+		'description' => "Tabel om users bij te houden en het device dat ze willen zien",
+		'fields' => array(
+				'uid' => array(
+					'type' => 'int',
+					'unsigned' => TRUE,
+					'not null' => TRUE,
+					'description' => 'User ID',
+				),
+				'device_uri' => array(
+					'type' => 'varchar',
+					'not null' => TRUE,
+					'length' => '128',
+					'description' => 'Een URI van een embedded device',
+				),
+			),
+			'primary key' => array('uid', 'device_uri'),
+			'foreign keys' => array(
+				'device_uri' => array(
+					'table' => 'sensor_CoAP_core_links',
+					'columns' => array('device_uri' => 'device_uri'), 
+				),
+			),
 	);
 	
 	return $schema;

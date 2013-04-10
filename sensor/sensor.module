@@ -2,31 +2,45 @@
 
 require_once(drupal_get_path('module', 'coap_library') . '/coap_library_classes.inc');
 
-// function sensor_menu() {
-
-  // $items = array(); 
-  
-  // $items['sensor/form'] = array(
-    // 'title' => 'Sensor network',
-    // 'page callback' => 'drupal_get_form',
-    // 'page arguments' => array('sensor_form'),
-    // 'access callback' => TRUE,
-    // 'description' => 'Sensor network',
-    // 'type' => MENU_NORMAL_ITEM,
-    // 'weight' => 1,
-  // );
-  // return $items;
-//}
-
 function sensor_menu() {
   $items = array();
-  $items["discover/ajax"] = array(
+  $items["sensor/poll"] = array(
     "title" => "Discovery",
     "page callback" => "sensor_page_callback",
     "access callback" => true,
     "type" => MENU_CALLBACK
   );
   return $items;
+}
+
+function sensor_page_callback(){
+	global $user;
+	$output ='';
+	
+	$result = db_select('sensor_CoAP_users','user_device')
+			->fields('user_device', array('uid','device_uri'))
+			->condition('uid', $user->uid, '=')
+			->execute();
+	foreach($result as $record){
+		$device_uri = $record->device_uri;
+	}
+	
+	$result = db_select('sensor_CoAP_core_links', 'links')
+			->fields('links', array('device_uri','link_name','title'))
+			->condition('device_uri', $device_uri, '=')
+			->execute();
+	
+	foreach($result as $record){
+		$output .= '<link>';
+		$output .= '<link_name>';
+		$output .= $record->link_name;
+		$output .= '</link_name>';
+		$output .= '<title>';
+		$output .= $record->title;
+		$output .= '</title>';
+		$output .='</link>';
+	}
+	print $output;
 }
 
 function build_headers(){
@@ -70,141 +84,123 @@ function build_options($links){
 
 function sensor_form_validate($form, &$form_state) {
 	$regex = '/^(((?=(?>.*?(::))(?!.+\3)))\3?|([\dA-F]{1,4}(\3|:(?!$)|$)|\2))(?4){5}((?4){2}|(25[0-5]|(2[0-4]|1\d|[1-9])?\d)(\.(?7)){3})\z/i';
-	if(!preg_match($regex, $form_state['values']['device_url'], $matches)){
-		form_set_error('device_url', t('Please enter a valid IPv6-adres.'));
+	if(!preg_match($regex, $form_state['values']['device_uri'], $matches)){
+		form_set_error('device_uri', t('Please enter a valid IPv6-adres.'));
 	}
 }
 
 function sensor_form($form, &$form_state) {	
-  //textfield for device url
-  $form['device_url'] = array
-  (
-    '#type' => 'textfield',
-	'#title' => t('Device IPv6 adress'),
-	'#size' => 60,
-	'#required' => TRUE,
-  );
-  
-  //geef default waarde op indien er al iets stond in tekstveld
-  if (isset($form_state['sensor']['device_url'])) {
-    $form['device_url']['#default_value'] = $form_state['sensor']['device_url'];
-  }
-  
-  //button to reload the well-know/core
-  $form['reload_device'] = array
-  (
-    '#type' => 'submit',
-    '#value' => t('Reload device'),
-	'#submit' => array('reload_device_core'),
-  );
-  
-  //button to clear tableselect
-  $form['clear_tableselect'] = array
-  (
-    '#type' => 'submit',
-    '#value' => t('Clear'),
-	'#submit' => array('clear_tableselect'),
-  );
-  
-  //haal dingen op uit db als reload_core=1
-  if (isset($form_state['sensor']['reload_core']) && $form_state['sensor']['reload_core'] == 1) {
-	// $device_url = $form_state['sensor']['device_url'];
-	// $query = db_select('core_links', 'links')
-		// ->fields('links', array('device_url','link_name','title'))
-		// ->condition('device_url', $device_url, '=');
-	// $result = $query->execute();
-	// $links = array();
-	// $uid = 1;
-	// foreach($result as $record){
-		// array_push($links, 
-			// array( 	'uid' => $uid,
-					// 'link_name' => $record->link_name,
-					// 'rt' => '',
-					// 'ct' => '',
-					// 'if' => '',
-					// 'sz' => '',
-					// 'title' => $record->title,
-					// 'anchor' => '',
-					// 'rel' => ''));
-		// $uid++;
-	// }
+	//textfield for device uri
+	$form['device_uri'] = array
+	(
+		'#type' => 'textfield',
+		'#title' => t('Device IPv6 adress'),
+		'#size' => 60,
+		'#required' => TRUE,
+	);
+	
+	//geef default waarde op indien er al iets stond in tekstveld
+	if (isset($form_state['sensor']['device_uri'])) {
+		$form['device_uri']['#default_value'] = $form_state['sensor']['device_uri'];
+	}
+	
+	//button to reload the well-know/core
+	$form['reload_device'] = array
+	(
+		'#type' => 'submit',
+		'#value' => t('Reload device'),
+		'#submit' => array('reload_device_core'),
+	);
+	
+	//button to clear tableselect
+	$form['clear_tableselect'] = array
+	(
+		'#type' => 'submit',
+		'#value' => t('Clear'),
+		'#attributes' => array('id' => 'core_table'),
+		'#submit' => array('clear_tableselect'),
+	);	
 
-	$device_url = $form_state['sensor']['device_url'];
-	$query = db_select('core_links', 'links')
-		->fields('links', array('device_url','link_name','title'))
-		->condition('device_url', $device_url, '=');
-	$result = $query->execute();
+	$form['tableselect_container'] = array(
+		'#type' => 'container',
+		'#attributes' => array(
+			'class' => array('class-name'),
+		),
+	);
+	
 	$links = array();
-	$uid = 1;
-	foreach($result as $record){
-		array_push($links, 
-			array( 	'uid' => $uid,
-					'link_name' => $record->link_name,
-					'title' => $record->title));
-		$uid++;
-	} 
-  }
-  else {
-	$links = array();
-  }
+	
+	//build headers
+	$header = build_headers();
+	
+	//build options
+	$options = build_options($links);
+	
+	$table = array
+	(
+		'#type' => 'tableselect',
+		'#header' => $header,
+		'#options' => $options,
+		//'#empty' => t('No sensors found'),
+		'#multiple' => FALSE,
+	);
+	
+	if (isset($form_state['sensor']['reload_core']) && $form_state['sensor']['reload_core'] == 1) {
+		$table['#empty'] = 'Fetching sensors...';
+	}
+	else{
+		$table['#empty'] = 'Enter a URI and click on \'Reload device\' to display resources here.';
+	}
+	
+	$form['tableselect_container']['table']= $table;
   
-  //build headers
-  $header = build_headers();
-  
-  //build options
-  $options = build_options($links);
-  
-  $form['table'] = array
-  (
-    '#type' => 'tableselect',
-    '#header' => $header,
-    '#options' => $options,
-    '#empty' => t('No sensors found'),
-	'#multiple' => FALSE,
-  );
-  
-  $form['select'] = array
-  (
-    '#type' => 'submit',
-    '#value' => t('Select'),
-	'#submit' => array('show_sensor'),
-  );
-  
-  for($i=0 ; $i<0 ; $i++){
-	dpm(variable_get("response_string_$i",0));
-	//dpm(variable_get("response_string_$i",0));
-	//dpm($i . ': ' . variable_get("discovery_request_$i", 0) . ' gelijk aan 4? ' . variable_get("next_length_$i",0));
-	//dpm(variable_get("response_string_$i",0));
-	//dpm(variable_get("response_hex_string_$i",0));
-	//dpm(variable_get("option23_$i",0));
-	//dpm(variable_get("bool_response_$i",0));
-	//dpm(variable_get("has_next_$i", 0));
-	//dpm(variable_get("has_next_$i", 0) . '|' . variable_get("message_id_$i", 0) . '|' . variable_get("message_id_next_$i", 0));
-	//dpm('---------------------------------------------------');
-  }
-  
-  //2001:6a8:1d80:200::2
-  
-  return $form;
+	$form['select'] = array
+	(
+		'#type' => 'submit',
+		'#value' => t('Select'),
+		'#submit' => array('show_sensor'),
+	);
+	
+	for($i=0 ; $i<0 ; $i++){
+		dpm(variable_get("response_string_$i",0));
+		//dpm(variable_get("response_string_$i",0));
+		//dpm($i . ': ' . variable_get("discovery_request_$i", 0) . ' gelijk aan 4? ' . variable_get("next_length_$i",0));
+		//dpm(variable_get("response_string_$i",0));
+		//dpm(variable_get("response_hex_string_$i",0));
+		//dpm(variable_get("option23_$i",0));
+		//dpm(variable_get("bool_response_$i",0));
+		//dpm(variable_get("has_next_$i", 0));
+		//dpm(variable_get("has_next_$i", 0) . '|' . variable_get("message_id_$i", 0) . '|' . variable_get("message_id_next_$i", 0));
+		//dpm('---------------------------------------------------');
+	}
+	
+	//2001:6a8:1d80:200::2
+	
+	drupal_add_js('https://www.google.com/jsapi'); // JavaScript bestand toevoegen
+	drupal_add_js(drupal_get_path('module', 'sensor') . '/js/sensor.js'); // JavaScript bestand toevoegen
+	
+	return $form;
 }
 
 //submit handler when clicked on reload device
 function reload_device_core($form, &$form_state) {
   
-	//background_process_start('start_discover', $form_state['values']['device_url']);  
-	start_discover($form_state['values']['device_url']); //voorgrond
+	background_process_start('start_discover', $form_state['values']['device_uri']);  
+	//start_discover($form_state['values']['device_uri']); //voorgrond
   
 	$form_state['sensor']['reload_core'] = 1;
-	$form_state['sensor']['device_url'] = $form_state['values']['device_url'];
+	$form_state['sensor']['device_uri'] = $form_state['values']['device_uri'];
 	$form_state['rebuild'] = TRUE;
 }
 
 //submit handler when clicked on reload device
 function clear_tableselect($form, &$form_state) {
-  $form_state['sensor']['reload_core'] = 0;
-  
-  //$form_state['sensor']['device_url'] = 0;
-  $form_state['rebuild'] = TRUE;
+	global $user;
+	$form_state['sensor']['reload_core'] = 0;
+	db_delete('sensor_CoAP_users')
+		->condition('uid', $user->uid, '=')
+		->execute();
+	$form_state['rebuild'] = TRUE;
 }
 
 //submit handler when clicked on select
@@ -218,9 +214,11 @@ function sensor_form_alter(&$form, &$form_state, $form_id) {
 }
 
 // This hook is invoked during node viewing after the node is fully loaded
-function node_content_view($node, $view_mode) {	
-  $node->content['sensor_form'] = drupal_get_form('sensor_form', $node);
-  return $node;
+function node_content_view($node, $view_mode) {
+	if($node->type == 'sensor'){
+		$node->content['sensor_form'] = drupal_get_form('sensor_form', $node);
+	}
+	return $node;
 }
 
 function start_discover($ip){
@@ -245,19 +243,24 @@ function start_discover($ip){
 }
 
 function parse_discovery_payloads($ip,$payloads){
+	global $user;
 	$regex = '/<[^>]+>\s*(;\s*\w+\s*(=\s*(\w+|"[^"]*(\\.[^"]*)*")\s*)?)*/';
 	preg_match_all($regex, $payloads, $resources);
 	
-	$query = db_select('core_links', 'links')
-		->fields('links', array('device_url','link_name'));
+	db_delete('sensor_CoAP_users')
+			->condition('uid', $user->uid, '=')
+			->execute();
+	
+	$query = db_select('sensor_CoAP_core_links', 'links')
+		->fields('links', array('device_uri','link_name'));
 	$result = $query->execute();
 	foreach($result as $record){
-		db_delete('core_links')
-			->condition('device_url', $record->device_url, '=')
+		db_delete('sensor_CoAP_core_links')
+			->condition('device_uri', $record->device_uri, '=')
 			->condition('link_name', $record->link_name, '=')
 			->execute();
 	} 
-	
+	$id=-1;
 	for($i=0 ; $i < count($resources[0]) ; $i++){
 		if(preg_match('/^<([^>\?]+)[^>]*>\s*(;.+)?\s*$/', $resources[0][$i], $elements)){ //tweede nul moet $i zijn
 			$uri = $elements[1];
@@ -271,7 +274,7 @@ function parse_discovery_payloads($ip,$payloads){
 				preg_match_all('/;\s*\w+\s*(=\s*(\w+|"([^"]*(\\.[^"]*)*)"))?/',$elements[2],$tokens);
 				
 				$attributes = array(
-					'device_url' => $ip,
+					'device_uri' => $ip,
 					'link_name' => $uri,
 				);
 				for($e=0 ; $e<count($tokens[0]) ; $e++){
@@ -283,14 +286,22 @@ function parse_discovery_payloads($ip,$payloads){
 				}
 			}
 			
-			$id = db_insert('core_links')
+			$id = db_insert('sensor_CoAP_core_links')
 			->fields($attributes)
 			->execute();
 		}
 		else{
 			//variable_set("response_string_$i", 'no match');
 		}		
-	}	
+	}
+	if($id != -1){
+		$id = db_insert('sensor_CoAP_users')
+			->fields(array(
+				'uid' => $user->uid,
+				'device_uri' => $ip,
+				))
+			->execute();
+	}
 }
 
 function sensor_recieve_response(){
