@@ -41,6 +41,7 @@ Drupal.behaviors.temperatuursensor_udp = {
 
 function discoverReady(xml){
 	clearInterval(refreshId);
+	//console.log('jquery opgestart');
 	//console.log(xml);
 	
 	if(xml.length != 0){
