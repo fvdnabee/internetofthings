@@ -322,7 +322,7 @@ class CoAPMessage {
 			$message = pack('H*', $this->message_hex);
 			$returnvalue = fwrite($socket, $message); // wegschrijven naar udp-socket
 			if($returnvalue != FALSE){
-				$response = fread($socket, 128); // lezen van udp-socket
+				$response = fread($socket, 512); // lezen van udp-socket
 			}
 			while($retries < 5 && ($response == '' || $response == 'empty')){
 				$function_name = $this->module . '_receive_error';
@@ -589,20 +589,18 @@ class CoAPMessageFactory{
 			$first_hex_digits = substr($response_option_value, 0, $option_value_length-1);
 			$carry = coap_library_increment_hex($first_hex_digits);
 			
-			$last_hex_digit = substr($response_option_value, $option_value_length-1, 1);			
+			$last_hex_digit = substr($response_option_value, $option_value_length-1, 1);
 			$size = 0;			
 			if(coap_library_get_bit_from_hex($last_hex_digit,2) == 1) $size += 4;
 			if(coap_library_get_bit_from_hex($last_hex_digit,1) == 1) $size += 2;
 			if(coap_library_get_bit_from_hex($last_hex_digit,0) == 1) $size += 1;
-			//variable_set("response_string_0", $size);			
 			$last_hex_digit = dechex($size);
 			
 			//build option 23 value for request
 			$request_option_value = '';
 			if($carry) $request_option_value .= '01';
 			$request_option_value .= $first_hex_digits . $last_hex_digit;
-			variable_set("response_string_0", $request_option_value);
-			$coap_message->add_option(23,$request_option_value);
+			$coap_message->add_option(23,coap_library_hex_to_string($request_option_value));
 		}
 		return $coap_message;
 	}
