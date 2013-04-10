@@ -4,28 +4,28 @@ require_once(drupal_get_path('module', 'coap_library') . '/coap_library_classes.
 
 // This hook is invoked during node viewing after the node is fully loaded
 function node_content_view($node, $view_mode) {
-	if($node->type == 'sensor'){
-		$node->content['sensor_form'] = drupal_get_form('sensor_form', $node);
+	if($node->type == 'coap_discovery'){
+		$node->content['coap_discovery_form'] = drupal_get_form('coap_discovery_form', $node);
 	}
 	return $node;
 }
 
-function sensor_menu() {
+function coap_discovery_menu() {
   $items = array();
-  $items["sensor/poll"] = array(
+  $items["coap_discovery/poll"] = array(
     "title" => "Discovery",
-    "page callback" => "sensor_page_callback",
+    "page callback" => "coap_discovery_page_callback",
     "access callback" => true,
     "type" => MENU_CALLBACK
   );
   return $items;
 }
 
-function sensor_page_callback(){
+function coap_discovery_page_callback(){
 	$output ='';
 	
 	if($user->uid != 0 && !isset($_SESSION['links'])){
-		$result = db_select('sensor_CoAP_users','user_device')
+		$result = db_select('coap_discovery_users','user_device')
 				->fields('user_device', array('uid','device_uri'))
 				->condition('uid', $user->uid, '=')
 				->execute();
@@ -33,7 +33,7 @@ function sensor_page_callback(){
 			$device_uri = $record->device_uri;
 		}
 		
-		$result = db_select('sensor_CoAP_core_links', 'links')
+		$result = db_select('coap_discovery_core_links', 'links')
 				->fields('links', array('device_uri','link_name','title'))
 				->condition('device_uri', $device_uri, '=')
 				->execute();
@@ -72,10 +72,10 @@ function sensor_page_callback(){
 function _form_example_steps() {
   return array(
       1 => array(
-        'form' => 'sensor_form_core',
+        'form' => 'coap_discovery_form_core',
       ),
       2 => array(
-        'form' => 'sensor_form_resource',
+        'form' => 'coap_discovery_form_resource',
       ),
     );
 }
@@ -87,7 +87,7 @@ function _form_example_steps() {
  * - Replaces $form_state['values'] with the values from the previous state.
  * - Forces form rebuild.
  */
-function sensor_back_to_core_submit($form, &$form_state) {
+function coap_discovery_back_to_core_submit($form, &$form_state) {
   $current_step = &$form_state['step'];
   $form_state['step_information'][$current_step]['stored_values'] = $form_state['values'];
   if ($current_step > 1) {
@@ -108,7 +108,7 @@ function sensor_back_to_core_submit($form, &$form_state) {
  * @param $form
  * @param $form_state
  */
-function sensor_select_resource_submit($form, &$form_state) {
+function coap_discovery_select_resource_submit($form, &$form_state) {
 	$link = $_SESSION['links'][$form_state['values']['table']];
 	
 	$current_step = &$form_state['step'];
@@ -141,8 +141,8 @@ function sensor_select_resource_submit($form, &$form_state) {
  * The third handler, the finish button handler, is the default form _submit
  * handler used to process the information.
  */
-function sensor_form($form, &$form_state) {
-	drupal_add_js(drupal_get_path('module', 'sensor') . '/js/sensor.js'); // JavaScript bestand toevoegen
+function coap_discovery_form($form, &$form_state) {
+	drupal_add_js(drupal_get_path('module', 'coap_discovery') . '/js/coap_discovery.js'); // JavaScript bestand toevoegen
 	
 	if (empty($form_state['step'])) {
 		$form_state['step'] = 1;
@@ -170,7 +170,7 @@ function sensor_form($form, &$form_state) {
 			'#type' => 'submit',
 			'#value' => t('Core'),
 			'#name' => 'prev',
-			'#submit' => array('sensor_back_to_core_submit'),
+			'#submit' => array('coap_discovery_back_to_core_submit'),
 			'#limit_validation_errors' => array(),
 		);
 	}
@@ -182,7 +182,7 @@ function sensor_form($form, &$form_state) {
 			'#type' => 'submit',
 			'#value' => t('Select'),
 			'#name' => 'next',
-			'#submit' => array('sensor_select_resource_submit'),
+			'#submit' => array('coap_discovery_select_resource_submit'),
 		);
 	}
 	else {
@@ -246,7 +246,7 @@ function build_options($links){
 /**
  * Custom validation form for the core page.
  */
-function sensor_form_core_validate($form, &$form_state) {
+function coap_discovery_form_core_validate($form, &$form_state) {
 	$regex = '/^(((?=(?>.*?(::))(?!.+\3)))\3?|([\dA-F]{1,4}(\3|:(?!$)|$)|\2))(?4){5}((?4){2}|(25[0-5]|(2[0-4]|1\d|[1-9])?\d)(\.(?7)){3})\z/i';
 	if(!preg_match($regex, $form_state['values']['device_uri'], $matches)){
 		form_set_error('device_uri', t('Please enter a valid IPv6-adres.'));
@@ -257,7 +257,7 @@ function sensor_form_core_validate($form, &$form_state) {
  * Returns form elements for core page. This is the
  * first step.
  */
-function sensor_form_core($form, &$form_state) {
+function coap_discovery_form_core($form, &$form_state) {
 	global $user;
 	
 	//textfield for device uri
@@ -285,14 +285,14 @@ function sensor_form_core($form, &$form_state) {
 	
 	if($user->uid != 0){ //anonieme user	
 		$_SESSION['links'] = array();	
-		$result = db_select('sensor_CoAP_users','user_device')
+		$result = db_select('coap_discovery_users','user_device')
 				->fields('user_device', array('uid','device_uri'))
 				->condition('uid', $user->uid, '=')
 				->execute();
 		foreach($result as $record){
 			$device_uri = $record->device_uri;
 			$form['device_uri']['#default_value'] = $device_uri;		
-			$result = db_select('sensor_CoAP_core_links', 'links')
+			$result = db_select('coap_discovery_core_links', 'links')
 				->fields('links', array('device_uri','link_name','title'))
 				->condition('device_uri', $device_uri, '=')
 				->execute();
@@ -359,7 +359,8 @@ function sensor_form_core($form, &$form_state) {
 	// (
 		// '#type' => 'submit',
 		// '#value' => t('Select'),
-		// '#submit' => array('show_sensor'),
+		// '#submit' => array('show_coap_discovery'),
+		// '#submit' => array('show_coap_discovery'),
 	// );
 	
 	for($i=0 ; $i<0 ; $i++){
@@ -378,7 +379,7 @@ function sensor_form_core($form, &$form_state) {
 	//2001:6a8:1d80:200::2
 	
 	// drupal_add_js('https://www.google.com/jsapi'); // JavaScript bestand toevoegen
-	// drupal_add_js(drupal_get_path('module', 'sensor') . '/js/sensor.js'); // JavaScript bestand toevoegen
+	// drupal_add_js(drupal_get_path('module', 'coap_discovery') . '/js/coap_discovery.js'); // JavaScript bestand toevoegen
 	
 	return $form;
 }
@@ -395,7 +396,7 @@ function reload_device_core($form, &$form_state) {
 function clear_tableselect($form, &$form_state) {
 	global $user;
 	if($user->uid!=0){
-		db_delete('sensor_CoAP_users')
+		db_delete('coap_discovery_users')
 			->condition('uid', $user->uid, '=')
 			->execute();
 	}
@@ -404,7 +405,7 @@ function clear_tableselect($form, &$form_state) {
 }
 
 function start_discover($ip){
-	$coap_factory = new CoAPMessageFactory('sensor', $ip, '');
+	$coap_factory = new CoAPMessageFactory('coap_discovery', $ip, '');
 	$response_obj = null;
 	$payloads = '';
 	$has_more = true;
@@ -432,11 +433,11 @@ function parse_discovery_payloads($ip,$payloads){
 	preg_match_all($regex, $payloads, $resources);
 	
 	if($user->uid != 0){
-		db_delete('sensor_CoAP_users')
+		db_delete('coap_discovery_users')
 				->condition('uid', $user->uid, '=')
 				->execute();
 		
-		$query = db_delete('sensor_CoAP_core_links')
+		$query = db_delete('coap_discovery_core_links')
 			->condition('device_uri', $ip, '=')
 			->execute();
 	}
@@ -471,7 +472,7 @@ function parse_discovery_payloads($ip,$payloads){
 			}
 			
 			if($user->uid != 0){			
-				$id = db_insert('sensor_CoAP_core_links')
+				$id = db_insert('coap_discovery_core_links')
 				->fields($attributes)
 				->execute();
 			}
@@ -482,7 +483,7 @@ function parse_discovery_payloads($ip,$payloads){
 	}
 	$_SESSION['links'] = $links;
 	if($id != -1 && $user->uid != 0){ //tweede stuk is eigenlijk overbodig, maar je weet nooit
-		$id = db_insert('sensor_CoAP_users')
+		$id = db_insert('coap_discovery_users')
 			->fields(array(
 				'uid' => $user->uid,
 				'device_uri' => $ip,
@@ -495,7 +496,7 @@ function parse_discovery_payloads($ip,$payloads){
  * Returns form elements for the resource page. This is the
  * second step of the wizard.
  */
-function sensor_form_resource($form, &$form_state) {
+function coap_discovery_form_resource($form, &$form_state) {
   $form = array();
   $form['city'] = array(
     '#type' => 'textfield',
@@ -507,10 +508,10 @@ function sensor_form_resource($form, &$form_state) {
   return $form;
 }
 
-function sensor_receive_response(){
-	//dpm('sensor_receive_response');
+function coap_discovery_receive_response(){
+	//dpm('coap_discovery_receive_response');
 }
 
-function sensor_receive_error($error_message, $ip, $resource){
-	//dpm('sensor_receive_error');
+function coap_discovery_receive_error($error_message, $ip, $resource){
+	//dpm('coap_discovery_receive_error');
 }
