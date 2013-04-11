@@ -1,0 +1,6 @@
+name = CoAP discovery
+description = Manage CoAP discovery
+package = zzz
+core = 7.x
+dependencies[] = background_process
+dependencies[] = coap_library

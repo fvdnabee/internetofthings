@@ -7,7 +7,7 @@ Drupal.behaviors.temperatuursensor_udp = {
 				refreshId = setInterval(function(){
 					$.ajax({
 						type: "GET",
-						url: "/sensor/poll",
+						url: "/coap_discovery/poll",
 						dataType: "text",
 						success: discoverReady
 					});
