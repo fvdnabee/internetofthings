@@ -56,7 +56,7 @@ function temperatuursensor_met_coap_library_block_view($delta='') {
 	$block_content .= drupal_render($temp);
 	
 	// Table offering REST functionality
-	$block_content .= "<table id = 'requests' ><th colspan = '4' >REST methods</th><tr><td>";
+	$block_content .= "<table id = 'requests' ><th colspan = '4' >Request methods</th><tr><td>";
 	
 	// GET form
 	$temp = drupal_get_form('get_request_form');

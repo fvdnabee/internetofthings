@@ -88,7 +88,7 @@ function tempReceived(html){
 				$('#errorimg').attr('style', 'visibility:visible;width:25px;height:25px;');
 				$('#error').html('Er werd een ongeldige URI opgegeven');
 			}
-				if(matches[2] == 'yes'){
+				if(matches[2] == '1'){
 				$('#response').hide();
 				$('#response_type').hide();
 				$('#response').html("Response: " + matches[3]);
