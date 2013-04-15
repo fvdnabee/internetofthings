@@ -11,130 +11,59 @@ function coap_discovery_node_view($node, $view_mode, $langcode) {
 }
 
 function coap_discovery_menu() {
-  $items = array();
-  $items["coap_discovery/poll"] = array(
-    "title" => "Discovery",
-    "page callback" => "coap_discovery_page_callback",
-    "access callback" => true,
-    "type" => MENU_CALLBACK
-  );
+	$items = array();
+	$items["coap_discovery/poll"] = array(
+		"title" => "Discovery",
+		"page callback" => "coap_discovery_page_callback",
+		"access callback" => true,
+		"type" => MENU_CALLBACK
+	);
   
-  
-  $items['node/%coap_discovery_menu/coap_discovery-results'] = array(
-    'title' => 'Results',
-    'page callback' => 'coap_discovery_form_core',
-    //'page arguments' => array(1, FALSE, '50'),
+  $items['node/%coap_discovery_menu/view/discovery'] = array(
+    'title' => 'Discovery',    
     'access callback' => TRUE,
-    //'file' => 'includes/coap_discovery.report.inc',
-    'weight' => 2,
+    'weight' => 4,
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+  );
+
+  $items['node/%coap_discovery_menu/view/resources'] = array(
+    'title' => 'Resources',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('coap_discovery_results_clear_form'),
+    'access callback' => TRUE,
+    'weight' => 8,
     'type' => MENU_LOCAL_TASK,
-    'context' => MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE,
   );
-  
-  $items['node/%coap_discovery_menu/view/submissions'] = array(
-    'title' => 'Submissions',
-    'page callback' => 'coap_discovery_form_core',
-    //'page arguments' => array(1, FALSE, '50'),
-    'access callback' => TRUE,
-    //'file' => 'includes/coap_discovery.report.inc',
-    'weight' => 4,
-    'type' => MENU_DEFAULT_LOCAL_TASK,
-  );
-  
-  $items['node/%coap_discovery_menu/coap_discovery-results/submissions'] = array(
-    'title' => 'Submissions',
-    'page callback' => 'coap_discovery_form_core',
-    //'page arguments' => array(1, FALSE, '50'),
-    'access callback' => TRUE,
-    //'file' => 'includes/coap_discovery.report.inc',
-    'weight' => 4,
-    'type' => MENU_DEFAULT_LOCAL_TASK,
-  );
-  
-  
-  
+
   return $items;
 }
 
-
-
-
-function coap_discovery_results_submissions($node, $user_filter, $pager_count) {
-  global $user;
-
-  if (isset($_GET['results']) && is_numeric($_GET['results'])) {
-    $pager_count = $_GET['results'];
-  }
-
-  $header = theme('webform_results_submissions_header', array('node' => $node));
-  if ($user_filter) {
-    if ($user->uid) {
-      drupal_set_title(t('Submissions for %user', array('%user' => $user->name)), PASS_THROUGH);
-    }
-    else {
-      drupal_set_title(t('Your submissions'));
-      webform_disable_page_cache();
-    }
-    webform_set_breadcrumb($node);
-    $submissions = webform_get_submissions(array('nid' => $node->nid, 'uid' => $user->uid), $header, $pager_count);
-    $count = webform_get_submission_count($node->nid, $user->uid);
-  }
-  else {
-    $submissions = webform_get_submissions($node->nid, $header, $pager_count);
-    $count = webform_get_submission_count($node->nid);
-  }
-
-  $operation_column = end($header);
-  $operation_total = $operation_column['colspan'];
-
-  $rows = array();
-  foreach ($submissions as $sid => $submission) {
-    $row = array(
-      $submission->is_draft ? t('@sid (draft)', array('@sid' => $sid)) : $sid,
-      format_date($submission->submitted, 'short'),
-    );
-    if (webform_results_access($node, $user)) {
-      $row[] = theme('username', array('account' => $submission));
-      $row[] = $submission->remote_addr;
-    }
-    $row[] = l(t('View'), "node/$node->nid/submission/$sid");
-    $operation_count = 1;
-    // No need to call this multiple times, just reference this in a variable.
-    $destination = drupal_get_destination();
-    if (webform_submission_access($node, $submission, 'edit', $user)) {
-      $row[] = l(t('Edit'), "node/$node->nid/submission/$sid/edit", array('query' => $destination));
-      $operation_count++;
-    }
-    if (webform_submission_access($node, $submission, 'delete', $user)) {
-      $row[] = l(t('Delete'), "node/$node->nid/submission/$sid/delete", array('query' => $destination));
-      $operation_count++;
-    }
-    if ($operation_count < $operation_total) {
-      $row[count($row) - 1] = array('data' => $row[count($row) - 1], 'colspan' => $operation_total - $operation_count + 1);
-    }
-    $rows[] = $row;
-  }
-
-  $element['#theme'] = 'webform_results_submissions';
-  $element['#node'] = $node;
-  $element['#submissions'] = $submissions;
-  $element['#total_count'] = $count;
-  $element['#pager_count'] = $pager_count;
-  $element['#attached']['library'][] = array('webform', 'admin');
-
-  $element['table']['#theme'] = 'table';
-  $element['table']['#header'] = $header;
-  $element['table']['#rows'] = $rows;
-  $element['table']['#operation_total'] = $operation_total;
-
-  return drupal_render($element);
-
+/**
+ * Menu loader callback. Load a coap_discovery node if the given nid is a coap_discovery.
+ */
+function coap_discovery_menu_load($nid) {
+	if (!is_numeric($nid)) {
+		return FALSE;
+	}
+	$node = node_load($nid);
+	if (!isset($node->type) || $node->type != 'coap_discovery') {
+		return FALSE;
+	}
+	return $node;
 }
 
-
-
-
-
+/**
+ * Confirmation form to delete all submissions for a node.
+ *
+ * @param $nid
+ *   ID of node for which to clear submissions.
+ */
+function coap_discovery_results_clear_form($form, $form_state) {
+  drupal_set_title(t('Clear Form Submissions'));
+  $form = array();
+  $question = t('Are you sure you want to delete all submissions for this form?');
+  return confirm_form($form, $question, '', NULL, t('Clear'), t('Cancel'));
+}
 
 function coap_discovery_page_callback(){
 	$output ='';
@@ -180,39 +109,6 @@ function coap_discovery_page_callback(){
 }
 
 /**
- * Returns the list of steps and their associated forms.
- *
- * @return $array
- */
-function coap_discovery_form_example_steps() {
-  return array(
-      1 => array(
-        'form' => 'coap_discovery_form_core',
-      ),
-      2 => array(
-        'form' => 'coap_discovery_form_resource',
-      ),
-    );
-}
-
-/**
- * Submit handler for the "previous" button.
- * - Stores away $form_state['values']
- * - Decrements the step counter
- * - Replaces $form_state['values'] with the values from the previous state.
- * - Forces form rebuild.
- */
-function coap_discovery_back_to_core_submit($form, &$form_state) {
-  $current_step = &$form_state['step'];
-  $form_state['step_information'][$current_step]['stored_values'] = $form_state['values'];
-  if ($current_step > 1) {
-    $current_step--;
-    $form_state['values'] = $form_state['step_information'][$current_step]['stored_values'];
-  }
-  $form_state['rebuild'] = TRUE;
-}
-
-/**
  * Submit handler for the 'next' button.
  * - Saves away $form_state['values']
  * - Increments the step count.
@@ -242,81 +138,6 @@ function coap_discovery_select_resource_submit($form, &$form_state) {
 		$form_state['rebuild'] = TRUE;  // Force rebuild with next step.
 		return;
 	}
-}
-
-/**
- * The primary formbuilder function. This is the form that
- * you should call with drupal_get_form() from your code, and it will include
- * the rest of the step forms defined.
- *
- * This form has two defined submit handlers to process the different steps:
- *  - Previous: handles the way to get back one step in the wizard.
- *  - Next:     handles each step form submission,
- *
- * The third handler, the finish button handler, is the default form _submit
- * handler used to process the information.
- */
-function coap_discovery_form($form, &$form_state) {
-	drupal_add_js(drupal_get_path('module', 'coap_discovery') . '/js/coap_discovery.js'); // JavaScript bestand toevoegen
-	
-	if (empty($form_state['step'])) {
-		$form_state['step'] = 1;
-		
-		// This array contains the function to be called at each step to get the
-		// relevant form elements. It will also store state information for each
-		// step.
-		$form_state['step_information'] = coap_discovery_form_example_steps();
-	}
-	
-	$step = &$form_state['step'];
-	//drupal_set_title(t('Sensor network: Step @step', array('@step' => $step)));
-	
-	// Call the function named in $form_state['step_information'] to get the
-	// form elements to display for this step.
-	$form = $form_state['step_information'][$step]['form']($form, $form_state);
-	
-	// Show the 'previous' button if appropriate. Note that #submit is set to
-	// a special submit handler, and that we use #limit_validation_errors to
-	// skip all complaints about validation when using the back button. The
-	// values entered will be discarded, but they will not be validated, which
-	// would be annoying in a "back" button.
-	if ($step > 1) {
-		$form['prev'] = array(
-			'#type' => 'submit',
-			'#value' => t('Core'),
-			'#name' => 'prev',
-			'#submit' => array('coap_discovery_back_to_core_submit'),
-			'#limit_validation_errors' => array(),
-		);
-	}
-
-	// Show the Next button only if there are more steps defined.
-	if ($step < count($form_state['step_information'])) {
-		// The Next button should be included on every step
-		$form['next'] = array(
-			'#type' => 'submit',
-			'#value' => t('Select'),
-			'#name' => 'next',
-			'#submit' => array('coap_discovery_select_resource_submit'),
-		);
-	}
-	else {
-		// Just in case there are no more steps, we use the default submit handler
-		// of the form wizard. Call this button Finish, Submit, or whatever you
-		// want to show. When this button is clicked, the
-		// form_example_wizard_submit handler will be called.
-		// $form['finish'] = array(
-			// '#type' => 'submit',
-			// '#value' => t('Finish'),
-		// );
-	}
-
-	// Include each validation function defined for the different steps.
-	if (function_exists($form_state['step_information'][$step]['form'] . '_validate')) {
-		$form['next']['#validate'] = array($form_state['step_information'][$step]['form'] . '_validate');
-	}
-
-	return $form;
 }
 
 function coap_discovery_build_headers(){
@@ -361,7 +182,7 @@ function coap_discovery_build_options($links){
 /**
  * Custom validation form for the core page.
  */
-function coap_discovery_form_core_validate($form, &$form_state) {
+function coap_discovery_form_validate($form, &$form_state) {
 	$regex = '/^(((?=(?>.*?(::))(?!.+\3)))\3?|([\dA-F]{1,4}(\3|:(?!$)|$)|\2))(?4){5}((?4){2}|(25[0-5]|(2[0-4]|1\d|[1-9])?\d)(\.(?7)){3})\z/i';
 	if(!preg_match($regex, $form_state['values']['device_uri'], $matches)){
 		form_set_error('device_uri', t('Please enter a valid IPv6-adres.'));
@@ -372,7 +193,8 @@ function coap_discovery_form_core_validate($form, &$form_state) {
  * Returns form elements for core page. This is the
  * first step.
  */
-function coap_discovery_form_core($form, &$form_state) {
+function coap_discovery_form($form, &$form_state) {
+	drupal_add_js(drupal_get_path('module', 'coap_discovery') . '/js/coap_discovery.js'); // JavaScript bestand toevoegen
 	global $user;
 	//dpm(menu_rebuild());
 	//textfield for device uri
@@ -469,14 +291,6 @@ function coap_discovery_form_core($form, &$form_state) {
 		$table['#empty'] = 'Enter a URI and click on \'Reload device\' to display resources here.';
 	
 	$form['tableselect_container']['table']= $table;
-  
-	// $form['select'] = array
-	// (
-		// '#type' => 'submit',
-		// '#value' => t('Select'),
-		// '#submit' => array('show_coap_discovery'),
-		// '#submit' => array('show_coap_discovery'),
-	// );
 	
 	for($i=0 ; $i<0 ; $i++){
 		dpm(variable_get("response_string_$i",0));
@@ -491,10 +305,11 @@ function coap_discovery_form_core($form, &$form_state) {
 		//dpm('---------------------------------------------------');
 	}
 	
-	//2001:6a8:1d80:200::2
-	
-	// drupal_add_js('https://www.google.com/jsapi'); // JavaScript bestand toevoegen
-	// drupal_add_js(drupal_get_path('module', 'coap_discovery') . '/js/coap_discovery.js'); // JavaScript bestand toevoegen
+	$form['select'] = array(
+		'#type' => 'submit',
+		'#value' => t('Select'),
+		'#submit' => array('coap_discovery_select_resource_submit'),
+	);
 	
 	return $form;
 }
@@ -605,22 +420,6 @@ function coap_discovery_parse_discovery_payloads($ip,$payloads){
 				))
 			->execute();
 	}
-}
-
-/**
- * Returns form elements for the resource page. This is the
- * second step of the wizard.
- */
-function coap_discovery_form_resource($form, &$form_state) {
-  $form = array();
-  $form['city'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Sensor'),
-    '#required' => TRUE,
-    '#default_value' => !empty($form_state['values']['link']) ? $form_state['values']['link']['link_name'] : '',
-
-  );
-  return $form;
 }
 
 function coap_discovery_receive_response(){
