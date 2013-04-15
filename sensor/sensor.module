@@ -2,8 +2,8 @@
 
 require_once(drupal_get_path('module', 'coap_library') . '/coap_library_classes.inc');
 
-// This hook is invoked during node viewing after the node is fully loaded
-function node_content_view($node, $view_mode) {
+//Act on a node that is being assembled before rendering.
+function sensor_node_view($node, $view_mode, $langcode) {
 	if($node->type == 'sensor'){
 		$node->content['sensor_form'] = drupal_get_form('sensor_form', $node);
 	}
@@ -69,7 +69,7 @@ function sensor_page_callback(){
  *
  * @return $array
  */
-function _form_example_steps() {
+function sensor_form_example_steps() {
   return array(
       1 => array(
         'form' => 'sensor_form_core',
@@ -150,7 +150,7 @@ function sensor_form($form, &$form_state) {
 		// This array contains the function to be called at each step to get the
 		// relevant form elements. It will also store state information for each
 		// step.
-		$form_state['step_information'] = _form_example_steps();
+		$form_state['step_information'] = sensor_form_example_steps();
 	}
 	
 	$step = &$form_state['step'];
@@ -204,7 +204,7 @@ function sensor_form($form, &$form_state) {
 	return $form;
 }
 
-function build_headers(){
+function sensor_build_headers(){
 return array
   (
     // 'link_name' => t('link name'),	
@@ -312,7 +312,7 @@ function sensor_form_core($form, &$form_state) {
 	(
 		'#type' => 'submit',
 		'#value' => t('Reload device'),
-		'#submit' => array('reload_device_core'),
+		'#submit' => array('sensor_reload_device_core'),
 	);
 	
 	//button to clear tableselect
@@ -321,7 +321,7 @@ function sensor_form_core($form, &$form_state) {
 		'#type' => 'submit',
 		'#value' => t('Clear'),
 		'#attributes' => array('id' => 'core_table'),
-		'#submit' => array('clear_tableselect'),
+		'#submit' => array('sensor_clear_tableselect'),
 	);	
 
 	$form['tableselect_container'] = array(
@@ -334,7 +334,7 @@ function sensor_form_core($form, &$form_state) {
 	$links = array();
 	
 	//build headers
-	$header = build_headers();
+	$header = sensor_build_headers();
 	
 	//build options
 	$options = build_options($links);
@@ -384,15 +384,15 @@ function sensor_form_core($form, &$form_state) {
 }
 
 //submit handler when clicked on reload device
-function reload_device_core($form, &$form_state) {
+function sensor_reload_device_core($form, &$form_state) {
 	//dpm('reload submit');
-	//background_process_start('start_discover', $form_state['values']['device_uri']);  
-	start_discover($form_state['values']['device_uri']); //voorgrond
+	//background_process_start('sensor_start_discover', $form_state['values']['device_uri']);  
+	sensor_start_discover($form_state['values']['device_uri']); //voorgrond
 	$form_state['rebuild'] = TRUE;
 }
 
 //submit handler when clicked on reload device
-function clear_tableselect($form, &$form_state) {
+function sensor_clear_tableselect($form, &$form_state) {
 	global $user;
 	if($user->uid!=0){
 		db_delete('sensor_CoAP_users')
@@ -403,7 +403,7 @@ function clear_tableselect($form, &$form_state) {
 	$form_state['rebuild'] = TRUE;
 }
 
-function start_discover($ip){
+function sensor_start_discover($ip){
 	$coap_factory = new CoAPMessageFactory('sensor', $ip, '');
 	$response_obj = null;
 	$payloads = '';
@@ -421,10 +421,10 @@ function start_discover($ip){
 		}
 		else $has_more = false;
 	}
-	parse_discovery_payloads($ip,$payloads);
+	sensor_parse_discovery_payloads($ip,$payloads);
 }
 
-function parse_discovery_payloads($ip,$payloads){
+function sensor_parse_discovery_payloads($ip,$payloads){
 	//dpm('payload geparsed');
 	global $user;
 	$links = array();

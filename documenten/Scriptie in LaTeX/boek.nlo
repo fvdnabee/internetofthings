@@ -1,0 +1,19 @@
+\nomenclatureentry{aIoT@[{IoT}]\begingroup Internet of Things\nomeqref {0}|nompageref}{3}
+\nomenclatureentry{aIPv4@[{IPv4}]\begingroup Internet Protocol versie 4\nomeqref {1.0}|nompageref}{2}
+\nomenclatureentry{aIPv6@[{IPv6}]\begingroup Internet Protocol versie 6\nomeqref {1.0}|nompageref}{2}
+\nomenclatureentry{aHTTP@[{HTTP}]\begingroup HyperText Transfer Protocol\nomeqref {1.0}|nompageref}{2}
+\nomenclatureentry{aUDP@[{UDP}]\begingroup User Datagram Protocol\nomeqref {1.0}|nompageref}{2}
+\nomenclatureentry{aCoAP@[{CoAP}]\begingroup Constrained Application Protocol\nomeqref {1.0}|nompageref}{2}
+\nomenclatureentry{aPHP@[{PHP}]\begingroup PHP Hypertext Preprocessor\nomeqref {1.0}|nompageref}{3}
+\nomenclatureentry{aWOEID@[{WOEID}]\begingroup Where On Earth ID\nomeqref {1.0}|nompageref}{3}
+\nomenclatureentry{aM2M@[{M2M}]\begingroup Machine-to-machine\nomeqref {2.0}|nompageref}{6}
+\nomenclatureentry{aURI@[{URI}]\begingroup Uniform Resource Identifier\nomeqref {2.0}|nompageref}{6}
+\nomenclatureentry{aTKL@[{TKL}]\begingroup ToKen Length\nomeqref {2.0}|nompageref}{8}
+\nomenclatureentry{aTLV@[{TLV}]\begingroup Type Length Value\nomeqref {2.0}|nompageref}{9}
+\nomenclatureentry{aCR@[{CR}]\begingroup Carriage Return\nomeqref {2.0}|nompageref}{10}
+\nomenclatureentry{aLF@[{LF}]\begingroup Line Feed\nomeqref {2.0}|nompageref}{10}
+\nomenclatureentry{aCON@[{CON}]\begingroup Confirmable\nomeqref {2.0}|nompageref}{11}
+\nomenclatureentry{aACK@[{ACK}]\begingroup Acknowledgement\nomeqref {2.0}|nompageref}{11}
+\nomenclatureentry{aRST@[{RST}]\begingroup Reset\nomeqref {2.0}|nompageref}{11}
+\nomenclatureentry{aNON@[{NON}]\begingroup Non-confirmable\nomeqref {2.0}|nompageref}{12}
+\nomenclatureentry{aCMS@[{CMS}]\begingroup Content Management System\nomeqref {3.0}|nompageref}{14}

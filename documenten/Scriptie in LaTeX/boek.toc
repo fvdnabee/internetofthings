@@ -1,0 +1,62 @@
+\select@language {dutch}
+\contentsline {chapter}{Lijst van gebruikte afkortingen}{iii}
+\contentsline {chapter}{\numberline {1}Inleiding}{1}
+\contentsline {subsubsection}{Is het internet klaar voor het IoT?}{2}
+\contentsline {section}{\numberline {1.1}Doel}{2}
+\contentsline {section}{\numberline {1.2}Verloop masterproef}{3}
+\contentsline {section}{\numberline {1.3}Structuur scriptie}{4}
+\contentsline {chapter}{\numberline {2}CoAP}{6}
+\contentsline {section}{\numberline {2.1}Wat is CoAP?}{6}
+\contentsline {subsection}{\numberline {2.1.1}Berichtformaat}{7}
+\contentsline {subsubsection}{Header}{8}
+\contentsline {subsubsection}{Token}{8}
+\contentsline {subsubsection}{Opties}{9}
+\contentsline {subsubsection}{Verschil met HTTP}{10}
+\contentsline {section}{\numberline {2.2}Communicatiemogelijkheden}{11}
+\contentsline {subsection}{\numberline {2.2.1}Betrouwbaarheid}{11}
+\contentsline {subsubsection}{Confirmable berichten}{11}
+\contentsline {subsubsection}{Non-confirmable berichten}{12}
+\contentsline {subsection}{\numberline {2.2.2}Request/response model}{12}
+\contentsline {subsubsection}{Piggy-backed response}{12}
+\contentsline {subsubsection}{Seperate response}{12}
+\contentsline {section}{\numberline {2.3}Extra Features}{13}
+\contentsline {subsection}{\numberline {2.3.1}Observer}{13}
+\contentsline {subsection}{\numberline {2.3.2}Resource discovery}{13}
+\contentsline {subsection}{\numberline {2.3.3}Resource directory}{13}
+\contentsline {chapter}{\numberline {3}Drupal}{14}
+\contentsline {section}{\numberline {3.1}Wat is Drupal?}{14}
+\contentsline {subsubsection}{Content Management System}{14}
+\contentsline {subsubsection}{Framework voor webapplicaties}{14}
+\contentsline {subsubsection}{Social publishing platform}{15}
+\contentsline {subsection}{\numberline {3.1.1}Drupal Core}{16}
+\contentsline {section}{\numberline {3.2}Waarom Drupal?}{16}
+\contentsline {section}{\numberline {3.3}Werking van Drupal}{18}
+\contentsline {subsection}{\numberline {3.3.1}Drupal bouwstenen}{18}
+\contentsline {subsubsection}{Node}{18}
+\contentsline {subsubsection}{Fields}{18}
+\contentsline {subsubsection}{Block}{18}
+\contentsline {subsubsection}{Content type}{18}
+\contentsline {subsubsection}{Taxonomy}{19}
+\contentsline {subsubsection}{Users, Roles en Permissions}{19}
+\contentsline {subsubsection}{Module}{19}
+\contentsline {subsubsection}{View}{19}
+\contentsline {subsubsection}{Theme}{19}
+\contentsline {subsubsection}{Hooks}{20}
+\contentsline {subsubsection}{Drupal Core}{20}
+\contentsline {subsection}{\numberline {3.3.2}Drupal bootstrap}{20}
+\contentsline {subsubsection}{Initialisatie van de configuratie}{20}
+\contentsline {subsubsection}{Poging tot opvragen van een gecachte pagina}{20}
+\contentsline {subsubsection}{Initialisatie van de database abstraction layer}{20}
+\contentsline {subsubsection}{Initialisatie van het Variable System}{20}
+\contentsline {subsubsection}{Initialisatie Session Handling}{21}
+\contentsline {subsubsection}{Page Header opbouwen}{21}
+\contentsline {subsubsection}{De taal van de pagina bepalen}{21}
+\contentsline {subsubsection}{Laden van modules en initialisatie van het theme}{21}
+\contentsline {section}{\numberline {3.4}jQuery in Drupal}{22}
+\contentsline {subsection}{\numberline {3.4.1}Met een formulier}{22}
+\contentsline {subsection}{\numberline {3.4.2}Met AJAX in jQuery}{23}
+\contentsline {subsection}{\numberline {3.4.3}Problemen}{23}
+\contentsline {chapter}{\numberline {4}Arduino}{24}
+\select@language {english}
+\select@language {dutch}
+\select@language {dutch}

@@ -1,0 +1,8 @@
+name = CoAP resource
+description = Een module die meerdere gebruikers in staat stelt verschillende CoAP resources te bevragen en te observeren.
+core = 7.x
+package = CoAP
+dependencies[] = background_process
+dependencies[] = coap_library
+dependencies[] = coap_discovery
+files[] = temperatuursensor_met_coap_library.module

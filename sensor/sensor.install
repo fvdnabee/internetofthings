@@ -110,7 +110,7 @@ function sensor_schema(){
 
 function sensor_uninstall(){
 	db_drop_table('sensor_CoAP_users');
-	db_drop_table('sensor_CoAP_core_links'):
+	db_drop_table('sensor_CoAP_core_links');
 }
 
 function sensor_enable() {
