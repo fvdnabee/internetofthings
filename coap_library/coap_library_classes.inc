@@ -325,25 +325,31 @@ class CoAPMessage {
 		if ($socket) {
 			$function_name = $this->module . '_receive_error';
 			$function_name('none', $this->ip, $this->resource);
-			stream_set_timeout($socket, 5, 0);
-			$retries = 0;
+			$timeout = rand($this->ACK_TIMEOUT, $this->ACK_TIMEOUT*$this->RANDOM_FACTOR);
+			stream_set_timeout($socket, 0, $timeout*1000); // third parameter is in MICROseconds
+			$this->retransmit_counter = 0;
 			$message = pack('H*', $this->message_hex);
-			$returnvalue = fwrite($socket, $message); // wegschrijven naar udp-socket
-			if($returnvalue != FALSE){
-				$response = fread($socket, 512); // lezen van udp-socket
-			}
-			while($retries < 5 && ($response == '' || $response == 'empty')){
-				$function_name = $this->module . '_receive_error';
-				$function_name('delay', $this->ip, $this->resource);
-				$returnvalue = fwrite($socket, $message); // wegschrijven naar udp-socket
+			$returnvalue = fwrite($socket, $message); // write to socket
+			if($this->is_confirmable()){
 				if($returnvalue != FALSE){
-					$response = fread($socket, 128); // lezen van udp-socket
+					$response = fread($socket, 512); // lezen van udp-socket
 				}
-				$retries++;
+				while($this->retransmit_counter < $this->MAX_RETRANSMIT && ($response == '' || $response == 'empty')){
+					$function_name = $this->module . '_receive_error';
+					$function_name('delay', $this->ip, $this->resource);
+					$returnvalue = fwrite($socket, $message); // wegschrijven naar udp-socket
+					if($returnvalue != FALSE){
+						$response = fread($socket, 512); // lezen van udp-socket
+					}
+					$this->retransmit_counter++;
+					$timeout *= 2;
+					stream_set_timeout($socket, 0, $timeout*1000);
+				}
 			}
 			if($response != '' && $response != 'empty'){
 				$response_obj = new CoAPMessage($this->module, $this->ip, $this->resource, coap_library_string_to_hex_with_padding($response));
 				$function_name = $this->module . '_receive_error';
+				$this->retransmit_counter = 0;
 				$function_name('none', $this->ip, $this->resource);
 				if($observe){
 					// Observe
@@ -356,9 +362,11 @@ class CoAPMessage {
 						$function_name('none', $this->ip, $this->resource);
 						$function_name = $this->module . '_receive_response';
 						$function_name($response_obj);
-						$ack = coap_library_generate_acknowledgement(coap_library_string_to_hex_with_padding($response));
-						$ack = pack('H*', $ack);
-						$returnvalue = fwrite($socket, $ack);
+						if($response_obj->is_confirmable()){
+							$ack = coap_library_generate_acknowledgement(coap_library_string_to_hex_with_padding($response));
+							$ack = pack('H*', $ack);
+							$returnvalue = fwrite($socket, $ack);
+						}
 						$retries = 0;
 						$response = 'empty';
 						$response = fread($socket, 128); // lezen van udp-socket
@@ -393,7 +401,7 @@ class CoAPMessage {
 					return $response_obj;
 				}
 			}
-			else{
+			else if($this->is_confirmable()){
 				$function_name = $this->module . '_receive_error';
 				$function_name('broken', $this->ip, $this->resource);
 			}
@@ -446,6 +454,12 @@ class CoAPMessage {
 	public function get_message_code(){
 		$code_nr = hexdec(substr($this->message_hex, 2, 2));
 		return $this->response_code_mapping[$code_nr];
+	}
+	
+	// Checks if this message is confirmable or not
+	// Returns boolean
+	public function is_confirmable(){
+		return (substr($this->message_hex, 0, 1) == '4');
 	}
 	
 }
