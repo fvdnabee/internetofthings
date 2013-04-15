@@ -1,5 +1,21 @@
 <?php
 
+/**
+ * Implements hook_menu().
+ * Creëert het pad waarnaar jQuery een ajax call kan uitvoeren en de callback-functie
+ */
+function totaal_uren_menu() {
+  $items = array();
+  $items["totaal_uren/grafiekdata"] = array(
+    "title" => "Grafiekdata ophalen",
+    "page callback" => "get_grafiekdata",
+    "access callback" => true,
+    "type" => MENU_CALLBACK
+  );
+  return $items;
+}
+
+
 ///////////
 // BLOCK //
 ///////////
@@ -45,7 +61,19 @@ function totaal_uren_block_view($delta='') {
 	
 	// GRAFIEKDATA
 	$block_content .= "<div id = 'grafiek' >";
-	$block_content .= "<table id = 'grafiekdata' ><tbody>";
+	$block_content .= "<label id = 'melding' >Even wachten terwijl de grafiek geladen wordt...</label>";
+	$block_content .= "</div>";
+	
+	$block['content'] = $block_content;
+	drupal_add_js('https://www.google.com/jsapi'); // JavaScript bestand toevoegen
+	drupal_add_js(drupal_get_path('module', 'totaal_uren') . '/totaal_uren.js'); // JavaScript bestand toevoegen
+	return $block;
+}
+
+function get_grafiekdata(){
+	
+	// GRAFIEKDATA
+	$block_content .= "<div id = 'grafiekafbeelding' style='width:100%' ><table id = 'grafiekdata' ><tbody>";
 	
 	$query = "SELECT datum FROM webform_views_logging_5 group by datum order by datum asc";
 	$result = db_query($query);
@@ -76,10 +104,7 @@ function totaal_uren_block_view($delta='') {
 		$block_content .= "<tr><td>" . $record->datum . "</td><td>" . $kobe_uren . "</td><td>" . $stef_uren . "</td></tr>";
 	}
 	
-	$block_content .= "</tbody></table>";
-	$block_content .= "</div>";
-	$block['content'] = $block_content;
-	drupal_add_js('https://www.google.com/jsapi'); // JavaScript bestand toevoegen
-	drupal_add_js(drupal_get_path('module', 'totaal_uren') . '/totaal_uren.js'); // JavaScript bestand toevoegen
-	return $block;
+	$block_content .= "</tbody></table></div>";
+	print $block_content;
+	
 }
