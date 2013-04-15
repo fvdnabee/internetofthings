@@ -1,4 +1,4 @@
-\chapter{Drupal}
+\chapter{Drupal} \label{Drupal}
 
 \section{Wat is Drupal?}
 
@@ -49,7 +49,7 @@ Bij deze masterproef wordt er gebruik gemaakt van Apache en MySQL.
 
 \subsection{Drupal Core}
 
-Wanneer je Drupal installeert beschik je meteen over een basiswebsite. Omdat je meteen al een bruikbare website hebt, is de drempel om Drupal te beginnen gebruiken dus laag. Deze website biedt meteen al een heleboel functionaliteit aan die geleverd wordt door de zogenaamde Drupal Core en een aantal out-of-the-box functies. De Drupal core is de motor achter de Drupalwebsite.
+Wanneer je Drupal installeert beschik je meteen over een basiswebsite. Omdat je meteen al een bruikbare website hebt, is de drempel om Drupal te beginnen gebruiken dus laag. Deze website biedt meteen al een heleboel functionaliteit aan die geleverd wordt door de zogenaamde Drupal Core en een aantal out-of-the-box functies.
 \begin{figure}[h]
 \begin{center}
 \includegraphics[keepaspectratio,width=1\textwidth]{fig/drupalBasiswebsite}
@@ -128,7 +128,7 @@ Themes zijn templates die bepalen hoe jouw website eruit ziet en aanvoelt voor d
 Hooks zijn functies die gedefinieerd zijn door de Drupal core. Ze kunnen worden ge\"{i}mplementeerd door elke module. In de Drupal bootstrap zal de Drupal core dan op bepaalde tijdstippen de bijhorende hooks oproepen van elke module die de hook ge\"{i}mplementeerd heeft. Hiervoor wordt een zeer eenvoudig mechanisme gehanteerd. Een module kan zo'n hook defini\"{e}ren door de naam van de hook te laten voorafgaan door de naam van de module die de hook implementeert.
 
 \subsubsection{Drupal Core}
-De Drupal core is wat je downloadt van de Drupal website. Het vormt de basis en een uitgebreide out-of-the-box functionaliteit.
+De Drupal core is wat je downloadt van de Drupal website. Het vormt de basis en een uitgebreide out-of-the-box functionaliteit, het fungeert eigenlijk als de motor achter een Drupal website. De Drupal Core is zeer uitgebreid en complex, het vormt op zich al voldoende materiaal voor een scriptie, er verder op ingaan zou ons dus te ver leiden.
 
 \subsection{Drupal bootstrap}
 Elke keer een web browser een Drupal pagina opvraagt, gebeurt telkens dezelfde reeks van complexe stappen. Deze bootstrap bestaat uit acht verschillende fasen:
@@ -185,7 +185,7 @@ Wanneer de gebruiker op de knop klikt, gebeuren volgende stappen:
 \begin{itemize}
 	\item het formulier wordt ingediend
 	\item de pagina wordt opnieuw geladen
-	\item de bootstrapcode roept de hook hook\_form\_submit()op door weather\_location\_form\_submit() op te roepen (weather\_location is de naam van het formulier):
+	\item de bootstrapcode roept de hook hook\_form\_submit() op door weather\_location\_form\_submit() op te roepen (weather\_location is de naam van het formulier):
 	\begin{itemize}
 		\item het ingegeven WOEID wordt opgeslagen op serverniveau met de Drupal-functie variable\_set()
 	\end{itemize}
@@ -201,21 +201,16 @@ Wanneer de gebruiker op de knop klikt, gebeuren volgende stappen:
 
 \subsection{Met AJAX in jQuery}
 
-Een pagina zal pas getoond worden wanneer de bootstrap afgelopen is en aangezien de code in de hooks die worden uitgevoerd onderdeel is van de bootstrap, zal de pagina pas getoond worden wanneer de hooks afgelopen zijn.
-
-Dit heeft als gevolg dat de gebruiker van de website langer moet wachten op de pagina omdat eerst nog een HTTP-request moet gebeuren om het weerbericht op te halen.
-Het spreekt voor zich dat dit een zeer nadelig effect is dat moet vermeden worden.
-Als alternatief hebben we gekozen om een jQuery-event te koppelen aan de knop.
-jQuery is namelijk geschreven in JavaScript en JavaScript is een client-side scripting language, wat inhoudt dat deze code wordt uitgevoerd op de machine van de gebruiker en dit nadat de pagina geladen is.
-Wanneer de gebruiker op de knop klikt, wordt een Asynchronous JavaScript and XML(AJAX)-call uitgevoerd.
-Zoals de naam suggereert, is dit een asynchrone aanroep, wanneer het antwoord aankomt wordt automatisch een opgegeven functie opgeroepen waarin de data kan verwerkt worden.
-Als gevolg heeft de gebruiker dus geen enkele hinder van het internetverkeer dat noodzakelijk is om het weerbericht op te halen.
+Een pagina zal pas getoond worden wanneer de bootstrap afgelopen is en aangezien de code in de hooks die worden uitgevoerd onderdeel is van de bootstrap, zal de pagina pas getoond worden wanneer de hooks afgelopen zijn. Dit heeft als gevolg dat de gebruiker van de website langer moet wachten op de pagina omdat eerst nog een HTTP-request moet gebeuren om het weerbericht op te halen. Het spreekt voor zich dat dit een zeer nadelig effect is dat moet vermeden worden.\\
+Als alternatief hebben we gekozen om een jQuery-event te koppelen aan de submit-knop die het formulier indient. jQuery is namelijk geschreven in JavaScript en JavaScript is een client-side scripting language, wat inhoudt dat deze code wordt uitgevoerd op de machine van de gebruiker en dit nadat de pagina geladen is.\\
+Wanneer de gebruiker op de knop klikt, wordt een Asynchronous JavaScript and XML(AJAX)-call\nomenclature{AJAX}{Asynchronous JavaScript and XML} uitgevoerd.
+Zoals de naam suggereert, is dit een asynchrone aanroep, wanneer het antwoord aankomt wordt automatisch een opgegeven functie opgeroepen waarin de data kan verwerkt worden. Als gevolg heeft de gebruiker dus geen enkele hinder van het internetverkeer dat noodzakelijk is om het weerbericht op te halen.
 
 
 \subsection{Problemen}
 
 jQuery laat geen cross-domain AJAX calls toe wegens veiligheidsoverwegingen. Een oplossing hiervoor is een proxy-script in PHP gebruiken.
-De AJAX call gebeurt dan naar het proxy script dat zich op hetzelfde domein bevindt, het proxy-script vraagt dan effectief de data op.
+De AJAX call gebeurt dan naar het proxy script dat zich op de server en dus hetzelfde domein bevindt. Het proxy-script vraagt daar effectief de data op en geeft de uitvoer terug.
 De browser wordt dus eigenlijk om de tuin geleid.
 
 Bron: http://stackoverflow.com/questions/12683530/origin-http-localhost-is-not-allowed-by-access-control-allow-origin

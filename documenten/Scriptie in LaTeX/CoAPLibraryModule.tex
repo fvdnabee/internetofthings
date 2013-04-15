@@ -1,33 +1,106 @@
 \chapter{CoAP library module}
 
-\section{Architectuur}
+In hoofdstuk \ref{CoAP} bekeken we beknopt hoe het CoAP protocol in mekaar zit en wat er allemaal mogelijk is. In dit hoofdstuk bekijken we hoe een eigen CoAP library in PHP werd ontwikkeld als Drupal module. De module stelt een Drupal gebruiker in staat CoAP berichten op te stellen, te versturen en te ontvangen. Let wel, deze module heeft niet als doel om visueel iets voor te stellen op een website. Ze is slechts functioneel en bijvoorbeeld te gebruiken in een andere module die dan de berichten kan omvormen tot een visuele representatie. Dit laatste is wat wij doen in de uiteindelijk te ontwerpen module, deze laatste wordt toegelicht in hoofdstuk \ref{resourcemodule}.
 
-\subsection{Functionaliteit}
+\section{Doel}
 
-Hier komt de functionaliteit van de CoAP library.\\
+Wanneer we trachtten CoAP berichten op te stellen en te versturen en ontvangen in onze module, werd al snel het nut duidelijk van een aparte module die zou fungeren als CoAP library. Er ontstaat namelijk erg veel duplicatie van code, bovendien wordt de code onoverzichtelijk en slordig. Nog een zeer nadelig gevolgd is dat de code niet hergebruikt kan worden in een andere module. Men zou al de code moeten doorspitten om net dat stuk te vinden waar CoAP gesproken wordt. Bovendien is het niet zeker dat die code zal voldoen aan de waarschijnlijk andere eisen van de nieuwe gebruiker. Wanneer de code niet fungeert in de nieuwe situatie, zal er veel tijd gespendeerd worden aan debuggen en zal de frustratie oplopen bij de gebruiker. Kortom, het is duidelijk dat dit een zeer slechte praktijk is die ten alle kosten moet vermeden worden, het druist in tegen enkele van de belangrijkste programmeerprincipes.\\
 
-Een van de belangrijkste aspecten bij deze masterproef is een minimale belasting te realiseren voor de sensoren, dit is immers de reden voor de ontwikkeling van CoAP. Opgehaalde waarden zullen dan ook in de databank worden opgeslagen met een geldigheidswaarde, wanneer een waarde nog geldig is, wordt de waarde uit de databank gehaald en wordt het embedded device niet opnieuw bevraagd. Slechts wanneer de waarde niet meer geldig is, wordt het embedded device aangesproken.\\
+Met het nut bewezen, bekijken we even wat een gebruiker van deze library moet kunnen verwachten. Ze moet de gebruiker in staat stellen dynamisch berichten op te stellen, volledig naar eigen wens. Dit wil zeggen dat de verzameling operaties om een bericht op te stellen, alle mogelijke berichten moet kunnen genereren. Dit heeft als gevolg dat elke elementaire operatie moet kunnen worden uitgevoerd op een bericht, opstellen van bijvoorbeeld een bepaald bericht aan de hand van slechts één functie is niet prioritair en dus bijkomstig. Het is uiterst belangrijk bij het ontwerp van deze library dat de gebruiker zich niet meer moet bekommeren om hexadecimale code die nodig is in een bericht, alle generatie van hexadecimale code zit vervat in de CoAP library module. We besluiten dat de library een gebruiker in staat moet stellen dynamisch en gebruiksvriendelijk berichten op te stellen, en dit met een minimum aan code.
 
-\subsection{Content-type in de databank}
+\subsection{Essenti\"{e}le, te ondersteunen functies}
 
-Wanneer data ontvangen wordt, moet deze opgeslagen worden in de databank. Er moet dan ook een tabel voorzien worden in de databank met de nodige velden, het content-type in de databank:
-
-\begin{wrapfigure}{r}{0.3\textwidth}
-\vspace{10pt}
-\includegraphics[width=0.3\textwidth]{fig/contentTypeDatabank}
-\vspace{-35pt}
-\caption{Content-type in databank}
-\vspace{-10pt}
-\end{wrapfigure}
-\paragraph{}
-\vspace*{-\parskip}
+We sommen enkele van de eerder vermelde elementaire functies op, deze opsomming is allesbehalve limitatief:
 
 \begin{itemize}
-\item Een ID van de resource,
-\item de URI van het embedded device,
-\item het datatype van de ontvangen waarde (XML, JSON, plain text, etc),
-\item de effectieve data (originele, raw input),
-\item de verwerkte data,
-\item een timestamp die het tijdstip van opvragen aanduidt,
-\item waarde om de geldigheid te controleren (max age).
+\item Opstellen van de header en token waarbij de gebruiker het type, de methode en het token opgeeft. De token lengte wordt afgeleid uit het token. Wanneer geen token gewenst is, kan de gebruiker een lege string meegeven.
+\item Een optie toevoegen aan het bericht waarbij de gebruiker slechts het optienummer en de waarde van de optie moet meegeven. De gebruiker hoeft zich hierbij geen zorgen te maken over het mechanisme waarbij de Option Delta gebruikt wordt, of over de lengte van de waarde, noch over de volgorde van de opties. Evenmin moet de gebruiker rekening houden met het feit dat wanneer de Option Delta of lengte van de waarde groter is dan 12, een mechanisme met extra bytes wordt gebruikt. Hier wordt allemaal rekening mee gehouden in de CoAP library.
+\item De payload toevoegen aan het bericht waarbij de gebruiker slechts de payload hoeft op te geven. Alweer neemt de CoAP library alle formaliteiten voor eigen rekening. Dit houdt in dit geval in dat de payload marker wordt toegevoegd en dat de lengte van de payload wordt afgeleid uit de payload zelf.
+\item Een bericht versturen, hierbij onderscheiden we 2 mogelijkheden:
+\begin{itemize}
+\item Het sturen van een bericht zonder observe optie: Hierbij hoeft men enkel rekening te houden met \'{e}\'{e}n antwoord. Men kan dus het antwoord teruggeven als return waarde van de functie die het bericht stuurt. Men hoeft zich niet te bekommeren om meerdere antwoorden die op willekeurige tijdstippen kunnen aankomen.
+\item Het sturen van een bericht met observe optie: Het antwoord dat hierop terug gestuurd wordt, bevat slechts \'{e}\'{e}n en is slechts een bevestiging dat de server de client heeft toegevoegd aan de lijst van ge\"{i}nteresseerden. De server zal nu geregeld een antwoord sturen op eigen initiatief. Er moet dus een mechanisme voorzien worden dat het aankomen van die berichten opvangt. We zullen later in dit hoofdstuk zien hoe we deze probleemstelling in de library hebben opgevangen.
 \end{itemize}
+Hierbij wordt de gebruiksvriendelijkheid doorgetrokken, de gebruiker staat namelijk niet in voor de controle van de aanwezigheid van een observe optie. Dit wordt automatisch gedetecteerd door de CoAP library.
+\item Operaties om een bericht te ontmantelen, hieronder verstaan we het parsen van onder andere de payload, een optie op basis van optienummer, het message ID, het token, ...
+\end{itemize}
+
+Merk op dat bij het genereren van CoAP berichten ook een message ID nodig is. Ook hierop is de CoAP library voorzien, er wordt bijgehouden welke message ID's al gebruikt zijn door telkens het laatst gebruikte message ID te incrementeren. Dit is een mechanisme dat aangeraden wordt in de CoAP draft (versie 14).\\
+Een soortgelijk principe wordt toegepast wanneer een token moet worden gegenereerd. De gebruiker moet dan wel een lengte aangeven.\\
+Ook wanneer een ACK of RST moet worden gegenereerd wordt, door aan te geven op welk bericht het antwoord moet worden gestuurd, automatisch het message ID uit het oorspronkelijk bericht geparsed en in het antwoord geplaatst. Hetzelfde principe geldt wanneer een token moet worden overgenomen.
+
+\subsection{Optionele, handige functies}
+
+Sommige berichten worden zijn vaker nodig dan andere. Om de gebruiksvriendelijkheid van de library te verhogen en de drempel om ze te gebruiken te verlagen, is het een goed idee enkele functies te voorzien om bepaalde volledige berichten op te stellen. Belangrijk hierbij is dat deze opgestelde berichten nog steeds aanpasbaar moeten kunnen zijn. Dit zorgt ervoor een gebruiker bijvoorbeeld al een basisbericht kan opstellen en het daarna nog eigen wens kan aanpassen, wat de gebruiker veel tijd bespaart. We geven enkele voorbeelden die ook ge\"{i}mplementeerd zijn in de library, deze opsomming is alweer niet limitatief:
+\begin{itemize}
+\item Opstellen van een basis GET request: hierbij krijgt de gebruiker de kans krijgt om meteen een URI-path optie toe te voegen aan het bericht. De gebruiker hoeft hier enkel het desbetreffende URI-path toe te voegen. De optie wordt automatisch toegevoegd door de library op basis van de invoer. Wanneer de gebruiker geen URI-path meegeeft, wordt er ook geen optie toegevoegd aan het bericht.
+\item Opstellen van een basis GET request met observe optie: deze operatie is zeer vergelijkbaar met de vorige, het enige verschil is dat er een lege observe optie wordt toegevoegd. Dit zorgt ervoor dat de server waarnaar het bericht wordt verstuurd, de client zal toevoegen aan de lijst met ge\"{i}nteresseerden. Om de goede programmeerprincipes te volgen wordt in deze operatie gebruik gemaakt van de vorige operatie. Dit om duplicatie van code te vermijden.
+\item Automatisch genereren van een ACK op basis van een opgegeven bericht: de gebruiker hoeft enkel het bericht mee te geven waarop de ACK moet worden opgesteld. Het message ID wordt automatisch overgenomen uit het oorspronkelijk bericht. Naast het feit dat de gebruiksvriendelijkheid verhoogd wordt, heeft deze operatie nog een niet te verwaarlozen nut. De kans op fouten wordt namelijk veel kleiner omdat de ACK automatisch gegenereerd wordt, menselijke fouten zijn dus zo goed als uitgesloten als deze operatie op punt staat.
+\item Automatisch genereren van een RST op basis van een opgegeven bericht: deze operatie is volledig analoog aan de vorige met dat verschil dat het type van dit bericht RST is in plaats van ACK.
+\end{itemize}
+
+\section{Implementatie}
+
+In deze paragraaf wordt besproken hoe de library effectief ge\"{i}mplementeerd werd. De volgorde van de subparagrafen is tevens chronologisch. 
+
+\subsection{Proceduregericht}
+
+De eerste versie van de CoAP library werd proceduregericht geprogrammeerd. Dit houdt in dat geen staten of objecten bijgehouden worden. Bijgevolg moet de gebruiker zelf het bericht bijhouden onder een vorm die hij/zij zelf kiest. Deze versie van de CoAP library verwachtte echter het bericht onder de vorm van een hexadecimale string. Alle benodigde operaties die eerder vermeld werden, werden ge\"{i}mplementeerd. Alhoewel deze eerste versie al zeker een stap in de goede richting was, zijn er toch wel enkele nadelen die de kop opsteken. Zoals eerder al vermeld, is de gebruiker verplicht zelf de hexadecimale string bij te houden die het bericht voorstelt. Niet elke gebruiker is bekend met het gebruik van hexadecimale strings. Een tweede nadeel heeft te maken met bescherming van het bericht. Wanneer de gebruiker de hexadecimale string bijhoudt, kan die worden aangepast naar believen. Het bericht kan zo vervormd en mogelijks nutteloos worden. Bovendien kan de gebruiker zonder het te beseffen het bericht door \'{e}\'{e}n of andere operatie omvormen tot een normale string met American Standard Code for Information Interchange (ASCII)-karakters \nomenclature{ASCII}{American Standard Code for Information Interchange}. Dit heeft mogelijk als gevolg dat de library het bericht zal omvormen tot een verkeerde hexadecimale string. Kortom, er is nog ruimte voor verbetering en een objectgerichte implementatie lijkt voor de hand liggend.
+
+\subsection{Objectgericht}
+
+In de vorige subparagraaf zagen we de nadelen van een proceduregerichte oplossing. Het zijn net deze punten waar een objectgerichte oplossing goed op scoort. De tweede versie van de CoAP library maakt gebruik van 2 klassen welke besproken worden in volgende puntjes.
+
+\subsubsection{CoAPFactory klasse}
+
+Zoals de naam al suggereert, wordt deze klasse gebruik voor generatie van CoAP berichten. De gebruiker maakt eerst een instantie aan van de CoAPFactory klasse. Dit object kan dan gebruikt worden om CoAP berichten aan te maken. Het is deze klasse die de eerder besproken handige functies implementeert om bepaalde berichten aan te maken, samen met de operatie die de header en token opstelt. Alle operaties die een bericht object aanmaken geven een object terug van klasse CoAPMessage, deze klasse wordt hierna besproken. De constructor van deze factory klasse ontvangt volgende parameters:
+\begin{itemize}
+\item Modulenaam: deze parameter bevat de naam van de module die gebruik maakt van de CoAP library, de reden voor deze parameter wordt hierna uitgelegd in subparagraaf \ref{observe_hooks}.
+\item IPv6-adres: deze parameter bevat een geldig IPv6-adres, dit is het IPv6-adres van het embedded device waarop de beoogde resource is aangesloten.
+\item URI-path: deze parameter bevat een URI-path van een resource op het embedded device dat aangegeven wordt door het IPv6-adres. Deze parameter mag achterwege gelaten worden, het URI-path is dan leeg en duidt het embedded device zelf aan.
+\end{itemize}
+Zoals blijkt uit de parameters wordt een factory per gewenste resource aangemaakt.
+
+\subsubsection{CoAPMessage klasse}
+
+Deze klasse representeert het bericht zelf. Het bevat ten allen tijde het bericht in hexadecimale vorm. Het is deze klasse die de essenti\"{e}le operaties implenteert op het opstellen van de header en token na, zodanig dat het bericht kan worden aangepast naar eigen wensen en noden. Het bericht kan dan gemakkelijk worden verstuurd door een operatie op het object uit te voeren, een IPv6-adres opgeven hoeft niet meer, dit is reeds gebeurd bij constructie van de factory die dit bericht heeft aangemaakt.
+
+\subsection{Hooks voor notificaties} \label{observe_hooks}
+
+% HIER VERDERWERKEN
+
+\subsection{Opvangen van verloren berichten}
+
+%ALLES HIERNA HOORT HIER NIET THUIS, MAAR WEL ELDERS
+
+%\section{Architectuur}
+
+%\subsection{Functionaliteit}
+
+%Hier komt de functionaliteit van de CoAP library.\\
+
+%Een van de belangrijkste aspecten bij deze masterproef is een minimale belasting te realiseren voor de sensoren, dit is immers de reden voor de ontwikkeling van CoAP. Opgehaalde waarden %zullen dan ook in de databank worden opgeslagen met een geldigheidswaarde, wanneer een waarde nog geldig is, wordt de waarde uit de databank gehaald en wordt het embedded device niet %opnieuw bevraagd. Slechts wanneer de waarde niet meer geldig is, wordt het embedded device aangesproken.\\
+
+%\subsection{Content-type in de databank}
+
+%Wanneer data ontvangen wordt, moet deze opgeslagen worden in de databank. Er moet dan ook een tabel voorzien worden in de databank met de nodige velden, het content-type in de databank:
+
+%\begin{wrapfigure}{r}{0.3\textwidth}
+%\vspace{10pt}
+%\includegraphics[width=0.3\textwidth]{fig/contentTypeDatabank}
+%\vspace{-35pt}
+%\caption{Content-type in databank}
+%\vspace{-10pt}
+%\end{wrapfigure}
+%\paragraph{}
+%\vspace*{-\parskip}
+
+%\begin{itemize}
+%\item Een ID van de resource,
+%\item de URI van het embedded device,
+%\item het datatype van de ontvangen waarde (XML, JSON, plain text, etc),
+%\item de effectieve data (originele, raw input),
+%\item de verwerkte data,
+%\item een timestamp die het tijdstip van opvragen aanduidt,
+%\item waarde om de geldigheid te controleren (max age).
+%\end{itemize}
