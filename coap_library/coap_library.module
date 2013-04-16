@@ -13,7 +13,7 @@
 //																						//
 //	- coap_library_generate_message_id()												//
 //	- coap_library_generate_token($token_length)										//
-//	- coap_library_generate_header_and_token($type, $method, $token_length)				//
+//	- coap_library_generate_header_and_token($type, $method, $token)					//
 //	- coap_library_add_option($message, $option_number, $value)							//
 //	- coap_library_add_payload($message, $payload)										//
 //	- coap_library_string_to_hex_with_padding($string)									//

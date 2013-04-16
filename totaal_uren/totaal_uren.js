@@ -46,6 +46,7 @@ function drawChart() {
     var chart = new google.visualization.LineChart(document.getElementById('grafiekafbeelding'));
     chart.draw(data, options);
 	$('#melding').hide();
+	$('#waiting').hide();
 	$("#grafiekafbeelding").fadeIn("slow");
 }
 

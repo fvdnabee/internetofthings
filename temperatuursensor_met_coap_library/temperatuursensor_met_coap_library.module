@@ -48,8 +48,13 @@ function temperatuursensor_met_coap_library_block_view($delta='') {
 	$block_content .= drupal_render($temp);
 	
 	// Observe form
-	$temp = drupal_get_form('observe_form');
-	$block_content .= drupal_render($temp);
+	if($user->uid){
+		$temp = drupal_get_form('observe_form');
+		$block_content .= drupal_render($temp);
+	}
+	else{
+		$block_content .= '<label>Wegens beschermingsredenen is de observe functionaliteit uitgeschakeld voor anonieme gebruikers. Log in indien u een sensor wenst te observen.</label>';
+	}
 	
 	// Bekijken form
 	$temp = drupal_get_form('bekijken_form');
