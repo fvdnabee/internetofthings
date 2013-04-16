@@ -6,7 +6,7 @@ $(document).ready(function() {
 	setTimeout(function(){drawChart()}, 1000);
 });
 
-Drupal.behaviors.temperatuursensor_udp = {
+Drupal.behaviors.temperatuursensor_met_coap_library = {
   attach: 	function(context) {
 				var refreshId = setInterval(function(){
 					$.ajax({
@@ -61,29 +61,29 @@ function tempReceived(html){
 		var matches = regex.exec(html);
 		if(matches){
 			if(matches[1] == 'unreachable'){
-				if($('#errorimg').attr('src') != 'sites/all/modules/custom/temperatuursensor_udp/images/error.ico'){
-					$('#errorimg').attr('src', 'sites/all/modules/custom/temperatuursensor_udp/images/error.ico');
+				if($('#errorimg').attr('src') != 'sites/all/modules/temperatuursensor_met_coap_library/images/error.ico'){
+					$('#errorimg').attr('src', 'sites/all/modules/temperatuursensor_met_coap_library/images/error.ico');
 				}
 				$('#errorimg').attr('style', 'visibility:visible;width:25px;height:25px;');
-				$('#error').html('De sensor kon niet worden bereikt');
+				$('#error').html('De sensor kon tijdens de laatste poging niet worden bereikt. Probeer later opnieuw.');
 			}
 			else if(matches[1] == 'delay'){
-				if($('#errorimg').attr('src') != 'sites/all/modules/custom/temperatuursensor_udp/images/delay.gif'){
-					$('#errorimg').attr('src', 'sites/all/modules/custom/temperatuursensor_udp/images/delay.gif');
+				if($('#errorimg').attr('src') != 'sites/all/modules/temperatuursensor_met_coap_library/images/delay.gif'){
+					$('#errorimg').attr('src', 'sites/all/modules/temperatuursensor_met_coap_library/images/delay.gif');
 				}
 				$('#errorimg').attr('style', 'visibility:visible;width:25px;height:25px;');
 				$('#error').html('De sensor reageert trager dan normaal');
 			}
 			else if(matches[1] == 'broken'){
-				if($('#errorimg').attr('src') != 'sites/all/modules/custom/temperatuursensor_udp/images/error.ico'){
-					$('#errorimg').attr('src', 'sites/all/modules/custom/temperatuursensor_udp/images/error.ico');
+				if($('#errorimg').attr('src') != 'sites/all/modules/temperatuursensor_met_coap_library/images/error.ico'){
+					$('#errorimg').attr('src', 'sites/all/modules/temperatuursensor_met_coap_library/images/error.ico');
 				}
 				$('#errorimg').attr('style', 'visibility:visible;width:25px;height:25px;');
-				$('#error').html('De sensor reageert niet meer');
+				$('#error').html('De sensor stopte tijdens de laatste poging met reageren. Probeer later opnieuw.');
 			}
 			else if(matches[1] == 'bad_uri'){
-				if($('#errorimg').attr('src') != 'sites/all/modules/custom/temperatuursensor_udp/images/error.ico'){
-					$('#errorimg').attr('src', 'sites/all/modules/custom/temperatuursensor_udp/images/error.ico');
+				if($('#errorimg').attr('src') != 'sites/all/modules/temperatuursensor_met_coap_library/images/error.ico'){
+					$('#errorimg').attr('src', 'sites/all/modules/temperatuursensor_met_coap_library/images/error.ico');
 				}
 				$('#errorimg').attr('style', 'visibility:visible;width:25px;height:25px;');
 				$('#error').html('Er werd een ongeldige URI opgegeven');
@@ -102,29 +102,29 @@ function tempReceived(html){
 			var matches = regex.exec(html);
 			if(matches){
 				if(matches[1] == 'unreachable'){
-					if($('#errorimg').attr('src') != 'sites/all/modules/custom/temperatuursensor_udp/images/error.ico'){
-						$('#errorimg').attr('src', 'sites/all/modules/custom/temperatuursensor_udp/images/error.ico');
+					if($('#errorimg').attr('src') != 'sites/all/modules/temperatuursensor_met_coap_library/images/error.ico'){
+						$('#errorimg').attr('src', 'sites/all/modules/temperatuursensor_met_coap_library/images/error.ico');
 					}
 					$('#errorimg').attr('style', 'visibility:visible;width:25px;height:25px;');
-					$('#error').html('De sensor kon niet worden bereikt');
+					$('#error').html('De sensor kon tijdens de laatste poging niet worden bereikt. Probeer later opnieuw.');
 				}
 				else if(matches[1] == 'delay'){
-					if($('#errorimg').attr('src') != 'sites/all/modules/custom/temperatuursensor_udp/images/delay.gif'){
-						$('#errorimg').attr('src', 'sites/all/modules/custom/temperatuursensor_udp/images/delay.gif');
+					if($('#errorimg').attr('src') != 'sites/all/modules/temperatuursensor_met_coap_library/images/delay.gif'){
+						$('#errorimg').attr('src', 'sites/all/modules/temperatuursensor_met_coap_library/images/delay.gif');
 					}
 					$('#errorimg').attr('style', 'visibility:visible;width:25px;height:25px;');
 					$('#error').html('De sensor reageert trager dan normaal');
 				}
 				else if(matches[1] == 'broken'){
-					if($('#errorimg').attr('src') != 'sites/all/modules/custom/temperatuursensor_udp/images/error.ico'){
-						$('#errorimg').attr('src', 'sites/all/modules/custom/temperatuursensor_udp/images/error.ico');
+					if($('#errorimg').attr('src') != 'sites/all/modules/temperatuursensor_met_coap_library/images/error.ico'){
+						$('#errorimg').attr('src', 'sites/all/modules/temperatuursensor_met_coap_library/images/error.ico');
 					}
 					$('#errorimg').attr('style', 'visibility:visible;width:25px;height:25px;');
-					$('#error').html('De sensor reageert niet meer');
+					$('#error').html('De sensor stopte tijdens de laatste poging met reageren. Probeer later opnieuw.');
 				}
 				else if(matches[1] == 'bad_uri'){
-					if($('#errorimg').attr('src') != 'sites/all/modules/custom/temperatuursensor_udp/images/error.ico'){
-						$('#errorimg').attr('src', 'sites/all/modules/custom/temperatuursensor_udp/images/error.ico');
+					if($('#errorimg').attr('src') != 'sites/all/modules/temperatuursensor_met_coap_library/images/error.ico'){
+						$('#errorimg').attr('src', 'sites/all/modules/temperatuursensor_met_coap_library/images/error.ico');
 					}
 					$('#errorimg').attr('style', 'visibility:visible;width:25px;height:25px;');
 					$('#error').html('Er werd een ongeldige URI opgegeven');

@@ -62,6 +62,7 @@ function totaal_uren_block_view($delta='') {
 	// GRAFIEKDATA
 	$block_content .= "<div id = 'grafiek' >";
 	$block_content .= "<label id = 'melding' >Even wachten terwijl de grafiek geladen wordt...</label>";
+	$block_content .= "<img id = 'waiting' src = '" . drupal_get_path('module', 'totaal_uren') . "/images/waiting.gif' />";
 	$block_content .= "</div>";
 	
 	$block['content'] = $block_content;
@@ -87,8 +88,8 @@ function get_grafiekdata(){
 			$previous_date = date('Y-m-d', strtotime($previous_date . "+1 day"));
 			$block_content .= "<tr><td>" . $previous_date . "</td><td>" . $last_sum_kobe . "</td><td>" . $last_sum_stef . "</td></tr>";
 		}
-		$kobe_query = "SELECT SUM(TIME_TO_SEC(TIMEDIFF(EIND, BEGIN)))/3600 'uren' FROM webform_views_logging_5 where naam = 'Kobe' and datum <= '" . $record->datum . "'";
-		$stef_query = "SELECT SUM(TIME_TO_SEC(TIMEDIFF(EIND, BEGIN)))/3600 'uren' FROM webform_views_logging_5 where naam = 'Stef' and datum <= '" . $record->datum . "'";
+		$kobe_query = "SELECT SUM(TIME_TO_SEC(TIMEDIFF(EIND, BEGIN)))/3600 'uren' FROM webform_views_logging_5 where naam = 'Kobe' and datum = '" . $record->datum . "'";
+		$stef_query = "SELECT SUM(TIME_TO_SEC(TIMEDIFF(EIND, BEGIN)))/3600 'uren' FROM webform_views_logging_5 where naam = 'Stef' and datum = '" . $record->datum . "'";
 		$kobe_result = db_query($kobe_query);
 		$stef_result = db_query($stef_query);
 		$kobe_uren = 0;
@@ -99,9 +100,9 @@ function get_grafiekdata(){
 		foreach($stef_result as $stef_record){
 			$stef_uren += $stef_record->uren;
 		}
-		$last_sum_kobe += $kobe_uren-$last_sum_kobe;
-		$last_sum_stef += $stef_uren-$last_sum_stef;
-		$block_content .= "<tr><td>" . $record->datum . "</td><td>" . $kobe_uren . "</td><td>" . $stef_uren . "</td></tr>";
+		$last_sum_kobe += $kobe_uren;
+		$last_sum_stef += $stef_uren;
+		$block_content .= "<tr><td>" . $record->datum . "</td><td>" . $last_sum_kobe . "</td><td>" . $last_sum_stef . "</td></tr>";
 	}
 	
 	$block_content .= "</tbody></table></div>";
