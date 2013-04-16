@@ -198,32 +198,34 @@ function coap_resource_enable() {
 }
 
 function coap_resource_disable(){
-  $sql = 'SELECT nid FROM {node} n WHERE n.type = :type';
-  $result = db_query($sql, array(':type' => 'coap_resource'));
-  $nids = array();
-  foreach ($result as $row) {
-    $nids[] = $row->nid;
-  }
-  
-  //delete any  variables made by module
-  variable_del('comment_coap_resource');
-  variable_del('node_preview_coap_resource');
-  variable_del('node_submitted_coap_resource');
-  variable_del('node_options_coap_resource');
- 
-  // Delete all the nodes at once
-  node_delete_multiple($nids);
- 
-  $instance = array('field_name' => 'comment_body','bundle' => 'comment_node_coap_resource','entity_type' => 'comment');
-  field_delete_instance($instance);
- 
-  $instance = array('field_name' => 'body','bundle' => 'coap_resource','entity_type' => 'node');
-  field_delete_instance($instance);
-  
-  //deleting content type
-  node_type_delete('coap_resource');
-  node_types_rebuild();
-  
-  // Purge all field information
-   field_purge_batch(1000);
+	$result = db_select('node','nodes')
+				->fields('nodes', array('nid','type'))
+				->condition('type', 'coap_resource', '=')
+				->execute();
+				
+	$nids = array();
+	foreach ($result as $row) {
+		$nids[] = $row->nid;
+	}
+	// Delete all the nodes at once
+	node_delete_multiple($nids);
+	
+	//delete any  variables made by module
+	variable_del('comment_coap_resource');
+	variable_del('node_preview_coap_resource');
+	variable_del('node_submitted_coap_resource');
+	variable_del('node_options_coap_resource');	
+	
+	$instance = array('field_name' => 'comment_body','bundle' => 'comment_node_coap_resource','entity_type' => 'comment');
+	field_delete_instance($instance);
+	
+	$instance = array('field_name' => 'body','bundle' => 'coap_resource','entity_type' => 'node');
+	field_delete_instance($instance);
+	
+	//deleting content type
+	node_type_delete('coap_resource');
+	node_types_rebuild();
+	
+	// Purge all field information
+	field_purge_batch(1000);
 }

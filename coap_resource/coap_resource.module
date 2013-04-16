@@ -18,7 +18,7 @@ function coap_resource_menu() {
 	$items['node/%coap_resource_menu/view/resources'] = array(
 		'title' => 'Resources',    
 		'access callback' => TRUE,
-		'weight' => 4,
+		'weight' => 2,
 		'type' => MENU_DEFAULT_LOCAL_TASK,
 	);
 	
@@ -27,7 +27,7 @@ function coap_resource_menu() {
 		'page callback' => 'drupal_get_form',
 		'page arguments' => array('coap_discovery_form'),
 		'access callback' => TRUE,
-		'weight' => 8,
+		'weight' => 4,
 		'type' => MENU_LOCAL_TASK,
 	);
 
@@ -56,14 +56,14 @@ function coap_resource_menu_load($nid) {
 //Act on a node that is being assembled before rendering.
 function coap_resource_node_view($node, $view_mode, $langcode) {
 	if($node->type == 'coap_resource'){
-		$node->content['coap_discovery_form'] = drupal_get_form('coap_resource_form', $node);
+		$node->content['coap_resource_form'] = drupal_get_form('coap_resource_form', $node);
 	}
 	return $node;
 }
 
 function coap_resource_form($form, &$form_state) {
 	drupal_add_js('https://www.google.com/jsapi'); // JavaScript bestand toevoegen
-	drupal_add_js(drupal_get_path('module', 'coap_resource') . '/js/coap_resource.js'); // JavaScript bestand toevoegen
+	drupal_add_js(drupal_get_path('module', 'coap_resource') . '/js/coap_resource.js'); // JavaScript bestand toevoegen	
 	
 	global $user;
 	
@@ -73,15 +73,74 @@ function coap_resource_form($form, &$form_state) {
 	$form = array_merge_recursive($form, get_request_form($form, $form_state));
 	$form = array_merge_recursive($form, put_request_form($form, $form_state));
 	$form = array_merge_recursive($form, post_request_form($form, $form_state));
-	$form = array_merge_recursive($form, delete_request_form($form, $form_state));
+	$form = array_merge_recursive($form, delete_request_form($form, $form_state));	
 	
+	// Te bekijken URI ophalen
+	$query = db_select('coap_resource_users', 'users');
+	$query
+		->fields('users', array('uid', 'uri', 'watch'))
+		->condition('uid', $user->uid, '=')
+		->condition('watch', 1, '=');
+	$result = $query->execute();
+	$empty = TRUE;
+	foreach($result as $record){
+		$empty = FALSE;
+		$uri = $record->uri;
+	}
+	
+	$prefix = "<div><label id = 'response' >Response: </label></div>";
+	$prefix .= "<div><label id = 'response_type' >Response type: </label></div>";
+	$prefix .= "<img style = 'visibility:hidden;' src = '' id = 'errorimg' /><label id='error' ></label>"; // elementen om fouten te tonen
+	
+	if(!$empty){
+		// Tabel met geschiedenis van opvragingen(5 laatste)
+		$query = db_select('coap_resource_values', 'coap_values');
+		$query
+			->fields('coap_values', array('hid', 'parsed_value', 'max_age', 'timestamp', 'uri', 'uid'))
+			->condition('uri', $uri, '=')
+			->condition('uid', $user->uid, '=')
+			->orderBy('hid', 'DESC')
+			->range(0,5);
+		$result = $query->execute();
+		$prefix .= "<table id='historytable' ><tr><th>Hid</th><th>Value</th><th>Max age</th><th>Timestamp</th></tr>";
+		$nr = 1;
+		foreach ($result as $record){ // voegt telkens een rij toe aan de tabel, waarbij de elementen een id met een rij-nr erna krijgen
+			$value = $record->parsed_value;
+			$hid = $record->hid;
+			$max_age = $record->max_age;
+			$timestamp = $record->timestamp;
+			$prefix .= "<tr><td id='hid" . $nr . "' >" . $hid . "</td><td id='temperatuur" . $nr . "' >" . $value . "</td><td id='max_age" . $nr . "' >" . $max_age . "</td><td id='timestamp" . $nr . "' >" . $timestamp . "</td></tr>";
+			$nr++;
+		}
+		while($nr <= 5){ // voegt telkens een rij toe aan de tabel, waarbij de elementen een id met een rij-nr erna krijgen
+			$prefix .= "<tr><td id='hid" . $nr . "' >/</td><td id='temperatuur" . $nr . "' > </td><td id='max_age" . $nr . "' > </td><td id='timestamp" . $nr . "' > </td></tr>";
+			$nr++;
+		}
+		$prefix .= "</table>";
+		
+		$prefix .= "<div id = 'grafiek' ></div>"; // Grafiek
+	}
+	
+	
+	$form['values_container'] = array(
+		'#type' => 'container',
+		'#prefix' => $prefix,
+		'#attributes' => array(
+			'class' => array('class-name'),
+		),
+	);
+	
+	$form['title'] = array (
+		'#value' => t('Resource Form'),
+	);
 	
 	//$device_uri = $_SESSION['device_uri'];
 	//$link = $form_state['values']['link'];
 	
-	//dpm($device_uri);
-	//dpm($link);
+	////dpm($device_uri);
+	////dpm($link);
 	
+	//dpm($form);
 	return $form;
 }
 
@@ -221,6 +280,7 @@ function bekijken_form($form_in, &$form_state) {
 	if($result->rowCount() > 0){
 		$options = array();
 		foreach ($result as $record){
+			//dpm($record->uri);
 			$options[$record->uri] = $record->uri;
 			if($record->watch == 1){
 				$uri = $record->uri;
@@ -238,9 +298,10 @@ function bekijken_form($form_in, &$form_state) {
 	$form['bekijken']['submit'] = array (
 		'#type' => 'submit',
 		'#value' => t("Bekijken"),
+		'#submit' => array('bekijken_form_submit'),
 		);
-		
-	$form['#action'] = '';
+	
+	//dpm($form);
 	return $form;
 }
 
@@ -286,10 +347,11 @@ function get_request_form($form_in, &$form_state) {
 	// Submit-knop
 	$form['wx_info']['temperatuur_udp_url_submit'] = array (
 		'#type' => 'submit',
+		'#submit' => array('get_request_form_submit'),
 		'#value' => t('GET'),
 		);
 		
-	$form['#action'] = '';
+	//dpm($form);
 	return $form;
 }
 
@@ -326,10 +388,11 @@ function put_request_form($form_in, &$form_state) {
 	// Submit-knop
 	$form['wx_info']['put_request_submit'] = array (
 		'#type' => 'submit',
+		'#submit' => array('put_request_form_submit'),
 		'#value' => t('PUT'),
 		);
-		
-	$form['#action'] = '';
+	
+	//dpm($form);
 	return $form;
 }
 
@@ -366,10 +429,11 @@ function post_request_form($form_in, &$form_state) {
 	// Submit-knop
 	$form['wx_info']['post_request_submit'] = array (
 		'#type' => 'submit',
+		'#submit' => array('post_request_form_submit'),
 		'#value' => t('POST'),
 		);
 		
-	$form['#action'] = '';
+	//dpm($form);
 	return $form;
 }
 
@@ -399,10 +463,11 @@ function delete_request_form($form_in, &$form_state) {
 	// Submit-knop
 	$form['wx_info']['delete_request_submit'] = array (
 		'#type' => 'submit',
+		'#submit' => array('delete_request_form_submit'),
 		'#value' => t('DELETE'),
 		);
-		
-	$form['#action'] = '';
+	
+	//dpm($form);	
 	return $form;
 }
 
@@ -436,21 +501,24 @@ function uri_form($form_in, &$form_state) {
 	);
 	variable_del('bad_uri');
 	
+	
+	
+	
 	// Invoer textbox voor URI
 	$form['uri']['invoer'] = array(
 		'#type' => 'textfield',
 		'#title' => 'Geef een URI',
-		'#default_value' => '',
+		'#default_value' => '',		
 	);
 	
 	// Submit-knop
 	$form['uri']['submit'] = array (
 		'#type' => 'submit',
 		'#value' => t('Invoeren'),
+		'#submit' => array('uri_form_submit'),
 	);
 		
-	$form['#action'] = '';
-	
+	//dpm($form);
 	return $form;
 }
 
@@ -460,7 +528,7 @@ function uri_form($form_in, &$form_state) {
  */
 function uri_form_submit($form, $form_state) {
 	global $user;
-	
+	//dpm($form_state);
 	$pattern = '/([^\/]+)\/(.*)/i';
 	if(preg_match($pattern, $form_state['values']['invoer'], $matches)){
 		$query = db_select('coap_resource_resources', 'resources');
@@ -536,10 +604,10 @@ function observe_form($form_in, &$form_state) {
 	// Submit-knop
 	$form['observe']['temperatuur_udp_url_submit'] = array (
 		'#type' => 'submit',
+		'#submit' => array('observe_form_submit'),
 		'#value' => t('Observe'),
 		);
-		
-	$form['#action'] = '';
+	//dpm($form);	
 	return $form;
 }
 
