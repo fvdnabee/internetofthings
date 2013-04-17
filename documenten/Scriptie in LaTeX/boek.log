@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2013.4.11)  16 APR 2013 12:00
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.4.6)  17 APR 2013 15:14
 entering extended mode
 **boek.tex
 
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\boek.tex"
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\boek.te
+x"
 LaTeX2e <2011/06/27>
 Babel <v3.8m> and hyphenation patterns for english, afrikaans, ancientgreek, ar
 abic, armenian, assamese, basque, bengali, bokmal, bulgarian, catalan, coptic, 
@@ -64,6 +64,9 @@ Package: nomencl 2005/09/22 v4.2 Nomenclature package (LN)
 \nom@tempdim=\dimen105
 \nomitemsep=\skip43
 )
+\@nomenclaturefile=\write3
+
+Writing nomenclature file boek.nlo
 ("C:\Program Files\MiKTeX 2.9\tex\latex\wrapfig\wrapfig.sty"
 \wrapoverhang=\dimen106
 \WF@size=\dimen107
@@ -72,11 +75,13 @@ Package: nomencl 2005/09/22 v4.2 Nomenclature package (LN)
 \WF@everypar=\toks14
 Package: wrapfig 2003/01/31  v 3.6
 )
-\@nomenclaturefile=\write3
-
-Writing nomenclature file boek.nlo
 \@indexfile=\write4
+
 Writing index file boek.idx
+("C:\Program Files\MiKTeX 2.9\tex\latex\eurosym\eurosym.sty"
+Package: eurosym 1998/08/06 v1.1 European currency symbol ``Euro''
+\@eurobox=\box27
+)
 ("C:\Program Files\MiKTeX 2.9\tex\latex\caption\caption.sty"
 Package: caption 2013/02/03 v3.3-65 Customizing captions (AR)
 
@@ -144,59 +149,58 @@ Package: ltxcmds 2011/11/09 v1.22 LaTeX kernel commands for general use (HO)
 )
 
 Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
-less on input line 49.
+less on input line 48.
 
 
 Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
-less on input line 51.
+less on input line 50.
 
 
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\boek.aux"
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\titel.aux")
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\titel.aux")
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\voorwoord.aux")
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\overzicht.aux")
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\afkortingen.aux")
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\Inleiding.aux")
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\Drupal.aux")
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\CoAP.aux")
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\CoAPLibraryModule.aux")
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\CoAPResourceModule.aux")
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\Arduino.aux")
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\referenties.aux"))
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 71.
-LaTeX Font Info:    ... okay on input line 71.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 71.
-LaTeX Font Info:    ... okay on input line 71.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 71.
-LaTeX Font Info:    ... okay on input line 71.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 71.
-LaTeX Font Info:    ... okay on input line 71.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 71.
-LaTeX Font Info:    ... okay on input line 71.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 71.
-LaTeX Font Info:    ... okay on input line 71.
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\boek.au
+x"
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\titel.a
+ux")
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\titel.a
+ux")
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\voorwoo
+rd.aux")
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\overzic
+ht.aux")
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\afkorti
+ngen.aux")
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\Inleidi
+ng.aux")
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\Drupal.
+aux")
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\CoAP.au
+x")
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\CoAPLib
+raryModule.aux")
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\CoAPRes
+ourceModule.aux")
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\Arduino
+.aux")
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\referen
+ties.aux"))
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 70.
+LaTeX Font Info:    ... okay on input line 70.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 70.
+LaTeX Font Info:    ... okay on input line 70.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 70.
+LaTeX Font Info:    ... okay on input line 70.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 70.
+LaTeX Font Info:    ... okay on input line 70.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 70.
+LaTeX Font Info:    ... okay on input line 70.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 70.
+LaTeX Font Info:    ... okay on input line 70.
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: End \AtBeginDocument code.
-
-("C:\Program Files\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
+ ("C:\Program Files\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count94
 \scratchdimen=\dimen117
-\scratchbox=\box27
+\scratchbox=\box28
 \nofMPsegments=\count95
 \nofMParguments=\count96
 \everyMPshowfont=\toks16
@@ -206,26 +210,25 @@ Package caption Info: End \AtBeginDocument code.
 \makeMPintoPDFobject=\count99
 \everyMPtoPDFconversion=\toks17
 )
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\titel.tex" <fig/hogentLogo.jpg, id=1, 702.625pt x 281.05pt>
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\titel.t
+ex" <fig/hogentLogo.jpg, id=1, 702.625pt x 281.05pt>
 File: fig/hogentLogo.jpg Graphic file (type jpg)
-
-<use fig/hogentLogo.jpg>
+ <use fig/hogentLogo.jpg>
 Package pdftex.def Info: fig/hogentLogo.jpg used on input line 24.
 (pdftex.def)             Requested size: 284.5294pt x 113.81102pt.
 Missing character: There is no Ã in font cmr12!
 Missing character: There is no « in font cmr12!
- [1
+
+[1
 
 
 
-{C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map} <C:/Program Files/wamp/www
-/drupal-7.19/sites/all/modules/custom/documenten/Scriptie in LaTeX/fig/hogentLo
-go.jpg>]) [1
+{C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map} <C:/xampp/htdocs/sites/all
+/modules/custom/documenten/Scriptie in LaTeX/fig/hogentLogo.jpg>]) [1
 
 ]
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\titel.tex"
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\titel.t
+ex"
 File: fig/hogentLogo.jpg Graphic file (type jpg)
  <use fig/hogentLogo.jpg>
 Package pdftex.def Info: fig/hogentLogo.jpg used on input line 24.
@@ -236,18 +239,18 @@ Missing character: There is no « in font cmr12!
 
 
 ])
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\voorwoord.tex" [1
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\voorwoo
+rd.tex" [1
 
 
 ]) [2]
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\overzicht.tex" [3
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\overzic
+ht.tex" [3
 
 
 ])
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\boek.toc"
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\boek.to
+c"
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <10.95> on input line 5.
 LaTeX Font Info:    External font `cmex10' loaded for size
@@ -257,11 +260,11 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 
 
 Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
-less on input line 57.
+less on input line 56.
 
 
 Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
-less on input line 57.
+less on input line 56.
 
 [1
 
@@ -270,10 +273,10 @@ less on input line 57.
 ])
 \tf@toc=\write5
  [2]
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\afkortingen.tex"
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\boek.nls"
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\afkorti
+ngen.tex"
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\boek.nl
+s"
 
 Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
 less on input line 40.
@@ -286,8 +289,8 @@ less on input line 40.
 
 
 ]) [4])
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\Inleiding.tex"
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\Inleidi
+ng.tex"
 Hoofdstuk 1.
 
 Underfull \hbox (badness 10000) in paragraph at lines 3--5
@@ -320,29 +323,29 @@ less on input line 20.
 
 
 
- <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/documenten/Scr
-iptie in LaTeX/fig/InternetOfThings.png>]
+ <C:/xampp/htdocs/sites/all/modules/custom/documenten/Scriptie in LaTeX/fig/Int
+ernetOfThings.png>]
 Missing character: There is no â in font cmr10!
 Missing character: There is no € in font cmr10!
 Missing character: There is no ¦ in font cmr10!
 
-Underfull \hbox (badness 10000) in paragraph at lines 24--25
+Underfull \hbox (badness 10000) in paragraph at lines 23--24
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 26--27
+Underfull \hbox (badness 10000) in paragraph at lines 25--26
 
  []
 
 [2]
-Underfull \hbox (badness 10000) in paragraph at lines 29--31
+Underfull \hbox (badness 10000) in paragraph at lines 28--30
 
  []
 
 [3]) [4] [5]
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\Drupal.tex"
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\Drupal.
+tex"
 Hoofdstuk 2.
 <fig/drupalLogo.png, id=58, 262.73157pt x 301.125pt>
 File: fig/drupalLogo.png Graphic file (type png)
@@ -362,9 +365,8 @@ less on input line 32.
 
 
 
- <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/documenten/Scr
-iptie in LaTeX/fig/drupalLogo.png>]
-<fig/watIsDrupal.png, id=62, 569.12625pt x 456.95718pt>
+ <C:/xampp/htdocs/sites/all/modules/custom/documenten/Scriptie in LaTeX/fig/dru
+palLogo.png>] <fig/watIsDrupal.png, id=62, 569.12625pt x 456.95718pt>
 File: fig/watIsDrupal.png Graphic file (type png)
 
 <use fig/watIsDrupal.png>
@@ -382,10 +384,9 @@ File: fig/drupalBasiswebsite.png Graphic file (type png)
 <use fig/drupalBasiswebsite.png>
 Package pdftex.def Info: fig/drupalBasiswebsite.png used on input line 55.
 (pdftex.def)             Requested size: 455.24408pt x 215.86412pt.
- [7 <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/documenten/
-Scriptie in LaTeX/fig/watIsDrupal.png>]
-[8 <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/documenten/S
-criptie in LaTeX/fig/drupalBasiswebsite.png>]
+ [7 <C:/xampp/htdocs/sites/all/modules/custom/documenten/Scriptie in LaTeX/fig/
+watIsDrupal.png>] [8 <C:/xampp/htdocs/sites/all/modules/custom/documenten/Scrip
+tie in LaTeX/fig/drupalBasiswebsite.png>]
 Underfull \hbox (badness 10000) in paragraph at lines 79--80
 
  []
@@ -395,33 +396,65 @@ Underfull \hbox (badness 10000) in paragraph at lines 81--82
 
  []
 
-[9] [10]
-Overfull \hbox (0.14467pt too wide) in paragraph at lines 128--129
+[9] <fig/drupalGrafischeWeergave.png, id=75, 441.14813pt x 142.28156pt>
+File: fig/drupalGrafischeWeergave.png Graphic file (type png)
+
+<use fig/drupalGrafischeWeergave.png>
+Package pdftex.def Info: fig/drupalGrafischeWeergave.png used on input line 100
+.
+(pdftex.def)             Requested size: 441.14705pt x 142.2812pt.
+ [10 <C:/xampp/htdocs/sites/all/modules/custom/documenten/Scriptie in LaTeX/fig
+/drupalGrafischeWeergave.png>]
+<fig/drupalOrganizeModules.png, id=80, 1028.34187pt x 431.36156pt>
+File: fig/drupalOrganizeModules.png Graphic file (type png)
+
+<use fig/drupalOrganizeModules.png>
+Package pdftex.def Info: fig/drupalOrganizeModules.png used on input line 137.
+(pdftex.def)             Requested size: 455.24408pt x 190.96469pt.
+ [11]
+<fig/drupalHookExample.png, id=84, 834.86906pt x 142.28156pt>
+File: fig/drupalHookExample.png Graphic file (type png)
+
+<use fig/drupalHookExample.png>
+Package pdftex.def Info: fig/drupalHookExample.png used on input line 151.
+(pdftex.def)             Requested size: 455.24408pt x 77.58641pt.
+
+Overfull \hbox (0.14467pt too wide) in paragraph at lines 149--155
 \OT1/cmr/m/n/10.95 Hooks zijn func-ties die ge-de-fi-ni-eerd zijn door de Dru-p
 al core. Ze kun-nen wor-den ge[]mplementeerd
  []
 
-[11] [12] [13] <fig/weermodule.png, id=87, 138.5175pt x 306.39468pt>
-File: fig/weermodule.png Graphic file (type png)
 
-<use fig/weermodule.png>
-Package pdftex.def Info: fig/weermodule.png used on input line 168.
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[12 <C:/xampp/htdocs/sites/all/modules/custom/documenten/Scriptie in LaTeX/fig/
+drupalOrganizeModules.png>]
+
+LaTeX Warning: Reference `fig:drupalPageRendering' on page 13 undefined on inpu
+t line 160.
+
+[13 <C:/xampp/htdocs/sites/all/modules/custom/documenten/Scriptie in LaTeX/fig/
+drupalHookExample.png>] [14]
+<fig/weermodule.png, id=94, 138.5175pt x 306.39468pt>
+File: fig/weermodule.png Graphic file (type png)
+ <use fig/weermodule.png>
+Package pdftex.def Info: fig/weermodule.png used on input line 194.
 (pdftex.def)             Requested size: 136.5746pt x 302.09741pt.
 
-Overfull \hbox (22.76358pt too wide) in paragraph at lines 166--172
+Overfull \hbox (22.76358pt too wide) in paragraph at lines 192--198
  [] 
  []
 
-[14 <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/documenten/
-Scriptie in LaTeX/fig/weermodule.png>])
-Overfull \hbox (2.73715pt too wide) in paragraph at lines 216--115
+[15 <C:/xampp/htdocs/sites/all/modules/custom/documenten/Scriptie in LaTeX/fig/
+weermodule.png>])
+Overfull \hbox (2.73715pt too wide) in paragraph at lines 242--114
 []\OT1/cmr/m/n/10.95 Bron: http://stackoverflow.com/questions/12683530/origin-h
 ttp-localhost-is-not-allowed-by-
  []
 
-[15]
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\CoAP.tex"
+[16]
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\CoAP.te
+x"
 Hoofdstuk 3.
 
 Underfull \hbox (badness 10000) in paragraph at lines 7--8
@@ -441,18 +474,18 @@ less on input line 11.
 Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
 less on input line 11.
 
-[16
+[17
 
 
 
-] <fig/CoAPLaag.png, id=98, 299.61937pt x 194.97844pt>
+] <fig/CoAPLaag.png, id=105, 299.61937pt x 194.97844pt>
 File: fig/CoAPLaag.png Graphic file (type png)
 
 <use fig/CoAPLaag.png>
 Package pdftex.def Info: fig/CoAPLaag.png used on input line 14.
 (pdftex.def)             Requested size: 227.62204pt x 148.12862pt.
 
-<fig/CoAPMessageFormat.png, id=99, 428.35031pt x 142.28156pt>
+<fig/CoAPMessageFormat.png, id=106, 428.35031pt x 142.28156pt>
 File: fig/CoAPMessageFormat.png Graphic file (type png)
 
 <use fig/CoAPMessageFormat.png>
@@ -468,18 +501,18 @@ Underfull \hbox (badness 10000) in paragraph at lines 35--36
 
  []
 
-[17 <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/documenten/
-Scriptie in LaTeX/fig/CoAPLaag.png> <C:/Program Files/wamp/www/drupal-7.19/site
-s/all/modules/custom/documenten/Scriptie in LaTeX/fig/CoAPMessageFormat.png>]
-[18] <fig/CoAPOpties.png, id=106, 322.20375pt x 280.79906pt>
+[18 <C:/xampp/htdocs/sites/all/modules/custom/documenten/Scriptie in LaTeX/fig/
+CoAPLaag.png> <C:/xampp/htdocs/sites/all/modules/custom/documenten/Scriptie in 
+LaTeX/fig/CoAPMessageFormat.png>] [19]
+<fig/CoAPOpties.png, id=113, 322.20375pt x 280.79906pt>
 File: fig/CoAPOpties.png Graphic file (type png)
 
 <use fig/CoAPOpties.png>
 Package pdftex.def Info: fig/CoAPOpties.png used on input line 70.
 (pdftex.def)             Requested size: 273.14922pt x 238.05905pt.
- [19 <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/documenten
-/Scriptie in LaTeX/fig/CoAPOpties.png>]
-<fig/HTTPRequestMessageFormat.jpeg, id=110, 572.89032pt x 338.76563pt>
+ [20 <C:/xampp/htdocs/sites/all/modules/custom/documenten/Scriptie in LaTeX/fig
+/CoAPOpties.png>]
+<fig/HTTPRequestMessageFormat.jpeg, id=117, 572.89032pt x 338.76563pt>
 File: fig/HTTPRequestMessageFormat.jpeg Graphic file (type jpg)
 
 <use fig/HTTPRequestMessageFormat.jpeg>
@@ -487,18 +520,17 @@ Package pdftex.def Info: fig/HTTPRequestMessageFormat.jpeg used on input line 9
 1.
 (pdftex.def)             Requested size: 204.85844pt x 121.1388pt.
 
-<fig/HTTPResponseMessageFormat.jpeg, id=111, 763.85374pt x 451.6875pt>
+<fig/HTTPResponseMessageFormat.jpeg, id=118, 763.85374pt x 451.6875pt>
 File: fig/HTTPResponseMessageFormat.jpeg Graphic file (type jpg)
 
 <use fig/HTTPResponseMessageFormat.jpeg>
 Package pdftex.def Info: fig/HTTPResponseMessageFormat.jpeg used on input line 
 93.
 (pdftex.def)             Requested size: 204.85844pt x 121.13707pt.
- [20 <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/documenten
-/Scriptie in LaTeX/fig/HTTPRequestMessageFormat.jpeg> <C:/Program Files/wamp/ww
-w/drupal-7.19/sites/all/modules/custom/documenten/Scriptie in LaTeX/fig/HTTPRes
-ponseMessageFormat.jpeg (PNG copy)>]
-<fig/CoAPConfirmable.png, id=115, 241.65282pt x 148.30406pt>
+ [21 <C:/xampp/htdocs/sites/all/modules/custom/documenten/Scriptie in LaTeX/fig
+/HTTPRequestMessageFormat.jpeg> <C:/xampp/htdocs/sites/all/modules/custom/docum
+enten/Scriptie in LaTeX/fig/HTTPResponseMessageFormat.jpeg (PNG copy)>]
+<fig/CoAPConfirmable.png, id=123, 241.65282pt x 148.30406pt>
 File: fig/CoAPConfirmable.png Graphic file (type png)
 
 <use fig/CoAPConfirmable.png>
@@ -514,7 +546,7 @@ Underfull \hbox (badness 7362) in paragraph at lines 113--113
 \OT1/cmr/m/it/10 be-richt-ui-wis-se-ling (CoAP 14
  []
 
-<fig/CoAPNonConfirmable.png, id=116, 243.91125pt x 94.85437pt>
+<fig/CoAPNonConfirmable.png, id=124, 243.91125pt x 94.85437pt>
 File: fig/CoAPNonConfirmable.png Graphic file (type png)
 
 <use fig/CoAPNonConfirmable.png>
@@ -530,16 +562,16 @@ Underfull \hbox (badness 7362) in paragraph at lines 124--124
 \OT1/cmr/m/it/10 be-richt-ui-wis-se-ling (CoAP 14
  []
 
-[21 <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/documenten/
-Scriptie in LaTeX/fig/CoAPConfirmable.png>]
-<fig/CoAPPiggyBacked.png, id=121, 547.2947pt x 233.37187pt>
+[22 <C:/xampp/htdocs/sites/all/modules/custom/documenten/Scriptie in LaTeX/fig/
+CoAPConfirmable.png>]
+<fig/CoAPPiggyBacked.png, id=128, 547.2947pt x 233.37187pt>
 File: fig/CoAPPiggyBacked.png Graphic file (type png)
 
 <use fig/CoAPPiggyBacked.png>
 Package pdftex.def Info: fig/CoAPPiggyBacked.png used on input line 138.
 (pdftex.def)             Requested size: 318.66946pt x 135.88635pt.
 
-<fig/CoAPSeperateResponse.png, id=122, 252.19218pt x 354.57469pt>
+<fig/CoAPSeperateResponse.png, id=129, 252.19218pt x 354.57469pt>
 File: fig/CoAPSeperateResponse.png Graphic file (type png)
 
 <use fig/CoAPSeperateResponse.png>
@@ -550,13 +582,12 @@ Underfull \hbox (badness 2401) in paragraph at lines 151--151
 []\OT1/cmr/bx/n/10 Figuur 3.8: |\OT1/cmr/m/it/10 GET re-quest
  []
 
-[22 <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/documenten/
-Scriptie in LaTeX/fig/CoAPNonConfirmable.png> <C:/Program Files/wamp/www/drupal
--7.19/sites/all/modules/custom/documenten/Scriptie in LaTeX/fig/CoAPPiggyBacked
-.png> <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/documente
-n/Scriptie in LaTeX/fig/CoAPSeperateResponse.png>]) [23]
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\CoAPLibraryModule.tex"
+[23 <C:/xampp/htdocs/sites/all/modules/custom/documenten/Scriptie in LaTeX/fig/
+CoAPNonConfirmable.png> <C:/xampp/htdocs/sites/all/modules/custom/documenten/Sc
+riptie in LaTeX/fig/CoAPPiggyBacked.png> <C:/xampp/htdocs/sites/all/modules/cus
+tom/documenten/Scriptie in LaTeX/fig/CoAPSeperateResponse.png>]) [24]
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\CoAPLib
+raryModule.tex"
 Hoofdstuk 4.
 
 Underfull \hbox (badness 10000) in paragraph at lines 7--8
@@ -575,16 +606,16 @@ less on input line 10.
 Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
 less on input line 10.
 
-[24
+[25
 
 
 
-] [25] [26] [27] [28] [29]
+] [26] [27] [28] [29] [30]
 Missing character: There is no Ã in font cmr10!
 Missing character: There is no ¯ in font cmr10!
- [30]) [31]
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\CoAPResourceModule.tex"
+ [31]) [32]
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\CoAPRes
+ourceModule.tex"
 Hoofdstuk 5.
 
 Underfull \hbox (badness 10000) in paragraph at lines 9--10
@@ -599,7 +630,7 @@ less on input line 11.
 Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
 less on input line 11.
 
-[32
+[33
 
 
 
@@ -623,7 +654,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 30--31
 
  []
 
-[33]
+[34]
 Missing character: There is no é in font cmr10!
 Missing character: There is no é in font cmr10!
 
@@ -631,8 +662,8 @@ Underfull \hbox (badness 10000) in paragraph at lines 60--61
 
  []
 
-[34]
-<fig/TemperatuurModuleHTTPCOAPProxy.png, id=164, 455.45157pt x 259.7203pt>
+[35]
+<fig/TemperatuurModuleHTTPCOAPProxy.png, id=171, 455.45157pt x 259.7203pt>
 File: fig/TemperatuurModuleHTTPCOAPProxy.png Graphic file (type png)
 
 <use fig/TemperatuurModuleHTTPCOAPProxy.png>
@@ -649,8 +680,8 @@ Underfull \hbox (badness 10000) in paragraph at lines 80--81
 
  []
 
-[35 <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/documenten/
-Scriptie in LaTeX/fig/TemperatuurModuleHTTPCOAPProxy.png>]
+[36 <C:/xampp/htdocs/sites/all/modules/custom/documenten/Scriptie in LaTeX/fig/
+TemperatuurModuleHTTPCOAPProxy.png>]
 Underfull \hbox (badness 10000) in paragraph at lines 82--83
 
  []
@@ -670,7 +701,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 92--93
 
  []
 
-[36]
+[37]
 Missing character: There is no é in font cmr10!
 Missing character: There is no é in font cmr10!
 Missing character: There is no é in font cmr10!
@@ -705,7 +736,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 109--110
 
  []
 
-[37]
+[38]
 Underfull \hbox (badness 10000) in paragraph at lines 115--116
 
  []
@@ -725,26 +756,26 @@ Underfull \hbox (badness 10000) in paragraph at lines 121--123
 
  []
 
-[38]) [39]
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\Arduino.tex"
+[39]) [40]
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\Arduino
+.tex"
 Hoofdstuk 6.
 )
 
 Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
-less on input line 119.
+less on input line 118.
 
 
 Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
-less on input line 119.
+less on input line 118.
 
-[40
+[41
 
 
 
 ]
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\referenties.tex"
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\referen
+ties.tex"
 Missing character: There is no Ã in font cmr10!
 Missing character: There is no § in font cmr10!
 Missing character: There is no Ã in font cmr10!
@@ -754,94 +785,99 @@ Missing character: There is no © in font cmr10!
 )
 
 Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
-less on input line 127.
+less on input line 126.
 
 
 Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
-less on input line 127.
-
-[41
-
-
-
-]
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\boek.lof")
-\tf@lof=\write6
-
-
-Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
-less on input line 133.
-
-
-Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
-less on input line 133.
+less on input line 126.
 
 [42
 
 
 
 ]
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\boek.lot")
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\boek.lo
+f")
+\tf@lof=\write6
+
+
+Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
+less on input line 132.
+
+
+Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
+less on input line 132.
+
+[43
+
+
+
+]
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\boek.lo
+t")
 \tf@lot=\write7
 
 
 Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
-less on input line 139.
+less on input line 138.
 
 
 Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
-less on input line 139.
+less on input line 138.
 
-[43
+[44
 
 ]
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\boek.aux"
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\titel.aux")
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\titel.aux")
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\voorwoord.aux")
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\overzicht.aux")
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\afkortingen.aux")
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\Inleiding.aux")
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\Drupal.aux")
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\CoAP.aux")
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\CoAPLibraryModule.aux")
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\CoAPResourceModule.aux")
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\Arduino.aux")
-("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\referenties.aux")) ) 
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\boek.au
+x"
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\titel.a
+ux")
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\titel.a
+ux")
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\voorwoo
+rd.aux")
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\overzic
+ht.aux")
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\afkorti
+ngen.aux")
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\Inleidi
+ng.aux")
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\Drupal.
+aux")
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\CoAP.au
+x")
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\CoAPLib
+raryModule.aux")
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\CoAPRes
+ourceModule.aux")
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\Arduino
+.aux")
+("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\referen
+ties.aux"))
+
+LaTeX Warning: There were undefined references.
+
+ ) 
 Here is how much of TeX's memory you used:
- 3107 strings out of 494045
- 54144 string characters out of 3148390
- 101045 words of memory out of 3000000
- 6281 multiletter control sequences out of 15000+200000
- 11430 words of font info for 39 fonts, out of 3000000 for 9000
+ 3187 strings out of 494045
+ 53684 string characters out of 3148391
+ 101389 words of memory out of 3000000
+ 6353 multiletter control sequences out of 15000+200000
+ 11547 words of font info for 40 fonts, out of 3000000 for 9000
  717 hyphenation exceptions out of 8191
  36i,11n,47p,1490b,427s stack positions out of 5000i,500n,10000p,200000b,50000s
-<C:/Program Files/MiKTeX 2.9/fonts/type1/pub
-lic/amsfonts/cm/cmbx10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsf
-onts/cm/cmbx12.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/
-cmr10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr12.pfb
-><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmss10.pfb><C:/Pro
-gram Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmssi10.pfb><C:/Program Fi
-les/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files/MiKT
-eX 2.9/fonts/type1/public/amsfonts/cm/cmti10.pfb>
-Output written on boek.pdf (53 pages, 559988 bytes).
+<C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Pr
+ogram Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Program Fi
+les/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Program Files/MiKTe
+X 2.9/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Program Files/MiKTeX 2.9/fon
+ts/type1/public/amsfonts/cm/cmss10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1
+/public/amsfonts/cm/cmssi10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public
+/amsfonts/cm/cmsy10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfont
+s/cm/cmti10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/eurosym/feymr10
+.pfb>
+Output written on boek.pdf (54 pages, 615737 bytes).
 PDF statistics:
- 221 PDF objects out of 1000 (max. 8388607)
+ 231 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 81 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 96 words of extra memory for PDF output out of 10000 (max. 10000000)
 
