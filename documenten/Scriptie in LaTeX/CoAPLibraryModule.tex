@@ -8,7 +8,7 @@ Wanneer we trachtten CoAP berichten op te stellen en te versturen en ontvangen i
 
 Met het nut bewezen, bekijken we even wat een gebruiker van deze library moet kunnen verwachten. Ze moet de gebruiker in staat stellen dynamisch berichten op te stellen, volledig naar eigen wens. Dit wil zeggen dat de verzameling operaties om een bericht op te stellen, alle mogelijke berichten moet kunnen genereren. Dit heeft als gevolg dat elke elementaire operatie moet kunnen worden uitgevoerd op een bericht, opstellen van bijvoorbeeld een bepaald bericht aan de hand van slechts één functie is niet prioritair en dus bijkomstig. Het is uiterst belangrijk bij het ontwerp van deze library dat de gebruiker zich niet meer moet bekommeren om hexadecimale code die nodig is in een bericht, alle generatie van hexadecimale code zit vervat in de CoAP library module. We besluiten dat de library een gebruiker in staat moet stellen dynamisch en gebruiksvriendelijk berichten op te stellen, en dit met een minimum aan code.
 
-\subsection{Essenti\"{e}le, te ondersteunen functies}
+\subsection{Essenti\"{e}le, te ondersteunen functies} \label{essentielefuncties}
 
 We sommen enkele van de eerder vermelde elementaire functies op, deze opsomming is allesbehalve limitatief:
 
@@ -19,7 +19,7 @@ We sommen enkele van de eerder vermelde elementaire functies op, deze opsomming 
 \item Een bericht versturen, hierbij onderscheiden we 2 mogelijkheden:
 \begin{itemize}
 \item Het sturen van een bericht zonder observe optie: Hierbij hoeft men enkel rekening te houden met \'{e}\'{e}n antwoord. Men kan dus het antwoord teruggeven als return waarde van de functie die het bericht stuurt. Men hoeft zich niet te bekommeren om meerdere antwoorden die op willekeurige tijdstippen kunnen aankomen.
-\item Het sturen van een bericht met observe optie: Het antwoord dat hierop terug gestuurd wordt, bevat slechts \'{e}\'{e}n en is slechts een bevestiging dat de server de client heeft toegevoegd aan de lijst van ge\"{i}nteresseerden. De server zal nu geregeld een antwoord sturen op eigen initiatief. Er moet dus een mechanisme voorzien worden dat het aankomen van die berichten opvangt. We zullen later in dit hoofdstuk zien hoe we deze probleemstelling in de library hebben opgevangen.
+\item Het sturen van een bericht met observe optie: Het antwoord dat hierop terug gestuurd wordt, bevat slechts \'{e}\'{e}n en is slechts een bevestiging dat de server de client heeft toegevoegd aan de lijst van ge\"{i}nteresseerden. De server zal nu geregeld een antwoord sturen op eigen initiatief. Er moet dus een mechanisme voorzien worden dat het aankomen van die berichten opvangt. We zullen later in dit hoofdstuk zien (zie \ref{observe_hooks}) hoe we deze probleemstelling in de library hebben opgevangen.
 \end{itemize}
 Hierbij wordt de gebruiksvriendelijkheid doorgetrokken, de gebruiker staat namelijk niet in voor de controle van de aanwezigheid van een observe optie. Dit wordt automatisch gedetecteerd door de CoAP library.
 \item Operaties om een bericht te ontmantelen, hieronder verstaan we het parsen van onder andere de payload, een optie op basis van optienummer, het message ID, het token, ...
@@ -29,7 +29,7 @@ Merk op dat bij het genereren van CoAP berichten ook een message ID nodig is. Oo
 Een soortgelijk principe wordt toegepast wanneer een token moet worden gegenereerd. De gebruiker moet dan wel een lengte aangeven.\\
 Ook wanneer een ACK of RST moet worden gegenereerd wordt, door aan te geven op welk bericht het antwoord moet worden gestuurd, automatisch het message ID uit het oorspronkelijk bericht geparsed en in het antwoord geplaatst. Hetzelfde principe geldt wanneer een token moet worden overgenomen.
 
-\subsection{Optionele, handige functies}
+\subsection{Optionele, handige functies} \label{optionelefuncties}
 
 Sommige berichten worden zijn vaker nodig dan andere. Om de gebruiksvriendelijkheid van de library te verhogen en de drempel om ze te gebruiken te verlagen, is het een goed idee enkele functies te voorzien om bepaalde volledige berichten op te stellen. Belangrijk hierbij is dat deze opgestelde berichten nog steeds aanpasbaar moeten kunnen zijn. Dit zorgt ervoor een gebruiker bijvoorbeeld al een basisbericht kan opstellen en het daarna nog eigen wens kan aanpassen, wat de gebruiker veel tijd bespaart. We geven enkele voorbeelden die ook ge\"{i}mplementeerd zijn in de library, deze opsomming is alweer niet limitatief:
 \begin{itemize}
@@ -53,7 +53,7 @@ In de vorige subparagraaf zagen we de nadelen van een proceduregerichte oplossin
 
 \subsubsection{CoAPFactory klasse}
 
-Zoals de naam al suggereert, wordt deze klasse gebruik voor generatie van CoAP berichten. De gebruiker maakt eerst een instantie aan van de CoAPFactory klasse. Dit object kan dan gebruikt worden om CoAP berichten aan te maken. Het is deze klasse die de eerder besproken handige functies implementeert om bepaalde berichten aan te maken, samen met de operatie die de header en token opstelt. Alle operaties die een bericht object aanmaken geven een object terug van klasse CoAPMessage, deze klasse wordt hierna besproken. De constructor van deze factory klasse ontvangt volgende parameters:
+Zoals de naam al suggereert, wordt deze klasse gebruik voor generatie van CoAP berichten. De gebruiker maakt eerst een instantie aan van de CoAPFactory klasse. Dit object kan dan gebruikt worden om CoAP berichten aan te maken. Het is deze klasse die de eerder besproken handige functies (zie \ref{optionelefuncties}) implementeert om bepaalde berichten aan te maken, samen met de operatie die de header en token opstelt. Alle operaties die een bericht object aanmaken geven een object terug van klasse CoAPMessage, deze klasse wordt hierna besproken. De constructor van deze factory klasse ontvangt volgende parameters:
 \begin{itemize}
 \item Modulenaam: deze parameter bevat de naam van de module die gebruik maakt van de CoAP library, de reden voor deze parameter wordt hierna uitgelegd in subparagraaf \ref{observe_hooks}.
 \item IPv6-adres: deze parameter bevat een geldig IPv6-adres, dit is het IPv6-adres van het embedded device waarop de beoogde resource is aangesloten.
@@ -63,13 +63,34 @@ Zoals blijkt uit de parameters wordt een factory per gewenste resource aangemaak
 
 \subsubsection{CoAPMessage klasse}
 
-Deze klasse representeert het bericht zelf. Het bevat ten allen tijde het bericht in hexadecimale vorm. Het is deze klasse die de essenti\"{e}le operaties implenteert op het opstellen van de header en token na, zodanig dat het bericht kan worden aangepast naar eigen wensen en noden. Het bericht kan dan gemakkelijk worden verstuurd door een operatie op het object uit te voeren, een IPv6-adres opgeven hoeft niet meer, dit is reeds gebeurd bij constructie van de factory die dit bericht heeft aangemaakt.
+Deze klasse representeert het bericht zelf. Het bevat ten allen tijde het bericht in hexadecimale vorm. Het is deze klasse die de essenti\"{e}le operaties (zie \ref{essentielefuncties}) implementeert op het opstellen van de header en token na, zodanig dat het bericht kan worden aangepast naar eigen wensen en noden. Het bericht kan dan gemakkelijk worden verstuurd door een send-operatie op het object uit te voeren, een IPv6-adres opgeven hoeft niet meer, dit is reeds gebeurd bij constructie van de factory die dit bericht heeft aangemaakt. Aangezien CoAP werkt met UDP, moet er dus een UDP socket geopend worden en in het geval van de observe functionaliteit moet de socket bovendien onderhouden worden, daar berichten later kunnen toekomen op initiatief van de server.
 
 \subsection{Hooks voor notificaties} \label{observe_hooks}
+
+Eerder werd al aangehaald dat er een speciale voorziening nodig is voor de observe functionaliteit. Hierbij kan de server op eigen initiatief notificaties sturen naar ge\"{i}nteresseerde clients. Enkele alternatieven werden bedacht en overwogen, het een al beter dan het ander:
+\begin{itemize}
+\item Socket teruggeven: Dit houdt in dat de send-functie die opgeroepen wordt in de CoAP library als return waarde de socket zou teruggeven. Dit heeft echter als gevolg dat een gebruiker verder zelf de socket moet onderhouden en telkens de nodige berichten moet opbouwen, versturen en ontvangen. Het spreekt voor zich dat dit geen goede oplossing is. De CoAP library wordt zo allesbehalve modulair en een eventuele gebruiker ervan moet al een redelijke hoeveelheid technische kennis hebben om ze te gebruiken.
+\item Databank: bij dit alternatief zou men kunnen de socket toch beheren in de CoAP library zelf en de notificaties opslaan in de databank. Men kan dan bijvoorbeeld een gebruiker van de module een naam van een databanktabel laten opgeven en de notificaties daarin opslaan. Dit is al een betere oplossing, maar deze heeft ook wel wat nadelen. Er is namelijk geen enkele controle mogelijk of de kolommen van de databank wel kloppen en nog belangrijker, of de tabel wel bestaat. Ook is er nu niet echt sprake van abstractie, de gebruiker moet zich aanpassen aan de library. Bovendien moet de gebruiker kennis hebben over het gebruik van een databank, wil hij de library gebruiken.
+\item Hook mechanisme: Dit is het laatste en door ons verkozen alternatief. De CoAP library definieert hierbij 3 hooks die een gebruiker moet implementeren. \'{E}\'{e}n van de voordelen hiervan is dat de Drupal gebruiker normaal gezien al bekend is met het hook mechanisme van Drupal zelf. Het gebruikte mechanisme is namelijk analoog, de hook wordt ge\"{i}mplementeerd door de naam van de module voor de hook te plaatsen. We sommen even de te implementeren hooks op, deze mogen leeg zijn:
+\begin{itemize}
+\item \textit{hook\_receive\_response}: Deze hook wordt opgeroepen telkens wanneer een notificatie binnen komt. De CoAP library bouwt een response-object op van de klasse CoAPMessage en geeft deze mee als argument met de hook. Zo kan de gebruiker zelf beslissen wat er met het antwoord moet gebeuren. Men kan zo spreken van een hoge mate van abstractie.
+\item \textit{hook\_receive\_error}: Wanneer een fout gebeurt, bijvoorbeeld een sensor die laat of zelfs niet meer reageert, wordt deze hook opgeroepen. Als argumenten worden de foutboodschap en het IPv6-adres en URI-path van de resource meegegeven. Alweer kan de gebruiker van de library zelf beslissen wat er met deze foutboodschap moet gebeuren.
+\item \textit{hook\_stop\_observers}: Wanneer een observe op een resource stopt, om welke reden dan ook, wordt deze hook opgeroepen. Dit biedt een gebruiker van de library de kans om de consistentie van de eigen module te behouden en fouten te vermijden. Men kan bijvoorbeeld melden op een eventueel gemaakt website dat de observe gestopt is. Als parameters worden het IPv6-adres en het URI-path van de resource meegegeven zodat de gebruiker weet over welke resource het gaat.
+\end{itemize}
+\end{itemize}
+
+We merken verder nog op dat de CoAP library zelf instaat voor het bijhouden van de te observeren resources. Bovendien wordt om de resource zo weinig mogelijk te belasten, slechts \'{e}\'{e}n observe uitgevoerd op de resource, ongeacht hoeveel gebruikers erin ge\"{i}nteresseerd zijn. Een observe wordt pas gestopt wanneer geen enkele gebruiker meer ge\"{i}nteresseerd is in de resource.
 
 % HIER VERDERWERKEN
 
 \subsection{Opvangen van verloren berichten}
+
+Omdat het CoAP protocol gebruik maakt van UDP kunnen pakketten verloren gaan, dit moet dus opgevangen worden indien CON berichten verstuurd worden. In de CoAP draft (versie 14) wordt exponential backoff voorgeschreven. In de CoAP library werd die geïmplementeerd met de standaard waarden die eveneens in de CoAP draft (versie 14) staan. Het principe is dat wanneer geen ACK ontvangen wordt als antwoord op het CON bericht, het CON bericht opnieuw verstuurd wordt met daartussen exponentieel stijgende perioden tot een ACK ontvangen wordt of een maximum aantal verzendingen overschreden wordt. Hiervoor moeten 2 dingen worden bijgehouden: een timeout waarde en een retransmition counter die bijhoudt hoeveel keer het CON bericht al opnieuw werd verstuurd. De timeout waarde wordt ge\"{i}nitialiseerd op een random waarde tussen ACK\_TIMEOUT en ACK\_TIMEOUT*ACK\_RANDOM\_FACTOR, ACK\_TIMEOUT en ACK\_RANDOM\_FACTOR zijn constanten. De retransmission counter wordt initieel ingesteld op 0. Wanneer de timeout overschreden wordt en de retransmission counter nog steeds een waarde bevat die kleiner is dan MAX\_RETRANSMIT (nog een constante), wordt het CON bericht opnieuw verzonden en de timeout waarde verdubbeld. De constanten werden in de CoAP library ingevuld met volgende waarden die voorgeschreven worden in de CoAP draft (versie 14):
+\begin{itemize}
+\item \textit{ACK\_TIMEOUT}: 2 seconden
+\item \textit{ACK\_RANDOM\_FACTOR}: 1,5
+\item \textit{MAX\_RETRANSMIT}: 4
+\end{itemize}
 
 %ALLES HIERNA HOORT HIER NIET THUIS, MAAR WEL ELDERS
 

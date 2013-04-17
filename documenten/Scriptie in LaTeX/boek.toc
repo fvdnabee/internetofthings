@@ -53,7 +53,7 @@
 \contentsline {subsubsection}{Piggy-backed response}{22}
 \contentsline {subsubsection}{Seperate response}{22}
 \contentsline {section}{\numberline {3.3}Extra Features}{23}
-\contentsline {subsection}{\numberline {3.3.1}Observer}{23}
+\contentsline {subsection}{\numberline {3.3.1}Observe}{23}
 \contentsline {subsection}{\numberline {3.3.2}Resource discovery}{23}
 \contentsline {subsection}{\numberline {3.3.3}Resource directory}{23}
 \contentsline {chapter}{\numberline {4}CoAP library module}{24}
@@ -66,19 +66,19 @@
 \contentsline {subsubsection}{CoAPFactory klasse}{28}
 \contentsline {subsubsection}{CoAPMessage klasse}{29}
 \contentsline {subsection}{\numberline {4.2.3}Hooks voor notificaties}{29}
-\contentsline {subsection}{\numberline {4.2.4}Opvangen van verloren berichten}{29}
-\contentsline {chapter}{\numberline {5}CoAP resource module}{30}
-\contentsline {section}{\numberline {5.1}Architectuur}{30}
-\contentsline {subsection}{\numberline {5.1.1}Functionaliteit}{30}
-\contentsline {section}{\numberline {5.2}Evolutie}{31}
-\contentsline {section}{\numberline {5.3}Temperatuurmodule met HTTP/CoAP-proxy}{31}
-\contentsline {subsection}{\numberline {5.3.1}Proxy}{32}
-\contentsline {subsection}{\numberline {5.3.2}Achtergrondprocessen}{32}
-\contentsline {subsection}{\numberline {5.3.3}Geschiedenis van opvragingen}{33}
-\contentsline {subsection}{\numberline {5.3.4}Push-strategie: node.js}{34}
-\contentsline {subsection}{\numberline {5.3.5}Pull-strategie}{35}
-\contentsline {section}{\numberline {5.4}Temperatuurmodule met native CoAP}{36}
-\contentsline {chapter}{\numberline {6}Arduino}{37}
+\contentsline {subsection}{\numberline {4.2.4}Opvangen van verloren berichten}{31}
+\contentsline {chapter}{\numberline {5}CoAP resource module}{32}
+\contentsline {section}{\numberline {5.1}Architectuur}{32}
+\contentsline {subsection}{\numberline {5.1.1}Functionaliteit}{32}
+\contentsline {section}{\numberline {5.2}Evolutie}{34}
+\contentsline {section}{\numberline {5.3}Temperatuurmodule met HTTP/CoAP-proxy}{34}
+\contentsline {subsection}{\numberline {5.3.1}Proxy}{35}
+\contentsline {subsection}{\numberline {5.3.2}Achtergrondprocessen}{36}
+\contentsline {subsection}{\numberline {5.3.3}Geschiedenis van opvragingen}{36}
+\contentsline {subsection}{\numberline {5.3.4}Push-strategie: node.js}{37}
+\contentsline {subsection}{\numberline {5.3.5}Pull-strategie}{38}
+\contentsline {section}{\numberline {5.4}Temperatuurmodule met native CoAP}{39}
+\contentsline {chapter}{\numberline {6}Arduino}{40}
 \select@language {english}
 \select@language {dutch}
 \select@language {dutch}
