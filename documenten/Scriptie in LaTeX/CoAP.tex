@@ -2,11 +2,12 @@
 
 \section{Wat is CoAP?}
 
-CoAP is een web transfer protocol speciaal ontwikkeld voor netwerkcomponenten die beperkt zijn in zowel geheugen als energieverbruik als machine-to-machine (M2M)\nomenclature{M2M}{Machine-to-machine}communicatie. Naast het minimaliseren van de overhead concentreert CoAP zich ook op het automatiseren van taken. Het mechanisme van built-in discovery is hier een voorbeeld van. Met het verminderen van energieverbruik in het achterhoofd biedt CoAP naast synchrone ook asynchrone communicatie aan. Het biedt ook nieuwe soorten berichten aan zoals non-confirmable, piggy-backed, etc. %Als laatste merken we op dat het protocol RESTful is.\\
+CoAP is een web transfer protocol speciaal ontwikkeld voor netwerkcomponenten die beperkt zijn in zowel geheugen als energieverbruik als machine-to-machine (M2M)\nomenclature{M2M}{Machine-to-machine}communicatie. Naast het minimaliseren van de overhead concentreert CoAP zich ook op het automatiseren van taken. Het mechanisme van built-in discovery is hier een voorbeeld van. Met het verminderen van energieverbruik in het achterhoofd biedt CoAP naast synchrone ook asynchrone communicatie aan. Het biedt ook nieuwe soorten berichten aan zoals non-confirmable, piggy-backed, etc.\\
 
-Het interactiemodel van CoAP is vergelijkbaar met het client/server model van HTTP. Hoewel, bij een CoAP implementatie voor M2M interacties kan een device bij de ene berichtuitwisseling client zijn, en bij de andere server. Een CoAP request is equivalent aan een HTTP request en wordt ook gestuurd van de client naar de server om een actie aan te vragen op een resource die zich op die server bevindt. De actie wordt bepaald door een method code (GET, PUT, POST of DELETE) en de resource wordt aangeduid met een Uniform Resource Identifier (URI).\nomenclature{URI}{Uniform Resource Identifier} De server antwoordt met een response die onder andere een response code (bvb. 2.05 Content) bevat.\\
+Het interactiemodel van CoAP is vergelijkbaar met het client/server model van HTTP. Hoewel, bij een CoAP implementatie voor M2M interacties kan een device bij de ene berichtuitwisseling client zijn, en bij de andere server. Een CoAP request is equivalent aan een HTTP request en wordt ook gestuurd van de client naar de server om een actie aan te vragen op een resource die zich op die server bevindt. De actie wordt bepaald door een method code (GET, PUT, POST of DELETE) en de resource wordt aangeduid met een Uniform Resource Identifier (URI).\nomenclature{URI}{Uniform Resource Identifier} De server antwoordt met een response die onder andere een response code bevat.\\
 
-Verschillend met HTTP, gebeurt de berichtenuitwisseling asynchroon over een datagram-ge\"{o}ri\"{e}nteerd transport. Dit houdt in dat berichten mogelijks verloren gaan of in een andere volgorde kunnen aankomen dan dat ze verzonden zijn. Toch voorziet CoAP enige vorm van betrouwbaarheid met een soort bericht dat kan worden bevestigd door een acknowledgement (zie verder). Wanneer zo'n bericht niet wordt bevestigd, wordt het bericht meermaals opnieuw gestuurd volgens het exponential back-off mechanisme.\\
+Verschillend met HTTP, gebeurt de berichtenuitwisseling asynchroon over een datagram-ge\"{o}ri\"{e}nteerd transport. Dit houdt in dat berichten mogelijks verloren gaan of in een andere volgorde kunnen aankomen dan dat ze verzonden zijn. Toch voorziet CoAP enige vorm van betrouwbaarheid met een soort bericht dat kan worden bevestigd door een acknowledgement (zie verder). Wanneer zo'n bericht niet wordt bevestigd, wordt het bericht meermaals opnieuw gestuurd volgens het exponential back-off mechanisme.
+
 CoAP definieert vier soorten berichten: Confirmable, Non-confirmable, Acknowledgement en Reset. Door gebruik te maken van method codes en response codes transporteren sommige van deze berichten requests of responses. In paragraaf \ref{communicatieMogelijkheden} gaan we hier dieper op in.\\
 
 \begin{wrapfigure}{r}{0.5\textwidth}
@@ -32,7 +33,7 @@ We kunnen CoAP ook in het 7-lagen model plaatsen. Logisch gezien hebben we een C
 Om een minimale overhead te realiseren worden de berichten zeer compact gehouden. We geven een kort overzicht van de onderdelen van het berichtformaat (zie Figuur~\ref{fig:CoAPMessageFormat}) en bespreken dan de belangrijke delen apart in subparagrafen. De eerste vier bytes stellen de header voor. Bemerk dus dat de header gerealiseerd wordt met slechts 4 bytes. Het veld na de header is optioneel en bevat een token waarvan de lengte aangegeven is in de header. Vervolgens zitten er nul of meer opties in het bericht.
 Het laatste onderdeel van een bericht is de payload. Indien er een payload aanwezig is in het bericht, wordt die altijd voorafgegaan door een vaste byte, de payload marker (0xFF). Deze geeft het einde van de opties en het begin van de payload aan. Indien er geen payload is mag deze marker niet aanwezig zijn.
 
-We merken hier op dat een token, opties en een payload optioneel zijn. Dit zorgt ervoor dat sommige berichten beperkt blijven tot de header van 4 bytes, wat zeer weinig is.\\
+We merken hier op dat een token, opties en een payload optioneel zijn. Dit zorgt ervoor dat sommige berichten beperkt blijven tot de header van 4 bytes, wat zeer weinig is.
 
 \subsubsection{Header}
 
@@ -67,6 +68,7 @@ Elke optie heeft een uniek nummer, maar wanneer meerdere opties in \'{e}\'{e}n p
 Concreet, stel dat men na een optie met nummer 6 een optie met nummer 11 wil plaatsen, dan wordt deze laatste aangeduid met Option Delta gelijk aan 5 (11 - 6). Dit alles samen maakt dat een minimale (lege, maar daarom niet nutteloze) optie slechts 1 byte in beslag neemt. Dit heeft als gevolg dat opties na elkaar moeten worden geplaatst met oplopende Option Numbers.
 \begin{figure}[h]
 \centering
+\vspace{10pt}
 \includegraphics[width=0.6\textwidth]{fig/CoAPOpties}
 \vspace{-10pt}
 \caption{CoAP optie (CoAP 14 draft)}
@@ -133,7 +135,7 @@ Soms heeft een bericht geen betrouwbaar transport nodig. Een voorbeeld hiervan i
 
 Wanneer een request met een CON bericht verstuurd wordt, is het mogelijk dat het antwoord meteen beschikbaar is bij de server. Indien dit het geval is, wordt het antwoord op de request meteen meegestuurd met het ACK bericht. Dit wordt een piggy-backed response genoemd. In Figuur~\ref{fig:CoAPPiggyBacked} worden twee voorbeelden van GET requests met piggy-backed responses getoond. De ene is succesvol, de andere geeft een error response terug.
 \begin{figure}[h]
-%\vspace{-10pt}
+\vspace{10pt}
 \centering
 \includegraphics[width=0.7\textwidth]{fig/CoAPPiggyBacked}
 \vspace{-10pt}
@@ -142,18 +144,23 @@ Wanneer een request met een CON bericht verstuurd wordt, is het mogelijk dat het
 \vspace{-20pt}
 \end{figure}
 
+\newpage
+
 \subsubsection{Seperate response}
 
 \begin{wrapfigure}{r}{0.3\textwidth}
 \vspace{-40pt}
 \includegraphics[width=0.3\textwidth]{fig/CoAPSeperateResponse}
-\vspace{-20pt}
+\vspace{-30pt}
 \caption{GET request met seperate response (CoAP 14 draft)}
 \label{fig:SeperateResponse}
 \vspace{-100pt}
 \end{wrapfigure}
 Wanneer de server niet onmiddellijk kan antwoorden op de request van de client, antwoordt die met een leeg ACK bericht zodat de client niet zou beginnen heruitzenden als gevolg van het exponential back-off mechanisme. Wanneer de response klaar is, stuurt de server dit antwoord in een nieuw CON bericht dat op zijn beurt beantwoord moet worden door de client. Dit soort van berichtenuitwisseling heet seperate response (zie Figuur~\ref{fig:SeperateResponse}).
-
+\\
+\\
+\\
+\\
 
 \section{Extra Features}
 
