@@ -1,16 +1,5 @@
 <?php
 
-function coap_discovery_node_info() {
-  return array(
-    'coap_discovery' => array(
-      'name' => t('CoAP discovery'),
-      'base' => 'node_content',
-	  'has_body' => FALSE,
-      'description' => t('CoAP discovery Form'),
-    ),
-  );
-}
-
 function coap_discovery_schema(){
 	$schema['coap_discovery_core_links'] = array(
 		'description' => "Tabel om core links bij te houden",
@@ -111,42 +100,4 @@ function coap_discovery_schema(){
 function coap_discovery_uninstall(){
 	db_drop_table('coap_discovery_users');
 	db_drop_table('coap_discovery_core_links');
-}
-
-function coap_discovery_enable() {  
-  variable_set('comment_coap_discovery', 0);					//comments default disabled
-  variable_set('node_options_coap_discovery', array('status'));	//promote to front page default unchecked
-  variable_set('node_preview_coap_discovery', 0);				//preview default disabled
-  variable_set('node_submitted_coap_discovery', 0);
-}
-
-function coap_discovery_disable(){
-  $sql = 'SELECT nid FROM {node} n WHERE n.type = :type';
-  $result = db_query($sql, array(':type' => 'coap_discovery'));
-  $nids = array();
-  foreach ($result as $row) {
-    $nids[] = $row->nid;
-  }
-  
-  //delete any  variables made by module
-  variable_del('comment_coap_discovery');
-  variable_del('node_preview_coap_discovery');
-  variable_del('node_submitted_coap_discovery');
-  variable_del('node_options_coap_discovery');
- 
-  // Delete all the nodes at once
-  node_delete_multiple($nids);
- 
-  $instance = array('field_name' => 'comment_body','bundle' => 'comment_node_coap_discovery','entity_type' => 'comment');
-  field_delete_instance($instance);
- 
-  $instance = array('field_name' => 'body','bundle' => 'coap_discovery','entity_type' => 'node');
-  field_delete_instance($instance);
-  
-  //deleting content type
-  node_type_delete('coap_discovery');
-  node_types_rebuild();
-  
-  // Purge all field infromation
-   field_purge_batch(1000);
 }
