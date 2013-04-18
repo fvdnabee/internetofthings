@@ -71,6 +71,7 @@ function coap_discovery_node_view($node, $view_mode, $langcode) {
 function coap_discovery_build_headers(){
 return array
   (
+  
     // 'link_name' => 'link name',	
 	// 'rt' => 'application-specific semantic type',
 	// 'ct' => 'content-type',
@@ -87,10 +88,13 @@ return array
 
 function coap_discovery_build_options($links){
   $options = array();
+  $counter=1;
   foreach($links as $link)
   {
-    $options[$link['uid']] = array // each element of the array is keyed with the UID
+    //$options[$link['uid']] = array // each element of the array is keyed with the UID
+	$options[$counter] = array // each element of the array is keyed with the UID
     (
+	
 		// 'link_name' => $link['link_name'],
 		// 'rt' => $link['rt'],
 		// 'ct' => $link['ct'],
@@ -103,6 +107,7 @@ function coap_discovery_build_options($links){
 		'link_name' => $link['link_name'],
 		'title' => $link['title'],
 	);
+	$counter++;
   }
   return $options;
 }
@@ -134,7 +139,7 @@ function coap_discovery_form($form, &$form_state) {
 		'#required' => TRUE,
 	);
 	
-	if($user->uid != 0){ //anonieme user	
+	if($user->uid != 0){ //geen anonieme user	
 		$_SESSION['links'] = array();	
 		$result = db_select('coap_discovery_users','user_device')
 				->fields('user_device', array('uid','device_uri'))
@@ -250,9 +255,14 @@ function coap_discovery_clear_tableselect($form, &$form_state) {
 }
 
 function coap_discovery_add_resources($form, &$form_state) {
+	foreach (($form_state['values']['table']) as $lines => $line) {
+        if($line) {
+            //dpm ($lines);
+        }
+    }
+
 	//$link = $_SESSION['links'][$form_state['values']['table']];
-	//dpm($form['tableselect_container']['tableselect']);
-	dpm($form_state['values']);
+	//for($form_state['values']['table']);
 	//$form_state['values']['link'] = $link;
 	$form_state['rebuild'] = TRUE;  // Force rebuild with next step.
 	return;

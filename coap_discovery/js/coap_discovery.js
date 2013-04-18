@@ -22,24 +22,21 @@ function discoverReady(xml){
 	//console.log(xml);
 	
 	if(xml.length != 0){
-		$('#edit-tableselect-container').empty();
-		
-		var table = '<table class="sticky-header" style="position: fixed; top: 30px; left: 407px; visibility: hidden;"><thead style=""><tr><th></th><th>link name</th><th>human-readable name</th> </tr></thead></table><table class="sticky-enabled tableheader-processed sticky-table">';	
-		table += '<thead><tr><th></th><th>link name</th><th>human-readable name</th> </tr></thead>';
+		$('#edit-tableselect-container').empty();	
+		var table = '<table class="sticky-enabled table-select-processed tableheader-processed sticky-table"><thead><tr><th class="select-all"><input type="checkbox" class="form-checkbox" title="Select all rows in this table"></th><th>link name</th><th>human-readable name</th> </tr></thead>';	
 		table += '<tbody>';
 		var links = xml.match(/<link>(.+?)<\/link>/g);
 		for(var i=0 ; i< links.length ; i++){
 			var link_attr = /<link><link_name>(.*?)<\/link_name><title>(.*?)<\/title><\/link>/.exec(links[i]);
 			if(i%2 == 0){
-				table += '<tr class="even"><td><div class="form-item form-type-radio form-item-table">' +
-					'<input type="radio" id="edit-table-"' + i + '" name="table" value="' + i + '" class="form-radio">' + 
-					'</div></td><td>' + link_attr[1] + '</td><td>' + link_attr[2] + '</td> </tr>';
+				table += '<tr class="even">';
 			}
 			else{
-				table += '<tr class="odd"><td><div class="form-item form-type-radio form-item-table">' +
-					'<input type="radio" id="edit-table-"' + i + '" name="table" value="' + i + '" class="form-radio">' + 
-					'</div></td><td>' + link_attr[1] + '</td><td>' + link_attr[2] + '</td> </tr>';
+				table += '<tr class="odd">';
 			}
+			table += '<td><div class="form-item form-type-checkbox form-item-table-' + i + '">' +
+					 '<input type="checkbox" id="edit-table-' + i + '" name="table[' + i + ']" value="' + i + '" class="form-checkbox">' + 
+					 '</div></td><td>' + link_attr[1] + '</td><td>' + link_attr[2] + '</td> </tr>';
 		}	
 		table += '</tbody>';
 		table += '</table>';
