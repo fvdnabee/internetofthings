@@ -7,15 +7,15 @@
 \nomenclatureentry{aPHP@[{PHP}]\begingroup PHP Hypertext Preprocessor\nomeqref {1.0}|nompageref}{3}
 \nomenclatureentry{aWOEID@[{WOEID}]\begingroup Where On Earth ID\nomeqref {1.0}|nompageref}{3}
 \nomenclatureentry{aCMS@[{CMS}]\begingroup Content Management System\nomeqref {2.0}|nompageref}{6}
-\nomenclatureentry{aAJAX@[{AJAX}]\begingroup Asynchronous JavaScript and XML\nomeqref {2.0}|nompageref}{15}
-\nomenclatureentry{aM2M@[{M2M}]\begingroup Machine-to-machine\nomeqref {3.0}|nompageref}{16}
-\nomenclatureentry{aURI@[{URI}]\begingroup Uniform Resource Identifier\nomeqref {3.0}|nompageref}{16}
-\nomenclatureentry{aTKL@[{TKL}]\begingroup ToKen Length\nomeqref {3.0}|nompageref}{18}
-\nomenclatureentry{aTLV@[{TLV}]\begingroup Type Length Value\nomeqref {3.0}|nompageref}{19}
-\nomenclatureentry{aCR@[{CR}]\begingroup Carriage Return\nomeqref {3.0}|nompageref}{20}
-\nomenclatureentry{aLF@[{LF}]\begingroup Line Feed\nomeqref {3.0}|nompageref}{20}
-\nomenclatureentry{aCON@[{CON}]\begingroup Confirmable\nomeqref {3.0}|nompageref}{21}
-\nomenclatureentry{aACK@[{ACK}]\begingroup Acknowledgement\nomeqref {3.0}|nompageref}{21}
-\nomenclatureentry{aRST@[{RST}]\begingroup Reset\nomeqref {3.0}|nompageref}{21}
-\nomenclatureentry{aNON@[{NON}]\begingroup Non-confirmable\nomeqref {3.0}|nompageref}{22}
-\nomenclatureentry{aASCII@[{ASCII}]\begingroup American Standard Code for Information Interchange\nomeqref {4.0}|nompageref}{28}
+\nomenclatureentry{aAJAX@[{AJAX}]\begingroup Asynchronous JavaScript and XML\nomeqref {2.0}|nompageref}{17}
+\nomenclatureentry{aM2M@[{M2M}]\begingroup Machine-to-machine\nomeqref {3.0}|nompageref}{18}
+\nomenclatureentry{aURI@[{URI}]\begingroup Uniform Resource Identifier\nomeqref {3.0}|nompageref}{18}
+\nomenclatureentry{aTKL@[{TKL}]\begingroup ToKen Length\nomeqref {3.0}|nompageref}{20}
+\nomenclatureentry{aTLV@[{TLV}]\begingroup Type Length Value\nomeqref {3.0}|nompageref}{21}
+\nomenclatureentry{aCR@[{CR}]\begingroup Carriage Return\nomeqref {3.0}|nompageref}{22}
+\nomenclatureentry{aLF@[{LF}]\begingroup Line Feed\nomeqref {3.0}|nompageref}{22}
+\nomenclatureentry{aCON@[{CON}]\begingroup Confirmable\nomeqref {3.0}|nompageref}{23}
+\nomenclatureentry{aACK@[{ACK}]\begingroup Acknowledgement\nomeqref {3.0}|nompageref}{23}
+\nomenclatureentry{aRST@[{RST}]\begingroup Reset\nomeqref {3.0}|nompageref}{23}
+\nomenclatureentry{aNON@[{NON}]\begingroup Non-confirmable\nomeqref {3.0}|nompageref}{24}
+\nomenclatureentry{aASCII@[{ASCII}]\begingroup American Standard Code for Information Interchange\nomeqref {4.0}|nompageref}{30}

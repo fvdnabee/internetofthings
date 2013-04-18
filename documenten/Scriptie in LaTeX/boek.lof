@@ -5,19 +5,23 @@
 \contentsline {figure}{\numberline {2.1}{\ignorespaces Drupallogo\relax }}{6}
 \contentsline {figure}{\numberline {2.2}{\ignorespaces Wat is Drupal?\relax }}{7}
 \contentsline {figure}{\numberline {2.3}{\ignorespaces Basiswebsite van Drupal met Bartik-theme\relax }}{8}
-\contentsline {figure}{\numberline {2.4}{\ignorespaces Weermodule\relax }}{14}
+\contentsline {figure}{\numberline {2.4}{\ignorespaces Grafische weergave van hoe Drupal content aanbiedt.\relax }}{10}
+\contentsline {figure}{\numberline {2.5}{\ignorespaces Organisatie van Drupalmodules\relax }}{12}
+\contentsline {figure}{\numberline {2.6}{\ignorespaces Implementatie van hook\_node\_view door de module coap\_resource\relax }}{13}
+\contentsline {figure}{\numberline {2.7}{\ignorespaces Pagina renderen in Drupal\relax }}{14}
+\contentsline {figure}{\numberline {2.8}{\ignorespaces Weermodule\relax }}{16}
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {3.1}{\ignorespaces CoAP lagen (CoAP 14 draft)\relax }}{17}
-\contentsline {figure}{\numberline {3.2}{\ignorespaces Berichtformaat (CoAP 14 draft)\relax }}{17}
-\contentsline {figure}{\numberline {3.3}{\ignorespaces CoAP optie (CoAP 14 draft)\relax }}{19}
-\contentsline {figure}{\numberline {3.4}{\ignorespaces HTTP Message Format\relax }}{20}
-\contentsline {figure}{\numberline {3.5}{\ignorespaces Betrouwbare berichtuiwisseling (CoAP 14 draft)\relax }}{21}
-\contentsline {figure}{\numberline {3.6}{\ignorespaces Onbetrouwbare berichtuiwisseling (CoAP 14 draft)\relax }}{22}
-\contentsline {figure}{\numberline {3.7}{\ignorespaces Twee GET requests met piggy-backed responses (CoAP 14 draft)\relax }}{22}
-\contentsline {figure}{\numberline {3.8}{\ignorespaces GET request met seperate response (CoAP 14 draft)\relax }}{22}
+\contentsline {figure}{\numberline {3.1}{\ignorespaces CoAP lagen (CoAP 14 draft)\relax }}{19}
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Berichtformaat (CoAP 14 draft)\relax }}{19}
+\contentsline {figure}{\numberline {3.3}{\ignorespaces CoAP optie (CoAP 14 draft)\relax }}{21}
+\contentsline {figure}{\numberline {3.4}{\ignorespaces HTTP Message Format\relax }}{22}
+\contentsline {figure}{\numberline {3.5}{\ignorespaces Betrouwbare berichtuiwisseling (CoAP 14 draft)\relax }}{23}
+\contentsline {figure}{\numberline {3.6}{\ignorespaces Onbetrouwbare berichtuiwisseling (CoAP 14 draft)\relax }}{24}
+\contentsline {figure}{\numberline {3.7}{\ignorespaces Twee GET requests met piggy-backed responses (CoAP 14 draft)\relax }}{24}
+\contentsline {figure}{\numberline {3.8}{\ignorespaces GET request met seperate response (CoAP 14 draft)\relax }}{25}
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {5.1}{\ignorespaces Temperatuurmodule met HTTP/COAP-proxy\relax }}{35}
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Temperatuurmodule met HTTP/COAP-proxy\relax }}{37}
 \addvspace {10\p@ }
 \select@language {english}
 \select@language {dutch}

@@ -10,75 +10,75 @@
 \contentsline {subsubsection}{Content Management System}{6}
 \contentsline {subsubsection}{Framework voor webapplicaties}{6}
 \contentsline {subsubsection}{Social publishing platform}{7}
-\contentsline {subsection}{\numberline {2.1.1}Drupal Core}{8}
+\contentsline {subsection}{\numberline {2.1.1}Basiswebsite}{8}
 \contentsline {section}{\numberline {2.2}Waarom Drupal?}{8}
 \contentsline {section}{\numberline {2.3}Werking van Drupal}{10}
 \contentsline {subsection}{\numberline {2.3.1}Drupal bouwstenen}{10}
 \contentsline {subsubsection}{Node}{10}
-\contentsline {subsubsection}{Fields}{10}
 \contentsline {subsubsection}{Block}{10}
-\contentsline {subsubsection}{Content type}{10}
+\contentsline {subsubsection}{Content type}{11}
 \contentsline {subsubsection}{Taxonomy}{11}
 \contentsline {subsubsection}{Users, Roles en Permissions}{11}
-\contentsline {subsubsection}{Module}{11}
-\contentsline {subsubsection}{View}{11}
-\contentsline {subsubsection}{Theme}{11}
+\contentsline {subsubsection}{Module}{12}
+\contentsline {subsubsection}{View}{12}
+\contentsline {subsubsection}{Theme}{12}
 \contentsline {subsubsection}{Hooks}{12}
-\contentsline {subsubsection}{Drupal Core}{12}
-\contentsline {subsection}{\numberline {2.3.2}Drupal bootstrap}{12}
-\contentsline {subsubsection}{Initialisatie van de configuratie}{12}
-\contentsline {subsubsection}{Poging tot opvragen van een gecachte pagina}{12}
-\contentsline {subsubsection}{Initialisatie van de database abstraction layer}{12}
-\contentsline {subsubsection}{Initialisatie van het Variable System}{13}
-\contentsline {subsubsection}{Initialisatie Session Handling}{13}
-\contentsline {subsubsection}{Page Header opbouwen}{13}
-\contentsline {subsubsection}{De taal van de pagina bepalen}{13}
-\contentsline {subsubsection}{Laden van modules en initialisatie van het theme}{13}
-\contentsline {section}{\numberline {2.4}jQuery in Drupal}{14}
-\contentsline {subsection}{\numberline {2.4.1}Met een formulier}{14}
-\contentsline {subsection}{\numberline {2.4.2}Met AJAX in jQuery}{15}
-\contentsline {subsection}{\numberline {2.4.3}Problemen}{15}
-\contentsline {chapter}{\numberline {3}CoAP}{16}
-\contentsline {section}{\numberline {3.1}Wat is CoAP?}{16}
-\contentsline {subsection}{\numberline {3.1.1}Berichtformaat}{17}
-\contentsline {subsubsection}{Header}{18}
-\contentsline {subsubsection}{Token}{18}
-\contentsline {subsubsection}{Opties}{19}
-\contentsline {subsubsection}{Verschil met HTTP}{20}
-\contentsline {section}{\numberline {3.2}Communicatiemogelijkheden}{21}
-\contentsline {subsection}{\numberline {3.2.1}Betrouwbaarheid}{21}
-\contentsline {subsubsection}{Confirmable berichten}{21}
-\contentsline {subsubsection}{Non-confirmable berichten}{22}
-\contentsline {subsection}{\numberline {3.2.2}Request/response model}{22}
-\contentsline {subsubsection}{Piggy-backed response}{22}
-\contentsline {subsubsection}{Seperate response}{22}
-\contentsline {section}{\numberline {3.3}Extra Features}{23}
-\contentsline {subsection}{\numberline {3.3.1}Observe}{23}
-\contentsline {subsection}{\numberline {3.3.2}Resource discovery}{23}
-\contentsline {subsection}{\numberline {3.3.3}Resource directory}{23}
-\contentsline {chapter}{\numberline {4}CoAP library module}{24}
-\contentsline {section}{\numberline {4.1}Doel}{24}
-\contentsline {subsection}{\numberline {4.1.1}Essenti\"{e}le, te ondersteunen functies}{25}
-\contentsline {subsection}{\numberline {4.1.2}Optionele, handige functies}{26}
-\contentsline {section}{\numberline {4.2}Implementatie}{27}
-\contentsline {subsection}{\numberline {4.2.1}Proceduregericht}{27}
-\contentsline {subsection}{\numberline {4.2.2}Objectgericht}{28}
-\contentsline {subsubsection}{CoAPFactory klasse}{28}
-\contentsline {subsubsection}{CoAPMessage klasse}{29}
-\contentsline {subsection}{\numberline {4.2.3}Hooks voor notificaties}{29}
-\contentsline {subsection}{\numberline {4.2.4}Opvangen van verloren berichten}{31}
-\contentsline {chapter}{\numberline {5}CoAP resource module}{32}
-\contentsline {section}{\numberline {5.1}Architectuur}{32}
-\contentsline {subsection}{\numberline {5.1.1}Functionaliteit}{32}
-\contentsline {section}{\numberline {5.2}Evolutie}{34}
-\contentsline {section}{\numberline {5.3}Temperatuurmodule met HTTP/CoAP-proxy}{34}
-\contentsline {subsection}{\numberline {5.3.1}Proxy}{35}
-\contentsline {subsection}{\numberline {5.3.2}Achtergrondprocessen}{36}
-\contentsline {subsection}{\numberline {5.3.3}Geschiedenis van opvragingen}{36}
-\contentsline {subsection}{\numberline {5.3.4}Push-strategie: node.js}{37}
-\contentsline {subsection}{\numberline {5.3.5}Pull-strategie}{38}
-\contentsline {section}{\numberline {5.4}Temperatuurmodule met native CoAP}{39}
-\contentsline {chapter}{\numberline {6}Arduino}{40}
+\contentsline {subsubsection}{Drupal Core}{13}
+\contentsline {subsection}{\numberline {2.3.2}Pagina aanroepen}{13}
+\contentsline {subsubsection}{Initialisatie van de configuratie}{13}
+\contentsline {subsubsection}{Poging tot opvragen van een gecachte pagina}{15}
+\contentsline {subsubsection}{Initialisatie van de database abstraction layer}{15}
+\contentsline {subsubsection}{Initialisatie van het Variable System}{15}
+\contentsline {subsubsection}{Initialisatie Session Handling}{15}
+\contentsline {subsubsection}{Page Header opbouwen}{15}
+\contentsline {subsubsection}{De taal van de pagina bepalen}{15}
+\contentsline {subsubsection}{Laden van modules en initialisatie van het theme}{15}
+\contentsline {subsubsection}{Uitvoeren van page callback}{15}
+\contentsline {section}{\numberline {2.4}jQuery in Drupal}{16}
+\contentsline {subsection}{\numberline {2.4.1}Met een formulier}{16}
+\contentsline {subsection}{\numberline {2.4.2}Met AJAX in jQuery}{17}
+\contentsline {subsection}{\numberline {2.4.3}Problemen}{17}
+\contentsline {chapter}{\numberline {3}CoAP}{18}
+\contentsline {section}{\numberline {3.1}Wat is CoAP?}{18}
+\contentsline {subsection}{\numberline {3.1.1}Berichtformaat}{19}
+\contentsline {subsubsection}{Header}{20}
+\contentsline {subsubsection}{Token}{20}
+\contentsline {subsubsection}{Opties}{21}
+\contentsline {subsubsection}{Verschil met HTTP}{22}
+\contentsline {section}{\numberline {3.2}Communicatiemogelijkheden}{23}
+\contentsline {subsection}{\numberline {3.2.1}Betrouwbaarheid}{23}
+\contentsline {subsubsection}{Confirmable berichten}{23}
+\contentsline {subsubsection}{Non-confirmable berichten}{24}
+\contentsline {subsection}{\numberline {3.2.2}Request/response model}{24}
+\contentsline {subsubsection}{Piggy-backed response}{24}
+\contentsline {subsubsection}{Seperate response}{25}
+\contentsline {section}{\numberline {3.3}Extra Features}{25}
+\contentsline {subsection}{\numberline {3.3.1}Observe}{25}
+\contentsline {subsection}{\numberline {3.3.2}Resource discovery}{25}
+\contentsline {subsection}{\numberline {3.3.3}Resource directory}{25}
+\contentsline {chapter}{\numberline {4}CoAP library module}{26}
+\contentsline {section}{\numberline {4.1}Doel}{26}
+\contentsline {subsection}{\numberline {4.1.1}Essenti\"{e}le, te ondersteunen functies}{27}
+\contentsline {subsection}{\numberline {4.1.2}Optionele, handige functies}{28}
+\contentsline {section}{\numberline {4.2}Implementatie}{29}
+\contentsline {subsection}{\numberline {4.2.1}Proceduregericht}{29}
+\contentsline {subsection}{\numberline {4.2.2}Objectgericht}{30}
+\contentsline {subsubsection}{CoAPFactory klasse}{30}
+\contentsline {subsubsection}{CoAPMessage klasse}{31}
+\contentsline {subsection}{\numberline {4.2.3}Hooks voor notificaties}{31}
+\contentsline {subsection}{\numberline {4.2.4}Opvangen van verloren berichten}{33}
+\contentsline {chapter}{\numberline {5}CoAP resource module}{34}
+\contentsline {section}{\numberline {5.1}Architectuur}{34}
+\contentsline {subsection}{\numberline {5.1.1}Functionaliteit}{34}
+\contentsline {section}{\numberline {5.2}Evolutie}{36}
+\contentsline {section}{\numberline {5.3}Temperatuurmodule met HTTP/CoAP-proxy}{36}
+\contentsline {subsection}{\numberline {5.3.1}Proxy}{37}
+\contentsline {subsection}{\numberline {5.3.2}Achtergrondprocessen}{38}
+\contentsline {subsection}{\numberline {5.3.3}Geschiedenis van opvragingen}{38}
+\contentsline {subsection}{\numberline {5.3.4}Push-strategie: node.js}{39}
+\contentsline {subsection}{\numberline {5.3.5}Pull-strategie}{40}
+\contentsline {section}{\numberline {5.4}Temperatuurmodule met native CoAP}{41}
+\contentsline {chapter}{\numberline {6}Arduino}{42}
 \select@language {english}
 \select@language {dutch}
 \select@language {dutch}
