@@ -296,7 +296,7 @@ class CoAPMessage {
 		return coap_library_hex_to_string(substr($this->message_hex, $pos+2));
 	}
 	
-	// Returns response in binary form or null if the message has an observe option or there was no response
+	// Returns response object or null if the message has an observe option or there was no response
 	public function send_message(){
 		$observe = ($this->get_option_value(6) == -1) ? 0 : 1;
 		if($observe){

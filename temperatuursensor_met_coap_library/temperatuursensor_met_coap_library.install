@@ -67,7 +67,7 @@ function temperatuursensor_met_coap_library_schema() {
 					'type' => 'int',
 					'unsigned' => TRUE,
 					'not null' => TRUE,
-					'default' => 1,
+					'default' => 2,
 				),
 				'last_method' => array(
 					'description' => 'Methode van laatste request --> {GET, PUT, POST, DELETE}',
@@ -150,6 +150,12 @@ function temperatuursensor_met_coap_library_schema() {
 					'type' => 'int',
 					'unsigned' => TRUE,
 					'not null' => FALSE,
+				),
+				'response_type'=> array(
+					'type' => 'varchar',
+					'not null' => FALSE,
+					'length' => '256',
+					'description' => 'Het content-type van de response',
 				),
 				'timestamp' => array(
 					'description' => 'Tijd van opvraging',
