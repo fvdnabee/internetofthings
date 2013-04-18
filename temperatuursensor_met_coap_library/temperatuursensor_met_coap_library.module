@@ -712,19 +712,21 @@ function start_request($method, $payload=''){
 			
 			$response_obj = null;
 			
-			// Get last value from the database for the given resource, to check if value is still valid and use this value if it's still valid
-			$query = db_select('CoAP_values', 'values');
-			$query
-				->fields('values', array('timestamp', 'uri', 'payload', 'response_type', 'max_age'))
-				->condition('uri', $record->uri, '=')
-				->condition('uid', $user->uid, '=')
-				->orderBy('hid', 'DESC')
-				->range(0,1);
-			$result = $query->execute();
-			foreach($result as $record){
-				if($record->max_age != null && strtotime($record->timestamp) > intval($record->max_age)){
-					$factory = new CoAPMessageFactory('temperatuursensor_met_coap_library', $ip, $resource);
-					$response_obj = $factory->create_message_with_given_message($record->original_response);
+			if($method == "GET"){
+				// Get last value from the database for the given resource, to check if value is still valid and use this value if it's still valid
+				$query = db_select('CoAP_values', 'values');
+				$query
+					->fields('values', array('timestamp', 'uri', 'payload', 'response_type', 'max_age'))
+					->condition('uri', $record->uri, '=')
+					->condition('uid', $user->uid, '=')
+					->orderBy('hid', 'DESC')
+					->range(0,1);
+				$result = $query->execute();
+				foreach($result as $record){
+					if($record->max_age != null && strtotime($record->timestamp) > intval($record->max_age)){
+						$factory = new CoAPMessageFactory('temperatuursensor_met_coap_library', $ip, $resource);
+						$response_obj = $factory->create_message_with_given_message($record->original_response);
+					}
 				}
 			}
 			// Get new value if previous isn't still valid
