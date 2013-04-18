@@ -1,24 +1,46 @@
 (function ($) {
 
+var polling;
+
 $(document).ready(function() {
 	setTimeout(function(){google.load('visualization', '1', {'callback':'', 'packages':['corechart']})}, 10);
 	google.setOnLoadCallback(drawChart);
 	setTimeout(function(){drawChart()}, 1000);
+	$('#polling_button').click(
+		function setPollingInterval(){
+			console.log("polling button clicked, about to change interval to " + $('#polling_invoer').val() + ' seconds');
+			clearInterval(polling);
+			polling = setInterval(function(){
+				$.ajax({
+					type: "GET",
+					url: "/temperatuursensor/poll",
+					dataType: "text",
+					success: tempReceived
+				});
+			}, parseInt($('#polling_invoer').val())*1000);
+			$.ajax({
+				type: "POST",
+				url: "/temperatuursensor/interval/" + $('#polling_invoer').val(),
+				dataType: "text"
+			});
+		}
+	);
+	$('#polling_button').trigger('click');
 });
 
-Drupal.behaviors.temperatuursensor_met_coap_library = {
-  attach: 	function(context) {
-				var refreshId = setInterval(function(){
-					$.ajax({
-						type: "GET",
-						url: "/temperatuursensor/poll",
-						dataType: "text",
-						success: tempReceived
-					});
-				}, 2000);
-			}
+// Drupal.behaviors.temperatuursensor_met_coap_library = {
+  // attach: 	function(context) {
+				// polling = setInterval(function(){
+					// $.ajax({
+						// type: "GET",
+						// url: "/temperatuursensor/poll",
+						// dataType: "text",
+						// success: tempReceived
+					// });
+				// }, parseInt($('#polling_invoer')).html());
+			// }
 			
-};
+// };
 
 function tempReceived(html){
 	var regex = /<error>(.*)<\/error><responded>(.*)<\/responded><get_response>(.*)<\/get_response><method>(.*)<\/method><response_type>(.*)<\/response_type><tr><td>(\d+)<\/td><td>(.*)<\/td><td>(.*)<\/td><td>(.*)<\/td><\/tr>/;
