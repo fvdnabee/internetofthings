@@ -14,6 +14,15 @@ function temperatuursensor_met_coap_library_menu() {
     "access callback" => true,
     "type" => MENU_CALLBACK
   );
+  
+  $items["temperatuursensor/interval/%"] = array(
+    "title" => "Change polling interval",
+    "page callback" => "temperatuur_met_coap_library_change_interval",
+	"page arguments" => array(2),
+    "access callback" => true,
+    "type" => MENU_CALLBACK
+  );
+  
   return $items;
 }
 
@@ -42,6 +51,17 @@ function temperatuursensor_met_coap_library_block_view($delta='') {
 	$block = null;
 	$block['subject'] = 'Temperatuursensoren bevragen met het CoAP protocol';
 	$block_content = null;
+	
+	$current_interval = 1;
+	$query = db_select('CoAP_users', 'users');
+	$query
+		->fields('users', array('uid', 'polling_interval'))
+		->condition('uid', $user->uid, '=');
+	$result = $query->execute();
+	foreach ($result as $record){
+		$current_interval = $record->polling_interval;
+	}
+	$block_content .= "Polling gebeurt om de <input id = 'polling_invoer' type = 'text' size = '1' value = '" . $current_interval . "' > seconden. <button id = 'polling_button' type = 'button' >Wijzigen</button>";
 	
 	// URI form
 	$temp = drupal_get_form('uri_form');
@@ -523,7 +543,6 @@ function observe_form_submit($form, $form_state) {
 	}
 }
 
-
 //////////////////////
 // PRIVATE FUNCTIES //
 //////////////////////
@@ -602,6 +621,18 @@ function temperatuur_met_coap_library_page_callback(){
 		->execute();
 	
 	print $output;
+}
+
+function temperatuur_met_coap_library_change_interval($interval){
+	global $user;
+	
+	$seconds = intval($interval);
+	$id = db_update('CoAP_users')
+			->fields(array(
+				'polling_interval' => $seconds,
+			))
+			->condition('uid', $user->uid, '=')
+			->execute();
 }
 
 function start_observing($uri){
