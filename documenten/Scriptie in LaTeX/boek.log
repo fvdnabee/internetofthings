@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.4.6)  19 APR 2013 15:24
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.4.6)  19 APR 2013 15:39
 entering extended mode
 **boek.tex
 
@@ -214,8 +214,6 @@ File: fig/hogentLogo.jpg Graphic file (type jpg)
  <use fig/hogentLogo.jpg>
 Package pdftex.def Info: fig/hogentLogo.jpg used on input line 24.
 (pdftex.def)             Requested size: 284.5294pt x 113.81102pt.
-Missing character: There is no Ã in font cmr12!
-Missing character: There is no « in font cmr12!
 
 [1
 
@@ -231,8 +229,6 @@ File: fig/hogentLogo.jpg Graphic file (type jpg)
  <use fig/hogentLogo.jpg>
 Package pdftex.def Info: fig/hogentLogo.jpg used on input line 24.
 (pdftex.def)             Requested size: 284.5294pt x 113.81102pt.
-Missing character: There is no Ã in font cmr12!
-Missing character: There is no « in font cmr12!
  [1
 
 
@@ -636,57 +632,73 @@ Underfull \hbox (badness 10000) in paragraph at lines 11--13
  []
 
 [34]
-Underfull \hbox (badness 10000) in paragraph at lines 40--41
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 42--43
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 44--45
-
+Overfull \hbox (16.96507pt too wide) in paragraph at lines 25--27
+\OT1/cmr/m/n/10.95 source. Het is niet aan-vaard-baar dat de net-werk-be-las-ti
+ng zou stij-gen met het aan-tal ge[]nteresseerden.
  []
 
 [35]
-Missing character: There is no é in font cmr10!
-Missing character: There is no é in font cmr10!
+Hoofdstuk 6.
 
-Underfull \hbox (badness 10000) in paragraph at lines 74--75
+Underfull \hbox (badness 10000) in paragraph at lines 46--47
 
  []
 
-<fig/TemperatuurModuleHTTPCOAPProxy.png, id=174, 455.45157pt x 259.7203pt>
+
+Underfull \hbox (badness 10000) in paragraph at lines 48--49
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 50--51
+
+ []
+
+
+Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
+less on input line 51.
+
+
+Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
+less on input line 51.
+
+
+Package Fancyhdr Warning: \headheight is too small (14.22636pt): 
+ Make it at least 25.2842pt.
+ We now make it that large for the rest of the document.
+ This may cause the page layout to be inconsistent, however.
+
+[36
+
+]
+Missing character: There is no é in font cmr10!
+Missing character: There is no é in font cmr10!
+
+Underfull \hbox (badness 10000) in paragraph at lines 80--81
+
+ []
+
+[37]
+<fig/TemperatuurModuleHTTPCOAPProxy.png, id=180, 455.45157pt x 259.7203pt>
 File: fig/TemperatuurModuleHTTPCOAPProxy.png Graphic file (type png)
 
 <use fig/TemperatuurModuleHTTPCOAPProxy.png>
 Package pdftex.def Info: fig/TemperatuurModuleHTTPCOAPProxy.png used on input l
-ine 80.
+ine 86.
 (pdftex.def)             Requested size: 455.24408pt x 259.60869pt.
 
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 88--89
-
- []
-
-[36]
 Underfull \hbox (badness 10000) in paragraph at lines 94--95
 
  []
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 96--97
+[38 <C:/xampp/htdocs/sites/all/modules/custom/documenten/Scriptie in LaTeX/fig/
+TemperatuurModuleHTTPCOAPProxy.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 100--101
 
  []
 
-[37 <C:/xampp/htdocs/sites/all/modules/custom/documenten/Scriptie in LaTeX/fig/
-TemperatuurModuleHTTPCOAPProxy.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 98--99
+
+Underfull \hbox (badness 10000) in paragraph at lines 102--103
 
  []
 
@@ -696,41 +708,41 @@ Underfull \hbox (badness 10000) in paragraph at lines 104--105
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 106--107
+Underfull \hbox (badness 10000) in paragraph at lines 110--111
 
  []
 
-Missing character: There is no é in font cmr10!
-Missing character: There is no é in font cmr10!
-Missing character: There is no é in font cmr10!
-Missing character: There is no é in font cmr10!
-
+[39]
 Underfull \hbox (badness 10000) in paragraph at lines 112--113
 
  []
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 114--115
-
- []
-
-[38]
-Underfull \hbox (badness 10000) in paragraph at lines 116--117
-
- []
-
+Missing character: There is no é in font cmr10!
+Missing character: There is no é in font cmr10!
+Missing character: There is no é in font cmr10!
+Missing character: There is no é in font cmr10!
 
 Underfull \hbox (badness 10000) in paragraph at lines 118--119
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 120--122
+Underfull \hbox (badness 10000) in paragraph at lines 120--121
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 123--124
+Underfull \hbox (badness 10000) in paragraph at lines 122--123
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 124--125
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 126--128
 
  []
 
@@ -739,22 +751,27 @@ Underfull \hbox (badness 10000) in paragraph at lines 129--130
 
  []
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 131--132
-
- []
-
-[39]
-Underfull \hbox (badness 10000) in paragraph at lines 133--134
+[40]
+Underfull \hbox (badness 10000) in paragraph at lines 135--136
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 135--137
+Underfull \hbox (badness 10000) in paragraph at lines 137--138
 
  []
 
-) [40]
+
+Underfull \hbox (badness 10000) in paragraph at lines 139--140
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 141--143
+
+ []
+
+[41]) [42]
 ("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\referen
 ties.tex"
 Missing character: There is no Ã in font cmr10!
@@ -778,7 +795,7 @@ less on input line 126.
 Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
 less on input line 126.
 
-[41
+[43
 
 
 
@@ -795,7 +812,7 @@ less on input line 138.
 Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
 less on input line 138.
 
-[42
+[44
 
 
 
@@ -825,10 +842,10 @@ ourceModule.aux")
 ("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\referen
 ties.aux")) ) 
 Here is how much of TeX's memory you used:
- 3179 strings out of 494045
- 53185 string characters out of 3148391
+ 3180 strings out of 494045
+ 53194 string characters out of 3148391
  101109 words of memory out of 3000000
- 6354 multiletter control sequences out of 15000+200000
+ 6355 multiletter control sequences out of 15000+200000
  11547 words of font info for 40 fonts, out of 3000000 for 9000
  717 hyphenation exceptions out of 8191
  36i,11n,47p,1490b,427s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -841,9 +858,9 @@ fonts/type1/public/amsfonts/cm/cmssi10.pfb><C:/Program Files/MiKTeX 2.9/fonts/t
 ype1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/pub
 lic/amsfonts/cm/cmti10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/euro
 sym/feymr10.pfb>
-Output written on boek.pdf (52 pages, 793301 bytes).
+Output written on boek.pdf (54 pages, 798958 bytes).
 PDF statistics:
- 228 PDF objects out of 1000 (max. 8388607)
+ 234 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  101 words of extra memory for PDF output out of 10000 (max. 10000000)
 
