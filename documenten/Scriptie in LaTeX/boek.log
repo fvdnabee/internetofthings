@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2013.4.11)  19 APR 2013 15:56
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2013.4.11)  19 APR 2013 15:59
 entering extended mode
 **boek.tex
 
@@ -449,13 +449,7 @@ Overfull \hbox (22.76358pt too wide) in paragraph at lines 202--208
  []
 
 [16 <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/documenten/
-Scriptie in LaTeX/fig/weermodule.png>])
-Overfull \hbox (2.73715pt too wide) in paragraph at lines 252--115
-[]\OT1/cmr/m/n/10.95 Bron: http://stackoverflow.com/questions/12683530/origin-h
-ttp-localhost-is-not-allowed-by-
- []
-
-[17]
+Scriptie in LaTeX/fig/weermodule.png>]) [17]
 ("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
 iptie in LaTeX\CoAP.tex"
 Hoofdstuk 3.
@@ -793,6 +787,12 @@ Missing character: There is no Ã in font cmr10!
 Missing character: There is no © in font cmr10!
 Missing character: There is no Ã in font cmr10!
 Missing character: There is no © in font cmr10!
+
+Underfull \hbox (badness 10000) in paragraph at lines 23--24
+[]\OT1/cmr/m/n/10.95 http://stackoverflow.com/questions/12683530/origin-http-lo
+calhost-is-not-allowed-by-
+ []
+
 )
 
 Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
@@ -849,10 +849,10 @@ iptie in LaTeX\CoAPResourceModule.aux")
 ("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
 iptie in LaTeX\referenties.aux")) ) 
 Here is how much of TeX's memory you used:
- 3184 strings out of 494045
- 54960 string characters out of 3148390
- 101118 words of memory out of 3000000
- 6359 multiletter control sequences out of 15000+200000
+ 3180 strings out of 494045
+ 54932 string characters out of 3148390
+ 101110 words of memory out of 3000000
+ 6355 multiletter control sequences out of 15000+200000
  11547 words of font info for 40 fonts, out of 3000000 for 9000
  717 hyphenation exceptions out of 8191
  36i,11n,47p,1490b,427s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -865,7 +865,7 @@ gram Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmssi10.pfb><C:/Program Fi
 les/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files/MiKT
 eX 2.9/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Program Files/MiKTeX 2.9/f
 onts/type1/public/eurosym/feymr10.pfb>
-Output written on boek.pdf (55 pages, 801134 bytes).
+Output written on boek.pdf (55 pages, 799912 bytes).
 PDF statistics:
  238 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
