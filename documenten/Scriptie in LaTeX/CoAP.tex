@@ -79,7 +79,7 @@ Concreet, stel dat men na een optie met nummer 6 een optie met nummer 11 wil pla
 
 \subsubsection{Verschil met HTTP}
 
-Als we dit kort vergelijken met het berichtformaat van HTTP (zie Figuur~\ref{HTTPMessageFormat}) zien we dat er aanzienlijke verschillen zijn. Bij HTTP zijn request en response niet helemaal gelijk. We kijken eerst naar de HTTP request.
+Als we dit kort vergelijken met het berichtformaat van HTTP (zie Figuur~\ref{fig:HTTPMessageFormat}) zien we dat er aanzienlijke verschillen zijn. Bij HTTP zijn request en response niet helemaal gelijk. We kijken eerst naar de HTTP request.
 
 Deze is opgedeeld in drie delen. Een requestlijn die op zijn beurt opgedeeld is in drie delen, gescheiden door een spatie. Het eerste deel is de methodenaam (GET, POST, HEAD, PUT of DELETE voor HTTP 1.1). Het tweede deel is de URL van de gevraagde resource en het laatste deel is het versienummer. Vervolgens zijn er een aantal headerlijnen die bijkomende opties voorstellen. De entity body wordt gebruikt door de POST methode om gegevens door te sturen en wordt gescheiden van de headerlijnen door een lege lijn. Bijkomend wordt elke lijn (ook de lege) afgesloten met een carriage return (CR)\nomenclature{CR}{Carriage Return} en een line feed (LF\nomenclature{LF}{Line Feed}).
 
@@ -93,7 +93,7 @@ Het is dus duidelijk dat een HTTP bericht aanzienlijk groter zal zijn dan een Co
 {\includegraphics[width=0.45\textwidth]{fig/HTTPRequestMessageFormat}}
 \subcaptionbox{Response}
 {\includegraphics[width=0.45\textwidth]{fig/HTTPResponseMessageFormat}}
-\caption{HTTP Message Format}\label{HTTPMessageFormat}
+\caption{HTTP Message Format}\label{fig:HTTPMessageFormat}
 \end{figure}
 
 \newpage
@@ -108,26 +108,23 @@ HTTP realiseert een betrouwbare en robuuste vorm van communicatie. Het is gebase
 
 \subsubsection{Confirmable berichten}
 
-\begin{wrapfigure}{r}{0.3\textwidth}
-%\vspace{-20pt}
-\includegraphics[width=0.3\textwidth]{fig/CoAPConfirmable}
-\vspace{-30pt}
-\caption{Betrouwbare berichtuiwisseling (CoAP 14 draft)}
-%\vspace{-10pt}
-\end{wrapfigure}
-Wanneer we de betrouwbaarheid van de berichtenuitwisseling willen opdrijven, merken we de berichten als confirmable (CON)\nomenclature{CON}{Confirmable}. Een CON bericht moet door de server worden beantwoord met een Acknowledgement (ACK)\nomenclature{ACK}{Acknowledgement} bericht, dit ACK bericht moet hetzelfde message ID bevatten als het CON bericht waarop geantwoord wordt. Wanneer CON berichten niet worden beantwoord met een ACK bericht v\'{o}\'{o}r een bepaalde timeout, wordt het bericht opnieuw verzonden. Bij het opnieuw verzenden wordt een exponential back-off mechanisme toegepast. Eerst wordt een timeout bepaald tussen een ACK\_TIMEOUT en ACK\_TIMEOUT x ACK\_RANDOM\_FACTOR, wanneer die timeout verstrijkt wordt het CON bericht opnieuw verzonden en de timeout verdubbeld. Wanneer de server niet in staat is het CON bericht te verwerken, wat betekent dat die zelfs geen geldige error response kan geven, antwoordt die met een reset (RST)\nomenclature{RST}{Reset} bericht in plaats van een ACK bericht.
+Wanneer we de betrouwbaarheid van de berichtenuitwisseling willen opdrijven, merken we de berichten als confirmable (CON)\nomenclature{CON}{Confirmable}. Een CON bericht moet door de server worden beantwoord met een Acknowledgement (ACK)\nomenclature{ACK}{Acknowledgement} bericht (zie Figuur~\ref{fig:berichtuitwisseling}), dit ACK bericht moet hetzelfde message ID bevatten als het CON bericht waarop geantwoord wordt. Wanneer CON berichten niet worden beantwoord met een ACK bericht v\'{o}\'{o}r een bepaalde timeout, wordt het bericht opnieuw verzonden. Bij het opnieuw verzenden wordt een exponential back-off mechanisme toegepast. Eerst wordt een timeout bepaald tussen een ACK\_TIMEOUT en ACK\_TIMEOUT x ACK\_RANDOM\_FACTOR, wanneer die timeout verstrijkt wordt het CON bericht opnieuw verzonden en de timeout verdubbeld. Wanneer de server niet in staat is het CON bericht te verwerken, wat betekent dat die zelfs geen geldige error response kan geven, antwoordt die met een reset (RST)\nomenclature{RST}{Reset} bericht in plaats van een ACK bericht.
 
 \subsubsection{Non-confirmable berichten}
 
-\begin{wrapfigure}{r}{0.3\textwidth}
-\vspace{-30pt}
-\includegraphics[width=0.3\textwidth]{fig/CoAPNonConfirmable}
-\vspace{-20pt}
-\caption{Onbetrouwbare berichtuiwisseling (CoAP 14 draft)}
-\vspace{-15pt}
-\end{wrapfigure}
+Soms heeft een bericht geen betrouwbaar transport nodig. Een voorbeeld hiervan is een stroom van sensordata waarbij elke meting verstuurd wordt met een Non-confirmable bericht(NON)\nomenclature{NON}{Non-confirmable}. Dit soort berichten wordt niet bevestigd met een ACK bericht, maar de berichten hebben wel nog steeds een message id om duplicatie van berichten te detecteren (zie Figuur~\ref{fig:berichtuitwisseling}). Wanneer een ontvanger niet in staat is het bericht te verwerken, opnieuw bedoelen we daarmee dat het geen geldige error response kan geven, zendt hij een RST naar de zender.
 
-Soms heeft een bericht geen betrouwbaar transport nodig. Een voorbeeld hiervan is een stroom van sensordata waarbij elke meting verstuurd wordt met een Non-confirmable bericht(NON)\nomenclature{NON}{Non-confirmable}. Dit soort berichten wordt niet bevestigd met een ACK bericht, maar de berichten hebben wel nog steeds een message id om duplicatie van berichten te detecteren. Wanneer een ontvanger niet in staat is het bericht te verwerken, opnieuw bedoelen we daarmee dat het geen geldige error response kan geven, zendt hij een RST naar de zender.
+\begin{figure}[h]
+\vspace{10pt}
+\centering
+\subcaptionbox{Confirmable}
+{\includegraphics[width=0.3\textwidth]{fig/CoAPConfirmable}}
+\hspace{30pt}
+\subcaptionbox{Non-confirmable}
+{\includegraphics[width=0.3\textwidth]{fig/CoAPNonConfirmable}}
+\caption{Berichtuitwisseling (CoAP 14 draft)}
+\label{fig:berichtuitwisseling}
+\end{figure}
 
 \subsection{Request/response model}
 
@@ -138,7 +135,7 @@ Wanneer een request met een CON bericht verstuurd wordt, is het mogelijk dat het
 \vspace{10pt}
 \centering
 \includegraphics[width=0.7\textwidth]{fig/CoAPPiggyBacked}
-\vspace{-10pt}
+%\vspace{-10pt}
 \caption{Twee GET requests met piggy-backed responses (CoAP 14 draft)}
 \label{fig:CoAPPiggyBacked}
 \vspace{-20pt}

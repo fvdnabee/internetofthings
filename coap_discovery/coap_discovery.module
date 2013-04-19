@@ -229,8 +229,7 @@ function coap_discovery_form($form, &$form_state) {
 	
 	if(($user->uid != 0 && isset($result) && $result->rowCount() != 0) || (isset($_SESSION) && $user->uid == 0 && $_SESSION['links'])){
 		$table['#empty'] = 'Fetching sensors...';
-		//$result->
-		$form['device_uri']['#default_value'] = 'jongnueh';
+		$form['device_uri']['#default_value'] = $result->fetchField(1);
 	}
 	else		
 		$table['#empty'] = 'Enter a URI and click on \'Refresh device\' to display resources here.';
