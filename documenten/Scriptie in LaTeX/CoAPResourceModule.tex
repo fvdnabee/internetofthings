@@ -6,14 +6,28 @@ Nu we genoeg kennis hebben over Drupal en CoAP en een CoAP library ter beschikki
 
 \subsection{Functionaliteit}
 
-De bedoeling van deze module is de eindgebruiker in staat te stellen om gemakkelijk sensoren toe te voegen aan zijn/haar website, ze te bekijken en te sturen. Belangrijk hierbij is dat elke Drupal gebruiker die een website maakt, deze kan gebruiken zonder extra kennis nodig te hebben over het CoAP protocol. Ook is het niet de bedoeling dat de eindgebruiker zelf nog moet programmeren in Drupal om de module te kunnen gebruiken. Kortom, de module moet out-of-the box werken en zoveel mogelijk omvatten wat mogelijk is met CoAP sensoren. Concreet houdt dit onder andere dat bij installatie van de module een content-type mee wordt ge\"{i}nstalleerd, zodat de gebruiker slechts met enkele muisklikken het content-type kan toevoegen en onmiddellijk kan beginnen met het gebruike van de sensoren. Verder worden bij installatie ook alle benodigde databanktabellen gecre\"{e}erd.\\
+De bedoeling van deze module is de eindgebruiker in staat te stellen om gemakkelijk sensoren toe te voegen aan zijn/haar website, ze te bekijken en te sturen. Belangrijk hierbij is dat elke Drupal gebruiker die een website maakt, deze kan gebruiken zonder extra kennis nodig te hebben over het CoAP protocol. Ook is het niet de bedoeling dat de eindgebruiker zelf nog moet programmeren in Drupal om de module te kunnen gebruiken. Kortom, de module moet out-of-the box werken en zoveel mogelijk omvatten wat mogelijk is met CoAP sensoren. Concreet houdt dit onder andere in dat bij installatie van de module een content-type mee wordt ge\"{i}nstalleerd, zodat de gebruiker slechts met enkele muisklikken het content-type kan toevoegen en onmiddellijk kan beginnen met het gebruiken van de sensoren. Verder worden bij installatie ook alle benodigde databanktabellen gecre\"{e}erd.\\
 
 De configuratie die de gebruiker moet doen zoals bijvoorbeeld het toevoegen van een resource, moet gebruiksvriendelijk verlopen. Hiervoor wordt gebruik gemaakt van resource discovery, een gebruiker hoeft enkel het IPv6-adres op te geven. De sensoren die aangesloten zijn op dat embedded device worden dan opgesomd voor de gebruiker, die dan de mogelijk krijgt de sensoren aan te vinken om ze toe te voegen aan de website.\\
-Dit principe wordt zelfs verder doorgetrokken. Een gebruiker zal tevens de mogelijkheid krijgen om alle embedded devices in een subnetwerk op te vragen. Dit gebeurt aan de hand van een resource directory waarin alle well-known/core's van de embedded devices in het subnetwerk zich bevinden. De gebruiker krijgt dan de kans een embedded device te kiezen om dan resources te selecteren.\\
+Dit principe wordt zelfs verder doorgetrokken. Een gebruiker zal tevens de mogelijkheid krijgen om alle embedded devices in een subnetwerk op te vragen. Dit gebeurt aan de hand van een resource directory waarin alle well-known/core's zich bevinden van de embedded devices die in het subnetwerk aanwezig zijn. De gebruiker krijgt dan de kans een embedded device te kiezen om daarna eventueel resources te selecteren.\\
 
-Eens de gebruiker de gewenste resources heeft toegevoegd aan zijn/haar website, is het de bedoeling dat de 4 REST-methodes GET, PUT, POST, DELETE kunnen uitgevoerd worden, op voorwaarde dat de desbetreffende sensor de methode ondersteunt (dit wordt weergegeven bij het toevoegen van sensoren). Naast deze methodes kan een sensor ook nog observable zijn (zie hoofdstuk \ref{CoAP}), de gebruiker moet dus ook in staat gesteld worden om sensoren te observen.
+Eens de gebruiker de gewenste resources heeft toegevoegd aan zijn/haar website, is het de bedoeling dat de 4 REST-methodes GET, PUT, POST, DELETE kunnen uitgevoerd worden, op voorwaarde dat de desbetreffende sensor de methode ondersteunt (dit wordt weergegeven bij het toevoegen van sensoren). Naast deze methodes kan een sensor ook nog observable zijn (zie hoofdstuk \ref{CoAP}), de gebruiker moet dus ook in staat gesteld worden om notificaties te ontvangen van een resource.
 
+\subsection{Belangrijke aspecten}
 
+Deze module werd ontworpen met het oog op bepaalde aspecten waarmee rekening moeten gehouden worden. We sommen enkele van de belangrijkste op.
+
+\subsubsection{Modulariteit}
+Een van de grote troeven van Drupal is de modulariteit die aangeboden wordt. Het is dan ook van uiterst belang dat onze module dit principe niet verbreekt, maar juist doorzet. In hoofdstuk \ref{coaplibrary} zagen we al hoe een aparte CoAP library ontwikkeld werd. Dit heeft als gevolg dat elke Drupal gebruiker de kans heeft gebruik te maken van de library en dus zelf een module zou kunnen bouwen gelijkaardig aan de onze.\\
+Dit geldt ook voor deze module die we nu bespreken, deze is ook bruikbaar voor elke gebruiker die dat wil. Naast het installeren van de CoAP library en deze module, hoeft de gebruiker niets extra te doen om deze module te gebruiken. Databanktabellen worden gecre\"{e}erd en content-types worden ge\"{i}nstalleerd, zonder dat de gebruiker daar iets hoeft voor te configureren.
+
+\subsubsection{Minimalisatie van netwerkbelasting}
+
+\subsubsection{Caching}
+
+\subsection{Content-type in de databank}
+
+\subsection{Content-type in Drupal}
 
 
 
