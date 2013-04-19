@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.4.6)  19 APR 2013 11:46
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.4.6)  19 APR 2013 12:15
 entering extended mode
 **boek.tex
 
@@ -641,85 +641,58 @@ Underfull \hbox (badness 10000) in paragraph at lines 11--13
 
  []
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 26--27
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 28--29
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 30--31
-
- []
-
 [34]
-Missing character: There is no é in font cmr10!
-Missing character: There is no é in font cmr10!
+Underfull \hbox (badness 10000) in paragraph at lines 40--41
 
-Underfull \hbox (badness 10000) in paragraph at lines 60--61
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 42--43
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 44--45
 
  []
 
 [35]
-<fig/TemperatuurModuleHTTPCOAPProxy.png, id=174, 455.45157pt x 259.7203pt>
-File: fig/TemperatuurModuleHTTPCOAPProxy.png Graphic file (type png)
-
-<use fig/TemperatuurModuleHTTPCOAPProxy.png>
-Package pdftex.def Info: fig/TemperatuurModuleHTTPCOAPProxy.png used on input l
-ine 66.
-(pdftex.def)             Requested size: 455.24408pt x 259.60869pt.
+Missing character: There is no é in font cmr10!
+Missing character: There is no é in font cmr10!
 
 Underfull \hbox (badness 10000) in paragraph at lines 74--75
 
  []
 
+<fig/TemperatuurModuleHTTPCOAPProxy.png, id=174, 455.45157pt x 259.7203pt>
+File: fig/TemperatuurModuleHTTPCOAPProxy.png Graphic file (type png)
 
-Underfull \hbox (badness 10000) in paragraph at lines 80--81
+<use fig/TemperatuurModuleHTTPCOAPProxy.png>
+Package pdftex.def Info: fig/TemperatuurModuleHTTPCOAPProxy.png used on input l
+ine 80.
+(pdftex.def)             Requested size: 455.24408pt x 259.60869pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 88--89
 
  []
 
-[36 <C:/xampp/htdocs/sites/all/modules/custom/documenten/Scriptie in LaTeX/fig/
+[36]
+Underfull \hbox (badness 10000) in paragraph at lines 94--95
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 96--97
+
+ []
+
+[37 <C:/xampp/htdocs/sites/all/modules/custom/documenten/Scriptie in LaTeX/fig/
 TemperatuurModuleHTTPCOAPProxy.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 82--83
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 84--85
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 90--91
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 92--93
-
- []
-
-[37]
-Missing character: There is no é in font cmr10!
-Missing character: There is no é in font cmr10!
-Missing character: There is no é in font cmr10!
-Missing character: There is no é in font cmr10!
-
 Underfull \hbox (badness 10000) in paragraph at lines 98--99
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 100--101
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 102--103
 
  []
 
@@ -729,36 +702,65 @@ Underfull \hbox (badness 10000) in paragraph at lines 104--105
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 106--108
+Underfull \hbox (badness 10000) in paragraph at lines 106--107
+
+ []
+
+Missing character: There is no é in font cmr10!
+Missing character: There is no é in font cmr10!
+Missing character: There is no é in font cmr10!
+Missing character: There is no é in font cmr10!
+
+Underfull \hbox (badness 10000) in paragraph at lines 112--113
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 109--110
+Underfull \hbox (badness 10000) in paragraph at lines 114--115
 
  []
 
 [38]
-Underfull \hbox (badness 10000) in paragraph at lines 115--116
+Underfull \hbox (badness 10000) in paragraph at lines 116--117
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 117--118
+Underfull \hbox (badness 10000) in paragraph at lines 118--119
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 119--120
+Underfull \hbox (badness 10000) in paragraph at lines 120--122
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 121--123
+Underfull \hbox (badness 10000) in paragraph at lines 123--124
 
  []
 
-[39]) [40]
+
+Underfull \hbox (badness 10000) in paragraph at lines 129--130
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 131--132
+
+ []
+
+[39]
+Underfull \hbox (badness 10000) in paragraph at lines 133--134
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 135--137
+
+ []
+
+) [40]
 ("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\referen
 ties.tex"
 Missing character: There is no Ã in font cmr10!
@@ -823,10 +825,10 @@ ourceModule.aux")
 ("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\referen
 ties.aux")) ) 
 Here is how much of TeX's memory you used:
- 3182 strings out of 494045
- 53200 string characters out of 3148391
- 101108 words of memory out of 3000000
- 6357 multiletter control sequences out of 15000+200000
+ 3183 strings out of 494045
+ 53213 string characters out of 3148391
+ 101117 words of memory out of 3000000
+ 6358 multiletter control sequences out of 15000+200000
  11547 words of font info for 40 fonts, out of 3000000 for 9000
  717 hyphenation exceptions out of 8191
  36i,11n,47p,1490b,427s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -839,7 +841,7 @@ fonts/type1/public/amsfonts/cm/cmssi10.pfb><C:/Program Files/MiKTeX 2.9/fonts/t
 ype1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/pub
 lic/amsfonts/cm/cmti10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/euro
 sym/feymr10.pfb>
-Output written on boek.pdf (52 pages, 793237 bytes).
+Output written on boek.pdf (52 pages, 794510 bytes).
 PDF statistics:
  228 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
