@@ -22,8 +22,12 @@ Een van de grote troeven van Drupal is de modulariteit die aangeboden wordt. Het
 Dit geldt ook voor deze module die we nu bespreken, deze is ook bruikbaar voor elke gebruiker die dat wil. Naast het installeren van de CoAP library en deze module, hoeft de gebruiker niets extra te doen om deze module te gebruiken. Databanktabellen worden gecre\"{e}erd en content-types worden ge\"{i}nstalleerd, zonder dat de gebruiker daar iets hoeft voor te configureren.
 
 \subsubsection{Minimalisatie van netwerkbelasting}
+Mogelijks zijn meerdere gebruikers van een Drupal website ge\"{i}nteresseerd in een observable resource. Het is niet aanvaardbaar dat de netwerkbelasting zou stijgen met het aantal ge\"{i}nteresseerden. Daarom gedraagt Drupal zich eigenlijk als intermediaire server voor de eindgebruikers. Er wordt namelijk maar \'{e}\'{e}n observe uitgevoerd door Drupal, ongeacht het aantal gebruikers dat ge\'{i}nteresseerd is. De notificaties worden op de server in de databank gestopt en het zijn deze waarden waarop de gebruikers uiteindelijk pollen.\\
+Bovendien zorgt dit voor een vorm van controle over verkeer naar de resources, de gebruikers van de website kunnen namelijk niet zelfstandig CoAP praten met de resources. Een voorbeeld hiervan is de demo van de module op onze website. Enkel ingelogde gebruikers zijn in staat een observe uit te voeren. Dit om te vermijden dat gelijk wie een observe kan starten, men kan namelijk vergeten de observe af te sluiten, waardoor de databank meer en meer opgevuld wordt.
 
 \subsubsection{Caching}
+Een bericht kan een maximum levensduur hebben, dit wordt aangegeven met een max-age option in het bericht. Deze bevat dan een numerieke waarde die aangeeft in seconden hoelang de waarde als geldig mag worden beschouwd. Wanneer deze maximum levensduur overschreden wordt, mag deze waarde niet meer worden gebruikt. Dan moet bij een volgende aanvraag door een gebruiker een nieuwe waarde worden opgehaald van de resource. Bijgevolg wordt een opgehaalde waarde in de databank gestopt,. Wanneer de maximum levensduur nog niet overschreden is bij een aanvraag, wordt de waarde uit de databank gehaald. De resource wordt dan dus niet belast. Dit zorgt er ook voor dat de resource niet overmatig wordt belast wanneer veel gebruikers er een waarde van willen opvragen.\\
+Dit aspect is zeker een van de meer belangrijke omdat verbindingen naar een resource vaak een beperkte bandbreedte kennen. Bovendien komt de energievoorziening voor sensoren vaak van een batterij. Het werk dat zo'n sensor moet verrichten, moet dus worden geminimaliseerd.
 
 \subsection{Content-type in de databank}
 
@@ -36,6 +40,8 @@ Dit geldt ook voor deze module die we nu bespreken, deze is ook bruikbaar voor e
 
 
 %---------------------------------------- ALLES HIERNA IS NOG NIET VERWERKT ------------------------------------------------------------
+
+\chapter{ALLES IN DIT HOOFDSTUK MOET NOG VERWERKT WORDEN EN MAAKT DUS NOG GEEN DEEL UIT VAN DE SCRIPTIE}
 
 Er moet een module ontwikkeld worden voor Drupal die de gebruiker in staat moet stellen sensoren te kunnen beheren, waarbij als onderliggend protocol CoAP wordt gebruikt. De module moet zo veel mogelijk out-of-the-box te gebruiken zijn, wat inhoudt dat zoveel mogelijk benodigdheden mee ge\"{i}nstalleerd worden zonder extra tussenkomst van de gebruiker. Concreet betekent dit dat de benodigde content-types, zowel voor de gebruiker als de tabellen voor de databank, automatisch mee ge\"{i}nstalleerd worden bij installatie van de module.\\
 

@@ -3,17 +3,17 @@
  \nomgroup{A}
 
   \item [{ACK}]\begingroup Acknowledgement\nomeqref {3.0}
-		\nompageref{21}
+		\nompageref{22}
   \item [{AJAX}]\begingroup Asynchronous JavaScript and XML\nomeqref {2.0}
-		\nompageref{15}
+		\nompageref{16}
   \item [{ASCII}]\begingroup American Standard Code for Information Interchange\nomeqref {4.0}
-		\nompageref{28}
+		\nompageref{29}
   \item [{CMS}]\begingroup Content Management System\nomeqref {2.0}
-		\nompageref{6}
+		\nompageref{5}
   \item [{CoAP}]\begingroup Constrained Application Protocol\nomeqref {1.0}
 		\nompageref{2}
-  \item [{CON}]\begingroup Confirmable\nomeqref {3.0}\nompageref{21}
-  \item [{CR}]\begingroup Carriage Return\nomeqref {3.0}\nompageref{20}
+  \item [{CON}]\begingroup Confirmable\nomeqref {3.0}\nompageref{22}
+  \item [{CR}]\begingroup Carriage Return\nomeqref {3.0}\nompageref{21}
   \item [{HTTP}]\begingroup HyperText Transfer Protocol\nomeqref {1.0}
 		\nompageref{2}
   \item [{IoT}]\begingroup Internet of Things\nomeqref {0}
@@ -22,21 +22,21 @@
 		\nompageref{2}
   \item [{IPv6}]\begingroup Internet Protocol versie 6\nomeqref {1.0}
 		\nompageref{2}
-  \item [{LF}]\begingroup Line Feed\nomeqref {3.0}\nompageref{20}
+  \item [{LF}]\begingroup Line Feed\nomeqref {3.0}\nompageref{21}
   \item [{M2M}]\begingroup Machine-to-machine\nomeqref {3.0}
-		\nompageref{16}
+		\nompageref{17}
   \item [{NON}]\begingroup Non-confirmable\nomeqref {3.0}
 		\nompageref{22}
   \item [{PHP}]\begingroup PHP Hypertext Preprocessor\nomeqref {1.0}
 		\nompageref{3}
-  \item [{RST}]\begingroup Reset\nomeqref {3.0}\nompageref{21}
-  \item [{TKL}]\begingroup ToKen Length\nomeqref {3.0}\nompageref{18}
+  \item [{RST}]\begingroup Reset\nomeqref {3.0}\nompageref{22}
+  \item [{TKL}]\begingroup ToKen Length\nomeqref {3.0}\nompageref{19}
   \item [{TLV}]\begingroup Type Length Value\nomeqref {3.0}
-		\nompageref{19}
+		\nompageref{20}
   \item [{UDP}]\begingroup User Datagram Protocol\nomeqref {1.0}
 		\nompageref{2}
   \item [{URI}]\begingroup Uniform Resource Identifier\nomeqref {3.0}
-		\nompageref{16}
+		\nompageref{17}
   \item [{WOEID}]\begingroup Where On Earth ID\nomeqref {1.0}
 		\nompageref{3}
 
