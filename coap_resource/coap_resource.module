@@ -67,7 +67,7 @@ function coap_resource_form($form, &$form_state) {
 	
 	global $user;
 	
-	$form = array_merge_recursive($form, coap_resource_uri_form($form, $form_state));
+	//$form = array_merge_recursive($form, coap_resource_uri_form($form, $form_state));
 	$form = array_merge_recursive($form, observe_form($form, $form_state));
 	$form = array_merge_recursive($form, coap_resource_bekijken_form($form, $form_state));
 	$form = array_merge_recursive($form, coap_resource_get_request_form($form, $form_state));
@@ -88,8 +88,7 @@ function coap_resource_form($form, &$form_state) {
 		$uri = $record->uri;
 	}
 	
-	$prefix = "<div><label id = 'response' >Response: </label></div>";
-	$prefix .= "<div><label id = 'response_type' >Response type: </label></div>";
+	$prefix = "<tr><td colspan = '4' ><label id = 'response' >Response: </label></td><tr><td colspan = '4' ><label id = 'response_type' >Response type: </label></td></tr></table>";
 	$prefix .= "<img style = 'visibility:hidden;' src = '' id = 'errorimg' /><label id='error' ></label>"; // elementen om fouten te tonen
 	
 	if(!$empty){
@@ -349,6 +348,8 @@ function coap_resource_get_request_form($form_in, &$form_state) {
 		'#type' => 'submit',
 		'#submit' => array('coap_resource_get_request_form_submit'),
 		'#value' => t('GET'),
+		'#prefix' => "<table id = 'requests' ><th colspan = '4' >Request methods</th><tr><td>",
+		'#suffix' => "</td><td>",
 		);
 		
 	//dpm($form);
@@ -390,6 +391,7 @@ function coap_resource_put_request_form($form_in, &$form_state) {
 		'#type' => 'submit',
 		'#submit' => array('coap_resource_put_request_form_submit'),
 		'#value' => t('PUT'),
+		'#suffix' => "</td><td>",
 		);
 	
 	//dpm($form);
@@ -431,6 +433,7 @@ function coap_resource_post_request_form($form_in, &$form_state) {
 		'#type' => 'submit',
 		'#submit' => array('coap_resource_post_request_form_submit'),
 		'#value' => t('POST'),
+		'#suffix' => "</td><td>",
 		);
 		
 	//dpm($form);
@@ -465,6 +468,7 @@ function coap_resource_delete_request_form($form_in, &$form_state) {
 		'#type' => 'submit',
 		'#submit' => array('coap_resource_delete_request_form_submit'),
 		'#value' => t('DELETE'),
+		'#suffix' => "</td></tr>",
 		);
 	
 	//dpm($form);	
