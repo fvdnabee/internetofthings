@@ -296,7 +296,11 @@ class CoAPMessage {
 		return coap_library_hex_to_string(substr($this->message_hex, $pos+2));
 	}
 	
-	// Returns response object or null if the message has an observe option or there was no response
+	// 	Returns a response object with the response if the request doesn't have an observe option
+	//	Returns null if the request holds an observe option
+	//	Returns null if something went wrong
+	//	Calls hook_receive_notification for notification that have arrived from an observable resource
+	//	Calls hook_receive_notification if something went wrong
 	public function send_message(){
 		$observe = ($this->get_option_value(6) == -1) ? 0 : 1;
 		if($observe){
@@ -360,7 +364,7 @@ class CoAPMessage {
 						$response_hex = coap_library_string_to_hex_with_padding($response);
 						$function_name = $this->module . '_receive_error';
 						$function_name('none', $this->ip, $this->resource);
-						$function_name = $this->module . '_receive_response';
+						$function_name = $this->module . '_receive_notification';
 						$function_name($response_obj);
 						if($response_obj->is_confirmable()){
 							$ack = coap_library_generate_acknowledgement(coap_library_string_to_hex_with_padding($response));
@@ -396,8 +400,6 @@ class CoAPMessage {
 					}
 				}
 				else{
-					$function_name = $this->module . '_receive_response';
-					$function_name($response_obj);
 					return $response_obj;
 				}
 			}
@@ -428,8 +430,9 @@ class CoAPMessage {
 		return $result->rowCount();
 	}
 	
-	// hook_stop_observing, must be implemented by modules using this library
-	// Called when the observe stops, for whatever reason
+	// 	hook_stop_observing, must be implemented by modules using this library
+	// 	Called when the observe stops, for whatever reason
+	//	Calls hook_stop_observers to give the user of this module the chance to handle this event
 	public function stop_observing(){
 		$num_deleted = db_delete('coap_library_observe_resources')
 			->condition('uri', $this->ip . '/' . $this->resource, '=')
@@ -461,7 +464,7 @@ class CoAPMessage {
 	public function is_confirmable(){
 		return (substr($this->message_hex, 0, 1) == '4');
 	}
-	
+		
 }
 
 

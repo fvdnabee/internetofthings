@@ -657,6 +657,7 @@ function start_observing($uri){
 			while($result->rowCount() > 0){
 				$response_obj = $message->send_message();
 				temperatuursensor_met_coap_library_receive_response($response_obj);
+				sleep(5); // WAARDE NOG AANPASSEN NAAR EEN GEKOZEN WAARDE DOOR DE GEBRUIKER OF DE MAX AGE
 				$result = $query->execute();
 			}
 		}
