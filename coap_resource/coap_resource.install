@@ -24,14 +24,56 @@ function coap_resource_schema() {
 					'type' => 'varchar',
 					'not null' => TRUE,
 					'length' => '128',
-					'description' => 'Een URI van een embedded device',
+					'description' => 'Een URI van een resource',
 				),
-				'observable' => array(
-					'description' => 'Waarde om te bepalen of het device observeerbaar is of niet --> 0 = niet observeerbaar, 1 = wel observeerbaar',
+				'obs' => array(					
 					'type' => 'int',
 					'unsigned' => TRUE,
 					'not null' => TRUE,
 					'default' => 0,
+					'description' => 'Waarde om te bepalen of het device observeerbaar is of niet --> 0 = niet observeerbaar, 1 = wel observeerbaar',
+				),
+				'rt' => array(
+					'type' => 'varchar',
+					'not null' => FALSE,
+					'length' => '128',
+					'description' => 'application-specific semantic type',
+				),
+				'ct' => array(
+					'type' => 'varchar',
+					'not null' => FALSE,
+					'length' => '128',
+					'description' => 'content-type',
+				),
+				'ifd' => array(
+					'type' => 'varchar',
+					'not null' => FALSE,
+					'length' => '128',
+					'description' => 'interface desciption',
+				),
+				'sz' => array(
+					'type' => 'varchar',
+					'not null' => FALSE,
+					'length' => '128',
+					'description' => 'maximum size',
+				),
+				'title' => array(
+					'type' => 'varchar',
+					'not null' => FALSE,
+					'length' => '128',
+					'description' => 'human-readable name of resource',
+				),
+				'anchor' => array(
+					'type' => 'varchar',
+					'not null' => FALSE,
+					'length' => '128',
+					'description' => 'anchoring into other resource',
+				),
+				'rel' => array(
+					'type' => 'varchar',
+					'not null' => FALSE,
+					'length' => '128',
+					'description' => 'relation between source entered in anchor',
 				),
 				'last_error' => array(
 					'description' => 'Laatst opgetreden fout',
@@ -58,6 +100,13 @@ function coap_resource_schema() {
 					'not null' => TRUE,
 					'length' => '128',
 					'description' => 'Een URI van een embedded device',
+				),
+				'device' => array(
+					'description' => 'Waarde om te bepalen of het om een resource of een device gaat --> 0 = resource, 1 = device',
+					'type' => 'int',
+					'unsigned' => TRUE,
+					'not null' => TRUE,
+					'default' => 0,
 				),
 				'observe' => array(
 					'description' => 'Waarde om te bepalen of de gebruiker het device wil observeren of niet --> 0 = niet observeren, 1 = wel observeren',
@@ -161,12 +210,6 @@ function coap_resource_schema() {
 					'type' => 'int',
 					'unsigned' => TRUE,
 					'not null' => FALSE,
-				),
-				'response_type'=> array(
-					'type' => 'varchar',
-					'not null' => FALSE,
-					'length' => '256',
-					'description' => 'Het content-type van de response',
 				),
 				'timestamp' => array(
 					'description' => 'Tijd van opvraging',

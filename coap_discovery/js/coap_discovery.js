@@ -2,7 +2,7 @@
 
 var refreshId;
 
-Drupal.behaviors.temperatuursensor_udp = {
+Drupal.behaviors.coap_resource = {
   attach: 	function(context) {
 				refreshId = setInterval(function(){
 					$.ajax({

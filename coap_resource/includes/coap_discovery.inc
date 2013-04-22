@@ -1,79 +1,5 @@
 <?php
 
-require_once(drupal_get_path('module', 'coap_library') . '/coap_library_classes.inc');
-
-function coap_discovery_menu() {
-	$items = array();
-	$items["coap_discovery/poll"] = array(
-		"title" => "Discovery",
-		"page callback" => "coap_discovery_page_callback",
-		"access callback" => true,
-		"type" => MENU_CALLBACK
-	);
-  return $items;
-}
-
-function coap_discovery_page_callback(){
-	global $user;
-	$output ='';
-	
-	//if($user->uid != 0 && !isset($_SESSION['links'])){
-	if($user->uid != 0){
-		$result = db_select('coap_discovery_users','user_device')
-				->fields('user_device', array('uid','uri','device'))
-				->condition('uid', $user->uid, '=')
-				->condition('device',1,'=')
-				->execute();
-		foreach($result as $record){
-			$device_uri = $record->uri;
-		}
-		
-		if($result->rowCount() != 0){
-			$result = db_select('coap_discovery_resources', 'links')
-					->fields('links', array('uri','title'))
-					->condition('uri', "$device_uri%", 'LIKE')
-					->execute();
-			foreach($result as $record){
-				$output .= '<link>';
-				$output .= '<link_name>';
-				$output .= $record->link_name;
-				$output .= '</link_name>';
-				$output .= '<title>';
-				$output .= $record->title;
-				$output .= '</title>';
-				$output .='</link>';
-			}
-			if($result->rowCount() == 0) $output = 'No data in database about this device. Click on \'Refresh device\' to display resources.';
-		}
-	}	
-	else{
-		for($i=0 ; $i<count($_SESSION['links']) ; $i++){
-			$output .= '<link>';
-			$output .= '<link_name>';
-			$output .= $_SESSION['links'][$i]['link_name'];
-			$output .= '</link_name>';
-			$output .= '<title>';
-			$output .= $_SESSION['links'][$i]['title'];
-			$output .= '</title>';
-			$output .='</link>';
-		}
-	}
-	
-	print $output;
-}
-
-//////////
-// FORM //
-//////////
-
-//Act on a node that is being assembled before rendering.
-function coap_discovery_node_view($node, $view_mode, $langcode) {
-	if($node->type == 'coap_discovery'){
-		$node->content['coap_discovery_form'] = drupal_get_form('coap_discovery_form', $node);
-	}
-	return $node;
-}
-
 function coap_discovery_build_headers(){
 return array
   (
@@ -133,7 +59,7 @@ function coap_discovery_form_validate($form, &$form_state) {
  * first step.
  */
 function coap_discovery_form($form, &$form_state) {
-	drupal_add_js(drupal_get_path('module', 'coap_discovery') . '/js/coap_discovery.js'); // JavaScript bestand toevoegen
+	drupal_add_js(drupal_get_path('module', 'coap_resource') . '/js/coap_resource.js'); // JavaScript bestand toevoegen
 	global $user;
 
 	//textfield for device uri
@@ -183,15 +109,15 @@ function coap_discovery_form($form, &$form_state) {
 	
 	if($user->uid != 0){ //geen anonieme user	
 		$_SESSION['links'] = array();	
-		$result = db_select('coap_discovery_users','user_device')
-				->fields('user_device', array('uid','device','uri'))
+		$result = db_select('coap_resource_users','user_device')
+				->fields('user_device', array('uid','uri','device'))
 				->condition('uid', $user->uid, '=')
 				->condition('device',1,'=')
 				->execute();
 		foreach($result as $record){
 			$device_uri = $record->uri;
 			$form['device_uri']['#default_value'] = $device_uri;		
-			$db_links= db_select('coap_discovery_resources', 'links')
+			$db_links= db_select('coap_resource_resources', 'links')
 				->fields('links', array('uri','title'))
 				->condition('uri', "$device_uri%", 'LIKE')
 				->execute();
@@ -206,13 +132,13 @@ function coap_discovery_form($form, &$form_state) {
 		}
 	}
 	
-	if($user->uid != 0){ //geen anonieme user
-		$result = db_select('coap_discovery_users','user_device')
-				->fields('user_device', array('uid','device','uri'))
-				->condition('uid', $user->uid, '=')
-				->condition('device',1,'=')
-				->execute();
-	}
+	// if($user->uid != 0){ //geen anonieme user
+		// $result = db_select('coap_resource_users','user_device')
+				// ->fields('user_device', array('uid','uri','device'))
+				// ->condition('uid', $user->uid, '=')
+				// ->condition('device',1,'=')
+				// ->execute();
+	// }
 	
 	$links = array();
 	
@@ -267,22 +193,22 @@ function coap_discovery_form($form, &$form_state) {
 
 function coap_discovery_load_device_core_submit($form, &$form_state) {
 	//dpm('refresh submit');
-	background_process_start('coap_discovery_load_device_core', $form_state['values']['device_uri']);  
-	//coap_discovery_load_device_core($form_state['values']['device_uri']); //voorgrond
+	//background_process_start('coap_discovery_load_device_core', $form_state['values']['device_uri']);  
+	coap_discovery_load_device_core($form_state['values']['device_uri']); //voorgrond
 	$form_state['rebuild'] = TRUE;
 }
 
 function coap_discovery_refresh_device_core_submit($form, &$form_state) {
 	//dpm('refresh submit');
-	background_process_start('coap_discovery_start_discover', $form_state['values']['device_uri']);  
-	//coap_discovery_start_discover($form_state['values']['device_uri']); //voorgrond
+	//background_process_start('coap_discovery_start_discover', $form_state['values']['device_uri']);  
+	coap_discovery_start_discover($form_state['values']['device_uri']); //voorgrond
 	$form_state['rebuild'] = TRUE;
 }
 
 function coap_discovery_clear_tableselect_submit($form, &$form_state) {
 	global $user;
 	if($user->uid!=0){
-		db_delete('coap_discovery_users')
+		db_delete('coap_resource_users')
 			->condition('uid', $user->uid, '=')
 			->condition('device',1,'=')
 			->execute();
@@ -297,21 +223,6 @@ function coap_discovery_add_resources($form, &$form_state) {
 	foreach($form_state['values']['table'] as $value){
 		$link = $_SESSION['links'][$value];
 		$uri = $form_state['values']['device_uri'] . $link['link_name'];
-		
-		$result = db_select('coap_resource_resources', 'resources')
-			->fields('resources', array('uri'))
-			->condition('uri', $uri, '=')
-			->execute();
-		
-		if($result->rowCount() == 0){
-			$id = db_insert('coap_resource_resources')
-				->fields(array(
-					'uri' => $uri,
-					'observable' => 0, //dit kan ik uit een optie halen, momenteel standaard 0
-					'last_error' => 'none',
-				))
-				->execute();
-		}
 		
 		// Watch bij alle rijen van de user op nul zetten
 		$num_updated = db_update('coap_resource_users')
@@ -355,24 +266,70 @@ function coap_discovery_add_resources($form, &$form_state) {
 	return;
 }
 
-//////////
-// rest //
-//////////
+function coap_discovery_page_callback(){
+	global $user;
+	$output ='';
+	
+	//if($user->uid != 0 && !isset($_SESSION['links'])){
+	if($user->uid != 0){
+		$result = db_select('coap_resource_users','user_device')
+				->fields('user_device', array('uid','uri','device'))
+				->condition('uid', $user->uid, '=')
+				->condition('device',1,'=')
+				->execute();
+		foreach($result as $record){
+			$device_uri = $record->uri;
+		}
+		
+		if($result->rowCount() != 0){
+			$result = db_select('coap_resource_resources', 'links')
+					->fields('links', array('uri','title'))
+					->condition('uri', "$device_uri%", 'LIKE')
+					->execute();
+			foreach($result as $record){
+				$output .= '<link>';
+				$output .= '<link_name>';
+				$output .= $record->link_name;
+				$output .= '</link_name>';
+				$output .= '<title>';
+				$output .= $record->title;
+				$output .= '</title>';
+				$output .='</link>';
+			}
+			if($result->rowCount() == 0) $output = 'No data in database about this device. Click on \'Refresh device\' to display resources.';
+		}
+	}	
+	else{
+		for($i=0 ; $i<count($_SESSION['links']) ; $i++){
+			$output .= '<link>';
+			$output .= '<link_name>';
+			$output .= $_SESSION['links'][$i]['link_name'];
+			$output .= '</link_name>';
+			$output .= '<title>';
+			$output .= $_SESSION['links'][$i]['title'];
+			$output .= '</title>';
+			$output .='</link>';
+		}
+	}
+	
+	print $output;
+}
+
 function coap_discovery_load_device_core($device_uri){
 	global $user;
-	$result = db_select('coap_discovery_resources', 'links')
+	$result = db_select('coap_resource_resources', 'links')
 				->fields('links', array('uri','title'))
 				->condition('uri', "$device_uri%", 'LIKE')
 				->execute();
 	
 	if($user->uid != 0){ //db aanpassen
-		db_delete('coap_discovery_users')
+		db_delete('coap_resource_users')
 				->condition('uid', $user->uid, '=')
 				->condition('device',1,'=')
 				->execute();
 				
 		//if($result->rowCount() != 0){
-			db_insert('coap_discovery_users')
+			db_insert('coap_resource_users')
 					->fields(array(
 						'uid' => $user->uid,
 						'uri' => $device_uri,
@@ -387,7 +344,7 @@ function coap_discovery_load_device_core($device_uri){
 }
 
 function coap_discovery_start_discover($ip){
-	$coap_factory = new CoAPMessageFactory('coap_discovery', $ip, '');
+	$coap_factory = new CoAPMessageFactory('coap_resource', $ip, '');
 	$response_obj = null;
 	$payloads = '';
 	$has_more = true;
@@ -415,12 +372,12 @@ function coap_discovery_parse_discovery_payloads($ip,$payloads){
 	preg_match_all($regex, $payloads, $resources);
 	
 	if($user->uid != 0){
-		db_delete('coap_discovery_users')
+		db_delete('coap_resource_users')
 				->condition('uid', $user->uid, '=')
 				->condition('device',1,'=')
 				->execute();
 		
-		$query = db_delete('coap_discovery_resources')
+		$query = db_delete('coap_resource_resources')
 			->condition('uri', "$ip%", 'LIKE')
 			->execute();
 	}
@@ -454,7 +411,7 @@ function coap_discovery_parse_discovery_payloads($ip,$payloads){
 			}
 			
 			if($user->uid != 0){			
-				$id = db_insert('coap_discovery_resources')
+				$id = db_insert('coap_resource_resources')
 				->fields($attributes)
 				->execute();
 			}
@@ -465,21 +422,12 @@ function coap_discovery_parse_discovery_payloads($ip,$payloads){
 	}
 	if($user->uid == 0) $_SESSION['links'] = $links;
 	if($id != -1 && $user->uid != 0){ //tweede stuk is eigenlijk overbodig, maar je weet nooit
-		$id = db_insert('coap_discovery_users')
+		$id = db_insert('coap_resource_users')
 			->fields(array(
 				'uid' => $user->uid,
 				'uri' => $ip,
+				'device' => 1,
 				))
 			->execute();
 	}
-}
-
-function coap_discovery_receive_response($response_obj){
-	dpm($response_obj);
-	
-	// als content format apllication link format is, skip dan al de shizzle
-}
-
-function coap_discovery_receive_error($error_message, $ip, $resource){
-	//dpm($error_message);
 }

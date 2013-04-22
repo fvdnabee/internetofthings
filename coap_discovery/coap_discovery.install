@@ -4,17 +4,11 @@ function coap_discovery_schema(){
 	$schema['coap_discovery_resources'] = array( //moet geïntegreerd worden met coap_resource_resources
 		'description' => "Tabel om resources en hun karakteristieken bij te houden",
 		'fields' => array(
-				'device_uri' => array(										//
-					'type' => 'varchar',									//
-					'not null' => TRUE,										//	
-					'length' => '128',										//
-					'description' => 'ip device',							//
-				),															// => tesamen vormen ze uri van coap_resource_resources
-				'link_name' => array(										//
-					'type' => 'varchar',									//
-					'not null' => TRUE,										//
-					'length' => '128',										//
-					'description' => 'Een relatieve uri van een resource',	//
+				'uri' => array(
+					'type' => 'varchar',
+					'not null' => TRUE,
+					'length' => '128',
+					'description' => 'Een URI van een resource',
 				),
 				'obs' => array(					
 					'type' => 'int',
@@ -72,7 +66,7 @@ function coap_discovery_schema(){
 					'length' => '128',
 				),
 			),
-			'primary key' => array('device_uri','link_name'),
+			'primary key' => array('uri'),
 	);
 	
 	$schema['coap_discovery_users'] = array( //deze tabel moet geïntegreerd worden in coap_resource_users
@@ -146,9 +140,9 @@ function coap_discovery_schema(){
 			),
 			'primary key' => array('uid', 'uri'),
 			'foreign keys' => array(
-				'uri' => array( //kan device_uri zijn
+				'uri' => array(
 					'table' => 'coap_discovery_resources',
-					'columns' => array('uri' => 'device_uri'),  //volgorde kan omgewisseld zijn
+					'columns' => array('uri' => 'uri'),
 				),
 			),
 	);
