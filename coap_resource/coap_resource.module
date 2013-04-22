@@ -783,7 +783,17 @@ function coap_resource_start_observing($uri){
 	if(preg_match($pattern, $uri, $matches)){
 		$ip = $matches[1];
 		$resource = $matches[2];
-		$coap_factory = new CoAPMessageFactory('coap_resource', $ip, $resource);
+		
+		// Determine if resource uses separate response
+		$query = db_select('coap_resource_resources', 'separate_response');
+		$query
+			->fields('resources', array('uri', 'observable'))
+			->condition('separate_response', 1, '=')
+			->condition('uri', $uri, '=');
+		$result = $query->execute();
+		$separate_response = ($result->rowCount() > 0);
+		
+		$coap_factory = new CoAPMessageFactory('coap_resource', $ip, $resource, $separate_response);
 		
 		//	Get the record from the databse for given URI if it's observable, to check if the resource is observable
 		$query = db_select('coap_resource_resources', 'resources');
@@ -851,11 +861,20 @@ function coap_resource_start_request($method, $payload=''){
 		->condition('uid', $user->uid, '=');
 	$result = $query->execute();
 	
+	//	Determine if resource uses separate response
+	$query = db_select('coap_resource_resources', 'separate_response');
+	$query
+		->fields('resources', array('uri', 'observable'))
+		->condition('separate_response', 1, '=')
+		->condition('uri', $uri, '=');
+	$result = $query->execute();
+	$separate_response = ($result->rowCount() > 0);
+	
 	foreach($result as $record){
 		$pattern = '/([^\/]+)\/(.*)/i';
 		if(preg_match($pattern, $record->uri, $matches)){
 			//	Build message
-			$coap_factory = new CoAPMessageFactory('coap_resource', $matches[1], $matches[2]);
+			$coap_factory = new CoAPMessageFactory('coap_resource', $matches[1], $matches[2], $separate_response);
 			$coap_message = $coap_factory->create_message_with_header_and_token('CON', $method, 0);
 			$coap_message->add_option(11, $matches[2]);
 			if($payload != ''){
@@ -877,8 +896,7 @@ function coap_resource_start_request($method, $payload=''){
 				foreach($result as $record){
 					//	Check if the last value has a max age and if it has, check if the value is still valid
 					if($record->max_age != null && strtotime($record->timestamp) > intval($record->max_age)){
-						$factory = new CoAPMessageFactory('coap_resource', $ip, $resource);
-						$response_obj = $factory->create_message_with_given_message($record->original_response);
+						$response_obj = $coap_factory->create_message_with_given_message($record->original_response);
 					}
 				}
 			}

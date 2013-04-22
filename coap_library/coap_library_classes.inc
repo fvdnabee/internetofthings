@@ -11,6 +11,7 @@ class CoAPMessage {
 	private $module = null;
 	private $ip;
 	private $resource;
+	private $separate_response;
 	private $format_mapping;
 	private $response_code_mapping;
 	private $retransmit_counter = 0;
@@ -24,11 +25,12 @@ class CoAPMessage {
 	private $PROBING_RATE = 5; // 1 Byte/second
 	
 	// Constructor with optional given message, expects hexadecimal message
-	public function __construct($module, $ip, $resource, $message = ''){
+	public function __construct($module, $ip, $resource, $separate_response, $message = ''){
         $this->message_hex = $message;
 		$this->module = $module;
 		$this->ip = $ip;
 		$this->resource = $resource;
+		$this->separate_response = $separate_response;
 		$this->response_code_mapping = array(
 			65 => '2.01 Created',
 			66 => '2.02 Deleted',
@@ -299,12 +301,15 @@ class CoAPMessage {
 	// 	Returns a response object with the response if the request doesn't have an observe option
 	//	Returns null if the request holds an observe option
 	//	Returns null if something went wrong
-	//	Calls hook_receive_notification for notification that have arrived from an observable resource
+	//	Calls hook_receive_notification for notifications that have arrived from an observable resource
 	//	Calls hook_receive_notification if something went wrong
 	public function send_message(){
-		//	Check if request has an observe option
+		//	Determine if request has an observe option
 		$observe = ($this->get_option_value(6) == -1) ? 0 : 1;
+		
 		$request_token = $this->get_token();
+		$request_message_id = $this->get_message_id();
+		
 		if($observe){
 			//	Request has an observe option
 			//	Check if resource is already being observed
@@ -340,7 +345,7 @@ class CoAPMessage {
 			
 			//	Set initial timeout
 			$timeout = rand($this->ACK_TIMEOUT, $this->ACK_TIMEOUT*$this->RANDOM_FACTOR); 
-			stream_set_timeout($socket, 0, $timeout*1000); // third parameter is in MICROseconds
+			stream_set_timeout($socket, 0, $timeout*1000); // stream_set_timeout expects third parameter to be in MICROseconds
 			$this->retransmit_counter = 0;
 			
 			//	Send CoAP packet
@@ -386,17 +391,27 @@ class CoAPMessage {
 					//	Resource should be observed
 					$must_observe = $this->observe_is_necessary(); //	Check if resource should still be observed
 					
+					//	Set initial values for reordering
+					$V1 = 0;
+					$T1 = time();
+					
 					//	Keep receiving notifications while observe is still necessary
 					while($must_observe > 0 && $response != '' && $response != 'empty'){
 						//	Resource should still be observed
 						
 						$response_hex = coap_library_string_to_hex_with_padding($response);
 						
-						//	Only take care of the message if the message contains the correct token
-						if($response_obj->get_token() == $request_token){
+						//	Set parameters for reordering and build reordering condition
+						$V2 = intval(coap_hex_to_string($response_obj->get_option_value(6)));
+						$T2 = time();
+						$reordering_condition = (($V1 < $V2 && $V2 - $V1 < pow(2, 32)) || ($V1 > $V2 && $V1 - $V2 > pow(2, 32)) || ($T2 > $T1 + 128));
+						
+						//	Only take care of the message if the message contains the correct token or the reordering condition is met (cfr. CoAP observe draft)
+						if($response_obj->get_token() == $request_token && $reordering_condition){
 							//	notify using module that there are no difficulties at the moment
 							$function_name = $this->module . '_receive_error';
 							$function_name('none', $this->ip, $this->resource);
+							
 							//	Call hook_receive_notification of the using module
 							$function_name = $this->module . '_receive_notification';
 							$function_name($response_obj);
@@ -408,10 +423,16 @@ class CoAPMessage {
 								$returnvalue = fwrite($socket, $ack);
 							}
 						}
+						else if($response_obj->get_token() != $request_token && $response_obj->is_confirmable()){
+							//	Send a reset to inform the server that the client has no interest in notifications with this token
+							$reset = coap_library_generate_reset(coap_library_string_to_hex_with_padding($response));
+							$reset = pack('H*', $reset);
+							$returnvalue = fwrite($socket, $reset); // Write to socket
+						}
 						
 						//	Wait for next notification
 						$response = 'empty';
-						$response = fread($socket, 128); // lezen van udp-socket
+						$response = fread($socket, 128); // Read from socket
 						
 						//	Keep resending the packet and multiplying the timeout if something went wrong (exponential backoff)
 						while($this->retransmit_counter < $this->MAX_RETRANSMIT && ($response == '' || $response == 'empty')){
@@ -420,7 +441,7 @@ class CoAPMessage {
 							$function_name('delay', $this->ip, $this->resource);
 							
 							//	Rebuild and send the packet
-							$coap_factory = new CoAPMessageFactory($this->module, $this->ip, $this->resource);
+							$coap_factory = new CoAPMessageFactory($this->module, $this->ip, $this->resource, $this->separate_response);
 							$this->message_hex = $coap_factory->create_observe_get_request($this->resource);
 							$message = pack('H*', $this->message_hex);
 							$returnvalue = fwrite($socket, $message); // wegschrijven naar udp-socket
@@ -434,21 +455,54 @@ class CoAPMessage {
 							stream_set_timeout($socket, 0, $timeout*1000);
 						}
 						
+						//	Set variables for reordering
+						$V1 = $V2;
+						$T1 = $T2;
+						$V2 = intval(coap_hex_to_string($response_obj->get_option_value(6)));
+						$T2 = time();
+						
 						$response_obj = new CoAPMessage($this->module, $this->ip, $this->resource, coap_library_string_to_hex_with_padding($response));
 						$must_observe = $this->observe_is_necessary(); //	Check if resource should still be observed
 					}
+					
+					//	Check if the client has aborted the observe or something else went wrong
 					if($must_observe > 0){
+						//	Notify the using module that something went wrong
 						$function_name = $this->module . '_receive_error';
 						$function_name('broken', $this->ip, $this->resource);
 					}
 					else{
+						//	Send a reset to inform the server that the client has lost interest
 						$reset = coap_library_generate_reset(coap_library_string_to_hex_with_padding($response));
 						$reset = pack('H*', $reset);
 						$returnvalue = fwrite($socket, $reset); // wegschrijven naar udp-socket
 					}
 				}
+				else if($response_obj->separate_response && ($response_obj->get_payload() == null || $response_obj->get_payload() == '') && $request_message_id == $response_obj->get_message_id()){
+					//	Resource uses separate response and has returned an empty ACK
+					$response = 'empty';
+					stream_set_timeout($socket, 300, 0);
+					$response = fread($socket, 512); // Read from socket
+					if($response != 'empty' && $response != ''){
+						$response_obj = new CoAPMessage($this->module, $this->ip, $this->resource, coap_library_string_to_hex_with_padding($response));
+						if($response_obj->is_confirmable()){
+							$ack = coap_library_generate_acknowledgement(coap_library_string_to_hex_with_padding($response));
+							$ack = pack('H*', $ack);
+							$returnvalue = fwrite($socket, $ack);
+						}
+						fclose($socket); // Close the socket
+						return $response_obj;
+					}
+					else{
+						$function_name = $this->module . '_receive_error';
+						$function_name('broken', $this->ip, $this->resource);
+						fclose($socket); // Close the socket
+						return null;
+					}
+				}
 				else{
 					//	Resource should not be observed
+					fclose($socket); // Close the socket
 					return $response_obj;
 				}
 			}
@@ -526,6 +580,11 @@ class CoAPMessage {
 		return substr($this->message_hex, 8, $token_length*2);
 	}
 	
+	//	Returns the message id from this message
+	public function get_message_id(){
+		return substr($this->message_hex, 4, 4);
+	}
+	
 }
 
 
@@ -538,9 +597,10 @@ class CoAPMessageFactory{
 	private $module = null;
 	private $ip;
 	private $resource;
+	private $separate_response;
 	
 	// Constructor with given module name
-	public function __construct($module, $ip, $resource){
+	public function __construct($module, $ip, $resource, $separate_response){
         $this->module = $module;  
 		$this->ip = $ip;
 		$this->resource = $resource;
@@ -585,7 +645,7 @@ class CoAPMessageFactory{
 	
 	// Generates an empty CoAP message
 	public function create_empty_coap_message(){
-		return new CoAPMessage($this->module, $this->ip, $this->resource);
+		return new CoAPMessage($this->module, $this->ip, $this->resource, $separate_response);
 	}
 	
 	// Generates a basic CoAP message consisting of only the header and optional token, $type = {CON, NON, ACK, RST}, $method = {GET, PUT, POST, DELETE}
@@ -632,7 +692,7 @@ class CoAPMessageFactory{
 		}
 		$hex .= $this->generate_message_id();
 		$hex .= $this->generate_token($token_length);
-		return new CoAPMessage($this->module, $this->ip, $this->resource, $hex);
+		return new CoAPMessage($this->module, $this->ip, $this->resource, $separate_response, $hex);
 	}
 	
 	// Generates a basic CoAP GET request with optional given URI path
@@ -655,7 +715,7 @@ class CoAPMessageFactory{
 	
 	// Creates a message with the given hexadecimal message
 	public function create_message_with_given_message($message){
-		return new CoAPMessage($this->module, $this->ip, $this->resource, $message);
+		return new CoAPMessage($this->module, $this->ip, $this->resource, $separate_response, $message);
 	}
 	
 	// Creates a discovery request which depends on response
@@ -690,4 +750,5 @@ class CoAPMessageFactory{
 		}
 		return $coap_message;
 	}
+
 }  
