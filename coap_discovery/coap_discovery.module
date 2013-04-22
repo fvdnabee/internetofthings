@@ -466,7 +466,9 @@ function coap_discovery_parse_discovery_payloads($ip,$payloads){
 }
 
 function coap_discovery_receive_response($response_obj){
-	//dpm($response_obj);
+	dpm($response_obj);
+	
+	// als content format apllication link format is, skip dan al de shizzle
 }
 
 function coap_discovery_receive_error($error_message, $ip, $resource){
