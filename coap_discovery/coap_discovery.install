@@ -1,7 +1,7 @@
 <?php
 
 function coap_discovery_schema(){
-	$schema['coap_discovery_core_links'] = array(
+	$schema['coap_discovery_core_links'] = array( //moet geïntegreerd worden met coap_resource_resources
 		'description' => "Tabel om core links bij te houden",
 		'fields' => array(
 				'device_uri' => array(
@@ -69,7 +69,7 @@ function coap_discovery_schema(){
 			'primary key' => array('device_uri','link_name'),
 	);
 	
-	$schema['coap_discovery_users'] = array(
+	$schema['coap_discovery_users'] = array( //deze tabel moet geïntegreerd worden in coap_resource_users
 		'description' => "Tabel om users bij te houden en het device dat ze willen zien",
 		'fields' => array(
 				'uid' => array(

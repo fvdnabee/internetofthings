@@ -14,7 +14,7 @@ function coap_resource_menu() {
 		"access callback" => true,
 		"type" => MENU_CALLBACK
 	);
-	$items["temperatuursensor/interval/%"] = array(
+	$items["coap_resource/interval/%"] = array(
 		"title" => "Change polling interval",
 		"page callback" => "temperatuur_met_coap_library_change_interval",
 		"page arguments" => array(2),
@@ -74,13 +74,7 @@ function coap_resource_form($form, &$form_state) {
 	
 	global $user;
 	
-	//$form = array_merge_recursive($form, coap_resource_uri_form($form, $form_state));
-	$form = array_merge_recursive($form, observe_form($form, $form_state));
-	$form = array_merge_recursive($form, coap_resource_bekijken_form($form, $form_state));
-	$form = array_merge_recursive($form, coap_resource_get_request_form($form, $form_state));
-	$form = array_merge_recursive($form, coap_resource_put_request_form($form, $form_state));
-	$form = array_merge_recursive($form, coap_resource_post_request_form($form, $form_state));
-	$form = array_merge_recursive($form, coap_resource_delete_request_form($form, $form_state));	
+	$form = array_merge_recursive($form, coap_resource_uri_form($form, $form_state));
 	
 	// Te bekijken URI ophalen
 	$query = db_select('coap_resource_users', 'users');
@@ -99,6 +93,14 @@ function coap_resource_form($form, &$form_state) {
 	$prefix .= "<img style = 'visibility:hidden;' src = '' id = 'errorimg' /><label id='error' ></label>"; // elementen om fouten te tonen
 	
 	if(!$empty){
+		
+		$form = array_merge_recursive($form, observe_form($form, $form_state));
+		$form = array_merge_recursive($form, coap_resource_bekijken_form($form, $form_state));
+		$form = array_merge_recursive($form, coap_resource_get_request_form($form, $form_state));
+		$form = array_merge_recursive($form, coap_resource_put_request_form($form, $form_state));
+		$form = array_merge_recursive($form, coap_resource_post_request_form($form, $form_state));
+		$form = array_merge_recursive($form, coap_resource_delete_request_form($form, $form_state));
+	
 		// Tabel met geschiedenis van opvragingen(5 laatste)
 		$query = db_select('coap_resource_values', 'coap_values');
 		$query
@@ -125,16 +127,15 @@ function coap_resource_form($form, &$form_state) {
 		$prefix .= "</table>";
 		
 		$prefix .= "<div id = 'grafiek' ></div>"; // Grafiek
-	}
-	
-	
-	$form['values_container'] = array(
-		'#type' => 'container',
-		'#prefix' => $prefix,
-		'#attributes' => array(
-			'class' => array('class-name'),
-		),
-	);
+		
+		$form['values_container'] = array(
+			'#type' => 'container',
+			'#prefix' => $prefix,
+			'#attributes' => array(
+				'class' => array('class-name'),
+			),
+		);
+	}	
 	
 	$form['title'] = array (
 		'#value' => t('Resource Form'),
@@ -313,14 +314,13 @@ function coap_resource_bekijken_form($form_in, &$form_state) {
 			'#default_value' => $uri, // Default value moet geselecteerde URI worden
 			'#options' => $options,
 		);
-	}
-	
 	// Submit-knop
 	$form['bekijken']['submit'] = array (
 		'#type' => 'submit',
 		'#value' => t("Bekijken"),
 		'#submit' => array('coap_resource_bekijken_form_submit'),
 		);
+	}
 	
 	//dpm($form);
 	return $form;
@@ -533,8 +533,9 @@ function coap_resource_uri_form($form_in, &$form_state) {
 	// Invoer textbox voor URI
 	$form['uri']['invoer'] = array(
 		'#type' => 'textfield',
-		'#title' => 'Geef een URI',
-		'#default_value' => '',		
+		//'#title' => 'Geef een URI',
+		'#default_value' => '',
+		'#prefix' => '<label>Voeg een URI toe via het tekstveld of via de Discovery-tab.</label>',		
 	);
 	
 	// Submit-knop
@@ -686,7 +687,7 @@ function observe_form_submit($form, $form_state) {
 // PRIVATE FUNCTIES //
 //////////////////////
 
-// Functie die wordt uitgevoerd als een ajax call wordt uitgevoerd naar /temperatuursensor/poll, geeft de laatste entry terug
+// Functie die wordt uitgevoerd als een ajax call wordt uitgevoerd naar /coap_resource/poll, geeft de laatste entry terug
 function coap_resource_page_callback(){
 	global $user;
 	
