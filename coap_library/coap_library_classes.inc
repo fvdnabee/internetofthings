@@ -302,18 +302,24 @@ class CoAPMessage {
 	//	Calls hook_receive_notification for notification that have arrived from an observable resource
 	//	Calls hook_receive_notification if something went wrong
 	public function send_message(){
+		//	Check if request has an observe option
 		$observe = ($this->get_option_value(6) == -1) ? 0 : 1;
+		$request_token = $this->get_token();
 		if($observe){
+			//	Request has an observe option
+			//	Check if resource is already being observed
 			$query = db_select('coap_library_observe_resources', 'resources');
 			$query
 				->fields('resources', array('module', 'uri'))
 				->condition('uri', $this->ip . '/' . $this->resource, '=')
 				->condition('module', $this->module, '=');
 			$result = $query->execute();
+			//	function can be aborted if resource is already being observed
 			if($result->rowCount() != 0){
 				return null;
 			}
 			
+			//	Add resource to database table that holds which resources are being observed
 			db_insert('coap_library_observe_resources')
 				->fields(array(
 					'uri' => $this->ip . '/' . $this->resource,
@@ -325,58 +331,95 @@ class CoAPMessage {
 		
 		$response = 'empty';
 		$port = 5683;
-		$socket = pfsockopen("udp://[" . $this->ip . "]", $port, $errno, $errstr); // udp-socket openen
-		if ($socket) {
+		$socket = pfsockopen("udp://[" . $this->ip . "]", $port, $errno, $errstr); // Open UDP-socket
+		if($socket){
+			//Socket opened
+			//	notify using module that there are no difficulties at the moment
 			$function_name = $this->module . '_receive_error';
 			$function_name('none', $this->ip, $this->resource);
-			$timeout = rand($this->ACK_TIMEOUT, $this->ACK_TIMEOUT*$this->RANDOM_FACTOR);
+			
+			//	Set initial timeout
+			$timeout = rand($this->ACK_TIMEOUT, $this->ACK_TIMEOUT*$this->RANDOM_FACTOR); 
 			stream_set_timeout($socket, 0, $timeout*1000); // third parameter is in MICROseconds
 			$this->retransmit_counter = 0;
+			
+			//	Send CoAP packet
 			$message = pack('H*', $this->message_hex);
-			$returnvalue = fwrite($socket, $message); // write to socket
+			$returnvalue = fwrite($socket, $message); //	Write to socket
 			if($this->is_confirmable()){
+				//	Message type = CON
 				if($returnvalue != FALSE){
-					$response = fread($socket, 512); // lezen van udp-socket
+					$response = fread($socket, 512); //	Read from UDP-socket
 				}
+				
+				//	Keep resending the packet and multiplying the timeout if something went wrong (exponential backoff)
 				while($this->retransmit_counter < $this->MAX_RETRANSMIT && ($response == '' || $response == 'empty')){
+					//	Notify the using module that something went wrong
 					$function_name = $this->module . '_receive_error';
 					$function_name('delay', $this->ip, $this->resource);
-					$returnvalue = fwrite($socket, $message); // wegschrijven naar udp-socket
-					if($returnvalue != FALSE){
-						$response = fread($socket, 512); // lezen van udp-socket
-					}
+					
+					//Set new timeout
 					$this->retransmit_counter++;
 					$timeout *= 2;
 					stream_set_timeout($socket, 0, $timeout*1000);
+					
+					//	Resend the CoAP packet
+					$returnvalue = fwrite($socket, $message); //	Write to socket
+					if($returnvalue != FALSE){
+						$response = fread($socket, 512); //	Read from socket
+					}
 				}
 			}
 			if($response != '' && $response != 'empty'){
-				$response_obj = new CoAPMessage($this->module, $this->ip, $this->resource, coap_library_string_to_hex_with_padding($response));
+				$response_obj = new CoAPMessage($this->module, $this->ip, $this->resource, coap_library_string_to_hex_with_padding($response)); //	Put response in CoAPMessage-object
+				
+				//	notify using module that there are no difficulties at the moment
 				$function_name = $this->module . '_receive_error';
-				$this->retransmit_counter = 0;
 				$function_name('none', $this->ip, $this->resource);
+				
+				//	Reset timeout
+				$this->retransmit_counter = 0;
+				$timeout = rand($this->ACK_TIMEOUT, $this->ACK_TIMEOUT*$this->RANDOM_FACTOR);
+				stream_set_timeout($socket, 0, $timeout*1000);
+				
 				if($observe){
-					// Observe
-					$must_observe = $this->observe_is_necessary();
+					//	Resource should be observed
+					$must_observe = $this->observe_is_necessary(); //	Check if resource should still be observed
 					
-					stream_set_timeout($socket, intval($response_obj->get_max_age()), 0);
+					//	Keep receiving notifications while observe is still necessary
 					while($must_observe > 0 && $response != '' && $response != 'empty'){
+						//	Resource should still be observed
+						
 						$response_hex = coap_library_string_to_hex_with_padding($response);
-						$function_name = $this->module . '_receive_error';
-						$function_name('none', $this->ip, $this->resource);
-						$function_name = $this->module . '_receive_notification';
-						$function_name($response_obj);
-						if($response_obj->is_confirmable()){
-							$ack = coap_library_generate_acknowledgement(coap_library_string_to_hex_with_padding($response));
-							$ack = pack('H*', $ack);
-							$returnvalue = fwrite($socket, $ack);
+						
+						//	Only take care of the message if the message contains the correct token
+						if($response_obj->get_token() == $request_token){
+							//	notify using module that there are no difficulties at the moment
+							$function_name = $this->module . '_receive_error';
+							$function_name('none', $this->ip, $this->resource);
+							//	Call hook_receive_notification of the using module
+							$function_name = $this->module . '_receive_notification';
+							$function_name($response_obj);
+							
+							//	Send ACK back to server if the response message was of type CON
+							if($response_obj->is_confirmable()){
+								$ack = coap_library_generate_acknowledgement(coap_library_string_to_hex_with_padding($response));
+								$ack = pack('H*', $ack);
+								$returnvalue = fwrite($socket, $ack);
+							}
 						}
-						$retries = 0;
+						
+						//	Wait for next notification
 						$response = 'empty';
 						$response = fread($socket, 128); // lezen van udp-socket
-						while($retries < 3 && ($response == '' || $response == 'empty')){
+						
+						//	Keep resending the packet and multiplying the timeout if something went wrong (exponential backoff)
+						while($this->retransmit_counter < $this->MAX_RETRANSMIT && ($response == '' || $response == 'empty')){
+							//	Notify using module that something went wrong
 							$function_name = $this->module . '_receive_error';
 							$function_name('delay', $this->ip, $this->resource);
+							
+							//	Rebuild and send the packet
 							$coap_factory = new CoAPMessageFactory($this->module, $this->ip, $this->resource);
 							$this->message_hex = $coap_factory->create_observe_get_request($this->resource);
 							$message = pack('H*', $this->message_hex);
@@ -384,10 +427,15 @@ class CoAPMessage {
 							if($returnvalue != FALSE){
 								$response = fread($socket, 128); // lezen van udp-socket
 							}
-							$retries++;
+							
+							//	Set new timeout
+							$this->retransmit_counter++;
+							$timeout *= 2;
+							stream_set_timeout($socket, 0, $timeout*1000);
 						}
+						
 						$response_obj = new CoAPMessage($this->module, $this->ip, $this->resource, coap_library_string_to_hex_with_padding($response));
-						$must_observe = $this->observe_is_necessary();
+						$must_observe = $this->observe_is_necessary(); //	Check if resource should still be observed
 					}
 					if($must_observe > 0){
 						$function_name = $this->module . '_receive_error';
@@ -400,16 +448,19 @@ class CoAPMessage {
 					}
 				}
 				else{
+					//	Resource should not be observed
 					return $response_obj;
 				}
 			}
+			//	Only notify the using module that there went something wrong if the message type of the request was CON
 			else if($this->is_confirmable()){
 				$function_name = $this->module . '_receive_error';
 				$function_name('broken', $this->ip, $this->resource);
 			}
-			fclose($socket);
+			fclose($socket); // Close the socket
 		}
 		else{
+			// Socket could not be opened
 			$function_name = $this->module . '_receive_error';
 			$function_name('unreachable', $this->ip, $this->resource);
 		}
@@ -464,7 +515,17 @@ class CoAPMessage {
 	public function is_confirmable(){
 		return (substr($this->message_hex, 0, 1) == '4');
 	}
-		
+	
+	//	Returns the token from this message
+	//	Returns null if the token length == 0
+	public function get_token(){
+		$token_length = intval(coap_library_hex_to_string(substr($this->message_hex, 1, 1)));
+		if($token_length <= 0){
+			return null;
+		}
+		return substr($this->message_hex, 8, $token_length*2);
+	}
+	
 }
 
 
