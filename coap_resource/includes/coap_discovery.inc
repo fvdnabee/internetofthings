@@ -4,7 +4,7 @@ function coap_discovery_build_headers(){
 return array
   (
   
-    // 'link_name' => 'link name',	
+    // 'uri' => 'uri',	
 	// 'rt' => 'application-specific semantic type',
 	// 'ct' => 'content-type',
 	// 'if' => 'interface desciption',
@@ -13,31 +13,31 @@ return array
 	// 'anchor' => 'anchor',
 	// 'rel' => 'rel',
 	
-	'link_name' => 'link name',
+	'uri' => 'uri',
 	'title' => 'human-readable name',
   );
 }
 
-function coap_discovery_build_options($links){
+function coap_discovery_build_options($resources){
   $options = array();
   $counter=1;
-  foreach($links as $link)
+  foreach($resources as $resource)
   {
-    //$options[$link['uid']] = array // each element of the array is keyed with the UID
+    //$options[$resource['uid']] = array // each element of the array is keyed with the UID
 	$options[$counter] = array // each element of the array is keyed with the UID
     (
 	
-		// 'link_name' => $link['link_name'],
-		// 'rt' => $link['rt'],
-		// 'ct' => $link['ct'],
-		// 'if' => $link['if'],
-		// 'sz' => $link['sz'],
-		// 'title' => $link['title'],
-		// 'anchor' => $link['anchor'],
-		// 'rel' => $link['rel'],	
+		// 'uri' => $resource['uri'],
+		// 'rt' => $resource['rt'],
+		// 'ct' => $resource['ct'],
+		// 'if' => $resource['if'],
+		// 'sz' => $resource['sz'],
+		// 'title' => $resource['title'],
+		// 'anchor' => $resource['anchor'],
+		// 'rel' => $resource['rel'],	
 		
-		'link_name' => $link['link_name'],
-		'title' => $link['title'],
+		'uri' => $resource['uri'],
+		'title' => $resource['title'],
 	);
 	$counter++;
   }
@@ -61,7 +61,6 @@ function coap_discovery_form_validate($form, &$form_state) {
 function coap_discovery_form($form, &$form_state) {
 	drupal_add_js(drupal_get_path('module', 'coap_resource') . '/js/coap_resource.js'); // JavaScript bestand toevoegen
 	global $user;
-
 	//textfield for device uri
 	$form['device_uri'] = array
 	(
@@ -69,6 +68,8 @@ function coap_discovery_form($form, &$form_state) {
 		'#title' => 'Device IPv6 adress',
 		'#size' => 60,
 		'#required' => TRUE,
+		'#default_value' => 'shiiiit', 
+		//default value wordt later toegevoegd als uid niet nul is
 	);
 	
 	
@@ -108,7 +109,7 @@ function coap_discovery_form($form, &$form_state) {
 	);
 	
 	if($user->uid != 0){ //geen anonieme user	
-		$_SESSION['links'] = array();	
+		$_SESSION["user_$user->uid"]['resources'] = array();	
 		$result = db_select('coap_resource_users','user_device')
 				->fields('user_device', array('uid','uri','device'))
 				->condition('uid', $user->uid, '=')
@@ -116,19 +117,19 @@ function coap_discovery_form($form, &$form_state) {
 				->execute();
 		foreach($result as $record){
 			$device_uri = $record->uri;
-			$form['device_uri']['#default_value'] = $device_uri;		
-			$db_links= db_select('coap_resource_resources', 'links')
-				->fields('links', array('uri','title'))
+			//$form['device_uri']['#default_value'] = $device_uri;		
+			$db_resources= db_select('coap_resource_resources', 'resources')
+				->fields('resources', array('uri','title'))
 				->condition('uri', "$device_uri%", 'LIKE')
 				->execute();
-			$links = array();
-			foreach($db_links as $record){
-				$link = array();
-				$link['link_name'] = $record->link_name;
-				$link['title'] = $record->title;
-				array_push($links,$link);
+			$resources = array();
+			foreach($db_resources as $record){
+				$resource = array();
+				$resource['uri'] = $record->uri;
+				$resource['title'] = $record->title;
+				array_push($resources,$resource);
 			} 		
-			$_SESSION['links'] = $links;
+			$_SESSION["user_$user->uid"]['resources'] = $resources;
 		}
 	}
 	
@@ -140,13 +141,13 @@ function coap_discovery_form($form, &$form_state) {
 				// ->execute();
 	// }
 	
-	$links = array();
+	$resources = array();
 	
 	//build headers
 	$header = coap_discovery_build_headers();
 	
 	//build options
-	$options = coap_discovery_build_options($links);
+	$options = coap_discovery_build_options($resources);
 	
 	$table = array
 	(
@@ -156,7 +157,7 @@ function coap_discovery_form($form, &$form_state) {
 		'#multiple' => TRUE,
 	);
 	
-	if(($user->uid != 0 && isset($result) && $result->rowCount() != 0) || (isset($_SESSION) && $user->uid == 0 && $_SESSION['links'])){
+	if(($user->uid != 0 && isset($result) && $result->rowCount() != 0) || (isset($_SESSION) && $user->uid == 0 && $_SESSION["user_$user->uid"]['resources'])){
 		$table['#empty'] = 'Fetching sensors...';
 		$form['device_uri']['#default_value'] = $result->fetchField(1);
 	}
@@ -165,25 +166,13 @@ function coap_discovery_form($form, &$form_state) {
 	
 	$form['tableselect_container']['table']= $table;
 	
-	for($i=0 ; $i<0 ; $i++){
-		dpm(variable_get("response_string_$i",0));
-		//dpm(variable_get("response_string_$i",0));
-		//dpm($i . ': ' . variable_get("discovery_request_$i", 0) . ' gelijk aan 4? ' . variable_get("next_length_$i",0));
-		//dpm(variable_get("response_string_$i",0));
-		//dpm(variable_get("response_hex_string_$i",0));
-		//dpm(variable_get("option23_$i",0));
-		//dpm(variable_get("bool_response_$i",0));
-		//dpm(variable_get("has_next_$i", 0));
-		//dpm(variable_get("has_next_$i", 0) . '|' . variable_get("message_id_$i", 0) . '|' . variable_get("message_id_next_$i", 0));
-		//dpm('---------------------------------------------------');
-	}
-	
-	$form['add'] = array(
+	$form['save'] = array(
 		'#type' => 'submit',
-		'#value' => 'Add',
-		'#submit' => array('coap_discovery_add_resources'),
+		'#value' => 'Save',
+		'#submit' => array('coap_discovery_save_resources'),
 	);
-	
+	if(isset($_SESSION)) dpm($_SESSION);
+	dpm($user);
 	return $form;
 }
 
@@ -208,21 +197,22 @@ function coap_discovery_refresh_device_core_submit($form, &$form_state) {
 function coap_discovery_clear_tableselect_submit($form, &$form_state) {
 	global $user;
 	if($user->uid!=0){
+		$_SESSION["user_$user->uid"]['resources'] = array();
 		db_delete('coap_resource_users')
 			->condition('uid', $user->uid, '=')
 			->condition('device',1,'=')
 			->execute();
 			
 	}
-	else $_SESSION['links'] = array();
+	else $_SESSION["user_$user->uid"]['resources'] = array();
 	$form_state['rebuild'] = TRUE;
 }
 
-function coap_discovery_add_resources($form, &$form_state) {
+function coap_discovery_save_resources($form, &$form_state) {
 	global $user;
 	foreach($form_state['values']['table'] as $value){
-		$link = $_SESSION['links'][$value];
-		$uri = $form_state['values']['device_uri'] . $link['link_name'];
+		$resource = $_SESSION["user_$user->uid"]['resources'][$value];
+		$uri = $form_state['values']['device_uri'] . $resource['uri'];
 		
 		// Watch bij alle rijen van de user op nul zetten
 		$num_updated = db_update('coap_resource_users')
@@ -259,18 +249,21 @@ function coap_discovery_add_resources($form, &$form_state) {
 		}
 	}
 	
-	//$form_state['values']['link'] = $link;
+	//$form_state['values']['resource'] = $resource;
 
 	$form_state['redirect'] = substr($form['#action'],1,-10);
 	//$form_state['rebuild'] = TRUE;  // Force rebuild with next step.
 	return;
 }
 
+//////////
+// rest //
+//////////
 function coap_discovery_page_callback(){
 	global $user;
 	$output ='';
 	
-	//if($user->uid != 0 && !isset($_SESSION['links'])){
+	//if($user->uid != 0 && !isset($_SESSION["user_$user->uid"]['resources'])){
 	if($user->uid != 0){
 		$result = db_select('coap_resource_users','user_device')
 				->fields('user_device', array('uid','uri','device'))
@@ -282,33 +275,39 @@ function coap_discovery_page_callback(){
 		}
 		
 		if($result->rowCount() != 0){
-			$result = db_select('coap_resource_resources', 'links')
-					->fields('links', array('uri','title'))
+			$result = db_select('coap_resource_resources', 'resources')
+					->fields('resources', array('uri','title'))
 					->condition('uri', "$device_uri%", 'LIKE')
 					->execute();
 			foreach($result as $record){
-				$output .= '<link>';
-				$output .= '<link_name>';
-				$output .= $record->link_name;
-				$output .= '</link_name>';
+				$output .= '<resource>';
+				$output .= '<uri>';
+				$output .= $record->uri;
+				$output .= '</uri>';
 				$output .= '<title>';
 				$output .= $record->title;
 				$output .= '</title>';
-				$output .='</link>';
+				$output .= '<watch>';
+				$output .= 1;
+				$output .= '</watch>';
+				$output .='</resource>';
 			}
 			if($result->rowCount() == 0) $output = 'No data in database about this device. Click on \'Refresh device\' to display resources.';
 		}
 	}	
 	else{
-		for($i=0 ; $i<count($_SESSION['links']) ; $i++){
-			$output .= '<link>';
-			$output .= '<link_name>';
-			$output .= $_SESSION['links'][$i]['link_name'];
-			$output .= '</link_name>';
+		for($i=0 ; $i<count($_SESSION["user_$user->uid"]['resources']) ; $i++){
+			$output .= '<resource>';
+			$output .= '<uri>';
+			$output .= $_SESSION["user_$user->uid"]['resources'][$i]['uri'];
+			$output .= '</uri>';
 			$output .= '<title>';
-			$output .= $_SESSION['links'][$i]['title'];
+			$output .= $_SESSION["user_$user->uid"]['resources'][$i]['title'];
 			$output .= '</title>';
-			$output .='</link>';
+			$output .= '<watch>';
+			$output .= $_SESSION["user_$user->uid"]['resources'][$i]['title'];
+			$output .= '</watch>';
+			$output .='</resource>';
 		}
 	}
 	
@@ -317,8 +316,8 @@ function coap_discovery_page_callback(){
 
 function coap_discovery_load_device_core($device_uri){
 	global $user;
-	$result = db_select('coap_resource_resources', 'links')
-				->fields('links', array('uri','title'))
+	$result = db_select('coap_resource_resources', 'resources')
+				->fields('resources', array('uri','title'))
 				->condition('uri', "$device_uri%", 'LIKE')
 				->execute();
 	
@@ -367,7 +366,7 @@ function coap_discovery_start_discover($ip){
 function coap_discovery_parse_discovery_payloads($ip,$payloads){
 	//dpm('payload geparsed');
 	global $user;
-	$links = array();
+	$resources = array();
 	$regex = '/<[^>]+>\s*(;\s*\w+\s*(=\s*(\w+|"[^"]*(\\.[^"]*)*")\s*)?)*/';
 	preg_match_all($regex, $payloads, $resources);
 	
@@ -397,17 +396,17 @@ function coap_discovery_parse_discovery_payloads($ip,$payloads){
 				$attributes = array(
 					'uri' => $ip . $uri,
 				);
-				$link = array();
-				$link['link_name'] = $uri;
+				$resource = array();
+				$resource['uri'] = $uri;
 				for($e=0 ; $e<count($tokens[0]) ; $e++){
 					preg_match('/;\s*([^<"\s;,=]+)\s*(=\s*(([^<"\s;,]+)|"([^"]*(\\.[^"]*)*)"))?/',$tokens[0][$e],$keyvalues);
 					if($keyvalues[1] != 'if') $attribute = $keyvalues[1];
 					else $attribute = $keyvalues[1] . 'd';
 					$attributes[$attribute] = (count($keyvalues)>2 ? ($keyvalues[4] ? $keyvalues[4] : $keyvalues[5]) : 1);
 					
-					$link[$attribute] = $attributes[$attribute];
+					$resource[$attribute] = $attributes[$attribute];
 				}
-				array_push($links,$link);
+				array_push($resources,$resource);
 			}
 			
 			if($user->uid != 0){			
@@ -420,7 +419,7 @@ function coap_discovery_parse_discovery_payloads($ip,$payloads){
 			//variable_set("response_string_$i", 'no match');
 		}		
 	}
-	if($user->uid == 0) $_SESSION['links'] = $links;
+	if($user->uid == 0) $_SESSION["user_$user->uid"]['resources'] = $resources;
 	if($id != -1 && $user->uid != 0){ //tweede stuk is eigenlijk overbodig, maar je weet nooit
 		$id = db_insert('coap_resource_users')
 			->fields(array(
