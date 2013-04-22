@@ -73,6 +73,13 @@ function coap_resource_schema() {
 					'not null' => TRUE,
 					'default' => 0,
 				),
+				'polling_interval' => array(
+					'description' => 'Waarde die het aantal seconden weergeeft tussen 2 opvragingen vanuit jQuery',
+					'type' => 'int',
+					'unsigned' => TRUE,
+					'not null' => TRUE,
+					'default' => 2,
+				),
 				'last_method' => array(
 					'description' => 'Methode van laatste request --> {GET, PUT, POST, DELETE}',
 					'type' => 'varchar',
@@ -154,6 +161,12 @@ function coap_resource_schema() {
 					'type' => 'int',
 					'unsigned' => TRUE,
 					'not null' => FALSE,
+				),
+				'response_type'=> array(
+					'type' => 'varchar',
+					'not null' => FALSE,
+					'length' => '256',
+					'description' => 'Het content-type van de response',
 				),
 				'timestamp' => array(
 					'description' => 'Tijd van opvraging',
