@@ -1,31 +1,38 @@
 (function ($) {
 
+var polling;
+
 $(document).ready(function() {
 	setTimeout(function(){google.load('visualization', '1', {'callback':'', 'packages':['corechart']})}, 10);
-	google.setOnLoadCallback(drawChart);
-	setTimeout(function(){drawChart()}, 1000);
+	$('#polling_button').click(
+		function(){
+			console.log("polling button clicked, about to change interval to " + parseInt($('#polling_invoer').val())*1000 + ' milliseconds');
+			clearInterval(polling);
+			polling = setInterval(function(){
+				console.log('start poll');
+				$.ajax({
+					type: "GET",
+					url: "/coap_resource/poll",
+					dataType: "text",
+					success: tempReceived
+				});
+			}, parseInt(parseInt($('#polling_invoer').val())*1000));
+			$.ajax({
+				type: "POST",
+				url: "/coap_resource/interval/" + $('#polling_invoer').val(),
+				dataType: "text"
+			});
+		}
+	);
+	$('#polling_button').trigger('click');
+	drawChart();
 });
-
-Drupal.behaviors.coap_resource = {
-  attach: 	function(context) {
-				var refreshId = setInterval(function(){
-					$.ajax({
-						type: "GET",
-						url: "/coap_resource/poll",
-						dataType: "text",
-						success: tempReceived
-					});
-				}, 2000);
-			}
-			
-};
 
 function tempReceived(html){
 	var regex = /<error>(.*)<\/error><responded>(.*)<\/responded><get_response>(.*)<\/get_response><method>(.*)<\/method><response_type>(.*)<\/response_type><tr><td>(\d+)<\/td><td>(.*)<\/td><td>(.*)<\/td><td>(.*)<\/td><\/tr>/;
 	var matches = regex.exec(html);
 	console.log('input ajax call: ' + html);
 	if(matches && matches[1] == 'none'){
-		console.log('match');
 		$('#error').hide();
 		$('#errorimg').attr('style', 'visibility:hidden;');
 		console.log('nieuwe hid: ' + matches[6] + ', oude hid: ' + $('#hid1').html());
@@ -56,6 +63,7 @@ function tempReceived(html){
 			$('#response').fadeIn('slow');
 			$('#response_type').fadeIn('slow');
 		}
+		drawChart();
 	}
 	else{
 		var regex = /<error>(.*)<\/error><responded>(.*)<\/responded><get_response>(.*)<\/get_response><method>(.*)<\/method><response_type>(.*)<\/response_type>/;
@@ -66,7 +74,7 @@ function tempReceived(html){
 					$('#errorimg').attr('src', 'sites/all/modules/custom/coap_resource/images/error.ico');
 				}
 				$('#errorimg').attr('style', 'visibility:visible;width:25px;height:25px;');
-				$('#error').html('De sensor kon niet worden bereikt');
+				$('#error').html('De sensor kon tijdens de laatste poging niet worden bereikt. Probeer later opnieuw.');
 			}
 			else if(matches[1] == 'delay'){
 				if($('#errorimg').attr('src') != 'sites/all/modules/custom/coap_resource/images/delay.gif'){
@@ -80,7 +88,7 @@ function tempReceived(html){
 					$('#errorimg').attr('src', 'sites/all/modules/custom/coap_resource/images/error.ico');
 				}
 				$('#errorimg').attr('style', 'visibility:visible;width:25px;height:25px;');
-				$('#error').html('De sensor reageert niet meer');
+				$('#error').html('De sensor stopte tijdens de laatste poging met reageren. Probeer later opnieuw.');
 			}
 			else if(matches[1] == 'bad_uri'){
 				if($('#errorimg').attr('src') != 'sites/all/modules/custom/coap_resource/images/error.ico'){
@@ -107,7 +115,7 @@ function tempReceived(html){
 						$('#errorimg').attr('src', 'sites/all/modules/custom/coap_resource/images/error.ico');
 					}
 					$('#errorimg').attr('style', 'visibility:visible;width:25px;height:25px;');
-					$('#error').html('De sensor kon niet worden bereikt');
+					$('#error').html('De sensor kon tijdens de laatste poging niet worden bereikt. Probeer later opnieuw.');
 				}
 				else if(matches[1] == 'delay'){
 					if($('#errorimg').attr('src') != 'sites/all/modules/custom/coap_resource/images/delay.gif'){
@@ -121,7 +129,7 @@ function tempReceived(html){
 						$('#errorimg').attr('src', 'sites/all/modules/custom/coap_resource/images/error.ico');
 					}
 					$('#errorimg').attr('style', 'visibility:visible;width:25px;height:25px;');
-					$('#error').html('De sensor reageert niet meer');
+					$('#error').html('De sensor stopte tijdens de laatste poging met reageren. Probeer later opnieuw.');
 				}
 				else if(matches[1] == 'bad_uri'){
 					if($('#errorimg').attr('src') != 'sites/all/modules/custom/coap_resource/images/error.ico'){

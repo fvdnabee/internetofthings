@@ -196,7 +196,6 @@ function bekijken_form($form_in, &$form_state) {
 		'#value' => t("Bekijken"),
 		);
 		
-	$form['#action'] = '';
 	return $form;
 }
 
@@ -245,7 +244,6 @@ function get_request_form($form_in, &$form_state) {
 		'#value' => t('GET'),
 		);
 		
-	$form['#action'] = '';
 	return $form;
 }
 
@@ -285,7 +283,6 @@ function put_request_form($form_in, &$form_state) {
 		'#value' => t('PUT'),
 		);
 		
-	$form['#action'] = '';
 	return $form;
 }
 
@@ -325,7 +322,6 @@ function post_request_form($form_in, &$form_state) {
 		'#value' => t('POST'),
 		);
 		
-	$form['#action'] = '';
 	return $form;
 }
 
@@ -358,7 +354,6 @@ function delete_request_form($form_in, &$form_state) {
 		'#value' => t('DELETE'),
 		);
 		
-	$form['#action'] = '';
 	return $form;
 }
 
@@ -404,8 +399,6 @@ function uri_form($form_in, &$form_state) {
 		'#type' => 'submit',
 		'#value' => t('Invoeren'),
 	);
-		
-	$form['#action'] = '';
 	
 	return $form;
 }
@@ -495,7 +488,6 @@ function observe_form($form_in, &$form_state) {
 		'#value' => t('Observe'),
 		);
 		
-	$form['#action'] = '';
 	return $form;
 }
 

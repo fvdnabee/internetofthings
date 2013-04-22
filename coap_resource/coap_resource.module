@@ -14,6 +14,13 @@ function coap_resource_menu() {
 		"access callback" => true,
 		"type" => MENU_CALLBACK
 	);
+	$items["temperatuursensor/interval/%"] = array(
+		"title" => "Change polling interval",
+		"page callback" => "temperatuur_met_coap_library_change_interval",
+		"page arguments" => array(2),
+		"access callback" => true,
+		"type" => MENU_CALLBACK
+	);
   
 	$items['node/%coap_resource_menu/view/resources'] = array(
 		'title' => 'Resources',    
@@ -170,35 +177,51 @@ function coap_resource_block_view($delta='') {
 	$block['subject'] = 'Temperatuursensoren bevragen met het CoAP protocol';
 	$block_content = null;
 	
+	$current_interval = 1;
+	$query = db_select('coap_resource_users', 'users');
+	$query
+		->fields('users', array('uid', 'polling_interval'))
+		->condition('uid', $user->uid, '=');
+	$result = $query->execute();
+	foreach ($result as $record){
+		$current_interval = $record->polling_interval;
+	}
+	$block_content .= "Polling gebeurt om de <input id = 'polling_invoer' type = 'text' size = '1' value = '" . $current_interval . "' > seconden. <button id = 'polling_button' type = 'button' >Wijzigen</button>";
+	
 	// URI form
-	$temp = drupal_get_form('coap_resource_uri_form');
+	$temp = drupal_get_form('uri_form');
 	$block_content .= drupal_render($temp);
 	
 	// Observe form
-	$temp = drupal_get_form('observe_form');
-	$block_content .= drupal_render($temp);
+	if($user->uid){
+		$temp = drupal_get_form('observe_form');
+		$block_content .= drupal_render($temp);
+	}
+	else{
+		$block_content .= '<label>Wegens beschermingsredenen is de observe functionaliteit uitgeschakeld voor anonieme gebruikers. Log in indien u een sensor wenst te observen.</label>';
+	}
 	
 	// Bekijken form
-	$temp = drupal_get_form('coap_resource_bekijken_form');
+	$temp = drupal_get_form('bekijken_form');
 	$block_content .= drupal_render($temp);
 	
 	// Table offering REST functionality
-	$block_content .= "<table id = 'requests' ><th colspan = '4' >REST methods</th><tr><td>";
+	$block_content .= "<table id = 'requests' ><th colspan = '4' >Request methods</th><tr><td>";
 	
 	// GET form
-	$temp = drupal_get_form('coap_resource_get_request_form');
+	$temp = drupal_get_form('get_request_form');
 	$block_content .= drupal_render($temp) . "</td><td>";
 	
 	// PUT form
-	$temp = drupal_get_form('coap_resource_put_request_form');
+	$temp = drupal_get_form('put_request_form');
 	$block_content .= drupal_render($temp) . "</td><td>";
 	
 	// POST form
-	$temp = drupal_get_form('coap_resource_post_request_form');
+	$temp = drupal_get_form('post_request_form');
 	$block_content .= drupal_render($temp) . "</td><td>";
 	
 	// DELETE form
-	$temp = drupal_get_form('coap_resource_delete_request_form');
+	$temp = drupal_get_form('delete_request_form');
 	$block_content .= drupal_render($temp) . "</td></tr>";
 	
 	$block_content .= "<tr><td colspan = '4' ><label id = 'response' >Response: </label></td><tr><td colspan = '4' ><label id = 'response_type' >Response type: </label></td></tr></table>";
@@ -279,7 +302,6 @@ function coap_resource_bekijken_form($form_in, &$form_state) {
 	if($result->rowCount() > 0){
 		$options = array();
 		foreach ($result as $record){
-			//dpm($record->uri);
 			$options[$record->uri] = $record->uri;
 			if($record->watch == 1){
 				$uri = $record->uri;
@@ -740,15 +762,51 @@ function coap_resource_page_callback(){
 	print $output;
 }
 
+function temperatuur_met_coap_library_change_interval($interval){
+	global $user;
+	
+	$seconds = intval($interval);
+	$id = db_update('coap_resource_users')
+			->fields(array(
+				'polling_interval' => $seconds,
+			))
+			->condition('uid', $user->uid, '=')
+			->execute();
+}
+
 function coap_resource_start_observing($uri){
 	$pattern = '/([^\/]+)\/(.*)/i';
 	if(preg_match($pattern, $uri, $matches)){
+		$query = db_select('coap_resource_resources', 'resources');
+		$query
+			->fields('resources', array('uri', 'observable'))
+			->condition('observable', 1, '=')
+			->condition('uri', $uri, '=');
+		$result = $query->execute();
 		$ip = $matches[1];
 		$resource = $matches[2];
+		$coap_factory = new CoAPMessageFactory('temperatuursensor_met_coap_library', $ip, $resource);
 		
-		$coap_factory = new CoAPMessageFactory('coap_resource', $ip, $resource);
-		$message = $coap_factory->create_observe_get_request($resource);
-		$message->send_message();
+		if($result->rowCount() > 0){
+			// resource is observable
+			$message = $coap_factory->create_observe_get_request($resource);
+			$message->send_message();
+		}
+		else{
+			// resource is not observable
+			$message = $coap_factory->create_basic_get_request($resource);
+			$query = db_select('coap_resource_users', 'users');
+			$query
+				->fields('users', array('uri', 'observable'))
+				->condition('observe', 1, '=')
+				->condition('uri', $uri, '=');
+			$result = $query->execute();
+			while($result->rowCount() > 0){
+				$response_obj = $message->send_message();
+				coap_resource_receive_response($response_obj);
+				$result = $query->execute();
+			}
+		}
 	}
 }
 
@@ -790,7 +848,30 @@ function coap_resource_start_request($method, $payload=''){
 			if($payload != ''){
 				$coap_message->add_payload($payload);
 			}
-			$response_obj = $coap_message->send_message();
+			
+			$response_obj = null;
+			
+			if($method == "GET"){
+				// Get last value from the database for the given resource, to check if value is still valid and use this value if it's still valid
+				$query = db_select('coap_resource_values', 'values');
+				$query
+					->fields('values', array('timestamp', 'uri', 'payload', 'response_type', 'max_age'))
+					->condition('uri', $record->uri, '=')
+					->condition('uid', $user->uid, '=')
+					->orderBy('hid', 'DESC')
+					->range(0,1);
+				$result = $query->execute();
+				foreach($result as $record){
+					if($record->max_age != null && strtotime($record->timestamp) > intval($record->max_age)){
+						$factory = new CoAPMessageFactory('coap_resource', $ip, $resource);
+						$response_obj = $factory->create_message_with_given_message($record->original_response);
+					}
+				}
+			}
+			// Get new value if previous isn't still valid
+			if($response_obj == null){
+				$response_obj = $coap_message->send_message();
+			}
 			if($response_obj != null){
 				$num_updated = db_update('coap_resource_users')
 				->fields(array(
@@ -842,17 +923,17 @@ function coap_resource_receive_response($response_obj){
 	$max_age = $response_obj->get_max_age();
 	$value = $response_obj->get_payload();
 	$format = $response_obj->get_content_format();
+	$content_type = $response_obj->get_message_code();
 	if($format == 'text/plain'){
 		$value = coap_resource_get_temperature($value);
 	}
-	variable_set('test', $response_obj->get_ip() . '/' . $response_obj->get_resource());
 	
 	global $user;
-	variable_set('test', 'voor eerste insert');
 	$hid = db_insert('coap_resource_values')
 		->fields(array(
 			'payload' => $response_obj->get_payload(),
 			'content_format' => $format,
+			'content_type' => $content_type,
 			'original_response' => $response_obj->getHexMessage(),
 			'parsed_value' => $value,
 			'max_age' => $max_age,
@@ -860,7 +941,6 @@ function coap_resource_receive_response($response_obj){
 			'uid' => $user->uid,
 		))
 		->execute();
-	variable_set('test', 'na eerste insert');
 	
 	$query = db_select('coap_resource_users', 'users');
 	$query
@@ -875,6 +955,7 @@ function coap_resource_receive_response($response_obj){
 			->fields(array(
 				'payload' => $response_obj->get_payload(),
 				'content_format' => $format,
+				'content_type' => $content_type,
 				'original_response' => $response_obj->getHexMessage(),
 				'parsed_value' => $value,
 				'max_age' => $max_age,
