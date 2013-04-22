@@ -1,6 +1,7 @@
 <?php
 
 require_once(drupal_get_path('module', 'coap_library') . '/coap_library_classes.inc');
+require_once(drupal_get_path('module', 'coap_resource') . '/includes/coap_discovery.inc');
 
 /**
  * Implements hook_menu().
@@ -11,6 +12,12 @@ function coap_resource_menu() {
 	$items["coap_resource/poll"] = array(
 		"title" => "Get last entry",
 		"page callback" => "coap_resource_page_callback",
+		"access callback" => true,
+		"type" => MENU_CALLBACK
+	);
+	$items["coap_resource/discovery"] = array(
+		"title" => "Discovery",
+		"page callback" => "coap_discovery_page_callback",
 		"access callback" => true,
 		"type" => MENU_CALLBACK
 	);
@@ -150,7 +157,6 @@ function coap_resource_form($form, &$form_state) {
 	//dpm($form);
 	return $form;
 }
-
 
 ///////////
 // BLOCK //
@@ -568,7 +574,6 @@ function coap_resource_uri_form_submit($form, $form_state) {
 			$id = db_insert('coap_resource_resources')
 				->fields(array(
 					'uri' => $form_state['values']['invoer'],
-					'observable' => 1,
 					'last_error' => 'none',
 				))
 				->execute();

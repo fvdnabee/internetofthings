@@ -1,27 +1,21 @@
 <?php
 
 function coap_discovery_schema(){
-	$schema['coap_discovery_core_links'] = array( //moet geïntegreerd worden met coap_resource_resources
-		'description' => "Tabel om core links bij te houden",
+	$schema['coap_discovery_resources'] = array( //moet geïntegreerd worden met coap_resource_resources
+		'description' => "Tabel om resources en hun karakteristieken bij te houden",
 		'fields' => array(
-				'device_uri' => array(
+				'uri' => array(
 					'type' => 'varchar',
 					'not null' => TRUE,
 					'length' => '128',
-					'description' => 'ip device',
-				),		
-				'link_name' => array(
-					'type' => 'varchar',
-					'not null' => TRUE,
-					'length' => '128',
-					'description' => 'Een relatieve uri van een resource',
+					'description' => 'Een URI van een resource',
 				),
 				'obs' => array(					
 					'type' => 'int',
 					'unsigned' => TRUE,
 					'not null' => TRUE,
 					'default' => 0,
-					'description' => 'Observer --> 0 = no, 1 = yes',
+					'description' => 'Waarde om te bepalen of het device observeerbaar is of niet --> 0 = niet observeerbaar, 1 = wel observeerbaar',
 				),
 				'rt' => array(
 					'type' => 'varchar',
@@ -65,12 +59,18 @@ function coap_discovery_schema(){
 					'length' => '128',
 					'description' => 'relation between source entered in anchor',
 				),
+				'last_error' => array(
+					'description' => 'Laatst opgetreden fout',
+					'type' => 'varchar',
+					'not null' => TRUE,
+					'length' => '128',
+				),
 			),
-			'primary key' => array('device_uri','link_name'),
+			'primary key' => array('uri'),
 	);
 	
 	$schema['coap_discovery_users'] = array( //deze tabel moet geïntegreerd worden in coap_resource_users
-		'description' => "Tabel om users bij te houden en het device dat ze willen zien",
+		'description' => "Tabel om users bij te houden en de URI's die ze willen gebruiken. Zowel devices als resources",
 		'fields' => array(
 				'uid' => array(
 					'type' => 'int',
@@ -78,18 +78,71 @@ function coap_discovery_schema(){
 					'not null' => TRUE,
 					'description' => 'User ID',
 				),
-				'device_uri' => array(
+				'uri' => array(
 					'type' => 'varchar',
 					'not null' => TRUE,
 					'length' => '128',
 					'description' => 'Een URI van een embedded device',
 				),
+				'device' => array(
+					'description' => 'Waarde om te bepalen of het om een resource of een device gaat --> 0 = resource, 1 = device',
+					'type' => 'int',
+					'unsigned' => TRUE,
+					'not null' => TRUE,
+					'default' => 0,
+				),
+				'observe' => array(
+					'description' => 'Waarde om te bepalen of de gebruiker het device wil observeren of niet --> 0 = niet observeren, 1 = wel observeren',
+					'type' => 'int',
+					'unsigned' => TRUE,
+					'not null' => TRUE,
+					'default' => 0,
+				),
+				'watch' => array(
+					'description' => 'Waarde om te bepalen of de gebruiker de waardes wil zien verschijnen of niet --> 0 = niet verschijnen, 1 = wel verschijnen',
+					'type' => 'int',
+					'unsigned' => TRUE,
+					'not null' => TRUE,
+					'default' => 0,
+				),
+				'polling_interval' => array(
+					'description' => 'Waarde die het aantal seconden weergeeft tussen 2 opvragingen vanuit jQuery',
+					'type' => 'int',
+					'unsigned' => TRUE,
+					'not null' => TRUE,
+					'default' => 2,
+				),
+				'last_method' => array(
+					'description' => 'Methode van laatste request --> {GET, PUT, POST, DELETE}',
+					'type' => 'varchar',
+					'not null' => FALSE,
+					'length' => '64',
+				),
+				'last_response' => array(
+					'description' => 'Laatst verkregen response',
+					'type' => 'varchar',
+					'not null' => FALSE,
+					'length' => '2048',
+				),
+				'responded' => array(
+					'description' => 'value indicating if server just responded',
+					'type' => 'int',
+					'unsigned' => TRUE,
+					'not null' => TRUE,
+					'default' => 0,
+				),
+				'response_type' => array(
+					'description' => 'Response type of last received response',
+					'type' => 'varchar',
+					'not null' => FALSE,
+					'length' => '2048',
+				),
 			),
-			'primary key' => array('uid', 'device_uri'),
+			'primary key' => array('uid', 'uri'),
 			'foreign keys' => array(
-				'device_uri' => array(
-					'table' => 'coap_discovery_core_links',
-					'columns' => array('device_uri' => 'device_uri'), 
+				'uri' => array(
+					'table' => 'coap_discovery_resources',
+					'columns' => array('uri' => 'uri'),
 				),
 			),
 	);
