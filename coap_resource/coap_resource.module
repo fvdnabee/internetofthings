@@ -284,9 +284,9 @@ function coap_resource_block_view($delta='') {
 	return $block;
 }
 
-//////////////////
+///////////////////
 // BEKIJKEN FORM //
-//////////////////
+///////////////////
 
 /**
  * Implements hook_form().
