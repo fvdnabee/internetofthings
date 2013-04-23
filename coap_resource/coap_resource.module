@@ -227,7 +227,7 @@ function coap_resource_block_view($delta='') {
 	$block_content .= "Polling gebeurt om de <input id = 'polling_invoer' type = 'text' size = '1' value = '" . $current_interval . "' > seconden. <button id = 'polling_button' type = 'button' >Wijzigen</button>";
 	
 	// URI form
-	$temp = drupal_get_form('uri_form');
+	$temp = drupal_get_form('coap_resource_uri_form');
 	$block_content .= drupal_render($temp);
 	
 	// Observe form
@@ -240,26 +240,26 @@ function coap_resource_block_view($delta='') {
 	}
 	
 	// Bekijken form
-	$temp = drupal_get_form('bekijken_form');
+	$temp = drupal_get_form('coap_resource_bekijken_form');
 	$block_content .= drupal_render($temp);
 	
 	// Table offering REST functionality
 	$block_content .= "<table id = 'requests' ><th colspan = '4' >Request methods</th><tr><td>";
 	
 	// GET form
-	$temp = drupal_get_form('get_request_form');
+	$temp = drupal_get_form('coap_resource_get_request_form');
 	$block_content .= drupal_render($temp) . "</td><td>";
 	
 	// PUT form
-	$temp = drupal_get_form('put_request_form');
+	$temp = drupal_get_form('coap_resource_put_request_form');
 	$block_content .= drupal_render($temp) . "</td><td>";
 	
 	// POST form
-	$temp = drupal_get_form('post_request_form');
+	$temp = drupal_get_form('coap_resource_post_request_form');
 	$block_content .= drupal_render($temp) . "</td><td>";
 	
 	// DELETE form
-	$temp = drupal_get_form('delete_request_form');
+	$temp = drupal_get_form('coap_resource_delete_request_form');
 	$block_content .= drupal_render($temp) . "</td></tr>";
 	
 	$block_content .= "<tr><td colspan = '4' ><label id = 'response' >Response: </label></td><tr><td colspan = '4' ><label id = 'response_type' >Response type: </label></td></tr></table>";
