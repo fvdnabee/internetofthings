@@ -112,6 +112,23 @@ function coap_resource_form($form, &$form_state) {
 	
 	global $user;
 	
+	$current_interval = 1;
+	$query = db_select('coap_resource_users', 'users');
+	$query
+		->fields('users', array('uid', 'polling_interval'))
+		->condition('uid', $user->uid, '=');
+	$result = $query->execute();
+	foreach ($result as $record){
+		$current_interval = $record->polling_interval;
+	}	
+	
+	$prefix = "Polling gebeurt om de <input id = 'polling_invoer' type = 'text' size = '1' value = '" . $current_interval . "' > seconden. <button id = 'polling_button' type = 'button' >Wijzigen</button>";
+	
+	$form['polling_container'] = array(
+		'#prefix' => $prefix,
+	);
+	
+	
 	$form = array_merge_recursive($form, coap_resource_uri_form($form, $form_state));
 	
 	// Te bekijken URI ophalen

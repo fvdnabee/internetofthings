@@ -375,6 +375,7 @@ class CoAPMessage {
 					}
 				}
 			}
+			dpm($response);
 			if($response != '' && $response != 'empty'){
 				$response_obj = new CoAPMessage($this->module, $this->ip, $this->resource, coap_library_string_to_hex_with_padding($response)); //	Put response in CoAPMessage-object
 				
@@ -604,6 +605,7 @@ class CoAPMessageFactory{
         $this->module = $module;  
 		$this->ip = $ip;
 		$this->resource = $resource;
+		$this->separate_response = $separate_response;
     }
 
 	// Generates a valid message ID, message id's get incremented with each function call
@@ -645,7 +647,7 @@ class CoAPMessageFactory{
 	
 	// Generates an empty CoAP message
 	public function create_empty_coap_message(){
-		return new CoAPMessage($this->module, $this->ip, $this->resource, $separate_response);
+		return new CoAPMessage($this->module, $this->ip, $this->resource, $this->separate_response);
 	}
 	
 	// Generates a basic CoAP message consisting of only the header and optional token, $type = {CON, NON, ACK, RST}, $method = {GET, PUT, POST, DELETE}
@@ -692,7 +694,7 @@ class CoAPMessageFactory{
 		}
 		$hex .= $this->generate_message_id();
 		$hex .= $this->generate_token($token_length);
-		return new CoAPMessage($this->module, $this->ip, $this->resource, $separate_response, $hex);
+		return new CoAPMessage($this->module, $this->ip, $this->resource, $this->separate_response, $hex);
 	}
 	
 	// Generates a basic CoAP GET request with optional given URI path
@@ -715,7 +717,7 @@ class CoAPMessageFactory{
 	
 	// Creates a message with the given hexadecimal message
 	public function create_message_with_given_message($message){
-		return new CoAPMessage($this->module, $this->ip, $this->resource, $separate_response, $message);
+		return new CoAPMessage($this->module, $this->ip, $this->resource, $this->separate_response, $message);
 	}
 	
 	// Creates a discovery request which depends on response
