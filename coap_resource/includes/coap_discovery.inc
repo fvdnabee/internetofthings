@@ -68,7 +68,7 @@ function coap_discovery_form($form, &$form_state) {
 		'#title' => 'Device IPv6 adress',
 		'#size' => 60,
 		'#required' => TRUE,
-		'#default_value' => 'shiiiit', 
+		//'#default_value' => 'shiiiit', 
 		//default value wordt later toegevoegd als uid niet nul is
 	);
 	
@@ -117,7 +117,7 @@ function coap_discovery_form($form, &$form_state) {
 				->execute();
 		foreach($result as $record){
 			$device_uri = $record->uri;
-			//$form['device_uri']['#default_value'] = $device_uri;		
+			$form['device_uri']['#default_value'] = $device_uri;		
 			$db_resources= db_select('coap_resource_resources', 'resources')
 				->fields('resources', array('uri','title'))
 				->condition('uri', "$device_uri%", 'LIKE')
@@ -171,8 +171,8 @@ function coap_discovery_form($form, &$form_state) {
 		'#value' => 'Save',
 		'#submit' => array('coap_discovery_save_resources'),
 	);
-	if(isset($_SESSION)) dpm($_SESSION);
-	dpm($user);
+	//if(isset($_SESSION)) dpm($_SESSION);
+	//dpm($user);
 	return $form;
 }
 
@@ -349,17 +349,22 @@ function coap_discovery_start_discover($ip){
 	$has_more = true;
 	while($has_more){
 		$coap_message = $coap_factory->create_discovery_request($response_obj);
+		//dpm($coap_message->getHexMessage());
 		$response_obj = $coap_message->send_message();
+		//dpm($response_obj->getHexMessage());
 		if($response_obj){
 			$option_value = $response_obj->get_option_value(23);
+			//dpm($option_value);
 			if($option_value != -1){
 				$has_more = coap_library_get_bit_from_hex(substr($option_value,strlen($option_value)-1,1),3);
+				//dpm($has_more);
 				$payloads .= $response_obj->get_payload();
 			}
 			else $has_more = false;
 		}
 		else $has_more = false;
 	}
+	//dpm($payloads);
 	coap_discovery_parse_discovery_payloads($ip,$payloads);
 }
 
