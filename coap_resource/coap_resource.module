@@ -9,9 +9,9 @@ require_once(drupal_get_path('module', 'coap_resource') . '/includes/coap_discov
 function coap_resource_help($path, $arg) {
   switch ($path) {
     case 'admin/modules#description':
-      return t('What my module does.');
+      return t('De coap_resource module stelt de gebruiker in staat een sensornetwerk gebruiksvriendelijk en dynamisch te beheren.');
     case 'admin/help#coap_resource':
-      return t('<h3>Description:</h3><p>A longer description of what my module does.</p>');
+      return t('<h3>Description:</h3><p>De coap_resource module stelt de gebruiker in staat een sensornetwerk gebruiksvriendelijk en dynamisch te beheren.</p>');
   }
 }
 
@@ -64,16 +64,24 @@ function coap_resource_menu() {
 		'weight' => 4,
 		'type' => MENU_LOCAL_TASK,
 	);
+	
+	$items['node/%coap_resource_menu/view/configuration'] = array(
+		'title' => 'Configuration',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('coap_resource_admin_settings'),
+		'access callback' => TRUE,
+		'weight' => 8,
+		'type' => MENU_LOCAL_TASK,
+	);
 
   return $items;
 }
 
 function coap_resource_admin_settings() {
-	$form['message'] = array
+	$form['message_container'] = array
 	(
-		'#type' => 'textfield',
-		'#size' => 60,
-		'#default_value' => 'Configuratie',
+		'#type' => 'container',
+		'#prefix' => "De configuratietab van de module coap_resources.",
 	);
 	$form = system_settings_form($form);
 	return $form;
