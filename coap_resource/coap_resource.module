@@ -122,7 +122,7 @@ function coap_resource_form($form, &$form_state) {
 		$current_interval = $record->polling_interval;
 	}	
 	
-	$prefix = "Polling gebeurt om de <input id = 'polling_invoer' type = 'text' size = '1' value = '" . $current_interval . "' > seconden. <button id = 'polling_button' type = 'button' >Wijzigen</button>";
+	$prefix = "<p>" . variable_get('test', 'leeg') . "</p>Polling gebeurt om de <input id = 'polling_invoer' type = 'text' size = '1' value = '" . $current_interval . "' > seconden. <button id = 'polling_button' type = 'button' >Wijzigen</button>";
 	
 	$form['polling_container'] = array(
 		'#prefix' => $prefix,
@@ -460,7 +460,8 @@ function coap_resource_get_request_form($form_in, &$form_state) {
  * functie die wordt uitgevoerd als het formulier ingediend wordt
  */
 function coap_resource_get_request_form_submit($form, $form_state) {
-	$handle = background_process_start('coap_resource_start_request', 'GET');
+	// $handle = background_process_start('coap_resource_start_request', 'GET');
+	coap_resource_start_request('GET');
 }
 
 
@@ -936,55 +937,61 @@ function coap_resource_start_request($method, $payload=''){
 		->condition('watch', 1, '=')
 		->condition('uid', $user->uid, '=');
 	$result = $query->execute();
+	foreach($result as $record){
+		$uri = $record->uri;
+	}
 	
 	//	Determine if resource uses separate response
-	$query = db_select('coap_resource_resources', 'separate_response');
+	$query = db_select('coap_resource_resources', 'resources');
 	$query
-		->fields('resources', array('uri', 'observable'))
+		->fields('resources', array('uri', 'separate_response'))
 		->condition('separate_response', 1, '=')
 		->condition('uri', $uri, '=');
 	$result = $query->execute();
 	$separate_response = ($result->rowCount() > 0);
 	
-	foreach($result as $record){
-		$pattern = '/([^\/]+)\/(.*)/i';
-		if(preg_match($pattern, $record->uri, $matches)){
-			//	Build message
-			$coap_factory = new CoAPMessageFactory('coap_resource', $matches[1], $matches[2], $separate_response);
-			$coap_message = $coap_factory->create_message_with_header_and_token('CON', $method, 0);
-			$coap_message->add_option(11, $matches[2]);
-			if($payload != ''){
-				$coap_message->add_payload($payload);
-			}
-			
-			$response_obj = null;
-			
-			if($method == "GET"){
-				//	Get last value from the database for the given resource to check if value is still valid and use this value if it's still valid
-				$query = db_select('coap_resource_values', 'values');
-				$query
-					->fields('values', array('timestamp', 'uri', 'payload', 'response_type', 'max_age'))
-					->condition('uri', $record->uri, '=')
-					->condition('uid', $user->uid, '=')
-					->orderBy('hid', 'DESC')
-					->range(0,1);
-				$result = $query->execute();
-				foreach($result as $record){
-					//	Check if the last value has a max age and if it has, check if the value is still valid
-					if($record->max_age != null && strtotime($record->timestamp) > intval($record->max_age)){
-						$response_obj = $coap_factory->create_message_with_given_message($record->original_response);
-					}
+	$pattern = '/([^\/]+)\/(.*)/i';
+	if(preg_match($pattern, $uri, $matches)){
+		//	Build message
+		variable_set('test', 'voor message opbouwen');
+		$coap_factory = new CoAPMessageFactory('coap_resource', $matches[1], $matches[2], $separate_response);
+		$coap_message = $coap_factory->create_message_with_header_and_token('CON', $method, 0);
+		$coap_message->add_option(11, $matches[2]);
+		if($payload != ''){
+			$coap_message->add_payload($payload);
+		}
+		
+		$response_obj = null;
+		
+		variable_set('test', 'voor zoeken in databank');
+		if($method == "GET"){
+			//	Get last value from the database for the given resource to check if value is still valid and use this value if it's still valid
+			$cache_query = db_select('coap_resource_values', 'values');
+			$cache_query
+				->fields('values', array('uri', 'uid', 'hid', 'original_response', 'max_age', 'timestamp'))
+				->condition('uri', $uri, '=')
+				->condition('uid', $user->uid, '=')
+				->orderBy('hid', 'DESC')
+				->range(0,1);
+			$cache_result = $cache_query->execute();
+			variable_set('test', 'net na cache query');
+			foreach($cache_result as $cache_record){
+				//	Check if the last value has a max age and if it has, check if the value is still valid
+				if($cache_record->max_age != null && strtotime($cache_record->timestamp) > intval($cache_record->max_age)){
+					$response_obj = $coap_factory->create_message_with_given_message($cache_record->original_response);
 				}
 			}
-			
-			//	Get new value if previous isn't still valid
-			if($response_obj == null){
-				$response_obj = $coap_message->send_message();
-			}
-			
-			//	Insert the response into the database for the current user
-			coap_resource_give_response_to_user($response_obj, $method);
 		}
+		variable_set('test', 'na zoeken in databank');
+		
+		//	Get new value if previous isn't still valid
+		if($response_obj == null){
+			variable_set('test', 'net voor send message');
+			$response_obj = $coap_message->send_message();
+		}
+		
+		//	Insert the response into the database for the current user
+		coap_resource_give_response_to_user($response_obj, $method);
 	}
 }
 
