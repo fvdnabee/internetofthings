@@ -343,7 +343,7 @@ function coap_discovery_load_device_core($device_uri){
 }
 
 function coap_discovery_start_discover($ip){
-	$coap_factory = new CoAPMessageFactory('coap_resource', $ip, '');
+	$coap_factory = new CoAPMessageFactory('coap_resource', $ip, '', false);
 	$response_obj = null;
 	$payloads = '';
 	$has_more = true;
