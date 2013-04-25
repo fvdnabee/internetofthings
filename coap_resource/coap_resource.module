@@ -1192,12 +1192,15 @@ function coap_resource_start_request($method, $payload=''){
 		
 		//	Get new value if previous isn't still valid
 		if($response_obj == null){
-			variable_set('test', 'net voor send message');
 			$response_obj = $coap_message->send_message();
 		}
 		
-		//	Insert the response into the database for the current user
-		coap_resource_give_response_to_user($response_obj, $method);
+		if($response_obj != null){
+			//	Insert the response into the database for the current user
+			coap_resource_give_response_to_user($response_obj, $method);
+			
+			coap_resource_insert_response_into_database($response_obj, $user->uid);
+		}
 	}
 }
 
