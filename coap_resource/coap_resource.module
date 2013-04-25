@@ -130,15 +130,6 @@ function coap_resource_form($form, &$form_state) {
 		$current_interval = $record->polling_interval;
 	}	
 	
-	$prefix = "<p>" . variable_get('test', 'leeg') . "</p>Polling gebeurt om de <input id = 'polling_invoer' type = 'text' size = '1' value = '" . $current_interval . "' > seconden. <button id = 'polling_button' type = 'button' >Wijzigen</button>";
-	
-	$form['polling_container'] = array(
-		'#prefix' => $prefix,
-	);
-	
-	
-	$form = array_merge_recursive($form, coap_resource_uri_form($form, $form_state));
-	
 	// Te bekijken URI ophalen
 	$query = db_select('coap_resource_users', 'users');
 	$query
@@ -151,6 +142,19 @@ function coap_resource_form($form, &$form_state) {
 		$empty = FALSE;
 		$uri = $record->uri;
 	}
+	
+	if(!$empty){
+		$prefix = "<p></p>Polling gebeurt om de <input id = 'polling_invoer' type = 'text' size = '1' value = '" . $current_interval . "' > seconden. <button id = 'polling_button' type = 'button' >Wijzigen</button>";
+		
+		$form['polling_container'] = array(
+			'#prefix' => $prefix,
+		);
+	}
+	
+	
+	$form = array_merge_recursive($form, coap_resource_uri_form($form, $form_state));
+	
+	
 	
 	$prefix = "<tr><td colspan = '4' ><label id = 'response' >Response: </label></td><tr><td colspan = '4' ><label id = 'response_type' >Response type: </label></td></tr></table>";
 	$prefix .= "<img style = 'visibility:hidden;' src = '' id = 'errorimg' /><label id='error' ></label>"; // elementen om fouten te tonen
