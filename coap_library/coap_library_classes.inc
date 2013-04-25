@@ -32,6 +32,7 @@ class CoAPMessage {
 		$this->resource = $resource;
 		$this->separate_response = $separate_response;
 		$this->response_code_mapping = array(
+			0 => 'Empty',
 			65 => '2.01 Created',
 			66 => '2.02 Deleted',
 			67 => '2.03 Valid',
@@ -356,7 +357,6 @@ class CoAPMessage {
 				if($returnvalue != FALSE){
 					$response = fread($socket, 512); //	Read from UDP-socket
 				}
-				dpm(coap_library_string_to_hex_with_padding($response));
 				
 				//	Keep resending the packet and multiplying the timeout if something went wrong (exponential backoff)
 				while($this->retransmit_counter < $this->MAX_RETRANSMIT && ($response == '' || $response == 'empty')){
@@ -378,9 +378,9 @@ class CoAPMessage {
 			}
 			
 			if($response != '' && $response != 'empty'){
-				$response_obj = new CoAPMessage($this->module, $this->ip, $this->resource, coap_library_string_to_hex_with_padding($response)); //	Put response in CoAPMessage-object
+				$response_obj = new CoAPMessage($this->module, $this->ip, $this->resource, $this->separate_response, coap_library_string_to_hex_with_padding($response)); //	Put response in CoAPMessage-object
 				dpm($response_obj->getHexMessage());
-				dpm($response_obj->getMessage());
+				// dpm($response_obj->get_payload());
 				//	notify using module that there are no difficulties at the moment
 				$function_name = $this->module . '_receive_error';
 				$function_name('none', $this->ip, $this->resource);

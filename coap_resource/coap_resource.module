@@ -468,8 +468,7 @@ function coap_resource_get_request_form($form_in, &$form_state) {
  * functie die wordt uitgevoerd als het formulier ingediend wordt
  */
 function coap_resource_get_request_form_submit($form, $form_state) {
-	// $handle = background_process_start('coap_resource_start_request', 'GET');
-	coap_resource_start_request('GET');
+	$handle = background_process_start('coap_resource_start_request', 'GET');
 }
 
 
@@ -971,12 +970,12 @@ function coap_resource_start_request($method, $payload=''){
 		
 		$response_obj = null;
 		
-		variable_set('test', 'voor zoeken in databank');
 		if($method == "GET"){
+			variable_set('test', 'net voor zoeken in databank');
 			//	Get last value from the database for the given resource to check if value is still valid and use this value if it's still valid
-			$cache_query = db_select('coap_resource_values', 'values');
+			$cache_query = db_select('coap_resource_values', 'coap_resource_values');
 			$cache_query
-				->fields('values', array('uri', 'uid', 'hid', 'original_response', 'max_age', 'timestamp'))
+				->fields('coap_resource_values', array('uri', 'uid', 'hid', 'original_response', 'max_age', 'timestamp'))
 				->condition('uri', $uri, '=')
 				->condition('uid', $user->uid, '=')
 				->orderBy('hid', 'DESC')
