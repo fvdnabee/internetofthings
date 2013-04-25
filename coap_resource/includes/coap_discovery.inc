@@ -279,9 +279,15 @@ function coap_discovery_page_callback(){
 		
 		if($db_device_uri->rowCount() != 0){
 			$db_user_resources = db_select('coap_resource_users', 'users')
-					->fields('users', array('uri','title'))
+					->fields('users', array('uri','uid','device'))
 					->condition('uri', "$device_uri%", 'LIKE')
+					->condition('uid', $user->uid, '=')
+					->condition('device', 0, '=')
 					->execute();
+			$resource_hash = array();
+			foreach($db_user_resources as $record){
+				$resource_hash[$record->uri] = 1;
+			}
 			$db_resources = db_select('coap_resource_resources', 'resources')
 					->fields('resources', array('uri','title'))
 					->condition('uri', "$device_uri%", 'LIKE')
@@ -295,7 +301,8 @@ function coap_discovery_page_callback(){
 				$output .= $record->title;
 				$output .= '</title>';
 				$output .= '<watch>';
-				$output .= 1;
+				$output .= isset($resource_hash[$record->uri]) ? 1 : 0;
+				//output .= 1;
 				$output .= '</watch>';
 				$output .='</resource>';
 			}
