@@ -268,25 +268,21 @@ function coap_discovery_page_callback(){
 	
 	//if($user->uid != 0 && !isset($_SESSION[$user->sid]['resources'])){
 	if($user->uid != 0){
-		$db_device_uri = db_select('coap_resource_users','user_device')
+		$result = db_select('coap_resource_users','user_device')
 				->fields('user_device', array('uid','uri','device'))
 				->condition('uid', $user->uid, '=')
 				->condition('device',1,'=')
 				->execute();
-		foreach($db_device_uri as $record){
+		foreach($result as $record){
 			$device_uri = $record->uri;
 		}
 		
-		if($db_device_uri->rowCount() != 0){
-			$db_user_resources = db_select('coap_resource_users', 'users')
-					->fields('users', array('uri','title'))
-					->condition('uri', "$device_uri%", 'LIKE')
-					->execute();
-			$db_resources = db_select('coap_resource_resources', 'resources')
+		if($result->rowCount() != 0){
+			$result = db_select('coap_resource_resources', 'resources')
 					->fields('resources', array('uri','title'))
 					->condition('uri', "$device_uri%", 'LIKE')
 					->execute();
-			foreach($db_resources as $record){
+			foreach($result as $record){
 				$output .= '<resource>';
 				$output .= '<uri>';
 				$output .= $record->uri;
@@ -299,7 +295,7 @@ function coap_discovery_page_callback(){
 				$output .= '</watch>';
 				$output .='</resource>';
 			}
-			if($db_resources->rowCount() == 0) $output = 'No data in database about this device. Click on \'Refresh device\' to display resources.';
+			if($result->rowCount() == 0) $output = 'No data in database about this device. Click on \'Refresh device\' to display resources.';
 		}
 	}	
 	else{
