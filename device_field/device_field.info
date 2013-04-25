@@ -1,0 +1,5 @@
+name = Device Field
+description = Module that defines the device uri field.
+package = zzz
+dependencies[] = field_ui
+core = 7.x

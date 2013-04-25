@@ -1,19 +1,87 @@
 <?php
 
+
 function coap_resource_node_info() {
   return array(
     'coap_resource' => array(
       'name' => t('CoAP resource'),
       'base' => 'node_content',
 	  'has_body' => FALSE,
-      'description' => t('CoAP resource Form'),
+      'description' => t('CoAP resource form, displaying one resource.'),
+    ),
+	'coap_general' => array(
+      'name' => t('CoAP general'),
+      'base' => 'node_content',
+	  'has_body' => FALSE,
+      'description' => t('General CoAP form, most flexible.'),
+    ),
+	'coap_device' => array(
+      'name' => t('CoAP device'),
+      'base' => 'node_content',
+	  'has_body' => FALSE,
+	  'has_title' => FALSE,
+	  'locked' => TRUE,
+      'description' => t('CoAP devce form, managing one device with a well-known/core.'),
     ),
   );
 }
 
-/**
- * Implements hook_schema().
- */
+function coap_resource_install(){
+	// create the simple content type
+	node_types_rebuild();
+	$types = node_type_get_types();
+	
+	// create all the fields we are adding to our content type
+	foreach (_coap_resource_installed_fields() as $field) {
+		field_create_field($field);
+	}
+	
+	// create all the instance for our fields
+	foreach (_coap_resource_installed_instances() as $instance) {
+		field_create_instance($instance);
+	}
+}
+
+function _coap_resource_installed_fields()  {
+  // textfield
+  $fields['coap_device_textfield'] = array(
+    'field_name' => 'coap_device_textfield',
+    'label' => t('Device URI'),
+	'cardinality' => 1,
+    'type' => 'device_field',
+  );  
+  return $fields;
+}
+
+function _coap_resource_installed_instances()  {
+  // textfield
+  $instances['coap_device_textfield'] = array(
+    'field_name' => 'coap_device_textfield',
+	'entity_type' => 'node',
+	'bundle' => 'coap_device',
+    'type' => 'text',
+    'label' => t('Enter device URI') ,    
+	'widget' => array(
+		'type' => 'custom_field',
+	),
+	'display' => array(
+		'default' => array(
+			'label' => 'above',
+			'type' => 'custom_field_formatter',
+		),
+		'teaser' => array(
+			'label' => 'above',
+			'settings' => array(),
+			'type' => 'hidden',
+			'weight' => -1,
+		),
+	),
+	'description' => 'Enter URI',
+  );
+  
+  return $instances;
+}
+
 function coap_resource_schema() {
 	
 	// Tabel om resources bij te houden
@@ -254,42 +322,48 @@ function coap_resource_uninstall(){
 	db_drop_table('coap_resource_values');
 }
 
-function coap_resource_enable() {  
-  variable_set('comment_coap_resource', 0);					//comments default disabled
-  variable_set('node_options_coap_resource', array('status'));	//promote to front page default unchecked
-  variable_set('node_preview_coap_resource', 0);				//preview default disabled
-  variable_set('node_submitted_coap_resource', 0);
+function coap_resource_enable() {
+	$content_types = array('coap_general','coap_resource', 'coap_device');
+	foreach($content_types as $content_type){
+		variable_set("comment_$content_type", 0);					//comments default disabled
+		variable_set("node_options_$content_type", array('status'));	//promote to front page default unchecked
+		variable_set("node_preview_$content_type", 0);				//preview default disabled
+		variable_set("node_submitted_$content_type", 0);
+	}
 }
 
 function coap_resource_disable(){
-	$result = db_select('node','nodes')
-				->fields('nodes', array('nid','type'))
-				->condition('type', 'coap_resource', '=')
-				->execute();
-				
-	$nids = array();
-	foreach ($result as $row) {
-		$nids[] = $row->nid;
+	$content_types = array('coap_general','coap_resource', 'coap_device');
+	foreach($content_types as $content_type){
+		$result = db_select('node','nodes')
+					->fields('nodes', array('nid','type'))
+					->condition('type', $content_type, '=')
+					->execute();
+					
+		$nids = array();
+		foreach ($result as $row) {
+			$nids[] = $row->nid;
+		}
+		// Delete all the nodes at once
+		node_delete_multiple($nids);
+		
+		//delete any  variables made by module
+		variable_del("comment_$content_type");
+		variable_del("node_preview_$content_type");
+		variable_del("node_submitted_$content_type");
+		variable_del("node_options_$content_type");	
+		
+		$instance = array('field_name' => 'comment_body','bundle' => "comment_node_$content_type",'entity_type' => 'comment');
+		field_delete_instance($instance);
+		
+		$instance = array('field_name' => 'body','bundle' => $content_type,'entity_type' => 'node');
+		field_delete_instance($instance);
+		
+		//deleting content type
+		node_type_delete($content_type);
+		node_types_rebuild();
+		
+		// Purge all field information
+		field_purge_batch(1000);
 	}
-	// Delete all the nodes at once
-	node_delete_multiple($nids);
-	
-	//delete any  variables made by module
-	variable_del('comment_coap_resource');
-	variable_del('node_preview_coap_resource');
-	variable_del('node_submitted_coap_resource');
-	variable_del('node_options_coap_resource');	
-	
-	$instance = array('field_name' => 'comment_body','bundle' => 'comment_node_coap_resource','entity_type' => 'comment');
-	field_delete_instance($instance);
-	
-	$instance = array('field_name' => 'body','bundle' => 'coap_resource','entity_type' => 'node');
-	field_delete_instance($instance);
-	
-	//deleting content type
-	node_type_delete('coap_resource');
-	node_types_rebuild();
-	
-	// Purge all field information
-	field_purge_batch(1000);
 }
