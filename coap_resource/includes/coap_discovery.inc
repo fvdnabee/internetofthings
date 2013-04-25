@@ -68,7 +68,6 @@ function coap_discovery_form($form, &$form_state) {
 		'#title' => 'Device IPv6 adress',
 		'#size' => 60,
 		'#required' => TRUE,
-		//'#default_value' => 'shiiiit', 
 		//default value wordt later toegevoegd als uid niet nul is
 	);
 	
@@ -109,12 +108,14 @@ function coap_discovery_form($form, &$form_state) {
 	);
 	
 	if($user->uid != 0){ //geen anonieme user	
-		$_SESSION["user_$user->uid"]['resources'] = array();	
-		$result = db_select('coap_resource_users','user_device')
+		$_SESSION[$user->sid]['resources'] = array();	
+		if($user->uid != 0){ //geen anonieme user
+			$result = db_select('coap_resource_users','user_device')
 				->fields('user_device', array('uid','uri','device'))
 				->condition('uid', $user->uid, '=')
 				->condition('device',1,'=')
 				->execute();
+		}
 		foreach($result as $record){
 			$device_uri = $record->uri;
 			$form['device_uri']['#default_value'] = $device_uri;		
@@ -129,8 +130,11 @@ function coap_discovery_form($form, &$form_state) {
 				$resource['title'] = $record->title;
 				array_push($resources,$resource);
 			} 		
-			$_SESSION["user_$user->uid"]['resources'] = $resources;
+			$_SESSION[$user->sid]['resources'] = $resources;
 		}
+	}
+	else if(isset($_SESSION[$user->sid])){
+		$form['device_uri']['#default_value'] = $_SESSION[$user->sid]['device_uri'];
 	}
 	
 	// if($user->uid != 0){ //geen anonieme user
@@ -157,9 +161,8 @@ function coap_discovery_form($form, &$form_state) {
 		'#multiple' => TRUE,
 	);
 	
-	if(($user->uid != 0 && isset($result) && $result->rowCount() != 0) || (isset($_SESSION) && $user->uid == 0 && $_SESSION["user_$user->uid"]['resources'])){
+	if(($user->uid != 0 && isset($result) && $result->rowCount() != 0) || (isset($_SESSION) && $user->uid == 0 && $_SESSION[$user->sid]['resources'])){
 		$table['#empty'] = 'Fetching sensors...';
-		$form['device_uri']['#default_value'] = $result->fetchField(1);
 	}
 	else		
 		$table['#empty'] = 'Enter a URI and click on \'Load device\' or \'Refresh device\' to display resources here.';
@@ -172,7 +175,7 @@ function coap_discovery_form($form, &$form_state) {
 		'#submit' => array('coap_discovery_save_resources'),
 	);
 	//if(isset($_SESSION)) dpm($_SESSION);
-	//dpm($user);
+	dpm($user->sid);
 	return $form;
 }
 
@@ -197,21 +200,21 @@ function coap_discovery_refresh_device_core_submit($form, &$form_state) {
 function coap_discovery_clear_tableselect_submit($form, &$form_state) {
 	global $user;
 	if($user->uid!=0){
-		$_SESSION["user_$user->uid"]['resources'] = array();
+		$_SESSION[$user->sid]['resources'] = array();
 		db_delete('coap_resource_users')
 			->condition('uid', $user->uid, '=')
 			->condition('device',1,'=')
 			->execute();
 			
 	}
-	else $_SESSION["user_$user->uid"]['resources'] = array();
+	else $_SESSION[$user->sid]['resources'] = array();
 	$form_state['rebuild'] = TRUE;
 }
 
 function coap_discovery_save_resources($form, &$form_state) {
 	global $user;
 	foreach($form_state['values']['table'] as $value){
-		$resource = $_SESSION["user_$user->uid"]['resources'][$value];
+		$resource = $_SESSION[$user->sid]['resources'][$value];
 		$uri = $form_state['values']['device_uri'] . $resource['uri'];
 		
 		// Watch bij alle rijen van de user op nul zetten
@@ -263,7 +266,7 @@ function coap_discovery_page_callback(){
 	global $user;
 	$output ='';
 	
-	//if($user->uid != 0 && !isset($_SESSION["user_$user->uid"]['resources'])){
+	//if($user->uid != 0 && !isset($_SESSION[$user->sid]['resources'])){
 	if($user->uid != 0){
 		$result = db_select('coap_resource_users','user_device')
 				->fields('user_device', array('uid','uri','device'))
@@ -296,16 +299,16 @@ function coap_discovery_page_callback(){
 		}
 	}	
 	else{
-		for($i=0 ; $i<count($_SESSION["user_$user->uid"]['resources']) ; $i++){
+		for($i=0 ; $i<count($_SESSION[$user->sid]['resources']) ; $i++){
 			$output .= '<resource>';
 			$output .= '<uri>';
-			$output .= $_SESSION["user_$user->uid"]['resources'][$i]['uri'];
+			$output .= $_SESSION[$user->sid]['resources'][$i]['uri'];
 			$output .= '</uri>';
 			$output .= '<title>';
-			$output .= $_SESSION["user_$user->uid"]['resources'][$i]['title'];
+			$output .= $_SESSION[$user->sid]['resources'][$i]['title'];
 			$output .= '</title>';
 			$output .= '<watch>';
-			$output .= $_SESSION["user_$user->uid"]['resources'][$i]['title'];
+			$output .= $_SESSION[$user->sid]['resources'][$i]['title'];
 			$output .= '</watch>';
 			$output .='</resource>';
 		}
@@ -316,10 +319,10 @@ function coap_discovery_page_callback(){
 
 function coap_discovery_load_device_core($device_uri){
 	global $user;
-	$result = db_select('coap_resource_resources', 'resources')
-				->fields('resources', array('uri','title'))
-				->condition('uri', "$device_uri%", 'LIKE')
-				->execute();
+	// $result = db_select('coap_resource_resources', 'resources')
+				// ->fields('resources', array('uri','title'))
+				// ->condition('uri', "$device_uri%", 'LIKE')
+				// ->execute();
 	
 	if($user->uid != 0){ //db aanpassen
 		db_delete('coap_resource_users')
@@ -337,9 +340,7 @@ function coap_discovery_load_device_core($device_uri){
 					->execute();
 		//}
 	}
-	else { //sessie aanpassen
-		
-	}
+	$_SESSION[$user->sid]['device_uri'] = $device_uri;
 }
 
 function coap_discovery_start_discover($ip){
@@ -424,7 +425,7 @@ function coap_discovery_parse_discovery_payloads($ip,$payloads){
 			//variable_set("response_string_$i", 'no match');
 		}		
 	}
-	if($user->uid == 0) $_SESSION["user_$user->uid"]['resources'] = $resources;
+	if($user->uid == 0) $_SESSION[$user->sid]['resources'] = $resources;
 	if($id != -1 && $user->uid != 0){ //tweede stuk is eigenlijk overbodig, maar je weet nooit
 		$id = db_insert('coap_resource_users')
 			->fields(array(
