@@ -86,6 +86,7 @@ function coap_resource_schema() {
 					'description' => 'Laatst opgetreden fout',
 					'type' => 'varchar',
 					'not null' => TRUE,
+					'default' => 'none'
 					'length' => '128',
 				),
 			),

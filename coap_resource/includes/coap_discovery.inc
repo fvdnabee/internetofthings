@@ -175,7 +175,7 @@ function coap_discovery_form($form, &$form_state) {
 		'#submit' => array('coap_discovery_save_resources'),
 	);
 	//if(isset($_SESSION)) dpm($_SESSION);
-	dpm($user->sid);
+	//dpm($user->sid);
 	return $form;
 }
 
@@ -215,7 +215,7 @@ function coap_discovery_save_resources($form, &$form_state) {
 	global $user;
 	foreach($form_state['values']['table'] as $value){
 		$resource = $_SESSION[$user->sid]['resources'][$value];
-		$uri = $form_state['values']['device_uri'] . $resource['uri'];
+		$uri = $resource['uri'];
 		
 		// Watch bij alle rijen van de user op nul zetten
 		$num_updated = db_update('coap_resource_users')
@@ -268,21 +268,25 @@ function coap_discovery_page_callback(){
 	
 	//if($user->uid != 0 && !isset($_SESSION[$user->sid]['resources'])){
 	if($user->uid != 0){
-		$result = db_select('coap_resource_users','user_device')
+		$db_device_uri = db_select('coap_resource_users','user_device')
 				->fields('user_device', array('uid','uri','device'))
 				->condition('uid', $user->uid, '=')
 				->condition('device',1,'=')
 				->execute();
-		foreach($result as $record){
+		foreach($db_device_uri as $record){
 			$device_uri = $record->uri;
 		}
 		
-		if($result->rowCount() != 0){
-			$result = db_select('coap_resource_resources', 'resources')
+		if($db_device_uri->rowCount() != 0){
+			$db_user_resources = db_select('coap_resource_users', 'users')
+					->fields('users', array('uri','title'))
+					->condition('uri', "$device_uri%", 'LIKE')
+					->execute();
+			$db_resources = db_select('coap_resource_resources', 'resources')
 					->fields('resources', array('uri','title'))
 					->condition('uri', "$device_uri%", 'LIKE')
 					->execute();
-			foreach($result as $record){
+			foreach($db_resources as $record){
 				$output .= '<resource>';
 				$output .= '<uri>';
 				$output .= $record->uri;
@@ -295,7 +299,7 @@ function coap_discovery_page_callback(){
 				$output .= '</watch>';
 				$output .='</resource>';
 			}
-			if($result->rowCount() == 0) $output = 'No data in database about this device. Click on \'Refresh device\' to display resources.';
+			if($db_resources->rowCount() == 0) $output = 'No data in database about this device. Click on \'Refresh device\' to display resources.';
 		}
 	}	
 	else{
