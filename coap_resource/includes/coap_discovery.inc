@@ -253,8 +253,9 @@ function coap_discovery_save_resources($form, &$form_state) {
 	}
 	
 	//$form_state['values']['resource'] = $resource;
-
-	$form_state['redirect'] = substr($form['#action'],1,-10);
+	//dpm(substr($form['#action'],1) . '/view/resources');
+	$form_state['redirect'] = substr($form['#action'],1) . '/view/resources';
+	//$form_state['redirect'] = substr($form['#action'],1,-10);
 	//$form_state['rebuild'] = TRUE;  // Force rebuild with next step.
 	return;
 }
@@ -361,22 +362,17 @@ function coap_discovery_start_discover($ip){
 	$has_more = true;
 	while($has_more){
 		$coap_message = $coap_factory->create_discovery_request($response_obj);
-		//dpm($coap_message->get_hex_message());
 		$response_obj = $coap_message->send_message();
-		//dpm($response_obj->get_hex_message());
 		if($response_obj){
 			$option_value = $response_obj->get_option_value(23);
-			//dpm($option_value);
 			if($option_value != -1){
 				$has_more = coap_library_get_bit_from_hex(substr($option_value,strlen($option_value)-1,1),3);
-				//dpm($has_more);
-				$payloads .= $response_obj->get_payload_text();
+				$payloads .= $response_obj->get_payload();
 			}
 			else $has_more = false;
 		}
 		else $has_more = false;
 	}
-	//dpm($payloads);
 	coap_discovery_parse_discovery_payloads($ip,$payloads);
 }
 

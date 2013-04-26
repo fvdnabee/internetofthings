@@ -1,0 +1,147 @@
+<?php
+// $Id$
+
+
+/**
+ * Implementation of hook_field_info().
+ */
+function device_field_field_info() {
+  return array(
+    'device_field' => array(
+      'label' => t('Device URI field'),
+      'description' => t('Device URI field.'),
+      'default_widget' => 'device_field_widget',
+      'default_formatter' => 'device_field_formatter',
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_widget_info().
+ */
+function device_field_field_widget_info() {
+  return array(
+    'device_field_widget' => array(
+      'label' => t('Device field form'),
+      'field types' => array('device_field'),
+      'behaviors' => array(
+        'multiple values' => FIELD_BEHAVIOR_DEFAULT,
+        //Use FIELD_BEHAVIOR_NONE for no default value.
+        'default value' => FIELD_BEHAVIOR_DEFAULT,
+      ),
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_formatter_info().
+ */
+function device_field_field_formatter_info() {
+  return array(
+    'device_field_formatter' => array(
+      'label' => t('Default'),
+      'field types' => array('device_field'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_formatter_view().
+ * opgeroepen als content toegevoegd is en de pagina gerenderd w
+ */
+function device_field_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+  $element = array();
+
+  switch ($display['type']) {
+    case 'device_field_formatter':
+      foreach ($items as $delta => $item) {
+        $element[$delta]['#markup'] = theme('device_field_formatter_default', $item);
+      }
+      break;
+  }
+
+  return $element;
+}
+
+/**
+ * Implements hook_field_widget_form().
+ * wordt uitgevoerd nadat field toegevoegd wordt aan content type en er opties van het veld ingesteld worden
+ * en als je op add content van dit nieuwe content type klikt
+ */
+function device_field_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
+  $base = $element;
+  if ($instance['widget']['type'] == 'device_field_widget') {
+    $widget = $instance['widget'];
+    $settings = $widget['settings'];
+    
+    $element['uri'] = array(
+      '#type' => 'textfield',
+      '#title' => t('uri'),
+      '#default_value' => isset($items[$delta]['uri']) ? $items[$delta]['uri'] : NULL,
+      '#element_validate' => array('_device_field_uri_validate'),
+    );
+
+  }
+  return $element;
+}
+
+/**
+ * Implementation of hook_field_is_empty().
+ */
+function device_field_field_is_empty($item, $field) {
+	if ($field['type'] == 'device_field') {
+		if (empty($item['uri'])) {
+			return TRUE;
+		}
+	}
+	return FALSE;
+}
+
+/**
+ * Implementation of hook_field_settings_form().
+ */
+function device_field_field_settings_form($field, $instance, $has_data) {
+  if ($field['type'] == 'device_field') {
+    $settings = $field['settings'];
+    $form = array();
+    return $form;
+  }
+}
+
+/**
+ * Implementation of hook_field_validate().
+ */
+function device_field_field_validate($obj_type, $object, $field, $instance, $langcode, &$items, &$errors) {
+  if ($field['type'] == 'device_field') {
+
+  }
+}
+
+/**
+ * Validation callback for a device_field uri element.
+ */
+function _device_field_uri_validate($element, &$form_state, $form) {
+  $value = $element['#value'];
+  if (!empty($value) && !valid_url($value, TRUE)) {
+    form_error($element, t('Invalid URL.'));
+  }
+}
+
+function device_field_theme($existing, $type, $theme, $path) {
+  return array(
+    'device_field_formatter_default' => array(
+      'variables' => array('item' => NULL),
+    ),
+  );
+}
+
+
+function theme_device_field_formatter_default($item) {
+  
+  $output = '';
+  $output .= '<div class="device_field-wrapper">';
+  $output .= 'uri: ' . l($item['uri'], $item['uri'], array('options' =>  array('absolute' => TRUE)));
+  $output .= '</div><br />';
+
+  return $output;
+}

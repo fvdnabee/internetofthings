@@ -1,0 +1,18 @@
+<?php
+
+function device_field_field_schema($field) {
+
+  if ($field['type'] == 'device_field') {
+    $schema['columns']['uri'] = array(
+      'type' => 'varchar',
+      'length' => '255',
+      'not null' => FALSE,
+    );
+
+    $schema['indexes'] = array(
+      'uri' => array('uri'),
+    );
+
+    return $schema;
+  }
+}

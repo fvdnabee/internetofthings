@@ -5,4 +5,5 @@ package = CoAP
 configure = admin/config/content/coap_resource
 dependencies[] = background_process
 dependencies[] = coap_library
+dependencies[] = device_field
 files[] = temperatuursensor_met_coap_library.module
