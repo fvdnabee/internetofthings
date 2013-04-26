@@ -361,16 +361,16 @@ function coap_discovery_start_discover($ip){
 	$has_more = true;
 	while($has_more){
 		$coap_message = $coap_factory->create_discovery_request($response_obj);
-		//dpm($coap_message->getHexMessage());
+		//dpm($coap_message->get_hex_message());
 		$response_obj = $coap_message->send_message();
-		//dpm($response_obj->getHexMessage());
+		//dpm($response_obj->get_hex_message());
 		if($response_obj){
 			$option_value = $response_obj->get_option_value(23);
 			//dpm($option_value);
 			if($option_value != -1){
 				$has_more = coap_library_get_bit_from_hex(substr($option_value,strlen($option_value)-1,1),3);
 				//dpm($has_more);
-				$payloads .= $response_obj->get_payload();
+				$payloads .= $response_obj->get_payload_text();
 			}
 			else $has_more = false;
 		}

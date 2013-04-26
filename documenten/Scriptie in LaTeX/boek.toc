@@ -76,11 +76,11 @@
 \contentsline {subsubsection}{Caching}{36}
 \contentsline {subsection}{\numberline {5.1.3}Content-type in de databank}{36}
 \contentsline {subsection}{\numberline {5.1.4}Content-type in Drupal}{36}
-\contentsline {chapter}{\numberline {6}ALLES IN DIT HOOFDSTUK MOET NOG VERWERKT WORDEN EN MAAKT DUS NOG GEEN DEEL UIT VAN DE SCRIPTIE}{37}
+\contentsline {chapter}{\numberline {6}Deze inhoud is nog niet verwerkt in de scriptie}{37}
 \contentsline {section}{\numberline {6.1}Evolutie}{38}
-\contentsline {section}{\numberline {6.2}Temperatuurmodule met HTTP/CoAP-proxy}{39}
+\contentsline {section}{\numberline {6.2}Temperatuurmodule met HTTP/CoAP-proxy}{38}
 \contentsline {subsection}{\numberline {6.2.1}Proxy}{39}
-\contentsline {subsection}{\numberline {6.2.2}Achtergrondprocessen}{40}
+\contentsline {subsection}{\numberline {6.2.2}Achtergrondprocessen}{39}
 \contentsline {subsection}{\numberline {6.2.3}Geschiedenis van opvragingen}{40}
 \contentsline {subsection}{\numberline {6.2.4}Push-strategie: node.js}{41}
 \contentsline {subsection}{\numberline {6.2.5}Pull-strategie}{42}
