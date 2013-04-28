@@ -58,29 +58,30 @@ function coap_discovery_form_validate($form, &$form_state) {
  * Returns form elements for core page. This is the
  * first step.
  */
-function coap_discovery_form($form, &$form_state) {
+function coap_discovery_form($form, &$form_state, $node) {
+//dpm($node);
 	drupal_add_js(drupal_get_path('module', 'coap_resource') . '/js/coap_resource.js'); // JavaScript bestand toevoegen
 	global $user;
-	//textfield for device uri
-	$form['device_uri'] = array
-	(
-		'#type' => 'textfield',
-		'#title' => 'Device IPv6 adress',
-		'#size' => 60,
-		'#required' => TRUE,
-		//default value wordt later toegevoegd als uid niet nul is
-	);
 	
-	
-	
-	if($user->uid !=0){
-	//button to load a cached well-know/core
-		$form['load_device'] = array
+	if($node->type == 'coap_general'){
+		//textfield for device uri
+		$form['device_uri'] = array
 		(
-			'#type' => 'submit',
-			'#value' => 'Load device',
-			'#submit' => array('coap_discovery_load_device_core_submit'),
-		);
+			'#type' => 'textfield',
+			'#title' => 'Device IPv6 adress',
+			'#size' => 60,
+			'#required' => TRUE,
+			//default value wordt later toegevoegd als uid niet nul is
+		);	
+		if($user->uid !=0){
+		//button to load a cached well-know/core
+			$form['load_device'] = array
+			(
+				'#type' => 'submit',
+				'#value' => 'Load device',
+				'#submit' => array('coap_discovery_load_device_core_submit'),
+			);
+		}
 	}
 	
 	//button to refresh the well-know/core
@@ -90,16 +91,18 @@ function coap_discovery_form($form, &$form_state) {
 		'#value' => 'Refresh device',
 		'#submit' => array('coap_discovery_refresh_device_core_submit'),
 	);
+		
+	if($node->type == 'coap_general'){
+		//button to clear tableselect
+		$form['clear_tableselect'] = array
+		(
+			'#type' => 'submit',
+			'#value' => 'Clear',
+			'#attributes' => array('id' => 'core_table'),
+			'#submit' => array('coap_discovery_clear_tableselect_submit'),
+		);	
+	}
 	
-	//button to clear tableselect
-	$form['clear_tableselect'] = array
-	(
-		'#type' => 'submit',
-		'#value' => 'Clear',
-		'#attributes' => array('id' => 'core_table'),
-		'#submit' => array('coap_discovery_clear_tableselect_submit'),
-	);	
-
 	$form['tableselect_container'] = array(
 		'#type' => 'container',
 		'#attributes' => array(
@@ -118,7 +121,7 @@ function coap_discovery_form($form, &$form_state) {
 		}
 		foreach($result as $record){
 			$device_uri = $record->uri;
-			$form['device_uri']['#default_value'] = $device_uri;		
+			$form['device_uri']['#default_value'] = $device_uri;	//alleen nutig als type = coap_general	
 			$db_resources= db_select('coap_resource_resources', 'resources')
 				->fields('resources', array('uri','title'))
 				->condition('uri', "$device_uri%", 'LIKE')
@@ -373,15 +376,17 @@ function coap_discovery_start_discover($ip){
 		}
 		else $has_more = false;
 	}
+	//dpm($payloads);
 	coap_discovery_parse_discovery_payloads($ip,$payloads);
 }
 
 function coap_discovery_parse_discovery_payloads($ip,$payloads){
-	//dpm('payload geparsed');
+	$payloads_string = coap_library_hex_to_string($payloads);
 	global $user;
 	$resources = array();
 	$regex = '/<[^>]+>\s*(;\s*\w+\s*(=\s*(\w+|"[^"]*(\\.[^"]*)*")\s*)?)*/';
-	preg_match_all($regex, $payloads, $resources);
+	preg_match_all($regex, $payloads_string, $resources);
+	dpm($resources);
 	
 	if($user->uid != 0){
 		db_delete('coap_resource_users')

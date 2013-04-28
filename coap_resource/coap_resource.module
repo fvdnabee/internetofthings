@@ -75,7 +75,7 @@ function coap_resource_menu() {
 	$items['node/%coap_resource_menu/view/resources'] = array(
 		'title' => 'Resources',
 		'page callback' => 'drupal_get_form',
-		'page arguments' => array('coap_resource_device_form'),
+		'page arguments' => array('coap_resource_device_form', 1),
 		'access callback' => TRUE,
 		'weight' => 4,
 		'type' => MENU_LOCAL_TASK,
@@ -139,7 +139,8 @@ function coap_resource_node_view($node, $view_mode, $langcode) {
 	return $node;
 }
 
-function coap_resource_device_form($form, &$form_state) {
+function coap_resource_device_form($form, &$form_state, $nid) {
+//dpm($nid);
 	drupal_add_js('https://www.google.com/jsapi'); // JavaScript bestand toevoegen
 	drupal_add_js(drupal_get_path('module', 'coap_resource') . '/js/coap_resource.js'); // JavaScript bestand toevoegen	
 	

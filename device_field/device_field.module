@@ -76,7 +76,7 @@ function device_field_field_widget_form(&$form, &$form_state, $field, $instance,
     
     $element['uri'] = array(
       '#type' => 'textfield',
-      '#title' => t('uri'),
+      '#title' => t('URI'),
       '#default_value' => isset($items[$delta]['uri']) ? $items[$delta]['uri'] : NULL,
       '#element_validate' => array('_device_field_uri_validate'),
     );
@@ -123,7 +123,7 @@ function device_field_field_validate($obj_type, $object, $field, $instance, $lan
 function _device_field_uri_validate($element, &$form_state, $form) {
 	$regex = '/^(((?=(?>.*?(::))(?!.+\3)))\3?|([\dA-F]{1,4}(\3|:(?!$)|$)|\2))(?4){5}((?4){2}|(25[0-5]|(2[0-4]|1\d|[1-9])?\d)(\.(?7)){3})\z/i';
 	$value = $element['#value'];
-	if (!empty($value) && !preg_match($regex, $value, $matches)) {
+	if (empty($value) || !preg_match($regex, $value, $matches)) {
 		form_error($element, 'Please enter a valid IPv6-adres.');
 	}
 }
@@ -135,7 +135,6 @@ function device_field_theme($existing, $type, $theme, $path) {
     ),
   );
 }
-
 
 function theme_device_field_formatter_default($item) {
   

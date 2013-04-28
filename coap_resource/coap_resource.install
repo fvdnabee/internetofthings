@@ -58,6 +58,7 @@ function _coap_resource_installed_instances()  {
   $instances['coap_device_textfield'] = array(
     'field_name' => 'coap_device_textfield',
 	'entity_type' => 'node',
+	//'required' => TRUE,
 	'bundle' => 'coap_device',
     'type' => 'text',
     'label' => t('Enter device URI') ,    
@@ -160,6 +161,84 @@ function coap_resource_schema() {
 			),
 			'primary key' => array('uri'),
 	);
+	
+	// $schema['coap_devices'] = array(
+		// 'description' => "Tabel om devices bij te houden waarin users geïnteresseerd zijn.",
+		// 'fields' => array(
+				// 'uid' => array(
+					// 'type' => 'int',
+					// 'unsigned' => TRUE,
+					// 'not null' => TRUE,
+					// 'description' => 'User ID',
+				// ),
+				// 'uri' => array(
+					// 'type' => 'varchar',
+					// 'not null' => TRUE,
+					// 'length' => '128',
+					// 'description' => 'Een URI van een embedded device',
+				// ),
+				// 'device' => array(
+					// 'description' => 'Waarde om te bepalen of het om een resource of een device gaat --> 0 = resource, 1 = device',
+					// 'type' => 'int',
+					// 'unsigned' => TRUE,
+					// 'not null' => TRUE,
+					// 'default' => 0,
+				// ),
+				// 'observe' => array(
+					// 'description' => 'Waarde om te bepalen of de gebruiker het device wil observeren of niet --> 0 = niet observeren, 1 = wel observeren',
+					// 'type' => 'int',
+					// 'unsigned' => TRUE,
+					// 'not null' => TRUE,
+					// 'default' => 0,
+				// ),
+				// 'watch' => array(
+					// 'description' => 'Waarde om te bepalen of de gebruiker de waardes wil zien verschijnen of niet --> 0 = niet verschijnen, 1 = wel verschijnen',
+					// 'type' => 'int',
+					// 'unsigned' => TRUE,
+					// 'not null' => TRUE,
+					// 'default' => 0,
+				// ),
+				// 'polling_interval' => array(
+					// 'description' => 'Waarde die het aantal seconden weergeeft tussen 2 opvragingen vanuit jQuery',
+					// 'type' => 'int',
+					// 'unsigned' => TRUE,
+					// 'not null' => TRUE,
+					// 'default' => 2,
+				// ),
+				// 'last_method' => array(
+					// 'description' => 'Methode van laatste request --> {GET, PUT, POST, DELETE}',
+					// 'type' => 'varchar',
+					// 'not null' => FALSE,
+					// 'length' => '64',
+				// ),
+				// 'last_response' => array(
+					// 'description' => 'Laatst verkregen response',
+					// 'type' => 'varchar',
+					// 'not null' => FALSE,
+					// 'length' => '2048',
+				// ),
+				// 'responded' => array(
+					// 'description' => 'value indicating if server just responded',
+					// 'type' => 'int',
+					// 'unsigned' => TRUE,
+					// 'not null' => TRUE,
+					// 'default' => 0,
+				// ),
+				// 'response_type' => array(
+					// 'description' => 'Response type of last received response',
+					// 'type' => 'varchar',
+					// 'not null' => FALSE,
+					// 'length' => '2048',
+				// ),
+			// ),
+			// 'primary key' => array('uid', 'uri'),
+			// 'foreign keys' => array(
+				// 'uri' => array(
+					// 'table' => 'coap_resource_resources',
+					// 'columns' => array('uri' => 'uri'),
+				// ),
+			// ),
+	// );
 	
 	// Tabel om URI's per user bij te houden
 	$schema['coap_resource_users'] = array(
