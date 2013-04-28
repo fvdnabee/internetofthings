@@ -121,10 +121,11 @@ function device_field_field_validate($obj_type, $object, $field, $instance, $lan
  * Validation callback for a device_field uri element.
  */
 function _device_field_uri_validate($element, &$form_state, $form) {
-  $value = $element['#value'];
-  if (!empty($value) && !valid_url($value, TRUE)) {
-    form_error($element, t('Invalid URL.'));
-  }
+	$regex = '/^(((?=(?>.*?(::))(?!.+\3)))\3?|([\dA-F]{1,4}(\3|:(?!$)|$)|\2))(?4){5}((?4){2}|(25[0-5]|(2[0-4]|1\d|[1-9])?\d)(\.(?7)){3})\z/i';
+	$value = $element['#value'];
+	if (!empty($value) && !preg_match($regex, $value, $matches)) {
+		form_error($element, 'Please enter a valid IPv6-adres.');
+	}
 }
 
 function device_field_theme($existing, $type, $theme, $path) {
