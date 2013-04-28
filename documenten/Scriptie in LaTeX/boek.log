@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2013.4.11)  19 APR 2013 16:04
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2013.4.11)  25 APR 2013 10:42
 entering extended mode
 **boek.tex
 
@@ -663,17 +663,11 @@ Underfull \hbox (badness 10000) in paragraph at lines 50--51
 
 
 Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
-less on input line 51.
+less on input line 60.
 
 
 Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
-less on input line 51.
-
-
-Package Fancyhdr Warning: \headheight is too small (14.22636pt): 
- Make it at least 25.2842pt.
- We now make it that large for the rest of the document.
- This may cause the page layout to be inconsistent, however.
+less on input line 60.
 
 [37
 
@@ -685,8 +679,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 80--81
 
  []
 
-[38]
-<fig/TemperatuurModuleHTTPCOAPProxy.png, id=183, 455.45157pt x 259.7203pt>
+<fig/TemperatuurModuleHTTPCOAPProxy.png, id=180, 455.45157pt x 259.7203pt>
 File: fig/TemperatuurModuleHTTPCOAPProxy.png Graphic file (type png)
 
 <use fig/TemperatuurModuleHTTPCOAPProxy.png>
@@ -694,12 +687,15 @@ Package pdftex.def Info: fig/TemperatuurModuleHTTPCOAPProxy.png used on input l
 ine 86.
 (pdftex.def)             Requested size: 455.24408pt x 259.60869pt.
 
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
 Underfull \hbox (badness 10000) in paragraph at lines 94--95
 
  []
 
-[39 <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/documenten/
-Scriptie in LaTeX/fig/TemperatuurModuleHTTPCOAPProxy.png>]
+[38]
 Underfull \hbox (badness 10000) in paragraph at lines 100--101
 
  []
@@ -709,7 +705,8 @@ Underfull \hbox (badness 10000) in paragraph at lines 102--103
 
  []
 
-
+[39 <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/documenten/
+Scriptie in LaTeX/fig/TemperatuurModuleHTTPCOAPProxy.png>]
 Underfull \hbox (badness 10000) in paragraph at lines 104--105
 
  []
@@ -719,7 +716,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 110--111
 
  []
 
-[40]
+
 Underfull \hbox (badness 10000) in paragraph at lines 112--113
 
  []
@@ -733,7 +730,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 118--119
 
  []
 
-
+[40]
 Underfull \hbox (badness 10000) in paragraph at lines 120--121
 
  []
@@ -758,12 +755,12 @@ Underfull \hbox (badness 10000) in paragraph at lines 129--130
 
  []
 
-[41]
+
 Underfull \hbox (badness 10000) in paragraph at lines 135--136
 
  []
 
-
+[41]
 Underfull \hbox (badness 10000) in paragraph at lines 137--138
 
  []
@@ -778,7 +775,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 141--143
 
  []
 
-[42]) [43]
+) [42] [43]
 ("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
 iptie in LaTeX\referenties.tex"
 Missing character: There is no Ã in font cmr10!
@@ -865,7 +862,7 @@ gram Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmssi10.pfb><C:/Program Fi
 les/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files/MiKT
 eX 2.9/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Program Files/MiKTeX 2.9/f
 onts/type1/public/eurosym/feymr10.pfb>
-Output written on boek.pdf (55 pages, 799938 bytes).
+Output written on boek.pdf (55 pages, 799231 bytes).
 PDF statistics:
  238 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)

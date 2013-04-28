@@ -1183,8 +1183,8 @@ function coap_resource_start_request($method, $payload=''){
 			variable_set('test', 'net na cache query');
 			foreach($cache_result as $cache_record){
 				//	Check if the last value has a max age and if it has, check if the value is still valid
-				if($cache_record->max_age != null && strtotime($cache_record->timestamp) > intval($cache_record->max_age)){
-					$response_obj = $coap_factory->create_message_with_given_message($cache_record->original_response);
+				if($cache_record->max_age != null && time()-strtotime($cache_record->timestamp) < intval($cache_record->max_age)){ //	TIJDVERSCHIL IPV GEWOON TIMESTAMP!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+					$response_obj = $coap_factory->create_message_with_given_hex_message($cache_record->original_response);
 				}
 			}
 		}
@@ -1259,7 +1259,7 @@ function coap_resource_give_response_to_user($response_obj, $request_method){
 		->fields(array(
 			'responded' => 1,
 			'last_method' => $request_method,
-			'last_response' => $response_obj->get_payload(),
+			'last_response' => $response_obj->get_payload_text(),
 			'response_type' => $response_obj->get_message_code(),
 		))
 		->condition('uid', $user->uid, '=')
@@ -1281,19 +1281,17 @@ function coap_resource_give_response_to_user($response_obj, $request_method){
 function coap_resource_insert_response_into_database($response_obj, $uid){
 	//	Parsing values from response
 	$max_age = $response_obj->get_max_age();
-	$value = $response_obj->get_payload();
+	$value = $response_obj->get_payload_text();
 	$format = $response_obj->get_content_format();
 	$content_type = $response_obj->get_message_code();
 	if($format == 'text/plain'){
 		$value = coap_resource_get_temperature($value);
 	}
-	
 	$hid = db_insert('coap_resource_values')
 		->fields(array(
 			'payload' => $response_obj->get_payload(),
 			'content_format' => $format,
-			'content_type' => $content_type,
-			'original_response' => $response_obj->getHexMessage(),
+			'original_response' => $response_obj->get_hex_message(),
 			'parsed_value' => $value,
 			'max_age' => $max_age,
 			'uri' => ($response_obj->get_ip() . '/' . $response_obj->get_resource()),
