@@ -35,9 +35,10 @@ function coap_resource_menu() {
 		"access callback" => true,
 		"type" => MENU_CALLBACK
 	);
-	$items["coap_resource/discovery"] = array(
+	$items["coap_resource/discovery/%"] = array(
 		"title" => "Discovery",
 		"page callback" => "coap_discovery_page_callback",
+		"page arguments" => array(2),
 		"access callback" => true,
 		"type" => MENU_CALLBACK
 	);
@@ -48,22 +49,6 @@ function coap_resource_menu() {
 		"access callback" => true,
 		"type" => MENU_CALLBACK
 	);
-  
-	// $items['node/%coap_resource_menu/view/resources'] = array(
-		// 'title' => 'Resources',    
-		// 'access callback' => TRUE,
-		// 'weight' => 4,
-		// 'type' => MENU_DEFAULT_LOCAL_TASK,
-	// );
-	
-	// $items['node/%coap_resource_menu/view/discovery'] = array(
-		// 'title' => 'Discovery',
-		// 'page callback' => 'drupal_get_form',
-		// 'page arguments' => array('coap_discovery_form'),
-		// 'access callback' => TRUE,
-		// 'weight' => 2,
-		// 'type' => MENU_LOCAL_TASK,
-	// );
 	
 	$items['node/%coap_resource_menu/view/discovery'] = array(
 		'title' => 'Discovery',    
@@ -75,7 +60,7 @@ function coap_resource_menu() {
 	$items['node/%coap_resource_menu/view/resources'] = array(
 		'title' => 'Resources',
 		'page callback' => 'drupal_get_form',
-		'page arguments' => array('coap_resource_device_form', 1),
+		'page arguments' => array('coap_resource_form', 1),
 		'access callback' => TRUE,
 		'weight' => 4,
 		'type' => MENU_LOCAL_TASK,
@@ -93,9 +78,9 @@ function coap_resource_menu() {
   return $items;
 }
 
-function coap_resource_form_alter(&$form, &$form_state, $form_id){
-	//dpm($form);
-}
+// function coap_resource_form_alter(&$form, &$form_state, $form_id){
+	// dpm($form);
+// }
 
 function coap_resource_admin_settings() {
 	$form['message_container'] = array
@@ -128,226 +113,66 @@ function coap_resource_menu_load($nid) {
 //Act on a node that is being assembled before rendering.
 function coap_resource_node_view($node, $view_mode, $langcode) {
 	if($node->type == 'coap_general'){
-		$node->content['coap_resource_general_form'] = drupal_get_form('coap_discovery_form', $node);
+		$node->content['coap_discovery_form'] = drupal_get_form('coap_discovery_form', $node);
 	}
 	else if($node->type == 'coap_resource'){
-		$node->content['coap_resource_single_resource_form'] = drupal_get_form('coap_resource_single_resource_form', $node);
+		$node->content['coap_resource_form'] = drupal_get_form('coap_resource_form', $node);
 	}
 	else if($node->type == 'coap_device'){
-		$node->content['coap_resource_device_form'] = drupal_get_form('coap_discovery_form', $node);
+		$node->content['coap_discovery_form'] = drupal_get_form('coap_discovery_form', $node);
 	}
 	return $node;
 }
 
-function coap_resource_device_form($form, &$form_state, $nid) {
-//dpm($nid);
+function coap_resource_form($form, &$form_state, $node) {
 	drupal_add_js('https://www.google.com/jsapi'); // JavaScript bestand toevoegen
 	drupal_add_js(drupal_get_path('module', 'coap_resource') . '/js/coap_resource.js'); // JavaScript bestand toevoegen	
-	
 	global $user;
 	
+	$nid = $node->nid;
+	$form['nid'] = array
+	(
+		'#type' => 'hidden',
+		'#value' => $node->nid,
+	);	
+	
 	$current_interval = 1;
-	$query = db_select('coap_resource_users', 'users');
-	$query
+	$result = db_select('coap_resource_users', 'users')
 		->fields('users', array('uid', 'device', 'polling_interval'))
 		->condition('uid', $user->uid, '=')
-		->condition('device',0,'=');
-	$result = $query->execute();
+		->condition('device',0,'=')
+		->condition('nid',$nid,'=')
+		->execute();
 	foreach ($result as $record){
 		$current_interval = $record->polling_interval;
 	}	
 	
 	// Te bekijken URI ophalen
-	$query = db_select('coap_resource_users', 'users');
-	$query
+	$result = db_select('coap_resource_users', 'users')
 		->fields('users', array('uid', 'uri', 'device', 'watch'))
 		->condition('uid', $user->uid, '=')
 		->condition('device', 0, '=')
-		->condition('watch', 1, '=');
-	$result = $query->execute();
-	$empty = TRUE;
-	foreach($result as $record){
-		$empty = 0;
-		$uri = $record->uri;
-	}
-	if(!$empty && $empty != 1){
-		$form['polling_container'] = array(
-			'#prefix' => "<p></p>Polling gebeurt om de <input id = 'polling_invoer' type = 'text' size = '1' value = '" . $current_interval . "' > seconden. <button id = 'polling_button' type = 'button' >Wijzigen</button>",
-		);
-		
-		coap_resource_observe_form($form, $form_state);
-		coap_resource_bekijken_form($form, $form_state);
-		coap_resource_get_request_form($form, $form_state);
-		coap_resource_put_request_form($form, $form_state);
-		coap_resource_post_request_form($form, $form_state);
-		coap_resource_delete_request_form($form, $form_state);
-	
-		// Tabel met geschiedenis van opvragingen(5 laatste)
-		$query = db_select('coap_resource_values', 'coap_values');
-		$query
-			->fields('coap_values', array('hid', 'parsed_value', 'max_age', 'timestamp', 'uri', 'uid'))
-			->condition('uri', $uri, '=')
-			->condition('uid', $user->uid, '=')
-			->orderBy('hid', 'DESC')
-			->range(0,5);
-		$result = $query->execute();
-		
-		$prefix = "<tr><td colspan = '4' ><label id = 'response' >Response: </label></td><tr><td colspan = '4' ><label id = 'response_type' >Response type: </label></td></tr></table>";
-		$prefix .= "<img style = 'visibility:hidden;' src = '' id = 'errorimg' /><label id='error' ></label>"; // elementen om fouten te tonen
-		$prefix .= "<table id='historytable' ><tr><th>Hid</th><th>Value</th><th>Max age</th><th>Timestamp</th></tr>";
-		$nr = 1;
-		foreach ($result as $record){ // voegt telkens een rij toe aan de tabel, waarbij de elementen een id met een rij-nr erna krijgen
-			$value = $record->parsed_value;
-			$hid = $record->hid;
-			$max_age = $record->max_age;
-			$timestamp = $record->timestamp;
-			$prefix .= "<tr><td id='hid" . $nr . "' >" . $hid . "</td><td id='temperatuur" . $nr . "' >" . $value . "</td><td id='max_age" . $nr . "' >" . $max_age . "</td><td id='timestamp" . $nr . "' >" . $timestamp . "</td></tr>";
-			$nr++;
-		}
-		while($nr <= 5){ // voegt telkens een rij toe aan de tabel, waarbij de elementen een id met een rij-nr erna krijgen
-			$prefix .= "<tr><td id='hid" . $nr . "' >/</td><td id='temperatuur" . $nr . "' > </td><td id='max_age" . $nr . "' > </td><td id='timestamp" . $nr . "' > </td></tr>";
-			$nr++;
-		}
-		$prefix .= "</table>";
-		
-		$prefix .= "<div id = 'grafiek' ></div>"; // Grafiek
-		
-		$form['values_container'] = array(
-			'#type' => 'container',
-			'#prefix' => $prefix,
-			'#attributes' => array(
-				'class' => array('class-name'),
-			),
-		);
-	}	
-
-	return $form;
-}
-
-function coap_resource_single_resource_form($form, &$form_state) {
-	drupal_add_js('https://www.google.com/jsapi'); // JavaScript bestand toevoegen
-	drupal_add_js(drupal_get_path('module', 'coap_resource') . '/js/coap_resource.js'); // JavaScript bestand toevoegen	
-	
-	global $user;
-	
-	$current_interval = 1;
-	$query = db_select('coap_resource_users', 'users');
-	$query
-		->fields('users', array('uid', 'device', 'polling_interval'))
-		->condition('uid', $user->uid, '=')
-		->condition('device',0,'=');
-	$result = $query->execute();
-	foreach ($result as $record){
-		$current_interval = $record->polling_interval;
-	}	
-	
-	// Te bekijken URI ophalen
-	$query = db_select('coap_resource_users', 'users');
-	$query
-		->fields('users', array('uid', 'uri', 'device', 'watch'))
-		->condition('uid', $user->uid, '=')
-		->condition('device', 0, '=')
-		->condition('watch', 1, '=');
-	$result = $query->execute();
+		->condition('nid',$nid,'=')
+		->condition('watch', 1, '=')
+		->execute();
 	$empty = TRUE;
 	foreach($result as $record){
 		$empty = 0;
 		$uri = $record->uri;
 	}
 	
-	coap_resource_uri_form($form, $form_state);
-	if(!$empty && $empty != 1){
-	
-		$form['polling_container'] = array(
-			'#prefix' => "<p></p>Polling gebeurt om de <input id = 'polling_invoer' type = 'text' size = '1' value = '" . $current_interval . "' > seconden. <button id = 'polling_button' type = 'button' >Wijzigen</button>",
-		);
+	if($node->type == 'coap_general')
+		coap_resource_uri_form($form, $form_state);
 		
-		coap_resource_observe_form($form, $form_state);
-		coap_resource_bekijken_form($form, $form_state);
-		coap_resource_get_request_form($form, $form_state);
-		coap_resource_put_request_form($form, $form_state);
-		coap_resource_post_request_form($form, $form_state);
-		coap_resource_delete_request_form($form, $form_state);
-	
-		// Tabel met geschiedenis van opvragingen(5 laatste)
-		$query = db_select('coap_resource_values', 'coap_values');
-		$query
-			->fields('coap_values', array('hid', 'parsed_value', 'max_age', 'timestamp', 'uri', 'uid'))
-			->condition('uri', $uri, '=')
-			->condition('uid', $user->uid, '=')
-			->orderBy('hid', 'DESC')
-			->range(0,5);
-		$result = $query->execute();
-		
-		$prefix = "<tr><td colspan = '4' ><label id = 'response' >Response: </label></td><tr><td colspan = '4' ><label id = 'response_type' >Response type: </label></td></tr></table>";
-		$prefix .= "<img style = 'visibility:hidden;' src = '' id = 'errorimg' /><label id='error' ></label>"; // elementen om fouten te tonen
-		$prefix .= "<table id='historytable' ><tr><th>Hid</th><th>Value</th><th>Max age</th><th>Timestamp</th></tr>";
-		$nr = 1;
-		foreach ($result as $record){ // voegt telkens een rij toe aan de tabel, waarbij de elementen een id met een rij-nr erna krijgen
-			$value = $record->parsed_value;
-			$hid = $record->hid;
-			$max_age = $record->max_age;
-			$timestamp = $record->timestamp;
-			$prefix .= "<tr><td id='hid" . $nr . "' >" . $hid . "</td><td id='temperatuur" . $nr . "' >" . $value . "</td><td id='max_age" . $nr . "' >" . $max_age . "</td><td id='timestamp" . $nr . "' >" . $timestamp . "</td></tr>";
-			$nr++;
-		}
-		while($nr <= 5){ // voegt telkens een rij toe aan de tabel, waarbij de elementen een id met een rij-nr erna krijgen
-			$prefix .= "<tr><td id='hid" . $nr . "' >/</td><td id='temperatuur" . $nr . "' > </td><td id='max_age" . $nr . "' > </td><td id='timestamp" . $nr . "' > </td></tr>";
-			$nr++;
-		}
-		$prefix .= "</table>";
-		
-		$prefix .= "<div id = 'grafiek' ></div>"; // Grafiek
-		
-		$form['values_container'] = array(
-			'#type' => 'container',
-			'#prefix' => $prefix,
-			'#attributes' => array(
-				'class' => array('class-name'),
-			),
-		);
-	}	
-	
-	return $form;
-}
-
-function coap_resource_general_form($form, &$form_state) {
-	drupal_add_js('https://www.google.com/jsapi'); // JavaScript bestand toevoegen
-	drupal_add_js(drupal_get_path('module', 'coap_resource') . '/js/coap_resource.js'); // JavaScript bestand toevoegen	
-	
-	global $user;
-	
-	$current_interval = 1;
-	$query = db_select('coap_resource_users', 'users');
-	$query
-		->fields('users', array('uid', 'device', 'polling_interval'))
-		->condition('uid', $user->uid, '=')
-		->condition('device',0,'=');
-	$result = $query->execute();
-	foreach ($result as $record){
-		$current_interval = $record->polling_interval;
-	}	
-	
-	// Te bekijken URI ophalen
-	$query = db_select('coap_resource_users', 'users');
-	$query
-		->fields('users', array('uid', 'uri', 'device', 'watch'))
-		->condition('uid', $user->uid, '=')
-		->condition('device', 0, '=')
-		->condition('watch', 1, '=');
-	$result = $query->execute();
-	$empty = TRUE;
-	foreach($result as $record){
-		$empty = 0;
-		$uri = $record->uri;
-	}
 	if(!$empty && $empty != 1){
 		$form['polling_container'] = array(
 			'#prefix' => "<p></p>Polling gebeurt om de <input id = 'polling_invoer' type = 'text' size = '1' value = '" . $current_interval . "' > seconden. <button id = 'polling_button' type = 'button' >Wijzigen</button>",
 		);
 		
-		coap_resource_observe_form($form, $form_state);
-		coap_resource_bekijken_form($form, $form_state);
+		if($node->type != 'coap_resource'){
+			coap_resource_observe_form($form, $form_state, $nid);
+			coap_resource_bekijken_form($form, $form_state, $nid);
+		}
 		coap_resource_get_request_form($form, $form_state);
 		coap_resource_put_request_form($form, $form_state);
 		coap_resource_post_request_form($form, $form_state);
@@ -521,6 +346,169 @@ function coap_resource_block_view($delta='') {
 	return $block;
 }
 
+//////////////
+// URI FORM //
+//////////////
+
+/**
+ * Implements hook_form().
+ * Voegt componenten toe aan de form
+ */
+function coap_resource_uri_form(&$form, &$form_state) {
+	// Eventuele fout
+	$form['uri']['error'] = array(
+		'#type' => 'item',
+		'#markup' => variable_get('bad_uri', ''),
+	);
+	variable_del('bad_uri');
+
+	// Invoer textbox voor URI
+	$form['uri']['invoer'] = array(
+		'#type' => 'textfield',
+		'#title' => 'Geef een URI',
+		'#default_value' => '',	
+	);
+	
+	// Submit-knop
+	$form['uri']['submit'] = array (
+		'#type' => 'submit',
+		'#value' => t('Invoeren'),
+		'#submit' => array('coap_resource_uri_form_submit'),
+	);
+		
+	//dpm($form);
+	return $form;
+}
+
+/**
+ * Implements hook_form_submit().
+ * functie die wordt uitgevoerd als het formulier ingediend wordt
+ */
+function coap_resource_uri_form_submit($form, $form_state) {
+	global $user;
+	//dpm($form_state);
+	$pattern = '/([^\/]+)\/(.*)/i';
+	if(preg_match($pattern, $form_state['values']['invoer'], $matches)){
+		$query = db_select('coap_resource_resources', 'resources');
+		$query
+			->fields('resources', array('uri'))
+			->condition('uri', $form_state['values']['invoer'], '=');
+		$result = $query->execute();
+		
+		if($result->rowCount() == 0){
+			$id = db_insert('coap_resource_resources')
+				->fields(array(
+					'uri' => $form_state['values']['invoer'],
+					'last_error' => 'none',
+				))
+				->execute();
+		}
+		
+		// Watch bij alle rijen van de user op nul zetten
+		$num_updated = db_update('coap_resource_users')
+			->fields(array(
+				'watch' => 0,
+			))
+			->condition('uid', $user->uid, '=')
+			->execute();
+		
+		// Watch van net toegevoegde URI op 1 zetten
+		$id = db_insert('coap_resource_users')
+			->fields(array(
+				'uid' => $user->uid,
+				'uri' => $form_state['values']['invoer'],
+				'observe' => 0,
+				'watch' => 1,
+				'responded' => 0,
+			))
+			->execute();
+	}
+	else{
+		variable_set('bad_uri', 'Er werd een ongeldige URI opgegeven.');
+	}
+}
+
+//////////////////////
+// OBSERVE FORM //
+//////////////////////
+
+/**
+ * Implements hook_form().
+ * Voegt componenten toe aan de form
+ */
+function coap_resource_observe_form(&$form, &$form_state, $nid) {
+	global $user;
+	$form['title'] = array (
+		'#value' => t('Observe Form'),
+	);
+	// Checkbox per observable resource
+	$result = db_select('coap_resource_users', 'users')
+		->fields('users', array('uid', 'uri', 'device', 'observe'))
+		->condition('uid', $user->uid,'=')
+		->condition('device', 0,'=')
+		->condition('nid', $nid,'=')
+		->execute();
+	foreach ($result as $record){
+		$form['observe'][$record->uri] = array(
+			'#type' => 'checkbox',
+			'#title' => $record->uri,
+			'#default_value' => $record->observe,
+		);
+	}
+	
+	// Submit-knop
+	$form['observe']['submit'] = array (
+		'#type' => 'submit',
+		'#submit' => array('coap_resource_observe_form_submit'),
+		'#value' => t('Observe'),
+		);
+	return $form;
+}
+
+/**
+ * Implements hook_form_submit().
+ * functie die wordt uitgevoerd als het formulier ingediend wordt
+ */
+function coap_resource_observe_form_submit($form, $form_state) {
+	global $user;
+	
+	$query = db_select('coap_resource_users', 'users');
+	$query
+		->fields('users', array('uid', 'uri'))
+		->condition('uid', $user->uid, '=');
+	$result = $query->execute();
+	foreach ($result as $record){
+		$observe_query = db_select('coap_resource_users', 'users');
+		$observe_query
+			->fields('users', array('uid', 'uri', 'observe'))
+			->condition('uri', $record->uri, '=')
+			->condition('observe', 1, '=');
+		$observe_result = $observe_query->execute();
+		$num_observers = $observe_result->rowCount();
+	
+		if($form_state['values'][$record->uri] != 0 && $num_observers == 0){
+			background_process_start('coap_resource_start_observing', $record->uri);
+		}
+		$num_updated = db_update('coap_resource_users')
+			->fields(array(
+				'observe' => $form_state['values'][$record->uri],
+			))
+			->condition('uri', $record->uri, '=')
+			->condition('uid', $user->uid, '=')
+			->execute();
+			
+		$observe_query = db_select('coap_resource_users', 'users');
+		$observe_query
+			->fields('users', array('uid', 'uri', 'observe'))
+			->condition('uri', $record->uri, '=')
+			->condition('observe', 1, '=');
+		$observe_result = $observe_query->execute();
+		if($observe_result->rowCount() == 0){
+			coap_library_stop_observing('coap_resource', $record->uri);
+		}
+	}
+}
+
 ///////////////////
 // BEKIJKEN FORM //
 ///////////////////
@@ -529,14 +517,14 @@ function coap_resource_block_view($delta='') {
  * Implements hook_form().
  * Voegt componenten toe aan de form
  */
-function coap_resource_bekijken_form(&$form, &$form_state) {
+function coap_resource_bekijken_form(&$form, &$form_state, $nid) {
 	global $user;
-	$query = db_select('coap_resource_users', 'users');
-	$query
+	$result = db_select('coap_resource_users', 'users')
 		->fields('users', array('uid', 'uri', 'device', 'watch'))
 		->condition('uid', $user->uid,'=')
-		->condition('device', 0,'=');
-	$result = $query->execute();
+		->condition('device', 0,'=')
+		->condition('nid', $nid,'=')
+	->execute();
 	
 	// Radio buttons om URI te selecteren
 	if($result->rowCount() > 0){
@@ -748,7 +736,6 @@ function coap_resource_delete_request_form_submit($form, $form_state) {
 	$handle = background_process_start('coap_resource_start_request', 'DELETE');
 }
 
-
 //////////////
 // URI FORM //
 //////////////
@@ -918,13 +905,9 @@ function coap_resource_observe_form_submit($form, $form_state) {
 /////////////////
 // node insert //
 /////////////////
-// function coap_resource_insert($node){
+// function coap_resource_node_insert($node){
 	// dpm($node);
 // }
-
-function coap_resource_node_insert($node){
-	dpm($node);
-}
 
 //////////////////////
 // PRIVATE FUNCTIES //
