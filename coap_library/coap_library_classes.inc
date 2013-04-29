@@ -299,14 +299,6 @@ class CoAPMessage {
 				$function_name = $this->module . '_receive_error';
 				$function_name('none', $this->ip, $this->resource);
 				
-				//	Check if the response consists of blocks and get the following blocks if necessary
-				$response_block_value = $response_obj->get_option_value(23);
-				$request_block_value = $this->get_option_value(23);
-				if($block_option_value != null && $request_block_value == null){
-					//	Response comes in blocks
-					$this->get_next_responses_in_blocks($response_obj);
-				}
-				
 				//	Reset timeout
 				$this->retransmit_counter = 0;
 				$timeout = rand($this->ACK_TIMEOUT, $this->ACK_TIMEOUT*$this->RANDOM_FACTOR);
@@ -429,6 +421,15 @@ class CoAPMessage {
 				else{
 					//	Resource should not be observed
 					fclose($socket); // Close the socket
+					
+					//	Check if the response consists of blocks and get the following blocks if necessary
+					$response_block_value = $response_obj->get_option_value(23);
+					$request_block_value = $this->get_option_value(23);
+					if($response_block_value != null && $request_block_value == null){
+						//	Response comes in blocks
+						$this->get_next_responses_in_blocks($response_obj);
+					}
+					
 					return $response_obj;
 				}
 			}
@@ -558,7 +559,7 @@ class CoAPMessage {
 				$option_value = $current_response->get_option_value(23);
 				if($option_value != null){
 					$payloads_left = coap_library_get_bit_from_hex(substr($option_value,strlen($option_value)-1,1),3);
-					$response_obj->set_payload($response_obj->get_payload() . $current_obj->get_payload());
+					$response_obj->set_payload($response_obj->get_payload() . $current_response->get_payload());
 				}
 				else $payloads_left = false;
 			}

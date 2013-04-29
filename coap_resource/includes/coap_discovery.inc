@@ -388,24 +388,7 @@ function coap_discovery_load_device_core($device_uri, $nid){
 
 function coap_discovery_start_discover($device_uri, $nid){
 	$coap_factory = new CoAPMessageFactory('coap_resource', $device_uri, '', false);
-	// $response_obj = null;
-	// $payloads = '';
-	// $has_more = true;
-	// while($has_more){
-		// $coap_message = $coap_factory->create_discovery_request($response_obj);
-		// $response_obj = $coap_message->send_message();
-		// if($response_obj){
-			// $option_value = $response_obj->get_option_value(23);
-			// if($option_value != -1){
-				// $has_more = coap_library_get_bit_from_hex(substr($option_value,strlen($option_value)-1,1),3);
-				// $payloads .= $response_obj->get_payload();
-			// }
-			// else $has_more = false;
-		// }
-		// else $has_more = false;
-	// }
-	//dpm($payloads);
-	$request = $this->create_message_with_header_and_token("CON", "GET", 0);
+	$request = $coap_factory->create_message_with_header_and_token("CON", "GET", 0);
 	$request->add_option(11,'.well-known/core');
 	$response = $request->send_message();
 	$payloads = $response->get_payload();
