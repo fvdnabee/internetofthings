@@ -256,6 +256,12 @@ function coap_resource_schema() {
 					'length' => '128',
 					'description' => 'Een URI van een embedded device',
 				),
+				'nid' => array(
+					'description' => 'nid of the node',
+					'type' => 'int',
+					'unsigned' => TRUE,
+					'not null' => TRUE,
+				),
 				'device' => array(
 					'description' => 'Waarde om te bepalen of het om een resource of een device gaat --> 0 = resource, 1 = device',
 					'type' => 'int',

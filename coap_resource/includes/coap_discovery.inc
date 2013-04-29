@@ -177,8 +177,14 @@ function coap_discovery_form($form, &$form_state, $node) {
 		'#value' => 'Save',
 		'#submit' => array('coap_discovery_save_resources'),
 	);
-	//if(isset($_SESSION)) dpm($_SESSION);
-	//dpm($user->sid);
+	
+	//$node = node_load($nid);
+	// $image = field_get_items('node', $node, 'field_image');
+	// $output = field_view_value('node', $node, 'field_image', $image[0]);
+	// dpm($output);
+	//$form_state['values']['device_uri'] = '';
+	//coap_discovery_load_device_core_submit($form, &$form_state);
+	
 	return $form;
 }
 
@@ -194,9 +200,9 @@ function coap_discovery_load_device_core_submit($form, &$form_state) {
 }
 
 function coap_discovery_refresh_device_core_submit($form, &$form_state) {
-	//dpm('refresh submit');
-	//background_process_start('coap_discovery_start_discover', $form_state['values']['device_uri']);  
-	coap_discovery_start_discover($form_state['values']['device_uri']); //voorgrond
+	dpm($form_state['values']['device_uri']);
+	//background_process_start('coap_discovery_start_discover', $form_state['values']['device_uri']);
+	//coap_discovery_start_discover($form_state['values']['device_uri']); //voorgrond
 	$form_state['rebuild'] = TRUE;
 }
 
