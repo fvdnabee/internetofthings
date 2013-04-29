@@ -8,7 +8,7 @@ Drupal.behaviors.coap_resource = {
 				refreshId = setInterval(function(){
 					$.ajax({
 						type: "GET",
-						url: "/coap_resource/discovery",
+						url: "/coap_resource/discovery/" + $('input[name|="nid"]').attr("value"),
 						dataType: "text",
 						success: discoverReady
 					});

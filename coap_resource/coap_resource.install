@@ -44,43 +44,73 @@ function coap_resource_install(){
 
 function _coap_resource_installed_fields()  {
   // textfield
-  $fields['coap_device_textfield'] = array(
-    'field_name' => 'coap_device_textfield',
+  $fields['coap_device_uri_field'] = array(
+    'field_name' => 'coap_device_uri_field',
     'label' => t('Device URI'),
 	'cardinality' => 1,
-    'type' => 'device_field',
+    'type' => 'device_uri_field',
   );  
+  $fields['coap_resource_uri_field'] = array(
+    'field_name' => 'coap_resource_uri_field',
+    'label' => t('Resource URI'),
+	'cardinality' => 1,
+    'type' => 'resource_uri_field',
+  );
   return $fields;
 }
 
 function _coap_resource_installed_instances()  {
-  // textfield
-  $instances['coap_device_textfield'] = array(
-    'field_name' => 'coap_device_textfield',
-	'entity_type' => 'node',
-	//'required' => TRUE,
-	'bundle' => 'coap_device',
-    'type' => 'text',
-    'label' => t('Enter device URI') ,    
-	'widget' => array(
-		'type' => 'custom_field',
-	),
-	'display' => array(
-		'default' => array(
-			'label' => 'above',
-			'type' => 'custom_field_formatter',
+	// textfield
+	$instances['coap_device_uri_field'] = array(
+		'field_name' => 'coap_device_uri_field',
+		'entity_type' => 'node',
+		//'required' => TRUE,
+		'bundle' => 'coap_device',
+		'type' => 'text',
+		'label' => t('Device URI') ,    
+		'widget' => array(
+			'type' => 'custom_field',
 		),
-		'teaser' => array(
-			'label' => 'above',
-			'settings' => array(),
-			'type' => 'hidden',
-			'weight' => -1,
+		'display' => array(
+			'default' => array(
+				'label' => 'above',
+				'type' => 'custom_field_formatter',
+			),
+			'teaser' => array(
+				'label' => 'above',
+				'settings' => array(),
+				'type' => 'hidden',
+				'weight' => -1,
+			),
 		),
-	),
 	'description' => 'Enter URI',
-  );
-  
-  return $instances;
+	);
+	
+	$instances['coap_resource_uri_field'] = array(
+		'field_name' => 'coap_resource_uri_field',
+		'entity_type' => 'node',
+		//'required' => TRUE,
+		'bundle' => 'coap_resource',
+		'type' => 'text',
+		'label' => t('Resource URI') ,    
+		'widget' => array(
+			'type' => 'custom_field',
+		),
+		'display' => array(
+			'default' => array(
+				'label' => 'above',
+				'type' => 'custom_field_formatter',
+			),
+			'teaser' => array(
+				'label' => 'above',
+				'settings' => array(),
+				'type' => 'hidden',
+				'weight' => -1,
+			),
+		),
+	'description' => 'Enter URI',
+	);
+	return $instances;
 }
 
 function coap_resource_schema() {
@@ -162,84 +192,6 @@ function coap_resource_schema() {
 			'primary key' => array('uri'),
 	);
 	
-	// $schema['coap_devices'] = array(
-		// 'description' => "Tabel om devices bij te houden waarin users geïnteresseerd zijn.",
-		// 'fields' => array(
-				// 'uid' => array(
-					// 'type' => 'int',
-					// 'unsigned' => TRUE,
-					// 'not null' => TRUE,
-					// 'description' => 'User ID',
-				// ),
-				// 'uri' => array(
-					// 'type' => 'varchar',
-					// 'not null' => TRUE,
-					// 'length' => '128',
-					// 'description' => 'Een URI van een embedded device',
-				// ),
-				// 'device' => array(
-					// 'description' => 'Waarde om te bepalen of het om een resource of een device gaat --> 0 = resource, 1 = device',
-					// 'type' => 'int',
-					// 'unsigned' => TRUE,
-					// 'not null' => TRUE,
-					// 'default' => 0,
-				// ),
-				// 'observe' => array(
-					// 'description' => 'Waarde om te bepalen of de gebruiker het device wil observeren of niet --> 0 = niet observeren, 1 = wel observeren',
-					// 'type' => 'int',
-					// 'unsigned' => TRUE,
-					// 'not null' => TRUE,
-					// 'default' => 0,
-				// ),
-				// 'watch' => array(
-					// 'description' => 'Waarde om te bepalen of de gebruiker de waardes wil zien verschijnen of niet --> 0 = niet verschijnen, 1 = wel verschijnen',
-					// 'type' => 'int',
-					// 'unsigned' => TRUE,
-					// 'not null' => TRUE,
-					// 'default' => 0,
-				// ),
-				// 'polling_interval' => array(
-					// 'description' => 'Waarde die het aantal seconden weergeeft tussen 2 opvragingen vanuit jQuery',
-					// 'type' => 'int',
-					// 'unsigned' => TRUE,
-					// 'not null' => TRUE,
-					// 'default' => 2,
-				// ),
-				// 'last_method' => array(
-					// 'description' => 'Methode van laatste request --> {GET, PUT, POST, DELETE}',
-					// 'type' => 'varchar',
-					// 'not null' => FALSE,
-					// 'length' => '64',
-				// ),
-				// 'last_response' => array(
-					// 'description' => 'Laatst verkregen response',
-					// 'type' => 'varchar',
-					// 'not null' => FALSE,
-					// 'length' => '2048',
-				// ),
-				// 'responded' => array(
-					// 'description' => 'value indicating if server just responded',
-					// 'type' => 'int',
-					// 'unsigned' => TRUE,
-					// 'not null' => TRUE,
-					// 'default' => 0,
-				// ),
-				// 'response_type' => array(
-					// 'description' => 'Response type of last received response',
-					// 'type' => 'varchar',
-					// 'not null' => FALSE,
-					// 'length' => '2048',
-				// ),
-			// ),
-			// 'primary key' => array('uid', 'uri'),
-			// 'foreign keys' => array(
-				// 'uri' => array(
-					// 'table' => 'coap_resource_resources',
-					// 'columns' => array('uri' => 'uri'),
-				// ),
-			// ),
-	// );
-	
 	// Tabel om URI's per user bij te houden
 	$schema['coap_resource_users'] = array(
 		'description' => "Tabel om users bij te houden en de URI's die ze willen gebruiken",
@@ -256,12 +208,12 @@ function coap_resource_schema() {
 					'length' => '128',
 					'description' => 'Een URI van een embedded device',
 				),
-				// 'nid' => array(
-					// 'description' => 'nid of the node',
-					// 'type' => 'int',
-					// 'unsigned' => TRUE,
-					// 'not null' => TRUE,
-				// ),
+				'nid' => array(
+					'description' => 'nid of the node where the resource should be displayed',
+					'type' => 'int',
+					'unsigned' => TRUE,
+					'not null' => TRUE,
+				),
 				'device' => array(
 					'description' => 'Waarde om te bepalen of het om een resource of een device gaat --> 0 = resource, 1 = device',
 					'type' => 'int',
@@ -316,7 +268,7 @@ function coap_resource_schema() {
 					'length' => '2048',
 				),
 			),
-			'primary key' => array('uid', 'uri'),
+			'primary key' => array('uid', 'uri', 'nid'),
 			'foreign keys' => array(
 				'uri' => array(
 					'table' => 'coap_resource_resources',
@@ -418,6 +370,11 @@ function coap_resource_enable() {
 }
 
 function coap_resource_disable(){
+	$instance = array('field_name' => 'coap_device_uri_field','bundle' => 'coap_device','entity_type' => 'node');
+	field_delete_instance($instance);
+	$instance = array('field_name' => 'coap_resource_uri_field','bundle' => 'coap_resource','entity_type' => 'node');
+	field_delete_instance($instance);
+	
 	$content_types = array('coap_general','coap_resource', 'coap_device');
 	foreach($content_types as $content_type){
 		$result = db_select('node','nodes')

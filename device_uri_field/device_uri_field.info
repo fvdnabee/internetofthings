@@ -1,0 +1,5 @@
+name = Device URI Field
+description = Module that defines the device URI field.
+package = CoAP
+dependencies[] = field_ui
+core = 7.x
