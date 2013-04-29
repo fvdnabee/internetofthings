@@ -445,3 +445,9 @@ function coap_library_get_numeric_type_from_hex_message($hex_message){
 function coap_library_get_token_length_from_hex_message($hex_message){
 	return hexdec(substr($hex_message, 1, 1));
 }
+
+//	Retrieves the token from a given hexadecimal message
+function coap_library_get_token_from_hex_message($hex_message){
+	$token_length = intval(coap_library_get_token_length_from_hex_message($hex_message));
+	return hexdec(substr($hex_message, 8, $token_length*2));
+}

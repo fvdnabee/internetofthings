@@ -888,10 +888,8 @@ function coap_resource_observe_form_submit($form, $form_state) {
 			->condition('observe', 1, '=');
 		$observe_result = $observe_query->execute();
 		$num_observers = $observe_result->rowCount();
-	
-		if($form_state['values'][$record->uri] != 0 && $num_observers == 0){
-			background_process_start('coap_resource_start_observing', $record->uri);
-		}
+		
+		//	Update observe value for every user in database
 		$num_updated = db_update('coap_resource_users')
 			->fields(array(
 				'observe' => $form_state['values'][$record->uri],
@@ -899,6 +897,11 @@ function coap_resource_observe_form_submit($form, $form_state) {
 			->condition('uri', $record->uri, '=')
 			->condition('uid', $user->uid, '=')
 			->execute();
+		
+		//	Start observing if no one was observing yet
+		if($form_state['values'][$record->uri] != 0 && $num_observers == 0){
+			background_process_start('coap_resource_start_observing', $record->uri);
+		}
 			
 		$observe_query = db_select('coap_resource_users', 'users');
 		$observe_query
@@ -1025,9 +1028,9 @@ function coap_resource_start_observing($uri){
 		$resource = $matches[2];
 		
 		// Determine if resource uses separate response
-		$query = db_select('coap_resource_resources', 'separate_response');
+		$query = db_select('coap_resource_resources', 'resources');
 		$query
-			->fields('resources', array('uri', 'observable'))
+			->fields('resources', array('uri', 'obs'))
 			->condition('separate_response', 1, '=')
 			->condition('uri', $uri, '=');
 		$result = $query->execute();
@@ -1038,8 +1041,8 @@ function coap_resource_start_observing($uri){
 		//	Get the record from the databse for given URI if it's observable, to check if the resource is observable
 		$query = db_select('coap_resource_resources', 'resources');
 		$query
-			->fields('resources', array('uri', 'observable'))
-			->condition('observable', 1, '=')
+			->fields('resources', array('uri', 'obs'))
+			->condition('obs', 1, '=')
 			->condition('uri', $uri, '=');
 		$result = $query->execute();
 		
@@ -1053,7 +1056,7 @@ function coap_resource_start_observing($uri){
 			$message = $coap_factory->create_basic_get_request($resource);
 			$query = db_select('coap_resource_users', 'users');
 			$query
-				->fields('users', array('uri', 'observable'))
+				->fields('users', array('uri', 'observe'))
 				->condition('observe', 1, '=')
 				->condition('uri', $uri, '=');
 			$result = $query->execute();
