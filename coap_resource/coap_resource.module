@@ -877,9 +877,9 @@ function coap_resource_start_observing($uri){
 		$resource = $matches[2];
 		
 		// Determine if resource uses separate response
-		$query = db_select('coap_resource_resources', 'separate_response');
+		$query = db_select('coap_resource_resources', 'resources');
 		$query
-			->fields('resources', array('uri', 'observable'))
+			->fields('resources', array('uri', 'obs'))
 			->condition('separate_response', 1, '=')
 			->condition('uri', $uri, '=');
 		$result = $query->execute();
@@ -890,8 +890,8 @@ function coap_resource_start_observing($uri){
 		//	Get the record from the databse for given URI if it's observable, to check if the resource is observable
 		$query = db_select('coap_resource_resources', 'resources');
 		$query
-			->fields('resources', array('uri', 'observable'))
-			->condition('observable', 1, '=')
+			->fields('resources', array('uri', 'obs'))
+			->condition('obs', 1, '=')
 			->condition('uri', $uri, '=');
 		$result = $query->execute();
 		
@@ -905,7 +905,7 @@ function coap_resource_start_observing($uri){
 			$message = $coap_factory->create_basic_get_request($resource);
 			$query = db_select('coap_resource_users', 'users');
 			$query
-				->fields('users', array('uri', 'observable'))
+				->fields('users', array('uri', 'observe'))
 				->condition('observe', 1, '=')
 				->condition('uri', $uri, '=');
 			$result = $query->execute();

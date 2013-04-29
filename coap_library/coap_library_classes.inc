@@ -74,7 +74,7 @@ class CoAPMessage {
 	private $retransmit_counter = 0;
 	
 	// Constructor
-	public function __construct($module, $ip, $resource, $type, $code, $token_length, $separate_response = false){
+	public function __construct($module, $ip, $resource, $type, $code, $token_length, $separate_response = false, $message_id = null, $token = null){
 		
 		//STORE ATTRIBUTES
 		$this->module = $module;
@@ -86,8 +86,18 @@ class CoAPMessage {
 		$constants = new CoAPConstants();
 		
 		//	GENERATE TOKEN AND MESSAGE ID
-		$this->message_id = coap_library_generate_message_id();
-		$this->token = coap_library_generate_token($token_length);
+		if($message_id == null){
+			$this->message_id = coap_library_generate_message_id();
+			if($token == null){
+				$this->token = coap_library_generate_token($token_length);
+			}
+			else{
+				$this->token = $token;
+			}
+		}
+		else{
+			$this->message_id = $message_id;
+		}
 		
     }
 	
@@ -160,6 +170,7 @@ class CoAPMessage {
 	
 	//	Getter for option with given number
 	//	Retrieves option value (hexadecimal)
+	//	Return null if option is not present in this message
 	public function get_option_value($nr){
 		if(isset($this->options[$nr])){
 			return $this->options[$nr];
@@ -234,11 +245,14 @@ class CoAPMessage {
 			$must_observe = 1;
 		}
 		
+		//	Give the response an initial value
 		$response = 'empty';
+		
+		// Open UDP-socket
 		$port = 5683;
-		$socket = pfsockopen("udp://[" . $this->ip . "]", $port, $errno, $errstr); // Open UDP-socket
+		$socket = pfsockopen("udp://[" . $this->ip . "]", $port, $errno, $errstr);
 		if($socket){
-			//Socket opened
+			//	Socket opened
 			//	notify using module that there are no difficulties at the moment
 			$function_name = $this->module . '_receive_error';
 			$function_name('none', $this->ip, $this->resource);
@@ -251,6 +265,8 @@ class CoAPMessage {
 			//	Send CoAP packet
 			$message = pack('H*', $hex_message);
 			$returnvalue = fwrite($socket, $message); //	Write to socket
+			
+			//	Check for response if the message is confirmable
 			if($this->is_confirmable()){
 				//	Message type = CON
 				if($returnvalue != FALSE){
@@ -276,6 +292,7 @@ class CoAPMessage {
 				}
 			}
 			
+			//	Check if response isn't empty
 			if($response != '' && $response != 'empty'){
 				$response_obj = $coap_factory->create_message_with_given_hex_message(coap_library_string_to_hex_with_padding($response)); //	Put response in CoAPMessage-object
 				//	notify using module that there are no difficulties at the moment
@@ -404,22 +421,37 @@ class CoAPMessage {
 				else{
 					//	Resource should not be observed
 					fclose($socket); // Close the socket
+					
+					//	Check if the response consists of blocks and get the following blocks if necessary
+					$response_block_value = $response_obj->get_option_value(23);
+					$request_block_value = $this->get_option_value(23);
+					if($response_block_value != null && $request_block_value == null){
+						//	Response comes in blocks
+						$this->get_next_responses_in_blocks($response_obj);
+					}
+					
 					return $response_obj;
 				}
 			}
+			
 			//	Only notify the using module that there went something wrong if the message type of the request was CON
 			else if($this->is_confirmable()){
 				$function_name = $this->module . '_receive_error';
 				$function_name('broken', $this->ip, $this->resource);
 			}
-			fclose($socket); // Close the socket
+			
+			//	Close the socket
+			fclose($socket);
 		}
+		
+		//	The socket could not be opened
 		else{
 			// Socket could not be opened
 			$function_name = $this->module . '_receive_error';
 			$function_name('unreachable', $this->ip, $this->resource);
 		}
 		
+		//	Make sure observing stops when this function ends
 		$this->stop_observing();
 		
 		return null;
@@ -489,6 +521,50 @@ class CoAPMessage {
 	//	Returns the payload in textual form
 	public function get_payload_text(){
 		return coap_library_hex_to_string($this->payload);
+	}
+	
+	//	Gets the next blocks following to the given response and appends the resulting payloads
+	private function get_next_responses_in_blocks(&$response_obj){
+		$current_response = $response_obj;
+		$payloads_left = true;
+		
+		//	Get payloads and append them
+		while($payloads_left){
+			//	Build and send the next request
+			$response_option_value = $current_response->get_option_value(23);
+			$option_value_length = strlen($response_option_value);
+			
+			$first_hex_digits = substr($response_option_value, 0, $option_value_length-1);
+			$carry = coap_library_increment_hex($first_hex_digits);
+			
+			$last_hex_digit = substr($response_option_value, $option_value_length-1, 1);
+			$size = 0;			
+			if(coap_library_get_bit_from_hex($last_hex_digit,2) == 1) $size += 4;
+			if(coap_library_get_bit_from_hex($last_hex_digit,1) == 1) $size += 2;
+			if(coap_library_get_bit_from_hex($last_hex_digit,0) == 1) $size += 1;
+			$last_hex_digit = dechex($size);
+			
+			//	Build option 23 value for request
+			$request_option_value = '';
+			if($carry) $request_option_value .= '01';
+			$request_option_value .= $first_hex_digits . $last_hex_digit;
+			$this->add_option(23,coap_library_hex_to_string($request_option_value));
+			
+			//	Send the request
+			$this->message_id = coap_library_generate_message_id();
+			$current_response = $this->send_message();
+			
+			//	Append payload and check if there is a next block
+			if($current_response){
+				$option_value = $current_response->get_option_value(23);
+				if($option_value != null){
+					$payloads_left = coap_library_get_bit_from_hex(substr($option_value,strlen($option_value)-1,1),3);
+					$response_obj->set_payload($response_obj->get_payload() . $current_response->get_payload());
+				}
+				else $payloads_left = false;
+			}
+			else $payloads_left = false;
+		}
 	}
 	
 }
@@ -587,7 +663,9 @@ class CoAPMessageFactory{
 		
 		$code = coap_library_get_numeric_message_code_from_hex_message($hex_message);
 		$token_length = coap_library_get_token_length_from_hex_message($hex_message);
-		$message = new CoAPMessage($this->module, $this->ip, $this->resource, $type, $code, $token_length, $this->separate_response);
+		$token = coap_library_get_token_from_hex_message($hex_message);
+		$message_id = coap_library_get_message_id_from_message($hex_message);
+		$message = new CoAPMessage($this->module, $this->ip, $this->resource, $type, $code, $token_length, $this->separate_response, $message_id, $token);
 		
 		//	Add options
 		if(strlen($hex_message) >= 8){
@@ -662,7 +740,7 @@ class CoAPMessageFactory{
 	}
 	
 	// Creates a discovery request which depends on response
-	public function create_discovery_request($response){
+	public function create_block_request($response){
 		$coap_message = $this->create_message_with_header_and_token("CON", "GET", 0);
 		$coap_message->add_option(11,'.well-known/core');
 		
