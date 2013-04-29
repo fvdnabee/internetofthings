@@ -320,8 +320,9 @@ function coap_resource_general_form($form, &$form_state) {
 	$current_interval = 1;
 	$query = db_select('coap_resource_users', 'users');
 	$query
-		->fields('users', array('uid', 'polling_interval'))
-		->condition('uid', $user->uid, '=');
+		->fields('users', array('uid', 'device', 'polling_interval'))
+		->condition('uid', $user->uid, '=')
+		->condition('device',0,'=');
 	$result = $query->execute();
 	foreach ($result as $record){
 		$current_interval = $record->polling_interval;
@@ -330,40 +331,27 @@ function coap_resource_general_form($form, &$form_state) {
 	// Te bekijken URI ophalen
 	$query = db_select('coap_resource_users', 'users');
 	$query
-		->fields('users', array('uid', 'uri', 'watch'))
+		->fields('users', array('uid', 'uri', 'device', 'watch'))
 		->condition('uid', $user->uid, '=')
+		->condition('device', 0, '=')
 		->condition('watch', 1, '=');
 	$result = $query->execute();
 	$empty = TRUE;
 	foreach($result as $record){
-		$empty = FALSE;
+		$empty = 0;
 		$uri = $record->uri;
 	}
-	
-	if(!$empty){
-		$prefix = "<p></p>Polling gebeurt om de <input id = 'polling_invoer' type = 'text' size = '1' value = '" . $current_interval . "' > seconden. <button id = 'polling_button' type = 'button' >Wijzigen</button>";
-		
+	if(!$empty && $empty != 1){
 		$form['polling_container'] = array(
-			'#prefix' => $prefix,
+			'#prefix' => "<p></p>Polling gebeurt om de <input id = 'polling_invoer' type = 'text' size = '1' value = '" . $current_interval . "' > seconden. <button id = 'polling_button' type = 'button' >Wijzigen</button>",
 		);
-	}
-	
-	
-	$form = array_merge_recursive($form, coap_resource_uri_form($form, $form_state));
-	
-	
-	
-	$prefix = "<tr><td colspan = '4' ><label id = 'response' >Response: </label></td><tr><td colspan = '4' ><label id = 'response_type' >Response type: </label></td></tr></table>";
-	$prefix .= "<img style = 'visibility:hidden;' src = '' id = 'errorimg' /><label id='error' ></label>"; // elementen om fouten te tonen
-	
-	if(!$empty){
 		
-		$form = array_merge_recursive($form, observe_form($form, $form_state));
-		$form = array_merge_recursive($form, coap_resource_bekijken_form($form, $form_state));
-		$form = array_merge_recursive($form, coap_resource_get_request_form($form, $form_state));
-		$form = array_merge_recursive($form, coap_resource_put_request_form($form, $form_state));
-		$form = array_merge_recursive($form, coap_resource_post_request_form($form, $form_state));
-		$form = array_merge_recursive($form, coap_resource_delete_request_form($form, $form_state));
+		coap_resource_observe_form($form, $form_state);
+		coap_resource_bekijken_form($form, $form_state);
+		coap_resource_get_request_form($form, $form_state);
+		coap_resource_put_request_form($form, $form_state);
+		coap_resource_post_request_form($form, $form_state);
+		coap_resource_delete_request_form($form, $form_state);
 	
 		// Tabel met geschiedenis van opvragingen(5 laatste)
 		$query = db_select('coap_resource_values', 'coap_values');
@@ -374,6 +362,9 @@ function coap_resource_general_form($form, &$form_state) {
 			->orderBy('hid', 'DESC')
 			->range(0,5);
 		$result = $query->execute();
+		
+		$prefix = "<tr><td colspan = '4' ><label id = 'response' >Response: </label></td><tr><td colspan = '4' ><label id = 'response_type' >Response type: </label></td></tr></table>";
+		$prefix .= "<img style = 'visibility:hidden;' src = '' id = 'errorimg' /><label id='error' ></label>"; // elementen om fouten te tonen
 		$prefix .= "<table id='historytable' ><tr><th>Hid</th><th>Value</th><th>Max age</th><th>Timestamp</th></tr>";
 		$nr = 1;
 		foreach ($result as $record){ // voegt telkens een rij toe aan de tabel, waarbij de elementen een id met een rij-nr erna krijgen
@@ -400,18 +391,7 @@ function coap_resource_general_form($form, &$form_state) {
 			),
 		);
 	}	
-	
-	$form['title'] = array (
-		'#value' => t('Resource Form'),
-	);
-	
-	//$device_uri = $_SESSION['device_uri'];
-	//$link = $form_state['values']['link'];
-	
-	////dpm($device_uri);
-	////dpm($link);
-	
-	//dpm($form);
+
 	return $form;
 }
 
