@@ -216,7 +216,7 @@ function coap_resource_form($form, &$form_state, $node) {
 			),
 		);
 	}	
-
+	dpm($node);
 	return $form;
 }
 
@@ -739,9 +739,41 @@ function coap_resource_delete_request_form_submit($form, $form_state) {
 /////////////////
 // node insert //
 /////////////////
-// function coap_resource_node_insert($node){
-	// dpm($node);
-// }
+function coap_resource_node_insert($node){
+	global $user;
+	if($node->type == 'coap_resource'){
+		$uri = $node->coap_resource_uri_field['und'][0]['uri'];
+		$result = db_select('coap_resource_resources', 'resources')
+			->fields('resources', array('uri'))
+			->condition('uri', $uri, '=')
+			->execute();
+		
+		if($result->rowCount() == 0){
+			$id = db_insert('coap_resource_resources')
+				->fields(array(
+					'uri' => $uri,
+					'last_error' => 'none',
+				))
+				->execute();
+		}
+		
+		$id = db_insert('coap_resource_users')
+			->fields(array(
+				'uid' => $user->uid,
+				'uri' => $uri,
+				'device' => 0,
+				'nid' => $node->nid,
+				'observe' => 0,
+				'watch' => 1,
+				'responded' => 0,
+			))
+			->execute();
+	}
+	else if($node->type == 'coap_device'){
+		
+	}
+	
+}
 
 //////////////////////
 // PRIVATE FUNCTIES //

@@ -121,10 +121,10 @@ function resource_uri_field_field_settings_form($field, $instance, $has_data) {
  * Validation callback for a resource_uri_field uri element.
  */
 function _resource_uri_field_uri_validate($element, &$form_state, $form) {
-	$regex = '/^(((?=(?>.*?(::))(?!.+\3)))\3?|([\dA-F]{1,4}(\3|:(?!$)|$)|\2))(?4){5}((?4){2}|(25[0-5]|(2[0-4]|1\d|[1-9])?\d)(\.(?7)){3})\z/i';
+	$regex = '/^(((?=(?>.*?(::))(?!.+\3)))\3?|([\dA-F]{1,4}(\3|:(?!$)|$)|\2))(?4){5}((?4){2}|(25[0-5]|(2[0-4]|1\d|[1-9])?\d)(\.(?7)){3}).+\z/i';
 	$value = $element['#value'];
 	if (empty($value) || !preg_match($regex, $value, $matches)) {
-		form_error($element, 'Please enter a valid IPv6-adres.');
+		form_error($element, 'Please enter a valid IPv6-adress.');
 	}
 }
 
