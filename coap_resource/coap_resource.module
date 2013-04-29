@@ -438,7 +438,7 @@ function coap_resource_block_view($delta='') {
 	
 	// Observe form
 	if($user->uid){
-		$temp = drupal_get_form('observe_form');
+		$temp = drupal_get_form('coap_resource_observe_form');
 		$block_content .= drupal_render($temp);
 	}
 	else{
