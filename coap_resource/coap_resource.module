@@ -137,29 +137,19 @@ function coap_resource_form($form, &$form_state, $node) {
 	);	
 	
 	$current_interval = 1;
+	$empty = TRUE;
 	$result = db_select('coap_resource_users', 'users')
-		->fields('users', array('uid', 'device', 'polling_interval'))
+		->fields('users', array('uid', 'uri', 'device', 'watch', 'polling_interval'))
 		->condition('uid', $user->uid, '=')
 		->condition('device',0,'=')
 		->condition('nid',$nid,'=')
-		->execute();
-	foreach ($result as $record){
-		$current_interval = $record->polling_interval;
-	}	
-	
-	// Te bekijken URI ophalen
-	$result = db_select('coap_resource_users', 'users')
-		->fields('users', array('uid', 'uri', 'device', 'watch'))
-		->condition('uid', $user->uid, '=')
-		->condition('device', 0, '=')
-		->condition('nid',$nid,'=')
 		->condition('watch', 1, '=')
 		->execute();
-	$empty = TRUE;
-	foreach($result as $record){
+	foreach ($result as $record){
 		$empty = 0;
+		$current_interval = $record->polling_interval;
 		$uri = $record->uri;
-	}
+	}		
 	
 	if($node->type == 'coap_general')
 		coap_resource_uri_form($form, $form_state);
@@ -216,7 +206,7 @@ function coap_resource_form($form, &$form_state, $node) {
 			),
 		);
 	}	
-	dpm($node);
+	//dpm($node);
 	return $form;
 }
 
@@ -629,7 +619,8 @@ function coap_resource_get_request_form(&$form, &$form_state) {
  * functie die wordt uitgevoerd als het formulier ingediend wordt
  */
 function coap_resource_get_request_form_submit($form, $form_state) {
-	$handle = background_process_start('coap_resource_start_request', 'GET');
+	//$handle = background_process_start('coap_resource_start_request', 'GET', $form_state['values']['nid']);
+	coap_resource_start_request('GET', $form_state['values']['nid']);
 }
 
 
@@ -666,7 +657,7 @@ function coap_resource_put_request_form(&$form, &$form_state) {
  * functie die wordt uitgevoerd als het formulier ingediend wordt
  */
 function coap_resource_put_request_form_submit($form, $form_state) {
-	$handle = background_process_start('coap_resource_start_request', 'PUT', $form_state['values']['put_request_input']);
+	$handle = background_process_start('coap_resource_start_request', 'PUT', $form_state['values']['nid'], $form_state['values']['put_request_input']);
 }
 
 
@@ -703,7 +694,7 @@ function coap_resource_post_request_form(&$form, &$form_state) {
  * functie die wordt uitgevoerd als het formulier ingediend wordt
  */
 function coap_resource_post_request_form_submit($form, $form_state) {
-	$handle = background_process_start('coap_resource_start_request', 'POST', $form_state['values']['post_request_input']);
+	$handle = background_process_start('coap_resource_start_request', 'POST', $form_state['values']['nid'], $form_state['values']['post_request_input']);
 }
 
 
@@ -733,7 +724,7 @@ function coap_resource_delete_request_form(&$form, &$form_state) {
  * functie die wordt uitgevoerd als het formulier ingediend wordt
  */
 function coap_resource_delete_request_form_submit($form, $form_state) {
-	$handle = background_process_start('coap_resource_start_request', 'DELETE');
+	$handle = background_process_start('coap_resource_start_request', 'DELETE', $form_state['values']['nid']);
 }
 
 /////////////////
@@ -942,16 +933,17 @@ function coap_resource_get_number_of_observers($ip, $resource){
 
 // 	Creates and sends the CoAP message with given method and payload
 //	IPv6-address and URI-path are extracted from the database
-function coap_resource_start_request($method, $payload=''){
+function coap_resource_start_request($method, $nid, $payload=''){
 	global $user;
 	
 	//	Gets the URI for the resource that is selected by the user
-	$query = db_select('coap_resource_users', 'users');
-	$query
-		->fields('users', array('uid', 'uri', 'watch'))
+	$result = db_select('coap_resource_users', 'users')
+		->fields('users', array('uid', 'uri', 'nid', 'device', 'watch'))
 		->condition('watch', 1, '=')
-		->condition('uid', $user->uid, '=');
-	$result = $query->execute();
+		->condition('uid', $user->uid, '=')
+		->condition('device', 0, '=')
+		->condition('nid', $nid, '=')
+		->execute();
 	foreach($result as $record){
 		$uri = $record->uri;
 	}
