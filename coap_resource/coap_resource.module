@@ -629,7 +629,8 @@ function coap_resource_get_request_form(&$form, &$form_state) {
  * functie die wordt uitgevoerd als het formulier ingediend wordt
  */
 function coap_resource_get_request_form_submit($form, $form_state) {
-	$handle = background_process_start('coap_resource_start_request', 'GET');
+	// $handle = background_process_start('coap_resource_start_request', 'GET');
+	coap_resource_start_request('GET');
 }
 
 
@@ -913,6 +914,7 @@ function coap_resource_get_number_of_observers($ip, $resource){
 function coap_resource_start_request($method, $payload=''){
 	global $user;
 	
+	dpm(coap_library_string_to_hex_with_padding('.well-known/core'));
 	//	Gets the URI for the resource that is selected by the user
 	$query = db_select('coap_resource_users', 'users');
 	$query
@@ -936,10 +938,8 @@ function coap_resource_start_request($method, $payload=''){
 	$pattern = '/([^\/]+)\/(.*)/i';
 	if(preg_match($pattern, $uri, $matches)){
 		//	Build message
-		variable_set('test', 'voor message opbouwen');
 		$coap_factory = new CoAPMessageFactory('coap_resource', $matches[1], $matches[2], $separate_response);
-		$coap_message = $coap_factory->create_message_with_header_and_token('CON', $method, 0);
-		$coap_message->add_option(11, $matches[2]);
+		$coap_message = $coap_factory->create_basic_get_request($matches[2]);
 		if($payload != ''){
 			$coap_message->add_payload($payload);
 		}
@@ -947,7 +947,6 @@ function coap_resource_start_request($method, $payload=''){
 		$response_obj = null;
 		
 		if($method == "GET"){
-			variable_set('test', 'net voor zoeken in databank');
 			//	Get last value from the database for the given resource to check if value is still valid and use this value if it's still valid
 			$cache_query = db_select('coap_resource_values', 'coap_resource_values');
 			$cache_query
@@ -957,26 +956,26 @@ function coap_resource_start_request($method, $payload=''){
 				->orderBy('hid', 'DESC')
 				->range(0,1);
 			$cache_result = $cache_query->execute();
-			variable_set('test', 'net na cache query');
 			foreach($cache_result as $cache_record){
 				//	Check if the last value has a max age and if it has, check if the value is still valid
-				if($cache_record->max_age != null && time()-strtotime($cache_record->timestamp) < intval($cache_record->max_age)){ //	TIJDVERSCHIL IPV GEWOON TIMESTAMP!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+				if($cache_record->max_age != null && time()-strtotime($cache_record->timestamp) < intval($cache_record->max_age)){
 					$response_obj = $coap_factory->create_message_with_given_hex_message($cache_record->original_response);
 				}
 			}
 		}
-		variable_set('test', 'na zoeken in databank');
 		
 		//	Get new value if previous isn't still valid
 		if($response_obj == null){
 			$response_obj = $coap_message->send_message();
+			if($response_obj != null){
+				//	Insert the response into the database to add to the history of responses
+				coap_resource_insert_response_into_database($response_obj, $user->uid);
+			}
 		}
 		
 		if($response_obj != null){
 			//	Insert the response into the database for the current user
 			coap_resource_give_response_to_user($response_obj, $method);
-			
-			coap_resource_insert_response_into_database($response_obj, $user->uid);
 		}
 	}
 }

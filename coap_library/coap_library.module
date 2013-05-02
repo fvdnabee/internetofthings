@@ -227,7 +227,7 @@ function coap_library_get_max_age_from_hex_message($hex_message){
 	return hexdec($max_age_hex);
 }
 
-// Extracts the value of the option with given number from a hexadecimal message
+// Extracts the hexadecimal value of the option with given number from a hexadecimal message
 // Returns -1 if the option with given number is not present
 function coap_library_get_option_value_from_hex_message($hex_message, $option_number){
 	$follow_up = $hex_message . "\r\n";
@@ -297,7 +297,7 @@ function coap_library_get_option_value_from_hex_message($hex_message, $option_nu
 }
 
 //	Adds an option with given number and value to the given hexadecimal message
-//	Expects the given option value to be a normal ASCII string, not hexadecimal
+//	Expects the given option value to be a normal ASCII string or decimal, not hexadecimal
 //	Returns null if message is smaller than 4 bytes
 function coap_library_add_option_to_hex_message(&$hex_message, $option_number, $value){
 	
@@ -337,7 +337,9 @@ function coap_library_add_option_to_hex_message(&$hex_message, $option_number, $
 			$option_delta = hexdec(substr($hex_message, $pos, 1));
 		}
 	}
-	$value_length = strlen($value);
+		
+	$value_length = strlen($value)/2;
+	
 	$mid = null;
 	// Add Option Delta
 	if($option_number-$current_number > 268){
@@ -386,7 +388,7 @@ function coap_library_add_option_to_hex_message(&$hex_message, $option_number, $
 	}
 	
 	// Add Option Value
-	$mid .= coap_library_string_to_hex_with_padding($value);
+	$mid .= $value;
 	
 	if($pos >= strlen($hex_message)){
 		$hex_message .= $mid;

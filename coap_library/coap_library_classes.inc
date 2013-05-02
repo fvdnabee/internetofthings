@@ -135,15 +135,14 @@ class CoAPMessage {
 		$message_id_string = strval(dechex($this->message_id));
 		$message_id_string = str_pad($message_id_string, 4, "0", STR_PAD_LEFT);
 		$hex .= $message_id_string;
-		
 		//	Add token
 		$hex .= $this->token;
 		
 		//	Add options
 		foreach($this->options as $option_nr => $option_value){
-			$current_options = preg_split("/\//", $option_value);
-			foreach($current_options as $current_option){
-				coap_library_add_option_to_hex_message($hex, $option_nr, $current_option);
+			$values = preg_split("/\//", $option_value);
+			foreach($values as $value){
+				coap_library_add_option_to_hex_message($hex, $option_nr, $value);
 			}
 		}
 		
@@ -163,13 +162,13 @@ class CoAPMessage {
 		return $this->resource;
 	}
 	
-	//	Adds an option to the message object with given number and hexadecimal value
-	public function add_option($nr, $hex_value){
-		$this->options[$nr] = $hex_value;
+	//	Adds an option to the message object with given number and value
+	public function add_option($nr, $value){
+		$this->options[$nr] = $value;
 	}
 	
 	//	Getter for option with given number
-	//	Retrieves option value (hexadecimal)
+	//	Retrieves option value
 	//	Return null if option is not present in this message
 	public function get_option_value($nr){
 		if(isset($this->options[$nr])){
@@ -190,7 +189,7 @@ class CoAPMessage {
 	// Returns 0 if no max age option is included
 	public function get_max_age(){
 		$max_age_hex = $this->get_option_value(14);
-		if(!$max_age_hex){
+		if(!isset($max_age_hex) || $max_age_hex == null || !$max_age_hex){
 			return 0;
 		}
 		return hexdec($max_age_hex);
@@ -548,7 +547,8 @@ class CoAPMessage {
 			$request_option_value = '';
 			if($carry) $request_option_value .= '01';
 			$request_option_value .= $first_hex_digits . $last_hex_digit;
-			$this->add_option(23,coap_library_hex_to_string($request_option_value));
+			dpm($request_option_value);
+			$this->add_option(23, $request_option_value);
 			
 			//	Send the request
 			$this->message_id = coap_library_generate_message_id();
@@ -565,6 +565,18 @@ class CoAPMessage {
 			}
 			else $payloads_left = false;
 		}
+	}
+	
+	//	Add an URI path option to this message
+	//	Expects a normal ASCII string as option value
+	public function add_uri_path($uri_path){
+		$paths = preg_split("/\//", $uri_path);
+		$hex_paths = array();
+		foreach($paths as $path){
+			array_push($hex_paths, coap_library_string_to_hex_with_padding($path));
+		}
+		$option_value_hex = implode("/", $hex_paths);
+		$this->add_option(11, $option_value_hex);
 	}
 	
 }
@@ -627,16 +639,15 @@ class CoAPMessageFactory{
 	public function create_basic_get_request($uri_path){
 		$coap_message = $this->create_message_with_header_and_token("CON", "GET", 0);
 		if(isset($uri_path) && $uri_path != ''){
-			$coap_message->add_option(11, $uri_path);
+			$coap_message->add_uri_path($uri_path);
 		}
 		return $coap_message;
 	}
 	
 	// Generates a CoAP observe GET request with given URI-path
 	public function create_observe_get_request($uri_path){
-		$coap_message = $this->create_message_with_header_and_token("CON", "GET", 2);
+		$coap_message = $this->create_basic_get_request($uri_path);
 		$coap_message->add_option(6, '');
-		$coap_message->add_option(11, $uri_path);
 		return $coap_message;
 	}
 	
@@ -664,7 +675,7 @@ class CoAPMessageFactory{
 		$code = coap_library_get_numeric_message_code_from_hex_message($hex_message);
 		$token_length = coap_library_get_token_length_from_hex_message($hex_message);
 		$token = coap_library_get_token_from_hex_message($hex_message);
-		$message_id = coap_library_get_message_id_from_message($hex_message);
+		$message_id = hexdec(coap_library_get_message_id_from_message($hex_message));
 		$message = new CoAPMessage($this->module, $this->ip, $this->resource, $type, $code, $token_length, $this->separate_response, $message_id, $token);
 		
 		//	Add options
@@ -741,8 +752,7 @@ class CoAPMessageFactory{
 	
 	// Creates a discovery request which depends on response
 	public function create_block_request($response){
-		$coap_message = $this->create_message_with_header_and_token("CON", "GET", 0);
-		$coap_message->add_option(11,'.well-known/core');
+		$coap_message = $this->create_basic_get_request('.well-known/core');
 		
 		if($response){
 			$response_option_value = $response->get_option_value(23);
@@ -766,7 +776,7 @@ class CoAPMessageFactory{
 			$request_option_value = '';
 			if($carry) $request_option_value .= '01';
 			$request_option_value .= $first_hex_digits . $last_hex_digit;
-			$coap_message->add_option(23,coap_library_hex_to_string($request_option_value));
+			$coap_message->add_option(23, $request_option_value);
 		}
 		return $coap_message;
 	}
