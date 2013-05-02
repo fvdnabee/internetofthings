@@ -514,7 +514,6 @@ function coap_resource_observe_form_submit($form, $form_state) {
 		->condition('nid', $form_state['values']['nid'], '=')
 		->execute();
 	foreach ($result as $record){
-	dpm($record);
 		$observe_result = db_select('coap_resource_users', 'users')
 			->fields('users', array('uid', 'uri', 'observe'))
 			->condition('uri', $record->uri, '=')
