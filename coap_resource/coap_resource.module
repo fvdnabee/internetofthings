@@ -187,27 +187,27 @@ function coap_resource_form($form, &$form_state, $node) {
 			coap_resource_observe_form($form, $form_state, $nid);
 			coap_resource_bekijken_form($form, $form_state, $nid);
 		}
-		// else{
+		else{
 			//dpm($first_resource);
-			// if(isset($first_resource['obs'])){
+			if(isset($first_resource['obs'])){
 				// dpm($first_resource['uri']);
-				// $form['observe'][$first_resource['uri']] = array(
-					// '#type' => 'hidden',
-				// );
-				// $form['observe_button'] = array(
-					// '#type' => 'submit',
-					// '#submit' => array('coap_resource_observe_form_submit'),
-				// );
-				// if(!$first_resource['observe']){
-					// $form['observe'][$first_resource['uri']]['#value'] = 1;
-					// $form['observe_button'] = 'Start observing';
-				// }
-				// else{
-					// $form['observe'][$first_resource['uri']]['#value'] = 0;
-					// $form['observe_button'] = 'Stop observing';
-				// }
-			// }
-		// }
+				$form['observe'][$first_resource['uri']] = array(
+					'#type' => 'hidden',
+				);
+				$form['observe_button'] = array(
+					'#type' => 'submit',
+					'#submit' => array('coap_resource_observe_form_submit'),
+				);
+				if(!$first_resource['observe']){
+					$form['observe'][$first_resource['uri']]['#value'] = 1;
+					$form['observe_button']['#default_value'] = 'Start observing';
+				}
+				else{
+					$form['observe'][$first_resource['uri']]['#value'] = 0;
+					$form['observe_button']['#default_value'] = 'Stop observing';
+				}
+			}
+		}
 		coap_resource_get_request_form($form, $form_state);
 		coap_resource_put_request_form($form, $form_state);
 		coap_resource_post_request_form($form, $form_state);
