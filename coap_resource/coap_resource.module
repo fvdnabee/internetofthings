@@ -138,31 +138,76 @@ function coap_resource_form($form, &$form_state, $node) {
 	
 	$current_interval = 1;
 	$empty = TRUE;
-	$result = db_select('coap_resource_users', 'users')
-		->fields('users', array('uid', 'uri', 'device', 'watch', 'polling_interval'))
+	
+	$query = db_select('coap_resource_users', 'users');
+	$query->join('coap_resource_resources', 'resources', 'users.uri = resources.uri');
+	$query
+		->fields('users')
+		->fields('resources')
 		->condition('uid', $user->uid, '=')
 		->condition('device',0,'=')
 		->condition('nid',$nid,'=')
-		->condition('watch', 1, '=')
-		->execute();
-	foreach ($result as $record){
-		$empty = 0;
-		$current_interval = $record->polling_interval;
-		$uri = $record->uri;
-	}		
+		->condition('watch', 1, '=');
+	$resources = $query->execute();
+	
+	$first_resource  = $resources->fetchAssoc();
+	//dpm($first_resource);
+	if(isset($first_resource)){
+		$empty =0;
+		$current_interval = $first_resource['polling_interval'];
+		$uri = $first_resource['uri'];
+	}
+	// foreach($resources as $record){
+		// dpm($record);
+	// }
+	// foreach ($resources as $record){
+		// $empty = 0;
+		// $current_interval = $record->polling_interval;
+		// $uri = $record->uri;
+	// }		
 	
 	if($node->type == 'coap_general')
 		coap_resource_uri_form($form, $form_state);
 		
 	if(!$empty && $empty != 1){
 		$form['polling_container'] = array(
-			'#prefix' => "<p></p>Polling gebeurt om de <input id = 'polling_invoer' type = 'text' size = '1' value = '" . $current_interval . "' > seconden. <button id = 'polling_button' type = 'button' >Wijzigen</button>",
+			'#type' => 'container',
+			'#prefix' => "Polling gebeurt om de <input id='polling_invoer' type='text' size='1' value='" . $current_interval . "' > seconden. <button id='polling_button' type='button' >Wijzigen</button></br>",
 		);
+		
+		// $form['polling_button'] = array(
+			// '#type' => 'submit',
+			// '#value' => 'Wijzigen',
+			// '#prefix' => "Polling gebeurt om de <input id='polling_invoer' type='text' size='1' value='" . $current_interval . "' > seconden.",
+			// '#id' => 'polling_button',
+			// '#submit' => 'do_nothing',
+		// );
 		
 		if($node->type != 'coap_resource'){
 			coap_resource_observe_form($form, $form_state, $nid);
 			coap_resource_bekijken_form($form, $form_state, $nid);
 		}
+		// else{
+			//dpm($first_resource);
+			// if(isset($first_resource['obs'])){
+				// dpm($first_resource['uri']);
+				// $form['observe'][$first_resource['uri']] = array(
+					// '#type' => 'hidden',
+				// );
+				// $form['observe_button'] = array(
+					// '#type' => 'submit',
+					// '#submit' => array('coap_resource_observe_form_submit'),
+				// );
+				// if(!$first_resource['observe']){
+					// $form['observe'][$first_resource['uri']]['#value'] = 1;
+					// $form['observe_button'] = 'Start observing';
+				// }
+				// else{
+					// $form['observe'][$first_resource['uri']]['#value'] = 0;
+					// $form['observe_button'] = 'Stop observing';
+				// }
+			// }
+		// }
 		coap_resource_get_request_form($form, $form_state);
 		coap_resource_put_request_form($form, $form_state);
 		coap_resource_post_request_form($form, $form_state);
@@ -419,7 +464,7 @@ function coap_resource_uri_form_submit($form, $form_state) {
 }
 
 //////////////////////
-// OBSERVE FORM //
+//   OBSERVE FORM 	//
 //////////////////////
 
 /**
@@ -451,7 +496,7 @@ function coap_resource_observe_form(&$form, &$form_state, $nid) {
 		'#type' => 'submit',
 		'#submit' => array('coap_resource_observe_form_submit'),
 		'#value' => t('Observe'),
-		);
+	);
 	return $form;
 }
 
@@ -462,18 +507,20 @@ function coap_resource_observe_form(&$form, &$form_state, $nid) {
 function coap_resource_observe_form_submit($form, $form_state) {
 	global $user;
 	
-	$query = db_select('coap_resource_users', 'users');
-	$query
+	$result = db_select('coap_resource_users', 'users')
 		->fields('users', array('uid', 'uri'))
-		->condition('uid', $user->uid, '=');
-	$result = $query->execute();
+		->condition('uid', $user->uid, '=')
+		->condition('device', 0, '=')
+		->condition('nid', $form_state['values']['nid'], '=')
+		->execute();
 	foreach ($result as $record){
-		$observe_query = db_select('coap_resource_users', 'users');
-		$observe_query
+	dpm($record);
+		$observe_result = db_select('coap_resource_users', 'users')
 			->fields('users', array('uid', 'uri', 'observe'))
 			->condition('uri', $record->uri, '=')
-			->condition('observe', 1, '=');
-		$observe_result = $observe_query->execute();
+			->condition('device', 0, '=')
+			->condition('observe', 1, '=')
+			->execute();
 		$num_observers = $observe_result->rowCount();
 	
 		if($form_state['values'][$record->uri] != 0 && $num_observers == 0){
@@ -485,14 +532,16 @@ function coap_resource_observe_form_submit($form, $form_state) {
 			))
 			->condition('uri', $record->uri, '=')
 			->condition('uid', $user->uid, '=')
+			->condition('device', 0, '=')
+			->condition('nid', $form_state['values']['nid'], '=')
 			->execute();
 			
-		$observe_query = db_select('coap_resource_users', 'users');
-		$observe_query
+		$observe_result = db_select('coap_resource_users', 'users')
 			->fields('users', array('uid', 'uri', 'observe'))
 			->condition('uri', $record->uri, '=')
-			->condition('observe', 1, '=');
-		$observe_result = $observe_query->execute();
+			->condition('device', 0, '=')
+			->condition('observe', 1, '=')
+			->execute();
 		if($observe_result->rowCount() == 0){
 			coap_library_stop_observing('coap_resource', $record->uri);
 		}

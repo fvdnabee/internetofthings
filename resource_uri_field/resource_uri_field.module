@@ -140,7 +140,7 @@ function theme_resource_uri_field_formatter_default($item) {
   
   $output = '';
   $output .= '<div class="resource_uri_field-wrapper">';
-  $output .= l($item['uri'], $item['uri'], array('options' =>  array('absolute' => TRUE)));
+  $output .= $item['uri'];
   $output .= '</div><br />';
 
   return $output;
