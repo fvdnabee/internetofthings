@@ -20,7 +20,7 @@ class CoAPMessage {
 	private $version = 1;
 	private $type;
 	private $code;
-	private $message_id;
+	private $message_id; //	IMPORTANT: message ID is kept in numeric form, not hexadecimal!
 	
 	//	CONTENT
 	private $options = array();
@@ -83,20 +83,20 @@ class CoAPMessage {
 		$this->separate_response = $separate_response;
 		$this->type = $type;
 		$this->code = $code;
-		$constants = new CoAPConstants();
 		
 		//	GENERATE TOKEN AND MESSAGE ID
 		if($message_id == null){
 			$this->message_id = coap_library_generate_message_id();
+			$this->token = coap_library_generate_token($token_length);
+		}
+		else{
+			$this->message_id = $message_id;
 			if($token == null){
 				$this->token = coap_library_generate_token($token_length);
 			}
 			else{
 				$this->token = $token;
 			}
-		}
-		else{
-			$this->message_id = $message_id;
 		}
 		
     }
@@ -126,7 +126,7 @@ class CoAPMessage {
 		$hex .= dechex($this->version*4 + $type_nr);
 		
 		//	Add token length
-		$hex .= dechex(strlen($this->token));
+		$hex .= dechex(strlen($this->token)/2);
 		
 		//	Add message code
 		$hex .= str_pad(dechex($this->code), 2, "0", STR_PAD_LEFT);
@@ -135,10 +135,12 @@ class CoAPMessage {
 		$message_id_string = strval(dechex($this->message_id));
 		$message_id_string = str_pad($message_id_string, 4, "0", STR_PAD_LEFT);
 		$hex .= $message_id_string;
+		
 		//	Add token
 		$hex .= $this->token;
 		
 		//	Add options
+		ksort($this->options);	//	Order options array by growing option deltas to keep option deltas in the hex message consistent
 		foreach($this->options as $option_nr => $option_value){
 			$values = preg_split("/\//", $option_value);
 			foreach($values as $value){
@@ -210,15 +212,9 @@ class CoAPMessage {
 	public function send_message(){
 		//	Create CoAP factory
 		$coap_factory = new CoAPMessageFactory($this->module, $this->ip, $this->resource, $this->separate_response);
-		
-		//	Retrieve this message in hexadecimal form
-		$hex_message = $this->get_hex_message();
 	
 		//	Determine if request has an observe option
-		$observe = ($this->get_option_value(6) != null) ? 1 : 0;
-		
-		$request_token = $this->get_token();
-		$request_message_id = $this->get_message_id();
+		$observe = ($this->get_option_value(6) === null) ? 0 : 1;
 		
 		if($observe){
 			//	Request has an observe option
@@ -262,12 +258,17 @@ class CoAPMessage {
 			$this->retransmit_counter = 0;
 			
 			//	Send CoAP packet
-			$message = pack('H*', $hex_message);
-			$returnvalue = fwrite($socket, $message); //	Write to socket
+			$binary_message = pack('H*', $this->get_hex_message());
+			$returnvalue = fwrite($socket, $binary_message); //	Write to socket
+			
+			//	Stop this function if the message is an acknowledgement or a reset message
+			if($this->type == "ACK" || $this->type == "RST"){
+				return null;
+			}
 			
 			//	Check for response if the message is confirmable
-			if($this->is_confirmable()){
-				//	Message type = CON
+			if($this->is_confirmable() || $observe){
+				//	Message type = CON or sent message had an observe option
 				if($returnvalue != FALSE){
 					$response = fread($socket, 512); //	Read from UDP-socket
 				}
@@ -284,7 +285,8 @@ class CoAPMessage {
 					stream_set_timeout($socket, 0, $timeout*1000);
 					
 					//	Resend the CoAP packet
-					$returnvalue = fwrite($socket, $message); //	Write to socket
+					$binary_message = pack('H*', $this->get_hex_message());
+					$returnvalue = fwrite($socket, $binary_message); //	Write to socket
 					if($returnvalue != FALSE){
 						$response = fread($socket, 512); //	Read from socket
 					}
@@ -307,6 +309,9 @@ class CoAPMessage {
 					//	Resource should be observed
 					$must_observe = $this->observe_is_necessary(); //	Check if resource should still be observed
 					
+					//	Set timeout to 24 hours, server should at least send a notification every 24 hours
+					stream_set_timeout($socket, 0, 24*60*60*1000);
+					
 					//	Set initial values for reordering
 					$V1 = 0;
 					$T1 = time();
@@ -315,15 +320,13 @@ class CoAPMessage {
 					while($must_observe > 0 && $response != '' && $response != 'empty'){
 						//	Resource should still be observed
 						
-						$response_hex = coap_library_string_to_hex_with_padding($response);
-						
 						//	Set parameters for reordering and build reordering condition
-						$V2 = intval(coap_hex_to_string($response_obj->get_option_value(6)));
+						$V2 = hexdec($response_obj->get_option_value(6));
 						$T2 = time();
 						$reordering_condition = (($V1 < $V2 && $V2 - $V1 < pow(2, 32)) || ($V1 > $V2 && $V1 - $V2 > pow(2, 32)) || ($T2 > $T1 + 128));
 						
 						//	Only take care of the message if the message contains the correct token or the reordering condition is met (cfr. CoAP observe draft)
-						if($response_obj->get_token() == $request_token && $reordering_condition){
+						if($response_obj->get_token() == $this->token && $reordering_condition){
 							//	notify using module that there are no difficulties at the moment
 							$function_name = $this->module . '_receive_error';
 							$function_name('none', $this->ip, $this->resource);
@@ -334,48 +337,26 @@ class CoAPMessage {
 							
 							//	Send ACK back to server if the response message was of type CON
 							if($response_obj->is_confirmable()){
-								$ack = coap_library_generate_acknowledgement(coap_library_string_to_hex_with_padding($response));
-								$ack = pack('H*', $ack);
-								$returnvalue = fwrite($socket, $ack);
+								$ack = $response_obj->generate_acknowledgement();
+								$ack_message = pack('H*', $ack->get_hex_message());
+								$returnvalue = fwrite($socket, $ack_message); // wegschrijven naar udp-socket
 							}
 						}
-						else if($response_obj->get_token() != $request_token && $response_obj->is_confirmable()){
+						else if($response_obj->get_token() != $this->token && $response_obj->is_confirmable()){
 							//	Send a reset to inform the server that the client has no interest in notifications with this token
-							$reset = coap_library_generate_reset(coap_library_string_to_hex_with_padding($response));
-							$reset = pack('H*', $reset);
-							$returnvalue = fwrite($socket, $reset); // Write to socket
+							$reset = $response_obj->generate_reset();
+							$reset_message = pack('H*', $reset->get_hex_message());
+							$returnvalue = fwrite($socket, $reset_message); // wegschrijven naar udp-socket
 						}
 						
 						//	Wait for next notification
 						$response = 'empty';
 						$response = fread($socket, 512); // Read from socket
 						
-						//	Keep resending the packet and multiplying the timeout if something went wrong (exponential backoff)
-						while($this->retransmit_counter < $this->MAX_RETRANSMIT && ($response == '' || $response == 'empty')){
-							//	Notify using module that something went wrong
-							$function_name = $this->module . '_receive_error';
-							$function_name('delay', $this->ip, $this->resource);
-							
-							//	Rebuild and send the packet
-							$this->message_id = coap_library_generate_message_id();
-							$this->token = coap_library_generate_token();
-							$hex_message = $this->get_hex_message();
-							$message = pack('H*', $hex_message);
-							$returnvalue = fwrite($socket, $message); // wegschrijven naar udp-socket
-							if($returnvalue != FALSE){
-								$response = fread($socket, 512); // lezen van udp-socket
-							}
-							
-							//	Set new timeout
-							$this->retransmit_counter++;
-							$timeout *= 2;
-							stream_set_timeout($socket, 0, $timeout*1000);
-						}
-						
 						//	Set variables for reordering
 						$V1 = $V2;
 						$T1 = $T2;
-						$V2 = intval(coap_hex_to_string($response_obj->get_option_value(6)));
+						$V2 = hexdec($response_obj->get_option_value(6));
 						$T2 = time();
 						
 						$response_obj = $coap_factory->create_message_with_given_hex_message(coap_library_string_to_hex_with_padding($response)); //	Put response in CoAPMessage-object
@@ -390,22 +371,26 @@ class CoAPMessage {
 					}
 					else{
 						//	Send a reset to inform the server that the client has lost interest
-						$reset = coap_library_generate_reset(coap_library_string_to_hex_with_padding($response));
-						$reset = pack('H*', $reset);
-						$returnvalue = fwrite($socket, $reset); // wegschrijven naar udp-socket
+						$reset = $response_obj->generate_reset();
+						$reset_message = pack('H*', $reset->get_hex_message());
+						$returnvalue = fwrite($socket, $reset_message); // wegschrijven naar udp-socket
 					}
 				}
-				else if($response_obj->separate_response && ($response_obj->get_payload() == null || $response_obj->get_payload() == '') && $request_message_id == $response_obj->get_message_id()){
+				else if($response_obj->separate_response && ($response_obj->get_payload() == null || $response_obj->get_payload() == '') && $this->message_id == $response_obj->get_message_id()){
 					//	Resource uses separate response and has returned an empty ACK
 					$response = 'empty';
 					stream_set_timeout($socket, 20, 0); //	Timeout for separate response currently set to 20 seconds, but can be chosen
 					$response = fread($socket, 512); // Read from socket
 					if($response != 'empty' && $response != ''){
 						$response_obj = $coap_factory->create_message_with_given_hex_message(coap_library_string_to_hex_with_padding($response)); //	Put response in CoAPMessage-object
+						
+						//	Check if the message is confirmable
 						if($response_obj->is_confirmable()){
-							$ack = coap_library_generate_acknowledgement(coap_library_string_to_hex_with_padding($response));
-							$ack = pack('H*', $ack);
-							$returnvalue = fwrite($socket, $ack);
+							//	Message is confirmable
+							//	Send an acknowledgement back
+							$ack = $response_obj->generate_acknowledgement();
+							$ack_message = pack('H*', $ack->get_hex_message());
+							$returnvalue = fwrite($socket, $ack_message); // wegschrijven naar udp-socket
 						}
 						fclose($socket); // Close the socket
 						return $response_obj;
@@ -579,6 +564,22 @@ class CoAPMessage {
 		$this->add_option(11, $option_value_hex);
 	}
 	
+	//	Generates an acknowledgement to this message
+	//	Returns a CoAPMessage-object
+	public function generate_acknowledgement(){
+		$factory = new CoAPMessageFactory($this->module, $this->ip, $this->resource, $this->separate_response);
+		$ack = $factory->create_message_with_header_and_token("ACK", "EMPTY", 0, $this->message_id);
+		return $ack;
+	}
+	
+	//	Generates a reset to this message
+	//	Returns a CoAPMessage-object
+	public function generate_reset(){
+		$factory = new CoAPMessageFactory($this->module, $this->ip, $this->resource, $this->separate_response);
+		$reset = $factory->create_message_with_header_and_token("RST", "EMPTY", 0, $this->message_id);
+		return $reset;
+	}
+	
 }
 
 
@@ -603,7 +604,7 @@ class CoAPMessageFactory{
 	
 	// 	Generates a basic CoAP message consisting of only the header and optional token, $type = {CON, NON, ACK, RST}, $method = {GET, PUT, POST, DELETE}
 	//	Returns null if the token length is invalid
-	public function create_message_with_header_and_token($type, $method, $token_length){
+	public function create_message_with_header_and_token($type, $method, $token_length, $message_id = null, $token = null){
 		//	Check if token length is valid
 		if(!is_int($token_length) || $token_length < 0 || $token_length > 8){
 			return null;
@@ -632,7 +633,7 @@ class CoAPMessageFactory{
 		}
 		
 		//	Create a message object and return it
-		return new CoAPMessage($this->module, $this->ip, $this->resource, $type, $code, $token_length, $this->separate_response);
+		return new CoAPMessage($this->module, $this->ip, $this->resource, $type, $code, $token_length, $this->separate_response, $message_id, $token);
 	}
 	
 	// Generates a basic CoAP GET request with optional given URI path
@@ -646,7 +647,10 @@ class CoAPMessageFactory{
 	
 	// Generates a CoAP observe GET request with given URI-path
 	public function create_observe_get_request($uri_path){
-		$coap_message = $this->create_basic_get_request($uri_path);
+		$coap_message = $this->create_message_with_header_and_token("CON", "GET", 2);
+		if(isset($uri_path) && $uri_path != ''){
+			$coap_message->add_uri_path($uri_path);
+		}
 		$coap_message->add_option(6, '');
 		return $coap_message;
 	}
@@ -673,15 +677,14 @@ class CoAPMessageFactory{
 		}
 		
 		$code = coap_library_get_numeric_message_code_from_hex_message($hex_message);
-		$token_length = coap_library_get_token_length_from_hex_message($hex_message);
 		$token = coap_library_get_token_from_hex_message($hex_message);
+		$token_length = strlen($token)/2;
 		$message_id = hexdec(coap_library_get_message_id_from_message($hex_message));
 		$message = new CoAPMessage($this->module, $this->ip, $this->resource, $type, $code, $token_length, $this->separate_response, $message_id, $token);
 		
 		//	Add options
 		if(strlen($hex_message) >= 8){
 			//	Message has a valid header
-			$token_length = hexdec(substr($hex_message, 1, 1));
 			if(strlen($hex_message) >= 8+($token_length*2)){
 				//	Message has a valid token, if present at all
 				$pos = 8 + ($token_length*2);
@@ -750,37 +753,6 @@ class CoAPMessageFactory{
 		return $message;
 	}
 	
-	// Creates a discovery request which depends on response
-	public function create_block_request($response){
-		$coap_message = $this->create_basic_get_request('.well-known/core');
-		
-		if($response){
-			$response_option_value = $response->get_option_value(23);
-			$option_value_length = strlen($response_option_value);
-			//2 => xx
-			//4 => xx xx
-			//6 => xx xx xx
-			//...
-			
-			$first_hex_digits = substr($response_option_value, 0, $option_value_length-1);
-			$carry = coap_library_increment_hex($first_hex_digits);
-			
-			$last_hex_digit = substr($response_option_value, $option_value_length-1, 1);
-			$size = 0;			
-			if(coap_library_get_bit_from_hex($last_hex_digit,2) == 1) $size += 4;
-			if(coap_library_get_bit_from_hex($last_hex_digit,1) == 1) $size += 2;
-			if(coap_library_get_bit_from_hex($last_hex_digit,0) == 1) $size += 1;
-			$last_hex_digit = dechex($size);
-			
-			//build option 23 value for request
-			$request_option_value = '';
-			if($carry) $request_option_value .= '01';
-			$request_option_value .= $first_hex_digits . $last_hex_digit;
-			$coap_message->add_option(23, $request_option_value);
-		}
-		return $coap_message;
-	}
-
 }
 
 class CoAPConstants{

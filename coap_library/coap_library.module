@@ -117,20 +117,6 @@ function coap_library_stop_observing($module, $uri){
 		->execute();
 }
 
-function coap_library_generate_acknowledgement($response){
-	$hex = "60";
-	$hex .= "00";
-	$hex .= coap_library_get_message_id_from_message($response);
-	return $hex;
-}
-
-function coap_library_generate_reset($response){
-	$hex = "70";
-	$hex .= "00";
-	$hex .= coap_library_get_message_id_from_message($response);
-	return $hex;
-}
-
 function coap_library_get_message_id_from_message($response){
 	$message_id = substr($response, 4, 4);
 	return $message_id;
@@ -299,6 +285,7 @@ function coap_library_get_option_value_from_hex_message($hex_message, $option_nu
 //	Adds an option with given number and value to the given hexadecimal message
 //	Expects the given option value to be a normal ASCII string or decimal, not hexadecimal
 //	Returns null if message is smaller than 4 bytes
+//	IMPORTANT: options MUST be added in order of growing option deltas
 function coap_library_add_option_to_hex_message(&$hex_message, $option_number, $value){
 	
 	if(strlen($hex_message) < 8){
@@ -392,7 +379,8 @@ function coap_library_add_option_to_hex_message(&$hex_message, $option_number, $
 	
 	if($pos >= strlen($hex_message)){
 		$hex_message .= $mid;
-	}else{
+	}
+	else{
 		$start = substr($hex_message, 0, $pos);
 		$end = substr($hex_message, $pos);
 		$hex_message = $start . $mid . $end; // nog rekening houden met eventueel extra option delta veld en extra option length veld
@@ -451,5 +439,5 @@ function coap_library_get_token_length_from_hex_message($hex_message){
 //	Retrieves the token from a given hexadecimal message
 function coap_library_get_token_from_hex_message($hex_message){
 	$token_length = intval(coap_library_get_token_length_from_hex_message($hex_message));
-	return hexdec(substr($hex_message, 8, $token_length*2));
+	return substr($hex_message, 8, $token_length*2);
 }
