@@ -277,6 +277,7 @@ function coap_resource_schema() {
 			),
 	);
 
+	//
 	// Tabel om opgevraagde waarden op te slaan
 	$schema['coap_resource_values'] = array(
 		'description' => 'Tabel om geschiedenis van opgevraagde waarden op te slaan',

@@ -645,6 +645,30 @@ class CoAPMessageFactory{
 		return $coap_message;
 	}
 	
+	public function create_basic_post_request($uri_path){
+		$coap_message = $this->create_message_with_header_and_token("CON", "POST", 0);
+		if(isset($uri_path) && $uri_path != ''){
+			$coap_message->add_uri_path($uri_path);
+		}
+		return $coap_message;
+	}
+	
+	public function create_basic_put_request($uri_path){
+		$coap_message = $this->create_message_with_header_and_token("CON", "PUT", 0);
+		if(isset($uri_path) && $uri_path != ''){
+			$coap_message->add_uri_path($uri_path);
+		}
+		return $coap_message;
+	}
+	
+	public function create_basic_delete_request($uri_path){
+		$coap_message = $this->create_message_with_header_and_token("CON", "DELETE", 0);
+		if(isset($uri_path) && $uri_path != ''){
+			$coap_message->add_uri_path($uri_path);
+		}
+		return $coap_message;
+	}	
+	
 	// Generates a CoAP observe GET request with given URI-path
 	public function create_observe_get_request($uri_path){
 		$coap_message = $this->create_message_with_header_and_token("CON", "GET", 2);
