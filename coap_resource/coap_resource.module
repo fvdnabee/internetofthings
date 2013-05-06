@@ -732,7 +732,8 @@ function coap_resource_put_request_form(&$form, &$form_state) {
  * functie die wordt uitgevoerd als het formulier ingediend wordt
  */
 function coap_resource_put_request_form_submit($form, $form_state) {
-	$handle = background_process_start('coap_resource_start_request', 'PUT', $form_state['values']['nid'], $form_state['values']['put_request_input']);
+	//$handle = background_process_start('coap_resource_start_request', 'PUT', $form_state['values']['nid'], $form_state['values']['put_request_input']);
+	coap_resource_start_request('PUT', $form_state['values']['nid'], $form_state['values']['put_request_input']);
 }
 
 
@@ -1011,7 +1012,7 @@ function coap_resource_get_number_of_observers($ip, $resource){
 function coap_resource_start_request($method, $nid, $payload=''){
 	global $user;
 	
-	dpm(coap_library_string_to_hex_with_padding('.well-known/core'));
+	//dpm(coap_library_string_to_hex_with_padding('.well-known/core'));
 	//	Gets the URI for the resource that is selected by the user
 	$result = db_select('coap_resource_users', 'users')
 		->fields('users', array('uid', 'uri', 'nid', 'device', 'watch'))
@@ -1037,9 +1038,22 @@ function coap_resource_start_request($method, $nid, $payload=''){
 	if(preg_match($pattern, $uri, $matches)){
 		//	Build message
 		$coap_factory = new CoAPMessageFactory('coap_resource', $matches[1], $matches[2], $separate_response);
-		$coap_message = $coap_factory->create_basic_get_request($matches[2]);
+		switch ($method) {
+			case 'GET':
+				$coap_message = $coap_factory->create_basic_get_request($matches[2]);
+				break;
+			case 'PUT':
+				$coap_message = $coap_factory->create_basic_put_request($matches[2]);
+				break;
+			case 'POST':
+				$coap_message = $coap_factory->create_basic_post_request($matches[2]);
+				break;
+			case 'DELETE':
+				$coap_message = $coap_factory->create_basic_delete_request($matches[2]);
+				break;
+		}
 		if($payload != ''){
-			$coap_message->add_payload($payload);
+			$coap_message->set_payload(coap_library_string_to_hex_with_padding($payload));
 		}
 		
 		$response_obj = null;
@@ -1062,7 +1076,7 @@ function coap_resource_start_request($method, $nid, $payload=''){
 			}
 		}
 		
-		//	Get new value if previous isn't still valid
+		//	Get new value if previous isn't still valid or isn't GET
 		if($response_obj == null){
 			$response_obj = $coap_message->send_message();
 			if($response_obj != null){
