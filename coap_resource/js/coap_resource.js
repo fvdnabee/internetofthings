@@ -43,7 +43,13 @@ $(document).ready(function() {
 	
 	$('.GET_BUTTON').click(
 		function(){
-			alert('op GET knop geklikt');
+			console.log("GET button clicked for " + $(this).attr('id').replace(/\//g, '-'));
+			$.ajax({
+				type: "POST",
+				url: "/coap_resource/GET/" + $(this).attr('id').replace(/\//g, '-'),
+				dataType: "text",
+				success: getResponse
+			});
 		}
 	);
 	
@@ -220,6 +226,10 @@ function drawChart() {
 
     var chart = new google.visualization.LineChart(document.getElementById('grafiek'));
     chart.draw(data, options);
+}
+
+function getResponse(input){
+	console.log("Response for GET request: " + input);
 }
 
 })(jQuery);
