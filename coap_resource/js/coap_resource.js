@@ -40,7 +40,15 @@ $(document).ready(function() {
 			
 		}
 	);
+	
+	$('.GET_BUTTON').click(
+		function(){
+			alert('op GET knop geklikt');
+		}
+	);
+	
 	$('#polling_button').trigger('click');
+	
 	drawChart();
 });
 

@@ -891,6 +891,8 @@ function coap_resource_page_callback(){
 		->execute();
 	
 	print $output;
+	
+	exit();
 }
 
 //	Change the interval that the polling mechanism is using for this user, this is a callback for /temperatuursensor/interval/%
