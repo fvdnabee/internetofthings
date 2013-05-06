@@ -60,6 +60,7 @@ function coap_discovery_form_validate($form, &$form_state) {
  */
 function coap_discovery_form($form, &$form_state, $node) {
 	drupal_add_js(drupal_get_path('module', 'coap_resource') . '/js/coap_resource.js'); // JavaScript bestand toevoegen
+	drupal_add_js('https://www.google.com/jsapi'); // JavaScript bestand toevoegen
 	global $user;
 	
 	$form['nid'] = array
@@ -246,7 +247,7 @@ function coap_discovery_save_resources($form, &$form_state) {
 				'watch' => 0,
 			))
 			->condition('uid', $user->uid, '=')
-			->condition('nid',$nid,'=')
+			->condition('nid', $nid, '=')
 			->execute();
 		
 		// Watch van net toegevoegde URI op 1 zetten
@@ -358,7 +359,7 @@ function coap_discovery_page_callback($nid){
 }
 
 function coap_discovery_load_device_core($device_uri, $nid){
-	dpm($nid);
+	//dpm($nid);
 	global $user;
 	// $result = db_select('coap_resource_resources', 'resources')
 				// ->fields('resources', array('uri','title'))
