@@ -17,6 +17,7 @@ Drupal.behaviors.coap_resource = {
 			
 };
 
+//	HIER VERDER DOEN: POLLING MOET NOG AANGEPAST WORDEN!
 $(document).ready(function() {
 	setTimeout(function(){google.load('visualization', '1', {'callback':'', 'packages':['corechart']})}, 10);
 	$('#polling_button').click(
@@ -63,6 +64,30 @@ $(document).ready(function() {
 				dataType: "text",
 				success: getResponse
 			});
+		}
+	);
+	
+	$('.OBSERVE_BUTTON').click(
+		function(){
+			var uri = $($(this).parent().parent().find('.uri')[0]).html();
+			if($(this).val() == "Start Observing"){
+				console.log("Button clicked: starting observe for " + uri);
+				$(this).val('Starting Observe');
+				$.ajax({
+					type: "GET",
+					url: "/coap_resource/observe/" + uri.replace(/\//g, '|') + "/start",
+					dataType: "text",
+					success: observeResponse
+				});
+			}
+			else if($(this).val() == "Stop Observing"){
+				console.log("Button clicked: stopping observe for " + uri);
+				$(this).val('Start Observing');
+				$.ajax({
+					type: "GET",
+					url: "/coap_resource/observe/" + uri.replace(/\//g, '|') + "/stop"
+				});
+			}
 		}
 	);
 	
@@ -252,6 +277,21 @@ function getResponse(input){
 		$(label).hide();
 		$(label).html(matches[3]);
 		$(label).fadeIn('slow');
+	}
+}
+
+function observeResponse(input){
+	console.log("Response for observe: " + input);
+	var regex = /<uri>(.*)<\/uri><response>(.*)<\/response>/;
+	var matches = regex.exec(input);
+	if(matches){
+		if(matches[2] == "success"){
+			$('#btn_OBSERVE_' + matches[1]).val("Stop Observing");
+		}
+		else if(matches[2] == "failed"){
+			$('#btn_OBSERVE_' + matches[1]).val("Start Observing");
+			$('#lbl_OBSERVE_' + matches[1]).html("Observe could not be started");
+		}
 	}
 }
 
