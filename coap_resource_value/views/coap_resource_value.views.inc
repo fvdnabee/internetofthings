@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Providing extra functionality for the coap_resource_value UI via views.
+ * Providing extra functionality for the Coap_resource_value UI via views.
  */
 
 
@@ -54,14 +54,14 @@ function coap_resource_value_views_default_views() {
   $view->description = 'A list of all coap_resource_values';
   $view->tag = 'coap_resource_values';
   $view->base_table = 'coap_resource_value';
-  $view->human_name = 'coap_resource_values';
+  $view->human_name = 'Coap_resource_values';
   $view->core = 7;
   $view->api_version = '3.0-alpha1';
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
   
   /* Display: Master */
   $handler = $view->new_display('default', 'Master', 'default');
-  $handler->display->display_options['title'] = 'coap_resource_values';
+  $handler->display->display_options['title'] = 'Coap_resource_values';
   $handler->display->display_options['access']['type'] = 'perm';
   $handler->display->display_options['access']['perm'] = 'create any coap_resource_value type';
   $handler->display->display_options['cache']['type'] = 'none';
@@ -71,12 +71,12 @@ function coap_resource_value_views_default_views() {
   $handler->display->display_options['pager']['options']['items_per_page'] = '10';
   $handler->display->display_options['style_plugin'] = 'table';
   $handler->display->display_options['style_options']['columns'] = array(
-    'name' => 'name',
+    'payload' => 'payload',
     'coap_resource_value_id' => 'coap_resource_value_id',
   );
   $handler->display->display_options['style_options']['default'] = '-1';
   $handler->display->display_options['style_options']['info'] = array(
-    'name' => array(
+    'payload' => array(
       'sortable' => 0,
       'default_sort_order' => 'asc',
       'align' => '',
@@ -99,7 +99,7 @@ function coap_resource_value_views_default_views() {
   $handler->display->display_options['empty']['area']['label'] = 'Empty ';
   $handler->display->display_options['empty']['area']['empty'] = FALSE;
   $handler->display->display_options['empty']['area']['content'] = 'No coap_resource_values have been created yet';
-  /* Field: coap_resource_value: coap_resource_value ID */
+  /* Field: Coap_resource_value: Coap_resource_value ID */
   $handler->display->display_options['fields']['coap_resource_value_id']['id'] = 'coap_resource_value_id';
   $handler->display->display_options['fields']['coap_resource_value_id']['table'] = 'coap_resource_value';
   $handler->display->display_options['fields']['coap_resource_value_id']['field'] = 'coap_resource_value_id';
@@ -118,26 +118,26 @@ function coap_resource_value_views_default_views() {
   $handler->display->display_options['fields']['coap_resource_value_id']['element_default_classes'] = 1;
   $handler->display->display_options['fields']['coap_resource_value_id']['hide_empty'] = 0;
   $handler->display->display_options['fields']['coap_resource_value_id']['empty_zero'] = 0;
-  /* Field: coap_resource_value: Name */
-  $handler->display->display_options['fields']['name']['id'] = 'name';
-  $handler->display->display_options['fields']['name']['table'] = 'coap_resource_value';
-  $handler->display->display_options['fields']['name']['field'] = 'name';
-  $handler->display->display_options['fields']['name']['alter']['alter_text'] = 0;
-  $handler->display->display_options['fields']['name']['alter']['make_link'] = 0;
-  $handler->display->display_options['fields']['name']['alter']['absolute'] = 0;
-  $handler->display->display_options['fields']['name']['alter']['external'] = 0;
-  $handler->display->display_options['fields']['name']['alter']['replace_spaces'] = 0;
-  $handler->display->display_options['fields']['name']['alter']['trim'] = 0;
-  $handler->display->display_options['fields']['name']['alter']['nl2br'] = 0;
-  $handler->display->display_options['fields']['name']['alter']['word_boundary'] = 1;
-  $handler->display->display_options['fields']['name']['alter']['ellipsis'] = 1;
-  $handler->display->display_options['fields']['name']['alter']['strip_tags'] = 0;
-  $handler->display->display_options['fields']['name']['alter']['html'] = 0;
-  $handler->display->display_options['fields']['name']['element_label_colon'] = 1;
-  $handler->display->display_options['fields']['name']['element_default_classes'] = 1;
-  $handler->display->display_options['fields']['name']['hide_empty'] = 0;
-  $handler->display->display_options['fields']['name']['empty_zero'] = 0;
-  /* Field: coap_resource_value: Link */
+  /* Field: Coap_resource_value: Name */
+  $handler->display->display_options['fields']['payload']['id'] = 'payload';
+  $handler->display->display_options['fields']['payload']['table'] = 'coap_resource_value';
+  $handler->display->display_options['fields']['payload']['field'] = 'payload';
+  $handler->display->display_options['fields']['payload']['alter']['alter_text'] = 0;
+  $handler->display->display_options['fields']['payload']['alter']['make_link'] = 0;
+  $handler->display->display_options['fields']['payload']['alter']['absolute'] = 0;
+  $handler->display->display_options['fields']['payload']['alter']['external'] = 0;
+  $handler->display->display_options['fields']['payload']['alter']['replace_spaces'] = 0;
+  $handler->display->display_options['fields']['payload']['alter']['trim'] = 0;
+  $handler->display->display_options['fields']['payload']['alter']['nl2br'] = 0;
+  $handler->display->display_options['fields']['payload']['alter']['word_boundary'] = 1;
+  $handler->display->display_options['fields']['payload']['alter']['ellipsis'] = 1;
+  $handler->display->display_options['fields']['payload']['alter']['strip_tags'] = 0;
+  $handler->display->display_options['fields']['payload']['alter']['html'] = 0;
+  $handler->display->display_options['fields']['payload']['element_label_colon'] = 1;
+  $handler->display->display_options['fields']['payload']['element_default_classes'] = 1;
+  $handler->display->display_options['fields']['payload']['hide_empty'] = 0;
+  $handler->display->display_options['fields']['payload']['empty_zero'] = 0;
+  /* Field: Coap_resource_value: Link */
   $handler->display->display_options['fields']['link_coap_resource_value']['id'] = 'link_coap_resource_value';
   $handler->display->display_options['fields']['link_coap_resource_value']['table'] = 'coap_resource_value';
   $handler->display->display_options['fields']['link_coap_resource_value']['field'] = 'link_coap_resource_value';
@@ -157,7 +157,7 @@ function coap_resource_value_views_default_views() {
   $handler->display->display_options['fields']['link_coap_resource_value']['element_default_classes'] = 1;
   $handler->display->display_options['fields']['link_coap_resource_value']['hide_empty'] = 0;
   $handler->display->display_options['fields']['link_coap_resource_value']['empty_zero'] = 0;
-  /* Field: coap_resource_value: Operations links */
+  /* Field: Coap_resource_value: Operations links */
   $handler->display->display_options['fields']['operations']['id'] = 'operations';
   $handler->display->display_options['fields']['operations']['table'] = 'coap_resource_value';
   $handler->display->display_options['fields']['operations']['field'] = 'operations';
@@ -184,13 +184,13 @@ function coap_resource_value_views_default_views() {
   $handler->display->display_options['menu']['title'] = 'List';
   $handler->display->display_options['menu']['weight'] = '-10';
   $handler->display->display_options['tab_options']['type'] = 'tab';
-  $handler->display->display_options['tab_options']['title'] = 'coap_resource_values';
+  $handler->display->display_options['tab_options']['title'] = 'Coap_resource_values';
   $handler->display->display_options['tab_options']['description'] = 'Manage coap_resource_values';
   $handler->display->display_options['tab_options']['weight'] = '0';
   $handler->display->display_options['tab_options']['name'] = 'management';
   $translatables['coap_resource_values'] = array(
     t('Master'),
-    t('coap_resource_values'),
+    t('Coap_resource_values'),
     t('more'),
     t('Apply'),
     t('Reset'),
@@ -202,7 +202,7 @@ function coap_resource_value_views_default_views() {
     t('Offset'),
     t('Empty '),
     t('No coap_resource_values have been created yet'),
-    t('coap_resource_value ID'),
+    t('Coap_resource_value ID'),
     t('.'),
     t(','),
     t('Name'),

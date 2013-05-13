@@ -2,7 +2,7 @@
 
 /**
  * @file
- * coap_resource_value editing UI.
+ * Coap_resource_value editing UI.
  *
  * We make very little use of the EntityAPI interface for this - preferring instead to use
  * views. That offers more flexibility to change a UI that will, more often than not,
@@ -12,7 +12,7 @@
 /**
  * UI controller.
  */
-class coap_resource_valueUIController extends EntityDefaultUIController {
+class Coap_resource_valueUIController extends EntityDefaultUIController {
 
   /**
    * Overrides hook_menu() defaults. Main reason for doing this is that
@@ -25,7 +25,7 @@ class coap_resource_valueUIController extends EntityDefaultUIController {
     $wildcard = isset($this->entityInfo['admin ui']['menu wildcard']) ? $this->entityInfo['admin ui']['menu wildcard'] : '%' . $this->entityType;
 
     $items[$this->path] = array(
-      'title' => 'coap_resource_values',
+      'title' => 'Coap_resource_values',
       'description' => 'Add edit and update coap_resource_values.',
       'page callback' => 'system_admin_menu_block_page',
       'access arguments' => array('access administration pages'),
@@ -108,9 +108,8 @@ class coap_resource_valueUIController extends EntityDefaultUIController {
     return $items;
   }
   
-  
   /**
-   * Create the markup for the add coap_resource_value Entities page within the class
+   * Create the markup for the add Coap_resource_value Entities page within the class
    * so it can easily be extended/overriden.
    */ 
   public function addPage() {
@@ -127,7 +126,6 @@ class coap_resource_valueUIController extends EntityDefaultUIController {
   
 }
 
-
 /**
  * Form callback wrapper: create or edit a coap_resource_value.
  *
@@ -141,7 +139,6 @@ function coap_resource_value_form_wrapper($coap_resource_value) {
   coap_resource_value_set_breadcrumb();
   return drupal_get_form('coap_resource_value_edit_form', $coap_resource_value);
 }
-
 
 /**
  * Form callback wrapper: delete a coap_resource_value.
@@ -157,7 +154,6 @@ function coap_resource_value_delete_form_wrapper($coap_resource_value) {
   return drupal_get_form('coap_resource_value_delete_form', $coap_resource_value);
 }
 
-
 /**
  * Form callback: create or edit a coap_resource_value.
  *
@@ -167,13 +163,58 @@ function coap_resource_value_delete_form_wrapper($coap_resource_value) {
  */
 function coap_resource_value_edit_form($form, &$form_state, $coap_resource_value) {
   // Add the default field elements.
-  $form['name'] = array(
+  $form['payload'] = array(
     '#type' => 'textfield',
-    '#title' => t('coap_resource_value Name'),
-    '#default_value' => isset($coap_resource_value->name) ? $coap_resource_value->name : '',
+    '#title' => t('Coap_resource_value Payload'),
+    '#default_value' => isset($coap_resource_value->payload) ? $coap_resource_value->payload : '',
     '#maxlength' => 255,
     '#required' => TRUE,
     '#weight' => -5,
+  );
+  
+  $form['uid'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Coap_resource_value User ID'),
+    '#default_value' => isset($coap_resource_value->uid) ? $coap_resource_value->uid : '',
+    '#maxlength' => 255,
+    '#required' => TRUE,
+    '#weight' => -4,
+  );
+  
+  $form['content_format'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Coap_resource_value Content Format'),
+    '#default_value' => isset($coap_resource_value->content_format) ? $coap_resource_value->content_format : '',
+    '#maxlength' => 255,
+    '#required' => FALSE,
+    '#weight' => -3,
+  );
+  
+  $form['parsed_value'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Coap_resource_value Parsed Value'),
+    '#default_value' => isset($coap_resource_value->parsed_value) ? $coap_resource_value->parsed_value : '',
+    '#maxlength' => 255,
+    '#required' => FALSE,
+    '#weight' => -1,
+  );
+  
+  $form['max_age'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Coap_resource_value Max Age'),
+    '#default_value' => isset($coap_resource_value->max_age) ? $coap_resource_value->max_age : '',
+    '#maxlength' => 255,
+    '#required' => FALSE,
+    '#weight' => 0,
+  );
+  
+  $form['original_response'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Coap_resource_value Original Response'),
+    '#default_value' => isset($coap_resource_value->original_response) ? $coap_resource_value->original_response : '',
+    '#maxlength' => 255,
+    '#required' => FALSE,
+    '#weight' => 1,
   );
   
   $form['data']['#tree'] = TRUE;
@@ -207,7 +248,7 @@ function coap_resource_value_edit_form($form, &$form_state, $coap_resource_value
     '#submit' => $submit + array('coap_resource_value_edit_form_submit'),
   );
   
-  if (!empty($coap_resource_value->name)) {
+  if (!empty($coap_resource_value->payload)) {
     $form['actions']['delete'] = array(
       '#type' => 'submit',
       '#value' => t('Delete coap_resource_value'),
@@ -223,7 +264,6 @@ function coap_resource_value_edit_form($form, &$form_state, $coap_resource_value
   return $form;
 }
 
-
 /**
  * Form API validate callback for the coap_resource_value form
  */
@@ -233,7 +273,6 @@ function coap_resource_value_edit_form_validate(&$form, &$form_state) {
   // Notify field widgets to validate their data.
   field_attach_form_validate('coap_resource_value', $coap_resource_value, $form, $form_state);
 }
-
 
 /**
  * Form API submit callback for the coap_resource_value form.
@@ -265,7 +304,6 @@ function coap_resource_value_form_submit_delete(&$form, &$form_state) {
   $form_state['redirect'] = 'admin/content/coap_resource_values/coap_resource_value/' . $form_state['coap_resource_value']->coap_resource_value_id . '/delete';
 }
 
-
 /**
  * Form callback: confirmation form for deleting a coap_resource_value.
  *
@@ -280,7 +318,7 @@ function coap_resource_value_delete_form($form, &$form_state, $coap_resource_val
   $form['#submit'][] = 'coap_resource_value_delete_form_submit';
 
   $form = confirm_form($form,
-    t('Are you sure you want to delete coap_resource_value %name?', array('%name' => $coap_resource_value->name)),
+    t('Are you sure you want to delete coap_resource_value %payload?', array('%payload' => $coap_resource_value->payload)),
     'admin/content/coap_resource_values/coap_resource_value',
     '<p>' . t('This action cannot be undone.') . '</p>',
     t('Delete'),
@@ -299,16 +337,15 @@ function coap_resource_value_delete_form_submit($form, &$form_state) {
 
   coap_resource_value_delete($coap_resource_value);
 
-  drupal_set_message(t('The coap_resource_value %name has been deleted.', array('%name' => $coap_resource_value->name)));
-  watchdog('coap_resource_value', 'Deleted coap_resource_value %name.', array('%name' => $coap_resource_value->name));
+  drupal_set_message(t('The coap_resource_value %payload has been deleted.', array('%payload' => $coap_resource_value->payload)));
+  watchdog('coap_resource_value', 'Deleted coap_resource_value %payload.', array('%payload' => $coap_resource_value->payload));
 
   $form_state['redirect'] = 'admin/content/coap_resource_values';
 }
 
 
-
 /**
- * Page to add coap_resource_value Entities.
+ * Page to add Coap_resource_value Entities.
  *
  * @todo Pass this through a proper theme function
  */
@@ -316,7 +353,6 @@ function coap_resource_value_add_page() {
   $controller = entity_ui_controller('coap_resource_value');
   return $controller->addPage();
 }
-
 
 /**
  * Displays the list of available coap_resource_value types for coap_resource_value creation.
@@ -336,7 +372,7 @@ function theme_coap_resource_value_add_list($variables) {
   }
   else {
     if (user_access('administer coap_resource_value types')) {
-      $output = '<p>' . t('coap_resource_value Entities cannot be added because you have not created any coap_resource_value types yet. Go to the <a href="@create-coap_resource_value-type">coap_resource_value type creation page</a> to add a new coap_resource_value type.', array('@create-coap_resource_value-type' => url('admin/structure/coap_resource_value_types/add'))) . '</p>';
+      $output = '<p>' . t('Coap_resource_value Entities cannot be added because you have not created any coap_resource_value types yet. Go to the <a href="@create-coap_resource_value-type">coap_resource_value type creation page</a> to add a new coap_resource_value type.', array('@create-coap_resource_value-type' => url('admin/structure/coap_resource_value_types/add'))) . '</p>';
     }
     else {
       $output = '<p>' . t('No coap_resource_value types have been created yet for you to use.') . '</p>';
@@ -346,10 +382,6 @@ function theme_coap_resource_value_add_list($variables) {
   return $output;
 }
 
-
-
-
-
 /**
  * Sets the breadcrumb for administrative coap_resource_value pages.
  */
@@ -358,7 +390,7 @@ function coap_resource_value_set_breadcrumb() {
     l(t('Home'), '<front>'),
     l(t('Administration'), 'admin'),
     l(t('Content'), 'admin/content'),
-    l(t('coap_resource_values'), 'admin/content/coap_resource_values'),
+    l(t('Coap_resource_values'), 'admin/content/coap_resource_values'),
   );
 
   drupal_set_breadcrumb($breadcrumb);

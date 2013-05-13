@@ -1,4 +1,4 @@
-name = coap_resource_value
+name = Coap_resource_value
 description = Provides entity functionality as an example to use in your own development projects
 core = 7.x
 

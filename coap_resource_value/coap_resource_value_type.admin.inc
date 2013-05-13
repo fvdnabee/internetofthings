@@ -2,13 +2,13 @@
 
 /**
  * @file
- * coap_resource_value type editing UI.
+ * Coap_resource_value type editing UI.
  */
 
 /**
  * UI controller.
  */
-class coap_resource_valueTypeUIController extends EntityDefaultUIController {
+class Coap_resource_valueTypeUIController extends EntityDefaultUIController {
 
   /**
    * Overrides hook_menu() defaults.
