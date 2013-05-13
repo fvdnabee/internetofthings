@@ -2,9 +2,10 @@
 
 /**
  * @file
- * Module for the coap_resource_value Entity - a starting point to create your own Entity
+ * Module for the Coap_resource_value Entity - a starting point to create your own Entity
  * and associated administration interface
  */  
+
 
 /**
  * Implement hook_entity_info().
@@ -16,11 +17,11 @@
  */
 function coap_resource_value_entity_info() {
   $return['coap_resource_value'] = array(
-    'label' => t('coap_resource_value'),
+    'label' => t('Coap_resource_value'),
     // The entity class and controller class extend the classes provided by the
     // Entity API
-    'entity class' => 'coap_resource_value',
-    'controller class' => 'coap_resource_valueController',
+    'entity class' => 'Coap_resource_value',
+    'controller class' => 'Coap_resource_valueController',
     'base table' => 'coap_resource_value',
     'fieldable' => TRUE,
     'entity keys' => array(
@@ -38,19 +39,19 @@ function coap_resource_value_entity_info() {
     'creation callback' => 'coap_resource_value_create',
     'access callback' => 'coap_resource_value_access',
     'module' => 'coap_resource_value',
-    // The information below is used by the coap_resource_valueUIController (which extends the EntityDefaultUIController)
+    // The information below is used by the Coap_resource_valueUIController (which extends the EntityDefaultUIController)
     'admin ui' => array(
       'path' => 'admin/content/coap_resource_values',
       'file' => 'coap_resource_value.admin.inc',
-      'controller class' => 'coap_resource_valueUIController',
+      'controller class' => 'Coap_resource_valueUIController',
       'menu wildcard' => '%coap_resource_value',
     ),
   );
   // The entity that holds information about the entity types	  
   $return['coap_resource_value_type'] = array(
-    'label' => t('coap_resource_value Type'),
-    'entity class' => 'coap_resource_valueType',
-    'controller class' => 'coap_resource_valueTypeController',
+    'label' => t('Coap_resource_value Type'),
+    'entity class' => 'Coap_resource_valueType',
+    'controller class' => 'Coap_resource_valueTypeController',
     'base table' => 'coap_resource_value_type',
     'fieldable' => FALSE,
     'bundle of' => 'coap_resource_value',
@@ -66,12 +67,13 @@ function coap_resource_value_entity_info() {
     'admin ui' => array(
       'path' => 'admin/structure/coap_resource_value_types',
       'file' => 'coap_resource_value_type.admin.inc',
-      'controller class' => 'coap_resource_valueTypeUIController',
+      'controller class' => 'Coap_resource_valueTypeUIController',
     ),
   );
 
   return $return;
 }
+
 
 /**
  * Implements hook_entity_info_alter().
@@ -95,6 +97,7 @@ function coap_resource_value_entity_info_alter(&$entity_info) {
   }
 }
   
+
 /**
  * Implements hook_permission().
  */
@@ -127,6 +130,7 @@ function coap_resource_value_permission() {
   return $permissions;  
 }
 
+
 /**
  * Determines whether the given user has access to a coap_resource_value.
  *
@@ -154,6 +158,7 @@ function coap_resource_value_access($op, $coap_resource_value = NULL, $account =
   return FALSE;
 }
 
+
 /**
  * Access callback for the entity API.
  */
@@ -161,12 +166,13 @@ function coap_resource_value_type_access($op, $type = NULL, $account = NULL) {
   return user_access('administer coap_resource_value types', $account);
 }
 
+
 /**
  * Gets an array of all coap_resource_value types, keyed by the type name.
  *
  * @param $type_name
  *   If set, the type with the given name is returned.
- * @return coap_resource_valueType[]
+ * @return Coap_resource_valueType[]
  *   Depending whether $type isset, an array of coap_resource_value types or a single one.
  */
 function coap_resource_value_get_types($type_name = NULL) {
@@ -175,6 +181,7 @@ function coap_resource_value_get_types($type_name = NULL) {
   $types = entity_load_multiple_by_name('coap_resource_value_type', isset($type_name) ? array($type_name) : FALSE);
   return isset($type_name) ? reset($types) : $types;
 }
+
 
 /**
  * Menu argument loader; Load a coap_resource_value type by string.
@@ -187,6 +194,7 @@ function coap_resource_value_get_types($type_name = NULL) {
 function coap_resource_value_type_load($type) {
   return coap_resource_value_get_types($type);
 }
+
 
 /**
  * Fetch a coap_resource_value object. Make sure that the wildcard you choose 
@@ -205,6 +213,7 @@ function coap_resource_value_load($coap_resource_value_id, $reset = FALSE) {
   $coap_resource_values = coap_resource_value_load_multiple(array($coap_resource_value_id), array(), $reset);
   return reset($coap_resource_values);
 }
+
 
 /**
  * Load multiple coap_resource_values based on certain conditions.
@@ -225,12 +234,14 @@ function coap_resource_value_load_multiple($coap_resource_value_ids = array(), $
   return entity_load('coap_resource_value', $coap_resource_value_ids, $conditions, $reset);
 }
 
+
 /**
  * Deletes a coap_resource_value.
  */
-function coap_resource_value_delete(coap_resource_value $coap_resource_value) {
+function coap_resource_value_delete(Coap_resource_value $coap_resource_value) {
   $coap_resource_value->delete();
 }
+
 
 /**
  * Delete multiple coap_resource_values.
@@ -242,6 +253,7 @@ function coap_resource_value_delete_multiple(array $coap_resource_value_ids) {
   entity_get_controller('coap_resource_value')->delete($coap_resource_value_ids);
 }
 
+
 /**
  * Create a coap_resource_value object.
  */
@@ -249,45 +261,51 @@ function coap_resource_value_create($values = array()) {
   return entity_get_controller('coap_resource_value')->create($values);
 }
 
+
 /**
  * Saves a coap_resource_value to the database.
  *
  * @param $coap_resource_value
  *   The coap_resource_value object.
  */
-function coap_resource_value_save(coap_resource_value $coap_resource_value) {
+function coap_resource_value_save(Coap_resource_value $coap_resource_value) {
   return $coap_resource_value->save();
 }
+
 
 /**
  * Saves a coap_resource_value type to the db.
  */
-function coap_resource_value_type_save(coap_resource_valueType $type) {
+function coap_resource_value_type_save(Coap_resource_valueType $type) {
   $type->save();
 }
+
 
 /**
  * Deletes a coap_resource_value type from the db.
  */
-function coap_resource_value_type_delete(coap_resource_valueType $type) {
+function coap_resource_value_type_delete(Coap_resource_valueType $type) {
   $type->delete();
 }
+
 
 /**
  * URI callback for coap_resource_values
  */
-function coap_resource_value_uri(coap_resource_value $coap_resource_value){
+function coap_resource_value_uri(Coap_resource_value $coap_resource_value){
   return array(
     'path' => 'coap_resource_value/' . $coap_resource_value->coap_resource_value_id,
   );
 }
 
+
 /**
  * Menu title callback for showing individual entities
  */
-function coap_resource_value_page_title(coap_resource_value $coap_resource_value){
-  return $coap_resource_value->name;
+function coap_resource_value_page_title(Coap_resource_value $coap_resource_value){
+  return $coap_resource_value->payload;
 }
+
 
 /**
  * Sets up content to show an individual coap_resource_value
@@ -296,9 +314,10 @@ function coap_resource_value_page_title(coap_resource_value $coap_resource_value
 function coap_resource_value_page_view($coap_resource_value, $view_mode = 'full') {    
   $controller = entity_get_controller('coap_resource_value');  
   $content = $controller->view(array($coap_resource_value->coap_resource_value_id => $coap_resource_value));
-  drupal_set_title($coap_resource_value->name);
+  drupal_set_title($coap_resource_value->payload);
   return $content;
 }
+
 
 /**
  * Implements hook_views_api().
@@ -309,6 +328,7 @@ function coap_resource_value_views_api() {
     'path' => drupal_get_path('module', 'coap_resource_value') . '/views',
   );
 }
+
 
 /**
  * Implement hook_theme().
@@ -332,6 +352,7 @@ function coap_resource_value_theme() {
   );
 }  
 
+
 /**
  * Implements hook_menu_local_tasks_alter().
  */
@@ -348,17 +369,18 @@ function coap_resource_value_menu_local_tasks_alter(&$data, $router_item, $root_
   }
 }
 
+
 /**
  * The class used for coap_resource_value entities
  */
-class coap_resource_value extends Entity {
+class Coap_resource_value extends Entity {
   
   public function __construct($values = array()) {
     parent::__construct($values, 'coap_resource_value');
   }
 
   protected function defaultLabel() {
-    return $this->name;
+    return $this->payload;
   }
 
   protected function defaultUri() {
@@ -368,10 +390,11 @@ class coap_resource_value extends Entity {
   
 }
 
+
 /**
  * The class used for coap_resource_value type entities
  */
-class coap_resource_valueType extends Entity {
+class Coap_resource_valueType extends Entity {
   
   public $type;
   public $label;
@@ -382,10 +405,11 @@ class coap_resource_valueType extends Entity {
   
 }
 
+
 /**
- * The Controller for coap_resource_value entities
+ * The Controller for Coap_resource_value entities
  */
-class coap_resource_valueController extends EntityAPIController {
+class Coap_resource_valueController extends EntityAPIController {
   public function __construct($entityType) {
     parent::__construct($entityType);
   }
@@ -403,14 +427,20 @@ class coap_resource_valueController extends EntityAPIController {
    *   A coap_resource_value object with all default fields initialized.
    */
   public function create(array $values = array()) {
-    // Add values that are specific to our coap_resource_value
+    // Add values that are specific to our Coap_resource_value
     $values += array( 
       'coap_resource_value_id' => '',
       'is_new' => TRUE,
       'title' => '',
+	  'uid' => '',
       'created' => '',
       'changed' => '',
       'data' => '',
+	  'content_format' => '',
+	  'payload' => '',
+	  'parsed_value' => '',
+	  'max_age' => '',
+	  'original_response' => '',
     );
     
     $coap_resource_value = parent::create($values);
@@ -431,10 +461,11 @@ class coap_resource_valueController extends EntityAPIController {
   
 }
 
+
 /**
- * The Controller for coap_resource_value entities
+ * The Controller for Coap_resource_value entities
  */
-class coap_resource_valueTypeController extends EntityAPIControllerExportable {
+class Coap_resource_valueTypeController extends EntityAPIControllerExportable {
   public function __construct($entityType) {
     parent::__construct($entityType);
   }
@@ -451,7 +482,7 @@ class coap_resource_valueTypeController extends EntityAPIControllerExportable {
    *   A coap_resource_value type object with all default fields initialized.
    */
   public function create(array $values = array()) {
-    // Add values that are specific to our coap_resource_value
+    // Add values that are specific to our Coap_resource_value
     $values += array( 
       'id' => '',
       'is_new' => TRUE,
