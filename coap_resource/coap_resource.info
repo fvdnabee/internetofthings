@@ -7,4 +7,6 @@ dependencies[] = background_process
 dependencies[] = coap_library
 dependencies[] = device_uri_field
 dependencies[] = resource_uri_field
+dependencies[] = node_reference
+dependencies[] = entity
 //dependencies[] = coap_resource_value

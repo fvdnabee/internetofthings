@@ -139,10 +139,32 @@ function coap_resource_node_view($node, $view_mode, $langcode) {
 	return $node;
 }
 
+function create_my_node(){
+	global $user;
+	// Create an Entity
+	$new_node = entity_create('node', array('type' => 'test_content_type'));
+	// Specify the author
+	$new_node->uid = $user->uid;
+	// Create a Entity Wrapper of that new Entity
+	$entity = entity_metadata_wrapper('node',$new_node);
+	 
+	// Specify the title
+	$entity->title = 'Test node';
+	dpm($entity->getPropertyInfo());
+	// Add field data... SO MUCH BETTER!
+	dpm($entity->field_textarea);
+	//$entity->coap_resource_uri_field->set('2001:6a8:1d80:200::2/obs');
+	$entity->field_textarea->set('2001:6a8:1d80:200::2/obs');
+	//$entity->field_reference->set('2001:6a8:1d80:200::2/obs');
+	// Save the node.
+	// $entity->save();
+}
+
 function coap_resource_form($form, &$form_state, $node) {
 	drupal_add_js('https://www.google.com/jsapi'); // JavaScript bestand toevoegen
 	drupal_add_js(drupal_get_path('module', 'coap_resource') . '/js/coap_resource.js'); // JavaScript bestand toevoegen	
 	global $user;
+	//create_my_node();
 	
 	$nid = $node->nid;
 	$form['nid'] = array

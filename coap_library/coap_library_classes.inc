@@ -532,7 +532,7 @@ class CoAPMessage {
 			$request_option_value = '';
 			if($carry) $request_option_value .= '01';
 			$request_option_value .= $first_hex_digits . $last_hex_digit;
-			dpm($request_option_value);
+			//dpm($request_option_value);
 			$this->add_option(23, $request_option_value);
 			
 			//	Send the request
