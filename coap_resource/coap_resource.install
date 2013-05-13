@@ -19,7 +19,7 @@ function coap_resource_node_info() {
       'name' => t('CoAP device'),
       'base' => 'node_content',
 	  'has_body' => FALSE,
-	  'has_title' => FALSE,
+	  //'has_title' => FALSE,
 	  'locked' => TRUE,
       'description' => t('CoAP devce form, managing one device with a well-known/core.'),
     ),
@@ -56,6 +56,18 @@ function _coap_resource_installed_fields()  {
 	'cardinality' => 1,
     'type' => 'resource_uri_field',
   );
+  $fields['resource_references_field'] = array(
+    'field_name' => 'resource_references_field',
+    'label' => 'Resource References',
+    'type' => 'node_reference',
+    'settings' => array(
+      'referenceable_types' => array(
+        'coap_resource' => 'coap_resource'
+      ),
+    ),
+    'cardinality' => '-1',
+  );
+  
   return $fields;
 }
 
@@ -89,7 +101,7 @@ function _coap_resource_installed_instances()  {
 	$instances['coap_resource_uri_field'] = array(
 		'field_name' => 'coap_resource_uri_field',
 		'entity_type' => 'node',
-		//'required' => TRUE,
+		'required' => TRUE,
 		'bundle' => 'coap_resource',
 		'type' => 'text',
 		'label' => t('Resource URI') ,    
@@ -110,6 +122,18 @@ function _coap_resource_installed_instances()  {
 		),
 	'description' => 'Enter URI',
 	);
+	
+	$instances['resource_references_field'] = array(
+		'field_name' => 'resource_references_field',
+		'label' => 'Resources',
+		'type' => 'node_reference',
+		'widget' => array(
+			'type' => 'node_reference_autocomplete'
+		),
+		'entity_type' => 'node',
+		'bundle' => 'coap_device',
+	); 
+	
 	return $instances;
 }
 
