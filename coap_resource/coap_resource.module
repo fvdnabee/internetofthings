@@ -49,6 +49,13 @@ function coap_resource_menu() {
 		"access callback" => true,
 		"type" => MENU_CALLBACK
 	);
+	$items["coap_resource/request/%"] = array(
+		"title" => "Start GET request for given URI",
+		"page callback" => "coap_resource_start_request_for_uri",
+		"page arguments" => array(2, 3, 4),
+		"access callback" => true,
+		"type" => MENU_CALLBACK
+	);
 	
 	$items['node/%coap_resource_menu/view/discovery'] = array(
 		'title' => 'Discovery',    
@@ -214,8 +221,8 @@ function coap_resource_form($form, &$form_state, $node) {
 		coap_resource_post_request_form($form, $form_state);
 		coap_resource_delete_request_form($form, $form_state);
 		
-		// dpm($uri);
-		// dpm($first_resource['uri']);
+		dpm($uri);
+		dpm($first_resource['uri']);
 		
 		// Tabel met geschiedenis van opvragingen(5 laatste)
 		$result = db_select('coap_resource_values', 'coap_values')
@@ -1090,6 +1097,78 @@ function coap_resource_start_request($method, $nid, $payload=''){
 		if($response_obj != null){
 			//	Insert the response into the database for the current user
 			coap_resource_give_response_to_user($response_obj, $method);
+		}
+	}
+}
+
+// 	Creates and sends the CoAP message with given method for the given URI
+function coap_resource_start_request_for_uri($method, $uri, $payload=''){
+
+	$uri = str_replace('|', '/', $uri);
+	global $user;
+	
+	//	Determine if resource uses separate response
+	$query = db_select('coap_resource_resources', 'resources');
+	$query
+		->fields('resources', array('uri', 'separate_response'))
+		->condition('separate_response', 1, '=')
+		->condition('uri', $uri, '=');
+	$result = $query->execute();
+	$separate_response = ($result->rowCount() > 0);
+	
+	$pattern = '/([^\/]+)\/(.*)/i';
+	if(preg_match($pattern, $uri, $matches)){
+		//	Build message
+		$coap_factory = new CoAPMessageFactory('coap_resource', $matches[1], $matches[2], $separate_response);
+		switch ($method) {
+			case 'GET':
+				$coap_message = $coap_factory->create_basic_get_request($matches[2]);
+				break;
+			case 'PUT':
+				$coap_message = $coap_factory->create_basic_put_request($matches[2]);
+				break;
+			case 'POST':
+				$coap_message = $coap_factory->create_basic_post_request($matches[2]);
+				break;
+			case 'DELETE':
+				$coap_message = $coap_factory->create_basic_delete_request($matches[2]);
+				break;
+		}
+		if($payload != ''){
+			$coap_message->set_payload(coap_library_string_to_hex_with_padding($payload));
+		}
+		
+		$response_obj = null;
+		
+		if($method == "GET"){
+			//	Get last value from the database for the given resource to check if value is still valid and use this value if it's still valid
+			$cache_query = db_select('coap_resource_values', 'coap_resource_values');
+			$cache_query
+				->fields('coap_resource_values', array('uri', 'uid', 'hid', 'original_response', 'max_age', 'timestamp'))
+				->condition('uri', $uri, '=')
+				->condition('uid', $user->uid, '=')
+				->orderBy('hid', 'DESC')
+				->range(0,1);
+			$cache_result = $cache_query->execute();
+			foreach($cache_result as $cache_record){
+				//	Check if the last value has a max age and if it has, check if the value is still valid
+				if($cache_record->max_age != null && time()-strtotime($cache_record->timestamp) < intval($cache_record->max_age)){
+					$response_obj = $coap_factory->create_message_with_given_hex_message($cache_record->original_response);
+				}
+			}
+		}
+		
+		//	Get new value if previous isn't still valid or isn't GET
+		if($response_obj == null){
+			$response_obj = $coap_message->send_message();
+			if($response_obj != null){
+				//	Insert the response into the database to add to the history of responses
+				coap_resource_insert_response_into_database($response_obj, $user->uid);
+			}
+		}
+		
+		if($response_obj != null){
+			print "<uri>" . $uri . "</uri><method>" . $method . "</method><response>" . $response_obj->get_payload_text() . "</response>";
 		}
 	}
 }

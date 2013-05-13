@@ -41,9 +41,28 @@ $(document).ready(function() {
 		}
 	);
 	
-	$('.GET_BUTTON').click(
+	$('.REQUEST_BUTTON').click(
 		function(){
-			alert('op GET knop geklikt');
+			var uri = $($(this).parent().parent().find('.uri')[0]).html();
+			var method = $(this).parent().attr('class');
+			var input_element = $(this).parent().find('.' + method + "_INPUT")[0];
+			var input = '';
+			if(typeof(input_element) != "undefined"){
+				input = $(input_element).val();
+			}
+			console.log("Button clicked: starting " + method + " request for " + uri + " with input = " + input);
+			var label_id = "#lbl_" + method + "_" + uri;
+			label_id = label_id.replace(/\:/g, '\\\:');
+			label_id = label_id.replace(/\//g, '\\\/');
+			$(label_id).hide();
+			$(label_id).html("Fetching response...");
+			$(label_id).fadeIn("slow");
+			$.ajax({
+				type: method,
+				url: "/coap_resource/request/" + method + "/" + uri.replace(/\//g, '|') + "/" + input,
+				dataType: "text",
+				success: getResponse
+			});
 		}
 	);
 	
@@ -55,7 +74,7 @@ $(document).ready(function() {
 function tempReceived(html){
 	var regex = /<error>(.*)<\/error><responded>(.*)<\/responded><get_response>(.*)<\/get_response><method>(.*)<\/method><response_type>(.*)<\/response_type><tr><td>(\d+)<\/td><td>(.*)<\/td><td>(.*)<\/td><td>(.*)<\/td><\/tr>/;
 	var matches = regex.exec(html);
-	console.log('input ajax call: ' + html);
+	// console.log('input ajax call: ' + html);
 	if(matches && matches[1] == 'none'){
 		$('#error').hide();
 		$('#errorimg').attr('style', 'visibility:hidden;');
@@ -220,6 +239,20 @@ function drawChart() {
 
     var chart = new google.visualization.LineChart(document.getElementById('grafiek'));
     chart.draw(data, options);
+}
+
+function getResponse(input){
+	console.log("Response for GET request: " + input);
+	var regex = /<uri>(.*)<\/uri><method>(.*)<\/method><response>(.*)<\/response>/;
+	var matches = regex.exec(input);
+	if(matches){
+		var label = '#lbl_' + matches[2] + "_" + matches[1];
+		label = label.replace(/\:/g, '\\\:');
+		label = label.replace(/\//g, '\\\/');
+		$(label).hide();
+		$(label).html(matches[3]);
+		$(label).fadeIn('slow');
+	}
 }
 
 })(jQuery);
