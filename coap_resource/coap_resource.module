@@ -49,10 +49,10 @@ function coap_resource_menu() {
 		"access callback" => true,
 		"type" => MENU_CALLBACK
 	);
-	$items["coap_resource/GET/%"] = array(
+	$items["coap_resource/request/%"] = array(
 		"title" => "Start GET request for given URI",
 		"page callback" => "coap_resource_start_request_for_uri",
-		"page arguments" => array(2, "GET"),
+		"page arguments" => array(2, 3, 4),
 		"access callback" => true,
 		"type" => MENU_CALLBACK
 	);
@@ -221,8 +221,8 @@ function coap_resource_form($form, &$form_state, $node) {
 		coap_resource_post_request_form($form, $form_state);
 		coap_resource_delete_request_form($form, $form_state);
 		
-		// dpm($uri);
-		// dpm($first_resource['uri']);
+		dpm($uri);
+		dpm($first_resource['uri']);
 		
 		// Tabel met geschiedenis van opvragingen(5 laatste)
 		$result = db_select('coap_resource_values', 'coap_values')
@@ -1102,9 +1102,9 @@ function coap_resource_start_request($method, $nid, $payload=''){
 }
 
 // 	Creates and sends the CoAP message with given method for the given URI
-function coap_resource_start_request_for_uri($uri, $method, $payload=''){
+function coap_resource_start_request_for_uri($method, $uri, $payload=''){
 
-	$uri = str_replace('-', '/', $uri);
+	$uri = str_replace('|', '/', $uri);
 	global $user;
 	
 	//	Determine if resource uses separate response
@@ -1164,8 +1164,11 @@ function coap_resource_start_request_for_uri($uri, $method, $payload=''){
 			if($response_obj != null){
 				//	Insert the response into the database to add to the history of responses
 				coap_resource_insert_response_into_database($response_obj, $user->uid);
-				print $response_obj->get_hex_message();
 			}
+		}
+		
+		if($response_obj != null){
+			print "<uri>" . $uri . "</uri><method>" . $method . "</method><response>" . $response_obj->get_payload_text() . "</response>";
 		}
 	}
 }
