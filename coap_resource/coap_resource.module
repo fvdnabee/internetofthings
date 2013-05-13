@@ -56,6 +56,13 @@ function coap_resource_menu() {
 		"access callback" => true,
 		"type" => MENU_CALLBACK
 	);
+	$items["coap_resource/observe/%"] = array(
+		"title" => "Starts observing the given URI",
+		"page callback" => "coap_resource_handle_observing_for_uri",
+		"page arguments" => array(2, 3),
+		"access callback" => true,
+		"type" => MENU_CALLBACK
+	);
 	
 	$items['node/%coap_resource_menu/view/discovery'] = array(
 		'title' => 'Discovery',    
@@ -243,8 +250,8 @@ function coap_resource_form($form, &$form_state, $node) {
 		coap_resource_post_request_form($form, $form_state);
 		coap_resource_delete_request_form($form, $form_state);
 		
-		//dpm($uri);
-		//dpm($first_resource['uri']);
+		// dpm($uri);
+		// dpm($first_resource['uri']);
 		
 		// Tabel met geschiedenis van opvragingen(5 laatste)
 		$result = db_select('coap_resource_values', 'coap_values')
@@ -562,6 +569,7 @@ function coap_resource_observe_form(&$form, &$form_state, $nid) {
 function coap_resource_observe_form_submit($form, $form_state) {
 	global $user;
 	
+	//	Get URI's for this user and for this node
 	$result = db_select('coap_resource_users', 'users')
 		->fields('users', array('uid', 'uri'))
 		->condition('uid', $user->uid, '=')
@@ -569,6 +577,7 @@ function coap_resource_observe_form_submit($form, $form_state) {
 		->condition('nid', $form_state['values']['nid'], '=')
 		->execute();
 	foreach ($result as $record){
+		//	Get number of observers for the current URI
 		$observe_result = db_select('coap_resource_users', 'users')
 			->fields('users', array('uid', 'uri', 'observe'))
 			->condition('uri', $record->uri, '=')
@@ -576,10 +585,13 @@ function coap_resource_observe_form_submit($form, $form_state) {
 			->condition('observe', 1, '=')
 			->execute();
 		$num_observers = $observe_result->rowCount();
-	
+		
+		//	Start observing the current URI if this user is interested and no one else was already observing
 		if($form_state['values'][$record->uri] != 0 && $num_observers == 0){
 			background_process_start('coap_resource_start_observing', $record->uri);
 		}
+		
+		//	Store in database that this user is observing or not observing the current URI
 		$num_updated = db_update('coap_resource_users')
 			->fields(array(
 				'observe' => $form_state['values'][$record->uri],
@@ -589,13 +601,16 @@ function coap_resource_observe_form_submit($form, $form_state) {
 			->condition('device', 0, '=')
 			->condition('nid', $form_state['values']['nid'], '=')
 			->execute();
-			
+		
+		//	Get number of users that is still observing the current URI
 		$observe_result = db_select('coap_resource_users', 'users')
 			->fields('users', array('uid', 'uri', 'observe'))
 			->condition('uri', $record->uri, '=')
 			->condition('device', 0, '=')
 			->condition('observe', 1, '=')
 			->execute();
+		
+		//	Stop observing the URI if no one is interested anymore
 		if($observe_result->rowCount() == 0){
 			coap_library_stop_observing('coap_resource', $record->uri);
 		}
@@ -1289,4 +1304,52 @@ function coap_resource_insert_response_into_database($response_obj, $uid){
 			'uid' => $uid,
 		))
 		->execute();
+}
+
+//	Callback for AJAX call
+//	Starts observe for the given URI
+function coap_resource_handle_observing_for_uri($uri, $state){
+	global $user;
+	
+	$uri = str_replace('|', '/', $uri); //	Put slashes back in the URI
+	
+	//	Get number of observers for the current URI
+	$observe_result = db_select('coap_resource_users', 'users')
+		->fields('users', array('uid', 'uri', 'observe'))
+		->condition('uri', $uri, '=')
+		->condition('device', 0, '=')
+		->condition('observe', 1, '=')
+		->execute();
+	$num_observers = $observe_result->rowCount();
+	
+	//	Start observing the current URI if this user is interested and no one else was already observing
+	if($state == "start" && $num_observers == 0){
+		background_process_start('coap_resource_start_observing', $record->uri);
+	}
+	
+	//	Store in database that this user is observing or not observing the current URI
+	$num_updated = db_update('coap_resource_users')
+		->fields(array(
+			'observe' => ($start == "start" ? 1 : 0),
+		))
+		->condition('uri', $uri, '=')
+		->condition('uid', $user->uid, '=')
+		->condition('device', 0, '=')
+		->execute();
+	
+	//	Get number of users that is still observing the current URI
+	$observe_result = db_select('coap_resource_users', 'users')
+		->fields('users', array('uid', 'uri', 'observe'))
+		->condition('uri', $uri, '=')
+		->condition('device', 0, '=')
+		->condition('observe', 1, '=')
+		->execute();
+	
+	//	Stop observing the URI if no one is interested anymore
+	if($observe_result->rowCount() == 0){
+		coap_library_stop_observing('coap_resource', $uri);
+	}
+	
+	//	Return value for AJAX call
+	echo "<uri>" . $uri . "</uri><response>success</response>";
 }
