@@ -277,8 +277,7 @@ function coap_resource_schema() {
 			),
 	);
 
-	//
-	// Tabel om opgevraagde waarden op te slaan
+	// Table to store the fetched values
 	$schema['coap_resource_values'] = array(
 		'description' => 'Tabel om geschiedenis van opgevraagde waarden op te slaan',
 		'fields' => array(
@@ -336,6 +335,13 @@ function coap_resource_schema() {
 					'length' => '2048',
 					'default' => 'empty',
 					'description' => 'De originele response van de aanvraag',
+				),
+				'new' => array(
+					'type' => 'int',
+					'not null' => TRUE,
+					'default' => 1,
+					'unsigned' => TRUE,
+					'description' => 'Value indicating if the value is new',
 				),
 			),
 			'primary key' => array('hid'),
