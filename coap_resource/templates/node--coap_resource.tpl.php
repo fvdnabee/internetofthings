@@ -1,6 +1,6 @@
-<div class = 'coap_resource' style="padding:5px;border:2px solid;border-radius:10px;box-shadow:10px 10px 5px #888888;" >
+<div class = 'coap_resource' id = "<?php echo $content['field_resource_uri']['#items'][0]['uri']; ?>" style="padding:5px;border:2px solid;border-radius:10px;box-shadow:10px 10px 5px #888888;" >
 	<h1 class = "uri" style = "text-align:center" ><?php echo $content['field_resource_uri']['#items'][0]['uri']; ?></h1>
-	<div align = "center" >
+	<div class = "header" align = "center" >
 		<input type = "text" class = "POLLING_INVOER" size = "2" id = "<?php echo "polling_invoer_" . $content['field_resource_uri']['#items'][0]['uri'] ?>" 
 					value = "<?php 	global $user;
 									$result = db_select('coap_resource_users', 'users')
@@ -47,7 +47,7 @@
 		<label 	id = "<?php echo 'lbl_DELETE_' . $content['field_resource_uri']['#items'][0]['uri'] ?>"
 				style = "display:inline" >Perform a DELETE request</label>
 	</div>
-	<div class = 'OBSERVE' style = "text-align:center" >
+	<div class = 'OBSERVE' align = "center" >
 		<input type = "button" id = "<?php echo "btn_OBSERVE_" . $content['field_resource_uri']['#items'][0]['uri'] ?>"
 				class = "OBSERVE_BUTTON form-submit" value = "<?php $result = db_select('coap_resource_users', 'users')
 																	->fields('users', array('uid', 'uri'))
@@ -58,6 +58,54 @@
 																	->execute();
 																	echo ($result->rowCount() ? 'Stop' : 'Start'); ?> Observing" />
 		<label id = "<?php echo "lbl_OBSERVE_" . $content['field_resource_uri']['#items'][0]['uri'] ?>" style = "text-align:center" >Observe input comes here</label>
+	</div>
+	<div class = "history" >
+		<h1>History</h1>
+		<label style = "display:inline" >Selecteer het aantal gewenste rijen: </label>
+		<select style = "display:inline" class = 'historyselect' >
+			<option class = "option1" value = "1" >1</option>
+			<option class = "option2" value = "2" >2</option>
+			<option class = "option3" value = "3" >3</option>
+			<option class = "option4" value = "4" >4</option>
+			<option class = "option5" value = "5" selected = "selected" >5</option>
+			<option class = "option6" value = "6" >6</option>
+			<option class = "option7" value = "7" >7</option>
+			<option class = "option8" value = "8" >8</option>
+			<option class = "option9" value = "9" >9</option>
+			<option class = "option10" value = "10" >10</option>
+		</select>
+		
+		<table class = "historytable" >
+			<thead>
+				<tr><th>Timestamp</th><th>Value</th></tr>
+			</thead>
+			<tbody>
+				<?php
+					global $user;
+					$nr_entrys = 0;
+					$result = db_select('coap_resource_values', 'coap_values')
+						->fields('coap_values', array('timestamp', 'parsed_value'))
+						->condition('uri', $content['field_resource_uri']['#items'][0]['uri'], '=')
+						->condition('uid', $user->uid, '=')
+						->range(0, 10)
+						->orderBy('hid', 'DESC')
+						->execute();
+					foreach($result as $record){
+						$nr_entrys++;
+						$output = "<tr class = 'row" . $nr_entrys . "'";
+						if($nr_entrys > 5){
+							$output .= " style = 'display: none'";
+						}
+						$output .= " ><td>" . $record->timestamp . "</td><td>" . $record->parsed_value . "</td></tr>";
+						echo $output;
+					}
+					while($nr_entrys < 5){
+						$nr_entrys++;
+						echo "<tr class = 'row" . $nr_entrys . "' ><td></td><td></td></tr>";
+					}
+				?>
+			</tbody>
+		</table>
 	</div>
 </div>
 <div style = "visibility:hidden" >

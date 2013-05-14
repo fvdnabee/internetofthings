@@ -123,6 +123,10 @@ function valueReceived(html){
 	$(entrys.children("entry").get().reverse()).each(
 		function(){
 			var id = '#' + uri;
+			var observe_label = "#lbl_OBSERVE_" + uri;
+			observe_label = observe_label.replace(/\:/g, '\\\:');
+			observe_label = observe_label.replace(/\//g, '\\\/');
+			$(observe_label).html($(this).find("value").text());
 			id = id.replace(/\:/g, '\\\:');
 			id = id.replace(/\//g, '\\\/');
 			var table = $(id).find(".historytable");
