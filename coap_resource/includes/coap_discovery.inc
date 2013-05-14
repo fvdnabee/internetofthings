@@ -91,8 +91,8 @@ function coap_discovery_form($form, &$form_state, $node) {
 	}
 	else{
 		//$node = node_load($nid);
-		$image = field_get_items('node', $node, 'coap_device_uri_field');
-		// $output = field_view_value('node', $node, 'coap_device_uri_field', $image[0]);
+		$image = field_get_items('node', $node, 'field_device_uri');
+		// $output = field_view_value('node', $node, 'field_device_uri', $image[0]);
 
 		
 		$form['device_uri'] = array

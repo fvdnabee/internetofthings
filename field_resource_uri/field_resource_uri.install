@@ -1,8 +1,8 @@
 <?php
 
-function device_uri_field_field_schema($field) {
+function field_resource_uri_field_schema($field) {
 
-  if ($field['type'] == 'device_uri_field') {
+  if ($field['type'] == 'field_resource_uri') {
     $schema['columns']['uri'] = array(
       'type' => 'varchar',
       'length' => '255',

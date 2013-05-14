@@ -5,13 +5,13 @@
 /**
  * Implementation of hook_field_info().
  */
-function device_uri_field_field_info() {
+function field_device_uri_field_info() {
   return array(
-    'device_uri_field' => array(
+    'field_device_uri' => array(
       'label' => t('Device URI field'),
       'description' => t('Device URI field.'),
-      'default_widget' => 'device_uri_field_widget',
-      'default_formatter' => 'device_uri_field_formatter',
+      'default_widget' => 'field_device_uri_widget',
+      'default_formatter' => 'field_device_uri_formatter',
     ),
   );
 }
@@ -19,11 +19,11 @@ function device_uri_field_field_info() {
 /**
  * Implements hook_field_widget_info().
  */
-function device_uri_field_field_widget_info() {
+function field_device_uri_field_widget_info() {
   return array(
-    'device_uri_field_widget' => array(
+    'field_device_uri_widget' => array(
       'label' => t('Device field form'),
-      'field types' => array('device_uri_field'),
+      'field types' => array('field_device_uri'),
       'behaviors' => array(
         'multiple values' => FIELD_BEHAVIOR_DEFAULT,
         //Use FIELD_BEHAVIOR_NONE for no default value.
@@ -36,11 +36,11 @@ function device_uri_field_field_widget_info() {
 /**
  * Implements hook_field_formatter_info().
  */
-function device_uri_field_field_formatter_info() {
+function field_device_uri_field_formatter_info() {
   return array(
-    'device_uri_field_formatter' => array(
+    'field_device_uri_formatter' => array(
       'label' => t('Default'),
-      'field types' => array('device_uri_field'),
+      'field types' => array('field_device_uri'),
     ),
   );
 }
@@ -49,13 +49,13 @@ function device_uri_field_field_formatter_info() {
  * Implements hook_field_formatter_view().
  * opgeroepen als content toegevoegd is en de pagina gerenderd w
  */
-function device_uri_field_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+function field_device_uri_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
   $element = array();
 
   switch ($display['type']) {
-    case 'device_uri_field_formatter':
+    case 'field_device_uri_formatter':
       foreach ($items as $delta => $item) {
-        $element[$delta]['#markup'] = theme('device_uri_field_formatter_default', $item);
+        $element[$delta]['#markup'] = theme('field_device_uri_formatter_default', $item);
       }
       break;
   }
@@ -68,9 +68,9 @@ function device_uri_field_field_formatter_view($entity_type, $entity, $field, $i
  * wordt uitgevoerd nadat field toegevoegd wordt aan content type en er opties van het veld ingesteld worden
  * en als je op add content van dit nieuwe content type klikt
  */
-function device_uri_field_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
+function field_device_uri_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
   $base = $element;
-  if ($instance['widget']['type'] == 'device_uri_field_widget') {
+  if ($instance['widget']['type'] == 'field_device_uri_widget') {
     $widget = $instance['widget'];
     $settings = $widget['settings'];
     
@@ -78,7 +78,7 @@ function device_uri_field_field_widget_form(&$form, &$form_state, $field, $insta
       '#type' => 'textfield',
       '#title' => t('Device URI'),
       '#default_value' => isset($items[$delta]['uri']) ? $items[$delta]['uri'] : NULL,
-      '#element_validate' => array('_device_uri_field_uri_validate'),
+      '#element_validate' => array('_field_device_uri_uri_validate'),
     );
 
   }
@@ -88,8 +88,8 @@ function device_uri_field_field_widget_form(&$form, &$form_state, $field, $insta
 /**
  * Implementation of hook_field_is_empty().
  */
-function device_uri_field_field_is_empty($item, $field) {
-	if ($field['type'] == 'device_uri_field') {
+function field_device_uri_field_is_empty($item, $field) {
+	if ($field['type'] == 'field_device_uri') {
 		if (empty($item['uri'])) {
 			return TRUE;
 		}
@@ -100,8 +100,8 @@ function device_uri_field_field_is_empty($item, $field) {
 /**
  * Implementation of hook_field_settings_form().
  */
-function device_uri_field_field_settings_form($field, $instance, $has_data) {
-  if ($field['type'] == 'device_uri_field') {
+function field_device_uri_field_settings_form($field, $instance, $has_data) {
+  if ($field['type'] == 'field_device_uri') {
     $settings = $field['settings'];
     $form = array();
     return $form;
@@ -111,16 +111,16 @@ function device_uri_field_field_settings_form($field, $instance, $has_data) {
 /**
  * Implementation of hook_field_validate().
  */
-// function device_uri_field_field_validate($obj_type, $object, $field, $instance, $langcode, &$items, &$errors) {
-  // if ($field['type'] == 'device_uri_field') {
+// function field_device_uri_field_validate($obj_type, $object, $field, $instance, $langcode, &$items, &$errors) {
+  // if ($field['type'] == 'field_device_uri') {
 
   // }
 // }
 
 /**
- * Validation callback for a device_uri_field uri element.
+ * Validation callback for a field_device_uri uri element.
  */
-function _device_uri_field_uri_validate($element, &$form_state, $form) {
+function _field_device_uri_uri_validate($element, &$form_state, $form) {
 	$regex = '/^(((?=(?>.*?(::))(?!.+\3)))\3?|([\dA-F]{1,4}(\3|:(?!$)|$)|\2))(?4){5}((?4){2}|(25[0-5]|(2[0-4]|1\d|[1-9])?\d)(\.(?7)){3})\z/i';
 	$value = $element['#value'];
 	if (empty($value) || !preg_match($regex, $value, $matches)) {
@@ -128,18 +128,18 @@ function _device_uri_field_uri_validate($element, &$form_state, $form) {
 	}
 }
 
-function device_uri_field_theme($existing, $type, $theme, $path) {
+function field_device_uri_theme($existing, $type, $theme, $path) {
   return array(
-    'device_uri_field_formatter_default' => array(
+    'field_device_uri_formatter_default' => array(
       'variables' => array('item' => NULL),
     ),
   );
 }
 
-function theme_device_uri_field_formatter_default($item) {
+function theme_field_device_uri_formatter_default($item) {
   
   $output = '';
-  $output .= '<div class="device_uri_field-wrapper">';
+  $output .= '<div class="field_device_uri-wrapper">';
   $output .= $item['uri'];
   $output .= '</div><br />';
 

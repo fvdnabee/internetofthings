@@ -141,22 +141,18 @@ function coap_resource_node_view($node, $view_mode, $langcode) {
 function create_my_node(){
 	global $user;
 	// Create an Entity
-	$new_node = entity_create('node', array('type' => 'test_content_type'));
+	$new_node = entity_create('node', array('type' => 'coap_resource'));
 	// Specify the author
 	$new_node->uid = $user->uid;
 	// Create a Entity Wrapper of that new Entity
 	$entity = entity_metadata_wrapper('node',$new_node);
-	 
+
 	// Specify the title
 	$entity->title = 'Test node';
-	dpm($entity->getPropertyInfo());
 	// Add field data... SO MUCH BETTER!
-	dpm($entity->field_textarea);
-	//$entity->coap_resource_uri_field->set('2001:6a8:1d80:200::2/obs');
-	$entity->field_textarea->set('2001:6a8:1d80:200::2/obs');
-	//$entity->field_reference->set('2001:6a8:1d80:200::2/obs');
+	$entity->field_resource_uri->set('2001:6a8:1d80:200::2/large-update');
 	// Save the node.
-	// $entity->save();
+	$entity->save();
 }
 
 function coap_resource_form($form, &$form_state, $node) {
@@ -853,7 +849,7 @@ function coap_resource_delete_request_form_submit($form, $form_state) {
 function coap_resource_node_insert($node){
 	global $user;
 	if($node->type == 'coap_resource'){
-		$uri = $node->coap_resource_uri_field['und'][0]['uri'];
+		$uri = $node->field_resource_uri['und'][0]['uri'];
 		$result = db_select('coap_resource_resources', 'resources')
 			->fields('resources', array('uri'))
 			->condition('uri', $uri, '=')
