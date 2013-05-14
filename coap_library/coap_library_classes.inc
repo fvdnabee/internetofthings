@@ -286,8 +286,7 @@ class CoAPMessage {
 					$binary_message = pack('H*', $this->get_hex_message());
 					$returnvalue = fwrite($socket, $binary_message); //	Write to socket
 					if($returnvalue != FALSE){
-						dpm($returnvalue);
-						//$response = fread($socket, 512); //	Read from socket
+						$response = fread($socket, 512); //	Read from socket
 					}
 				}
 			}
@@ -295,6 +294,7 @@ class CoAPMessage {
 			//	Check if response isn't empty
 			if($response != '' && $response != 'empty'){
 				$response_obj = $coap_factory->create_message_with_given_hex_message(coap_library_string_to_hex_with_padding($response)); //	Put response in CoAPMessage-object
+				echo "response: " . coap_library_string_to_hex_with_padding($response);
 				//	notify using module that there are no difficulties at the moment
 				$function_name = $this->module . '_receive_error';
 				$function_name('none', $this->ip, $this->resource);
@@ -406,7 +406,7 @@ class CoAPMessage {
 					fclose($socket); // Close the socket
 					
 					//	Check if the response consists of blocks and get the following blocks if necessary
-					$response_block_value = $response_obj->get_option_value(23);
+					$response_block_value = $response_obj->get_option_value(23);	//	REKENING HOUDEN MET OPTIE 28 ------------------------------------------------------------------------------
 					$request_block_value = $this->get_option_value(23);
 					if($response_block_value != null && $request_block_value == null){
 						//	Response comes in blocks
@@ -418,7 +418,7 @@ class CoAPMessage {
 			}
 			
 			//	Only notify the using module that there went something wrong if the message type of the request was CON
-			else if($this->is_confirmable() && false){
+			else if($this->is_confirmable()){
 				$function_name = $this->module . '_receive_error';
 				$function_name('broken', $this->ip, $this->resource);
 			}
@@ -554,13 +554,11 @@ class CoAPMessage {
 	//	Add an URI path option to this message
 	//	Expects a normal ASCII string as option value
 	public function add_uri_path($uri_path){
-		$paths = preg_split("/[^\\\\]\//", $uri_path);
+		$paths = preg_split("/\//", $uri_path);
 		$hex_paths = array();
 		foreach($paths as $path){
-			$path = str_replace('\/', '/', $path);
 			array_push($hex_paths, coap_library_string_to_hex_with_padding($path));
 		}
-		//dpm($hex_paths);
 		$option_value_hex = implode("/", $hex_paths);
 		$this->add_option(11, $option_value_hex);
 	}

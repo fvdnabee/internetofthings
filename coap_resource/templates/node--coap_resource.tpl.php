@@ -46,6 +46,7 @@
 				class = "REQUEST_BUTTON form-submit" value = "DELETE" />
 		<label 	id = "<?php echo 'lbl_DELETE_' . $content['field_resource_uri']['#items'][0]['value'] ?>"
 				style = "display:inline" >Perform a DELETE request</label>
+	</div>
 	<div class = 'OBSERVE' align = "center" >
 		<input type = "button" id = "<?php echo "btn_OBSERVE_" . $content['field_resource_uri']['#items'][0]['value'] ?>"
 				class = "OBSERVE_BUTTON form-submit" value = "<?php $result = db_select('coap_resource_users', 'users')

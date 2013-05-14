@@ -345,7 +345,7 @@ function coap_resource_schema() {
 					'type' => 'int',
 					'unsigned' => TRUE,
 					'not null' => TRUE,
-					'default' => 2,
+					'default' => 3,
 				),
 				'last_method' => array(
 					'description' => 'Methode van laatste request --> {GET, PUT, POST, DELETE}',
