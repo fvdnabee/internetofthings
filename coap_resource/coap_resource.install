@@ -391,6 +391,13 @@ function coap_resource_enable() {
 		variable_set("node_preview_$content_type", 0);				//preview default disabled
 		variable_set("node_submitted_$content_type", 0);
 	}
+	
+	//	Alter the values table so the timestamp will not be updated when updating a value
+	db_query('
+		ALTER TABLE {coap_resource_values} 
+		MODIFY timestamp TIMESTAMP NOT NULL 
+		DEFAULT CURRENT_TIMESTAMP'
+	);
 }
 
 function coap_resource_disable(){

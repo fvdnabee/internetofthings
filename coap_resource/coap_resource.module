@@ -914,6 +914,7 @@ function coap_resource_poll($uri){
 		->condition('new', 1, '=')
 		->orderBy('hid', 'DESC');
 	$result = $query->execute();
+	$output .= "<entrys>";
 	foreach ($result as $record){
 		//	Store in the database that this value has been fetched and therefore not new anymore
 		$hid = $record->hid;
@@ -930,7 +931,7 @@ function coap_resource_poll($uri){
 		$max_age = $record->max_age;
 		$output .= "<entry><hid>" . $hid . "</hid><value>" . $coap_value . "</value><max_age>" . $max_age . "</max_age><timestamp>" . $timestamp . "</timestamp></entry>";
 	}
-	$output .= "</poll>";
+	$output .= "</entrys></poll>";
 	
 	//	return the output
 	print $output;

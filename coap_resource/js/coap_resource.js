@@ -31,7 +31,7 @@ $(document).ready(function() {
 					type: "GET",
 					url: "/coap_resource/poll/" + uri.replace(/\//g, '|'),
 					dataType: "text",
-					success: tempReceived
+					success: valueReceived
 				});
 			}, milliseconds);
 			$.ajax({
@@ -92,23 +92,55 @@ $(document).ready(function() {
 		}
 	);
 	
+	$('.historyselect').change(
+		function(){
+			var chosen_nr = parseInt($(this).find('option:selected').val());
+			var current_nr = parseInt($(this).parent().find('.historytable > tbody > tr:visible').length);
+			if(chosen_nr > current_nr){
+				for(var i = (current_nr+1); i < (chosen_nr+1); i++){
+					$(this).parent().find('.row' + i).fadeIn('slow');
+				}
+			}
+			else if(chosen_nr < current_nr){
+				for(var i = current_nr; i > chosen_nr; i--){
+					$(this).parent().find('.row' + i).fadeOut("slow");
+				}
+			}
+		}
+	);
+	
 	$('.POLLING_BUTTON').trigger('click');
 	
 	drawChart();
 });
 
-function tempReceived(html){
+function valueReceived(html){
 	var xmlDoc = $.parseXML(html.toString());
 	var $xml = $(xmlDoc);
 	var uri = $($xml.find('uri')).text();
-	var new_value = $($xml.find('value')).text();
 	console.log('input from poll for ' + uri + ': ' + html);
-	var label = '#lbl_OBSERVE_' + uri;
-	if(new_value != null && new_value != ''){
-		label = label.replace(/\:/g, '\\\:');
-		label = label.replace(/\//g, '\\\/');
-		$(label).html(new_value);
-	}
+	var entrys = $($xml.find('entrys'));
+	$(entrys.children("entry").get().reverse()).each(
+		function(){
+			var id = '#' + uri;
+			id = id.replace(/\:/g, '\\\:');
+			id = id.replace(/\//g, '\\\/');
+			var table = $(id).find(".historytable");
+			table.find('.row1').hide();
+			for(var i = 10; i > 1; i--){
+				var old_index = i-1;
+				table.find('.row' + i).html(table.find('.row' + old_index).html());
+			}
+			table.find('.row1').html("<td>" + $(this).find("timestamp").text() + "</td><td>" + $(this).find("value").text() + "</td>");
+			table.find('.row1').fadeIn('slow');
+		}
+	);
+	// var label = '#lbl_OBSERVE_' + uri;
+	// if(new_value != null && new_value != ''){
+		// label = label.replace(/\:/g, '\\\:');
+		// label = label.replace(/\//g, '\\\/');
+		// $(label).html(new_value);
+	// }
 	
 	
 	
