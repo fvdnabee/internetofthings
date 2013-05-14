@@ -287,7 +287,7 @@ function coap_library_get_option_value_from_hex_message($hex_message, $option_nu
 //	Returns null if message is smaller than 4 bytes
 //	IMPORTANT: options MUST be added in order of growing option deltas
 function coap_library_add_option_to_hex_message(&$hex_message, $option_number, $value){
-	
+	//dpm($value);
 	if(strlen($hex_message) < 8){
 		return null;
 	}
