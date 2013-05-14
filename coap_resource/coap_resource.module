@@ -964,16 +964,7 @@ function coap_resource_start_observing($uri){
 		$ip = $matches[1];
 		$resource = $matches[2];
 		
-		// Determine if resource uses separate response
-		$query = db_select('coap_resource_resources', 'resources');
-		$query
-			->fields('resources', array('uri', 'obs'))
-			->condition('separate_response', 1, '=')
-			->condition('uri', $uri, '=');
-		$result = $query->execute();
-		$separate_response = ($result->rowCount() > 0);
-		
-		$coap_factory = new CoAPMessageFactory('coap_resource', $ip, $resource, $separate_response);
+		$coap_factory = new CoAPMessageFactory('coap_resource', $ip, $resource);
 		
 		//	Get the record from the databse for given URI if it's observable, to check if the resource is observable
 		$query = db_select('coap_resource_resources', 'resources');
@@ -1045,20 +1036,11 @@ function coap_resource_start_request($method, $nid, $payload=''){
 	foreach($result as $record){
 		$uri = $record->uri;
 	}
-	
-	//	Determine if resource uses separate response
-	$query = db_select('coap_resource_resources', 'resources');
-	$query
-		->fields('resources', array('uri', 'separate_response'))
-		->condition('separate_response', 1, '=')
-		->condition('uri', $uri, '=');
-	$result = $query->execute();
-	$separate_response = ($result->rowCount() > 0);
-	
+		
 	$pattern = '/([^\/]+)\/(.*)/i';
 	if(preg_match($pattern, $uri, $matches)){
 		//	Build message
-		$coap_factory = new CoAPMessageFactory('coap_resource', $matches[1], $matches[2], $separate_response);
+		$coap_factory = new CoAPMessageFactory('coap_resource', $matches[1], $matches[2]);
 		switch ($method) {
 			case 'GET':
 				$coap_message = $coap_factory->create_basic_get_request($matches[2]);
@@ -1119,19 +1101,10 @@ function coap_resource_start_request_for_uri($method, $uri, $payload=''){
 	$uri = str_replace('|', '/', $uri);
 	global $user;
 	
-	//	Determine if resource uses separate response
-	$query = db_select('coap_resource_resources', 'resources');
-	$query
-		->fields('resources', array('uri', 'separate_response'))
-		->condition('separate_response', 1, '=')
-		->condition('uri', $uri, '=');
-	$result = $query->execute();
-	$separate_response = ($result->rowCount() > 0);
-	
 	$pattern = '/([^\/]+)\/(.*)/i';
 	if(preg_match($pattern, $uri, $matches)){
 		//	Build message
-		$coap_factory = new CoAPMessageFactory('coap_resource', $matches[1], $matches[2], $separate_response);
+		$coap_factory = new CoAPMessageFactory('coap_resource', $matches[1], $matches[2]);
 		switch ($method) {
 			case 'GET':
 				$coap_message = $coap_factory->create_basic_get_request($matches[2]);
@@ -1299,7 +1272,7 @@ function coap_resource_handle_observing_for_uri($uri, $state){
 	
 	//	Start observing the current URI if this user is interested and no one else was already observing
 	if($state == "start" && $num_observers == 0){
-		background_process_start('coap_resource_start_observing', $record->uri);
+		background_process_start('coap_resource_start_observing', $uri);
 	}
 	
 	//	Store in database that this user is observing or not observing the current URI

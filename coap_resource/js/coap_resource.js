@@ -73,7 +73,7 @@ $(document).ready(function() {
 			var uri = $($(this).parent().parent().find('.uri')[0]).html();
 			if($(this).val() == "Start Observing"){
 				console.log("Button clicked: starting observe for " + uri);
-				$(this).val('Starting Observe');
+				$(this).val('Starting Observe...');
 				$.ajax({
 					type: "GET",
 					url: "/coap_resource/observe/" + uri.replace(/\//g, '|') + "/start",
@@ -303,11 +303,20 @@ function observeResponse(input){
 	var matches = regex.exec(input);
 	if(matches){
 		if(matches[2] == "success"){
-			$('#btn_OBSERVE_' + matches[1]).val("Stop Observing");
+			var button = '#btn_OBSERVE_' + matches[1];
+			button = button.replace(/\:/g, '\\\:');
+			button = button.replace(/\//g, '\\\/');
+			$(button).val("Stop Observing");
 		}
 		else if(matches[2] == "failed"){
-			$('#btn_OBSERVE_' + matches[1]).val("Start Observing");
-			$('#lbl_OBSERVE_' + matches[1]).html("Observe could not be started");
+			var button = '#btn_OBSERVE_' + matches[1];
+			button = button.replace(/\:/g, '\\\:');
+			button = button.replace(/\//g, '\\\/');
+			$(button).val("Start Observing");
+			var label = '#lbl_OBSERVE_' + matches[1];
+			label = label.replace(/\:/g, '\\\:');
+			label = label.replace(/\//g, '\\\/');
+			$(label).html("Observe could not be started");
 		}
 	}
 }

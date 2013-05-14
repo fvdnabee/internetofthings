@@ -198,13 +198,6 @@ function coap_resource_schema() {
 					'length' => '128',
 					'description' => 'relation between source entered in anchor',
 				),
-				'separate_response' => array(
-					'type' => 'int',
-					'not null' => FALSE,
-					'unsigned' => TRUE,
-					'default' => 0,
-					'description' => 'Tells if the resource uses separate response or not, 0 = no, 1 = yes',
-				),
 				'last_error' => array(
 					'description' => 'Laatst opgetreden fout',
 					'type' => 'varchar',
