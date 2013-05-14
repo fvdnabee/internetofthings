@@ -163,6 +163,21 @@ function coap_resource_node_view($node, $view_mode, $langcode) {
 	return $node;
 }
 
+function coap_resource_form_alter(&$form,$form_state,$form_id){
+
+  if($form_id == 'coap_resource_node_form') {
+       $form['#validate'][] = '_coap_resource_node_form_validate';
+      }
+}
+
+function _coap_resource_node_form_validate(&$from,&$form_state) {
+	$regex = '/^(((?=(?>.*?(::))(?!.+\3)))\3?|([\dA-F]{1,4}(\3|:(?!$)|$)|\2))(?4){5}((?4){2}|(25[0-5]|(2[0-4]|1\d|[1-9])?\d)(\.(?7)){3}).+\z/i';
+	$value = $form_state['values']['field_resource_uri'][LANGUAGE_NONE][0]['value'];
+	if (empty($value) || !preg_match($regex, $value, $matches)) {
+		form_set_error('field_resource_uri', 'Please enter a valid IPv6-adress.');
+	}
+}
+
 function create_my_node(){
 	global $user;
 	// Create an Entity
@@ -177,7 +192,20 @@ function create_my_node(){
 	// Add field data... SO MUCH BETTER!
 	$entity->field_resource_uri->set('2001:6a8:1d80:200::2/large-update');
 	// Save the node.
-	$entity->save();
+	//$entity->save();
+}
+
+function partial_discover($nid){
+	$uri = '2001:6a8:1d80:200::2/validate';
+	$parts = explode('/',$uri);
+	$device_uri = $parts[0];
+	$name = '\/' . $parts[1]; //slashes moeten ge-escaped worden met een backslash
+	// dpm($device_uri . $name);
+	$coap_factory = new CoAPMessageFactory('coap_resource', $device_uri, '', false);
+	$request = $coap_factory->create_basic_get_request(".well-known/core?href=$name");
+	$response = $request->send_message();
+	//$payloads = $response->get_payload();
+	//coap_discovery_parse_discovery_payloads($device_uri, $nid, $payloads);
 }
 
 function coap_resource_form($form, &$form_state, $node) {
@@ -185,6 +213,7 @@ function coap_resource_form($form, &$form_state, $node) {
 	drupal_add_js(drupal_get_path('module', 'coap_resource') . '/js/coap_resource.js'); // JavaScript bestand toevoegen	
 	global $user;
 	//create_my_node();
+	//partial_discover($node->nid);
 	
 	$nid = $node->nid;
 	$form['nid'] = array
@@ -873,8 +902,11 @@ function coap_resource_delete_request_form_submit($form, $form_state) {
 /////////////////
 function coap_resource_node_insert($node){
 	global $user;
+	//haal informatie op door discovery met query filter optie toe te voegen, indien de remote server
+	//dit niet ondersteunt, wordt een complete discovery request uitgevoerd.
+	
 	if($node->type == 'coap_resource'){
-		$uri = $node->field_resource_uri['und'][0]['uri'];
+		$uri = $node->field_resource_uri['und'][0]['value'];
 		$result = db_select('coap_resource_resources', 'resources')
 			->fields('resources', array('uri'))
 			->condition('uri', $uri, '=')

@@ -286,7 +286,8 @@ class CoAPMessage {
 					$binary_message = pack('H*', $this->get_hex_message());
 					$returnvalue = fwrite($socket, $binary_message); //	Write to socket
 					if($returnvalue != FALSE){
-						$response = fread($socket, 512); //	Read from socket
+						dpm($returnvalue);
+						//$response = fread($socket, 512); //	Read from socket
 					}
 				}
 			}
@@ -417,7 +418,7 @@ class CoAPMessage {
 			}
 			
 			//	Only notify the using module that there went something wrong if the message type of the request was CON
-			else if($this->is_confirmable()){
+			else if($this->is_confirmable() && false){
 				$function_name = $this->module . '_receive_error';
 				$function_name('broken', $this->ip, $this->resource);
 			}
@@ -553,11 +554,13 @@ class CoAPMessage {
 	//	Add an URI path option to this message
 	//	Expects a normal ASCII string as option value
 	public function add_uri_path($uri_path){
-		$paths = preg_split("/\//", $uri_path);
+		$paths = preg_split("/[^\\\\]\//", $uri_path);
 		$hex_paths = array();
 		foreach($paths as $path){
+			$path = str_replace('\/', '/', $path);
 			array_push($hex_paths, coap_library_string_to_hex_with_padding($path));
 		}
+		//dpm($hex_paths);
 		$option_value_hex = implode("/", $hex_paths);
 		$this->add_option(11, $option_value_hex);
 	}
