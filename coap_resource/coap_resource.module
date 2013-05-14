@@ -4,6 +4,30 @@ require_once(drupal_get_path('module', 'coap_library') . '/coap_library_classes.
 require_once(drupal_get_path('module', 'coap_resource') . '/includes/coap_discovery.inc');
 
 /**
+ * Implements hook_theme_registry_alter()
+**/
+function coap_resource_theme_registry_alter(&$theme_registry) {
+  $mod_path = drupal_get_path('module', 'coap_resource') . '/templates';
+  $theme_registry_copy = $theme_registry;       // munge on a copy
+  _theme_process_registry($theme_registry_copy, 'phptemplate', 'theme_engine', 'pow', $mod_path);
+  $theme_registry += array_diff_key($theme_registry_copy, $theme_registry);
+  $hooks = array('node');
+  foreach ($hooks as $h) {
+    coap_resource_insert_after_first_element($theme_registry[$h]['theme paths'], $mod_path);
+  }
+}
+
+/**
+ * Helper function for re-ordering arrays (needed by theme_registry_alter)
+*/
+function coap_resource_insert_after_first_element(&$a, $element) {
+  if(is_array($a)) {
+    $first_element = array_shift($a);
+    array_unshift($a, $first_element, $element);
+  }
+}
+
+/**
  * Implementation of hook_help().
  */
 function coap_resource_help($path, $arg) {
@@ -946,6 +970,7 @@ function coap_resource_poll($uri){
 		->condition('new', 1, '=')
 		->orderBy('hid', 'DESC');
 	$result = $query->execute();
+	$output .= "<entrys>";
 	foreach ($result as $record){
 		//	Store in the database that this value has been fetched and therefore not new anymore
 		$hid = $record->hid;
@@ -962,7 +987,7 @@ function coap_resource_poll($uri){
 		$max_age = $record->max_age;
 		$output .= "<entry><hid>" . $hid . "</hid><value>" . $coap_value . "</value><max_age>" . $max_age . "</max_age><timestamp>" . $timestamp . "</timestamp></entry>";
 	}
-	$output .= "</poll>";
+	$output .= "</entrys></poll>";
 	
 	//	return the output
 	print $output;
