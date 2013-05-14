@@ -29,9 +29,10 @@ function coap_resource_menu() {
 		'description' => 'Global configuration of the CoAP resource module functionality.',
 		'type' => MENU_NORMAL_ITEM,
 	);
-	$items["coap_resource/poll"] = array(
+	$items["coap_resource/poll/%"] = array(
 		"title" => "Get last entry",
-		"page callback" => "coap_resource_page_callback",
+		"page callback" => "coap_resource_poll",
+		"page arguments" => array(2),
 		"access callback" => true,
 		"type" => MENU_CALLBACK
 	);
@@ -44,8 +45,8 @@ function coap_resource_menu() {
 	);
 	$items["coap_resource/interval/%"] = array(
 		"title" => "Change polling interval",
-		"page callback" => "temperatuur_met_coap_library_change_interval",
-		"page arguments" => array(2),
+		"page callback" => "coap_resource_change_interval",
+		"page arguments" => array(2, 3),
 		"access callback" => true,
 		"type" => MENU_CALLBACK
 	);
@@ -887,86 +888,59 @@ function coap_resource_node_insert($node){
 //////////////////////
 
 // Functie die wordt uitgevoerd als een ajax call wordt uitgevoerd naar /coap_resource/poll, geeft de laatste entry terug
-function coap_resource_page_callback(){
+function coap_resource_poll($uri){
 	global $user;
 	
-	// bekeken URI bepalen
-	$query = db_select('coap_resource_users', 'users');
-	$query
-		->fields('users', array('uid', 'uri', 'watch', 'last_response', 'last_method', 'responded', 'response_type'))
-		->condition('uid', $user->uid, '=')
-		->condition('watch', 1, '=')
-		->range(0,1);
-	$result = $query->execute();
-	$uri = '';
-	foreach($result as $record){
-		$uri = $record->uri;
-		$method = $record->last_method;
-		$response = $record->last_response;
-		$responded = $record->responded;
-		$response_type = $record->response_type;
+	$uri = str_replace('|', '/', $uri); //	Put slashes back in the URI
+	
+	$output = "<poll><uri>" . $uri . "</uri>";
+	
+	//	Retrieve last error from database
+	$resources_query = db_select('coap_resource_resources', 'resources');
+	$resources_query
+		->fields('resources', array('uri', 'last_error'))
+		->condition('uri', $uri, '=');
+	$resources_result = $resources_query->execute();
+	foreach($resources_result as $resources_record){
+		$output .= "<error>" . $resources_record->last_error . "</error>";
 	}
 	
-	// Laatste opvraging ophalen
+	//	Retrieve new values from database
 	$query = db_select('coap_resource_values', 'coap_values');
 	$query
 		->fields('coap_values', array('hid', 'uid', 'timestamp', 'max_age', 'parsed_value', 'uri'))
 		->condition('uri', $uri, '=')
 		->condition('uid', $user->uid, '=')
-		->orderBy('hid', 'DESC')
-		->range(0,1);
+		->condition('new', 1, '=')
+		->orderBy('hid', 'DESC');
 	$result = $query->execute();
-	
-	// print een rij uit in tabelformaat zodat jQuery die kan gebruiken om in de tabel te stoppen
 	foreach ($result as $record){
-		$resources_query = db_select('coap_resource_resources', 'resources');
-		$resources_query
-			->fields('resources', array('uri', 'last_error'))
-			->condition('uri', $record->uri, '=');
-		$resources_result = $resources_query->execute();
-		
-		foreach($resources_result as $resources_record){
-			$output = "<error>" . $resources_record->last_error . "</error><responded>" . $responded . "</responded><get_response>" . $response . "</get_response><method>" . $method . "</method><response_type>" . $response_type . "</response_type>";
-			$hid = $record->hid;
-			$timestamp = $record->timestamp;
-			$temperatuur = $record->parsed_value;
-			$max_age = $record->max_age;
-			$output .= "<tr><td>" . $hid . "</td><td>" . $temperatuur . "</td><td>" . $max_age . "</td><td>" . $timestamp . "</td></tr>";
-		}
-	}
-	if(!isset($output)){
-		$query = db_select('coap_resource_resources', 'resources');
-		$query
-			->fields('resources', array('uri', 'last_error'))
-			->condition('uri', $uri, '=');
-		$result = $query->execute();
-		
-		if($result->rowCount() > 0){
-			foreach($result as $record){
-				$output = "<error>" . $record->last_error . "</error><responded>" . $responded . "</responded><get_response>" . $response . "</get_response><method>" . $method . "</method><response_type>" . $response_type . "</response_type>";
-			}
-		}
-		else{
-			$output = "no values";
-		}
-	}
-	
-	// Responded op false zetten
-	$num_updated = db_update('coap_resource_users')
+		//	Store in the database that this value has been fetched and therefore not new anymore
+		$hid = $record->hid;
+		$num_updated = db_update('coap_resource_values')
 		->fields(array(
-			'responded' => 0,
+			'new' => 0,
 		))
-		->condition('uid', $user->uid, '=')
+		->condition('hid', $hid, '=')
 		->execute();
+		
+		//	Add the current value to the output
+		$timestamp = $record->timestamp;
+		$coap_value = $record->parsed_value;
+		$max_age = $record->max_age;
+		$output .= "<entry><hid>" . $hid . "</hid><value>" . $coap_value . "</value><max_age>" . $max_age . "</max_age><timestamp>" . $timestamp . "</timestamp></entry>";
+	}
+	$output .= "</poll>";
 	
+	//	return the output
 	print $output;
-	
-	exit();
 }
 
 //	Change the interval that the polling mechanism is using for this user, this is a callback for /temperatuursensor/interval/%
-function coap_resource_change_interval($interval){
+function coap_resource_change_interval($uri, $interval){
 	global $user;
+	
+	$uri = str_replace('|', '/', $uri); //	Put slashes back in the URI
 	
 	$seconds = intval($interval);
 	$id = db_update('coap_resource_users')
@@ -974,6 +948,7 @@ function coap_resource_change_interval($interval){
 				'polling_interval' => $seconds,
 			))
 			->condition('uid', $user->uid, '=')
+			->condition('uri', $uri, '=')
 			->execute();
 }
 
@@ -985,16 +960,7 @@ function coap_resource_start_observing($uri){
 		$ip = $matches[1];
 		$resource = $matches[2];
 		
-		// Determine if resource uses separate response
-		$query = db_select('coap_resource_resources', 'resources');
-		$query
-			->fields('resources', array('uri', 'obs'))
-			->condition('separate_response', 1, '=')
-			->condition('uri', $uri, '=');
-		$result = $query->execute();
-		$separate_response = ($result->rowCount() > 0);
-		
-		$coap_factory = new CoAPMessageFactory('coap_resource', $ip, $resource, $separate_response);
+		$coap_factory = new CoAPMessageFactory('coap_resource', $ip, $resource);
 		
 		//	Get the record from the databse for given URI if it's observable, to check if the resource is observable
 		$query = db_select('coap_resource_resources', 'resources');
@@ -1066,20 +1032,11 @@ function coap_resource_start_request($method, $nid, $payload=''){
 	foreach($result as $record){
 		$uri = $record->uri;
 	}
-	
-	//	Determine if resource uses separate response
-	$query = db_select('coap_resource_resources', 'resources');
-	$query
-		->fields('resources', array('uri', 'separate_response'))
-		->condition('separate_response', 1, '=')
-		->condition('uri', $uri, '=');
-	$result = $query->execute();
-	$separate_response = ($result->rowCount() > 0);
-	
+		
 	$pattern = '/([^\/]+)\/(.*)/i';
 	if(preg_match($pattern, $uri, $matches)){
 		//	Build message
-		$coap_factory = new CoAPMessageFactory('coap_resource', $matches[1], $matches[2], $separate_response);
+		$coap_factory = new CoAPMessageFactory('coap_resource', $matches[1], $matches[2]);
 		switch ($method) {
 			case 'GET':
 				$coap_message = $coap_factory->create_basic_get_request($matches[2]);
@@ -1140,19 +1097,10 @@ function coap_resource_start_request_for_uri($method, $uri, $payload=''){
 	$uri = str_replace('|', '/', $uri);
 	global $user;
 	
-	//	Determine if resource uses separate response
-	$query = db_select('coap_resource_resources', 'resources');
-	$query
-		->fields('resources', array('uri', 'separate_response'))
-		->condition('separate_response', 1, '=')
-		->condition('uri', $uri, '=');
-	$result = $query->execute();
-	$separate_response = ($result->rowCount() > 0);
-	
 	$pattern = '/([^\/]+)\/(.*)/i';
 	if(preg_match($pattern, $uri, $matches)){
 		//	Build message
-		$coap_factory = new CoAPMessageFactory('coap_resource', $matches[1], $matches[2], $separate_response);
+		$coap_factory = new CoAPMessageFactory('coap_resource', $matches[1], $matches[2]);
 		switch ($method) {
 			case 'GET':
 				$coap_message = $coap_factory->create_basic_get_request($matches[2]);
@@ -1320,7 +1268,7 @@ function coap_resource_handle_observing_for_uri($uri, $state){
 	
 	//	Start observing the current URI if this user is interested and no one else was already observing
 	if($state == "start" && $num_observers == 0){
-		background_process_start('coap_resource_start_observing', $record->uri);
+		background_process_start('coap_resource_start_observing', $uri);
 	}
 	
 	//	Store in database that this user is observing or not observing the current URI

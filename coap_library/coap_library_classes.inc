@@ -14,7 +14,6 @@ class CoAPMessage {
 	private $module = null;
 	private $ip;
 	private $resource;
-	private $separate_response;
 	
 	//	HEADER
 	private $version = 1;
@@ -74,13 +73,12 @@ class CoAPMessage {
 	private $retransmit_counter = 0;
 	
 	// Constructor
-	public function __construct($module, $ip, $resource, $type, $code, $token_length, $separate_response = false, $message_id = null, $token = null){
+	public function __construct($module, $ip, $resource, $type, $code, $token_length, $message_id = null, $token = null){
 		
 		//STORE ATTRIBUTES
 		$this->module = $module;
 		$this->ip = $ip;
 		$this->resource = $resource;
-		$this->separate_response = $separate_response;
 		$this->type = $type;
 		$this->code = $code;
 		
@@ -211,7 +209,7 @@ class CoAPMessage {
 	//	Calls hook_receive_notification if something went wrong
 	public function send_message(){
 		//	Create CoAP factory
-		$coap_factory = new CoAPMessageFactory($this->module, $this->ip, $this->resource, $this->separate_response);
+		$coap_factory = new CoAPMessageFactory($this->module, $this->ip, $this->resource);
 	
 		//	Determine if request has an observe option
 		$observe = ($this->get_option_value(6) === null) ? 0 : 1;
@@ -376,8 +374,8 @@ class CoAPMessage {
 						$returnvalue = fwrite($socket, $reset_message); // wegschrijven naar udp-socket
 					}
 				}
-				else if($response_obj->separate_response && ($response_obj->get_payload() == null || $response_obj->get_payload() == '') && $this->message_id == $response_obj->get_message_id()){
-					//	Resource uses separate response and has returned an empty ACK
+				else if(($response_obj->get_payload() == null || $response_obj->get_payload() == '') && $this->message_id == $response_obj->get_message_id()){
+					//	Resource has returned an empty ACK
 					$response = 'empty';
 					stream_set_timeout($socket, 20, 0); //	Timeout for separate response currently set to 20 seconds, but can be chosen
 					$response = fread($socket, 512); // Read from socket
@@ -567,7 +565,7 @@ class CoAPMessage {
 	//	Generates an acknowledgement to this message
 	//	Returns a CoAPMessage-object
 	public function generate_acknowledgement(){
-		$factory = new CoAPMessageFactory($this->module, $this->ip, $this->resource, $this->separate_response);
+		$factory = new CoAPMessageFactory($this->module, $this->ip, $this->resource);
 		$ack = $factory->create_message_with_header_and_token("ACK", "EMPTY", 0, $this->message_id);
 		return $ack;
 	}
@@ -575,7 +573,7 @@ class CoAPMessage {
 	//	Generates a reset to this message
 	//	Returns a CoAPMessage-object
 	public function generate_reset(){
-		$factory = new CoAPMessageFactory($this->module, $this->ip, $this->resource, $this->separate_response);
+		$factory = new CoAPMessageFactory($this->module, $this->ip, $this->resource);
 		$reset = $factory->create_message_with_header_and_token("RST", "EMPTY", 0, $this->message_id);
 		return $reset;
 	}
@@ -592,14 +590,12 @@ class CoAPMessageFactory{
 	private $module = null;
 	private $ip;
 	private $resource;
-	private $separate_response;
 	
 	// Constructor with given module name
-	public function __construct($module, $ip, $resource, $separate_response){
+	public function __construct($module, $ip, $resource){
         $this->module = $module;  
 		$this->ip = $ip;
 		$this->resource = $resource;
-		$this->separate_response = $separate_response;
     }
 	
 	// 	Generates a basic CoAP message consisting of only the header and optional token, $type = {CON, NON, ACK, RST}, $method = {GET, PUT, POST, DELETE}
@@ -633,7 +629,7 @@ class CoAPMessageFactory{
 		}
 		
 		//	Create a message object and return it
-		return new CoAPMessage($this->module, $this->ip, $this->resource, $type, $code, $token_length, $this->separate_response, $message_id, $token);
+		return new CoAPMessage($this->module, $this->ip, $this->resource, $type, $code, $token_length, $message_id, $token);
 	}
 	
 	// Generates a basic CoAP GET request with optional given URI path
@@ -704,7 +700,7 @@ class CoAPMessageFactory{
 		$token = coap_library_get_token_from_hex_message($hex_message);
 		$token_length = strlen($token)/2;
 		$message_id = hexdec(coap_library_get_message_id_from_message($hex_message));
-		$message = new CoAPMessage($this->module, $this->ip, $this->resource, $type, $code, $token_length, $this->separate_response, $message_id, $token);
+		$message = new CoAPMessage($this->module, $this->ip, $this->resource, $type, $code, $token_length, $message_id, $token);
 		
 		//	Add options
 		if(strlen($hex_message) >= 8){
