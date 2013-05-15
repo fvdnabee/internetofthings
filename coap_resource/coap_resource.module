@@ -89,30 +89,30 @@ function coap_resource_menu() {
 		"type" => MENU_CALLBACK
 	);
 	
-	$items['node/%coap_resource_menu/view/discovery'] = array(
-		'title' => 'Discovery',    
-		'access callback' => TRUE,
-		'weight' => 2,
-		'type' => MENU_DEFAULT_LOCAL_TASK,
-	);
+	// $items['node/%coap_resource_menu/view/discovery'] = array(
+		// 'title' => 'Discovery',    
+		// 'access callback' => TRUE,
+		// 'weight' => 2,
+		// 'type' => MENU_DEFAULT_LOCAL_TASK,
+	// );
 	
-	$items['node/%coap_resource_menu/view/resources'] = array(
-		'title' => 'Resources',
-		'page callback' => 'drupal_get_form',
-		'page arguments' => array('coap_resource_form', 1),
-		'access callback' => TRUE,
-		'weight' => 4,
-		'type' => MENU_LOCAL_TASK,
-	);
+	// $items['node/%coap_resource_menu/view/resources'] = array(
+		// 'title' => 'Resources',
+		// 'page callback' => 'drupal_get_form',
+		// 'page arguments' => array('coap_resource_form', 1),
+		// 'access callback' => TRUE,
+		// 'weight' => 4,
+		// 'type' => MENU_LOCAL_TASK,
+	// );
 	
-	$items['node/%coap_resource_menu/view/configuration'] = array(
-		'title' => 'Configuration',
-		'page callback' => 'drupal_get_form',
-		'page arguments' => array('coap_resource_admin_settings'),
-		'access callback' => TRUE,
-		'weight' => 8,
-		'type' => MENU_LOCAL_TASK,
-	);
+	// $items['node/%coap_resource_menu/view/configuration'] = array(
+		// 'title' => 'Configuration',
+		// 'page callback' => 'drupal_get_form',
+		// 'page arguments' => array('coap_resource_admin_settings'),
+		// 'access callback' => TRUE,
+		// 'weight' => 8,
+		// 'type' => MENU_LOCAL_TASK,
+	// );
 
   return $items;
 }
@@ -162,10 +162,12 @@ function coap_resource_node_view($node, $view_mode, $langcode) {
 //custom validatie van de uri velden wordt hier toegevoegd
 function coap_resource_form_alter(&$form,$form_state,$form_id){
 	if($form_id == 'coap_resource_node_form') {
-		$form['#validate'][] = '_coap_resource_node_form_validate';
+		$form['#validate'][] = '_coap_resource_node_form_validate';		
     }
 	if($form_id == 'coap_device_node_form') {
 		$form['#validate'][] = '_coap_device_node_form_validate';
+		//de user mag de node_references niet veranderen
+		$form['field_resource_references']['#access'] = FALSE;
     }
 	
 }
@@ -210,6 +212,8 @@ function coap_resource_form($form, &$form_state, $node) {
 	drupal_add_js(drupal_get_path('module', 'coap_resource') . '/js/coap_resource.js'); // JavaScript bestand toevoegen	
 	global $user;
 	
+	//create_my_node();
+	
 	$nid = $node->nid;
 	$form['nid'] = array
 	(
@@ -232,15 +236,13 @@ function coap_resource_form($form, &$form_state, $node) {
 	$resources = $query->execute();
 	
 	$first_resource  = $resources->fetchAssoc();
-	//dpm($first_resource);
 	if(isset($first_resource)){
-		// dpm($first_resource);
 		$empty =0;
 		$current_interval = $first_resource['polling_interval'];
 		$uri = $first_resource['uri'];
 	}
 	// foreach($resources as $record){
-		// dpm($record);
+		
 	// }
 	// foreach ($resources as $record){
 		// $empty = 0;
@@ -270,9 +272,7 @@ function coap_resource_form($form, &$form_state, $node) {
 			coap_resource_bekijken_form($form, $form_state, $nid);
 		}
 		else{
-			//dpm($first_resource);
 			if(isset($first_resource['obs'])){
-				// dpm($first_resource['uri']);
 				$form['observe'][$first_resource['uri']] = array(
 					'#type' => 'hidden',
 				);
@@ -294,9 +294,6 @@ function coap_resource_form($form, &$form_state, $node) {
 		coap_resource_put_request_form($form, $form_state);
 		coap_resource_post_request_form($form, $form_state);
 		coap_resource_delete_request_form($form, $form_state);
-		
-		// dpm($uri);
-		// dpm($first_resource['uri']);
 		
 		// Tabel met geschiedenis van opvragingen(5 laatste)
 		$result = db_select('coap_resource_values', 'coap_values')
@@ -335,7 +332,6 @@ function coap_resource_form($form, &$form_state, $node) {
 			),
 		);
 	}	
-	//dpm($node);
 	return $form;
 }
 
@@ -495,7 +491,6 @@ function coap_resource_uri_form(&$form, &$form_state) {
 		'#submit' => array('coap_resource_uri_form_submit'),
 	);
 		
-	//dpm($form);
 	return $form;
 }
 
@@ -707,7 +702,6 @@ function coap_resource_bekijken_form(&$form, &$form_state, $nid) {
 		);
 	}
 	
-	//dpm($form);
 	return $form;
 }
 
@@ -775,7 +769,6 @@ function coap_resource_get_request_form(&$form, &$form_state) {
 		'#suffix' => "</td><td>",
 		);
 		
-	//dpm($form);
 	return $form;
 }
 
@@ -812,7 +805,6 @@ function coap_resource_put_request_form(&$form, &$form_state) {
 		'#suffix' => "</td><td>",
 		);
 	
-	//dpm($form);
 	return $form;
 }
 
@@ -850,7 +842,6 @@ function coap_resource_post_request_form(&$form, &$form_state) {
 		'#suffix' => "</td><td>",
 		);
 		
-	//dpm($form);
 	return $form;
 }
 
@@ -880,7 +871,6 @@ function coap_resource_delete_request_form(&$form, &$form_state) {
 		'#suffix' => "</td></tr>",
 		);
 	
-	//dpm($form);	
 	return $form;
 }
 
@@ -892,13 +882,13 @@ function coap_resource_delete_request_form_submit($form, $form_state) {
 	$handle = background_process_start('coap_resource_start_request', 'DELETE', $form_state['values']['nid']);
 }
 
-////////////////////
-// NODE INSERTION //
-////////////////////
+///////////////////////
+// NODE MANIPULATION //
+///////////////////////
 
 function coap_resource_node_insert($node){
 	global $user;
-	
+	$nid = $node->nid;
 	if($node->type == 'coap_resource'){
 		//haal de resource_uri uit $node
 		$uri = $node->field_resource_uri['und'][0]['value'];
@@ -914,7 +904,7 @@ function coap_resource_node_insert($node){
 			//indien we toch query filtering zouden toepassen: we moeten een get request sturen met als uri_path = .well-known//core?href=/$parts[1]
 			$parts = explode('/',$uri);
 			$device_uri = $parts[0];
-			coap_discovery_start_discover($device_uri, $node->nid);
+			coap_discovery_start_discover($device_uri, $nid);
 		}
 		
 		//voeg toe in de db dat de user geïnteresseerd is in deze resource op deze node
@@ -923,7 +913,7 @@ function coap_resource_node_insert($node){
 				'uid' => $user->uid,
 				'uri' => $uri,
 				'device' => 0,
-				'nid' => $node->nid,
+				'nid' => $nid,
 				'observe' => 0,
 				'watch' => 1,
 				'responded' => 0,
@@ -931,9 +921,82 @@ function coap_resource_node_insert($node){
 			->execute();
 	}
 	else if($node->type == 'coap_device'){
+		$device_uri = $node->field_device_uri['und'][0]['value'];
 		
+		//discovery moet niet uitgevoerd worden als iemand al geïnteresseerd is, gebruik deze sub-optimale oplossing als query filtering geïmplementeerd wordt
+		// $result = db_select('coap_resource_users', 'coap_user')
+				// ->fields('coap_user', array('uri','nid','device'))
+				// ->condition('uri', $device_uri, '=')
+				// ->condition('device', 1, '=')
+				// ->execute();
+		
+		//discovery moet niet uitgevoerd worden er ooit al een discovery is uitgevoerd voor dit device, gebruik deze oplossing als er geen query filtering geïmplementeerd is
+		//indien het wel het geval zou zijn, zijn er partial discoveries gebeurt en geeft volgende query een vertekend beeld.
+		$result = db_select('coap_resource_resources', 'resources')
+					->fields('resources', array('uri','title'))
+					->condition('uri', "$device_uri%", 'LIKE')
+					->execute();
+		
+		if($result->rowCount() == 0){
+			//coap_discovery_start_discover($device_uri, $nid);
+			background_process_start('coap_discovery_start_discover', $device_uri, $nid);
+		}
+		else{		
+			//er is al een discovery uitgevoerd, maar was dit door de huidige user? 
+			$result = db_select('coap_resource_users', 'coap_user')
+					->fields('coap_user', array('uri','nid','device','uid'))
+					->condition('uid', $user->uid, '=')
+					->condition('uri', $device_uri, '=')
+					->execute();
+			
+			//het was door een ander user -> voeg nieuwe content toe
+			if($result->rowCount() == 0){
+				//coap_discovery_start_discover($device_uri, $nid);
+				background_process_start('coap_discovery_start_discover', $device_uri, $nid);
+			}
+			//het was door de huidige user, waarom voegt hij dit device nog eens toe?
+			// 2 denkpistes:
+			//	- melding dat hij dit device al eens toegevoegd heeft
+			//	- toevoegen van device voeg node references toe
+			//	- toevoegen en maak nieuwe resource content aan
+			else{
+				// ? te beslissen ?
+			}
+		}		
+		
+		//toevoegen dat de user geïnteresseerd is moet sowieso
+		$id = db_insert('coap_resource_users')
+		->fields(array(
+			'uid' => $user->uid,
+			'uri' => $device_uri,				
+			'nid' => $nid,
+			'device' => 1,
+			'new' => 1,
+			))
+		->execute();
+		 
 	}
 	
+}
+
+function coap_resource_node_delete($node){
+	global $user;
+	$nid = $node->nid;
+	//eigenlijk mag volgende query voor beide content types gebruikt worden en de device conditie weggelaten
+	if($node->type == 'coap_resource'){
+		db_delete('coap_resource_users')
+			->condition('uid', $user->uid, '=')
+			->condition('nid', $nid, '=')
+			->condition('device',0,'=')
+			->execute();
+	}
+	else if($node->type == 'coap_device'){
+		db_delete('coap_resource_users')
+			->condition('uid', $user->uid, '=')
+			->condition('nid', $nid, '=')
+			->condition('device',1,'=')
+			->execute();
+	}
 }
 
 //////////////////////
@@ -1074,7 +1137,6 @@ function coap_resource_get_number_of_observers($ip, $resource){
 function coap_resource_start_request($method, $nid, $payload=''){
 	global $user;
 	
-	//dpm(coap_library_string_to_hex_with_padding('.well-known/core'));
 	//	Gets the URI for the resource that is selected by the user
 	$result = db_select('coap_resource_users', 'users')
 		->fields('users', array('uid', 'uri', 'nid', 'device', 'watch'))

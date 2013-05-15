@@ -9,12 +9,12 @@ function coap_resource_node_info() {
 	  'has_body' => FALSE,
       'description' => t('CoAP resource form, displaying one resource.'),
     ),
-	'coap_general' => array(
-      'name' => t('CoAP general'),
-      'base' => 'node_content',
-	  'has_body' => FALSE,
-      'description' => t('General CoAP form, most flexible.'),
-    ),
+	// 'coap_general' => array(
+      // 'name' => t('CoAP general'),
+      // 'base' => 'node_content',
+	  // 'has_body' => FALSE,
+      // 'description' => t('General CoAP form, most flexible.'),
+    // ),
 	'coap_device' => array(
       'name' => t('CoAP device'),
       'base' => 'node_content',
@@ -84,17 +84,17 @@ function _coap_resource_installed_fields()  {
       // 'allowed_values_function' => '_field_ct_checkboxes_options_list',
     // ),
   // );
-  // $fields['resource_references_field'] = array(
-    // 'field_name' => 'resource_references_field',
-    // 'label' => 'Resource References',
-    // 'type' => 'node_reference',
-    // 'settings' => array(
-      // 'referenceable_types' => array(
-        // 'coap_resource' => 'coap_resource'
-      // ),
-    // ),
-    // 'cardinality' => '-1',
-  // );
+  $fields['field_resource_references'] = array(
+    'field_name' => 'field_resource_references',
+    'label' => 'Resource References',
+    'type' => 'node_reference',
+    'settings' => array(
+      'referenceable_types' => array(
+        'coap_resource' => 'coap_resource'
+      ),
+    ),
+    'cardinality' => '-1',
+  );
   
   return $fields;
 }
@@ -199,16 +199,16 @@ function _coap_resource_installed_instances()  {
 		// ),
 	// );
 	
-	// $instances['resource_references_field'] = array(
-		// 'field_name' => 'resource_references_field',
-		// 'label' => 'Resources',
-		// 'type' => 'node_reference',
-		// 'widget' => array(
-			// 'type' => 'node_reference_autocomplete'
-		// ),
-		// 'entity_type' => 'node',
-		// 'bundle' => 'coap_device',
-	// ); 
+	$instances['field_resource_references'] = array(
+		'field_name' => 'field_resource_references',
+		'label' => 'Resources',
+		'type' => 'node_reference',
+		'widget' => array(
+			'type' => 'node_reference_autocomplete'
+		),
+		'entity_type' => 'node',
+		'bundle' => 'coap_device',
+	); 
 	
 	return $instances;
 }
@@ -372,6 +372,13 @@ function coap_resource_schema() {
 					'not null' => FALSE,
 					'length' => '2048',
 				),
+				'new' => array(
+					'description' => 'value indicating if discovery values are in',
+					'type' => 'int',
+					'unsigned' => TRUE,
+					'not null' => TRUE,
+					'default' => 0,
+				),
 			),
 			'primary key' => array('uid', 'uri', 'nid'),
 			'foreign keys' => array(
@@ -489,10 +496,10 @@ function coap_resource_enable() {
 }
 
 function coap_resource_disable(){
-	$instance = array('field_name' => 'field_device_uri','bundle' => 'coap_device','entity_type' => 'node');
-	field_delete_instance($instance);
-	$instance = array('field_name' => 'field_resource_uri','bundle' => 'coap_resource','entity_type' => 'node');
-	field_delete_instance($instance);
+	// $instance = array('field_name' => 'field_device_uri','bundle' => 'coap_device','entity_type' => 'node');
+	// field_delete_instance($instance);
+	// $instance = array('field_name' => 'field_resource_uri','bundle' => 'coap_resource','entity_type' => 'node');
+	// field_delete_instance($instance);
 	// $instance = array('field_name' => 'field_obs_checkbox','bundle' => 'coap_resource','entity_type' => 'node');
 	// field_delete_instance($instance);
 	// $instance = array('field_name' => 'field_ct_checkboxes','bundle' => 'coap_resource','entity_type' => 'node');

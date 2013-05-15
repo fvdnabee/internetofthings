@@ -265,39 +265,50 @@ function valueReceived(html){
 }
 
 function discoverReady(xml){
-	clearInterval(refreshId);
-	//console.log('jquery opgestart');
-	//console.log(xml);
-	
-	if(xml.length != 0){
-		$('#edit-tableselect-container').empty();	
-		var table = '';
-		var resources = xml.match(/<resource>(.+?)<\/resource>/g);
-		if(resources){ //<input type="checkbox" class="form-checkbox" title="Select all rows in this table"> ==> stukje in eerste <th> dat ik weggelaten heb
-			table += '<table class="sticky-enabled table-select-processed tableheader-processed sticky-table"><thead><tr><th class="select-all"></th><th>uri</th><th>human-readable name</th> </tr></thead>';	
-			table += '<tbody>';
-			for(var i=0 ; i< resources.length ; i++){
-				var resource_attr = /<resource><uri>(.*?)<\/uri><title>(.*?)<\/title><watch>(.*?)<\/watch><\/resource>/.exec(resources[i]);
-				if(i%2 == 0){
-					table += '<tr class="even">';
-				}
-				else{
-					table += '<tr class="odd">';
-				}
-				table += '<td><div class="form-item form-type-checkbox form-item-table-' + i + '">' +
-						 '<input type="checkbox" id="edit-table-' + i + '" name="table[' + i + ']" value="' + i + '" class="form-checkbox";';
-				if(resource_attr[3] == 1) table += ' checked="yes"';
-				table += '></div></td><td>' + resource_attr[1] + '</td><td>' + resource_attr[2] + '</td> </tr>';
-			}
-		}
-		else{
-			table += '<table class="sticky-enabled table-select-processed tableheader-processed sticky-table"><thead><tr><th>uri</th><th>human-readable name</th> </tr></thead>';	
-			table += '<tbody><tr class="odd"><td colspan="2" class="empty message">' + xml + '</td> </tr>';
-		}		
-		table += '</tbody>';
-		table += '</table>';
-		$('#edit-tableselect-container').append(table);
+	console.log(xml);
+	if(xml == '::new=1'){
+		location.reload();
 	}
+	//omdat we overhevelen naar jquery zal dit interval niet meer gestopt mogen worden, aangezien de pagina niet meer herladen zal worden, moet de jquery code blijven lopen
+	// if(xml == 'reset'){
+		// console.log(xml);
+		// clearInterval(refreshId);
+	// }
+	// else{
+		// console.log(xml);
+	// }
+	
+	//console.log('jquery opgestart');
+	
+	// if(xml.length != 0){
+		// $('#edit-tableselect-container').empty();	
+		// var table = '';
+		// var resources = xml.match(/<resource>(.+?)<\/resource>/g);
+		// if(resources){ //<input type="checkbox" class="form-checkbox" title="Select all rows in this table"> ==> stukje in eerste <th> dat ik weggelaten heb
+			// table += '<table class="sticky-enabled table-select-processed tableheader-processed sticky-table"><thead><tr><th class="select-all"></th><th>uri</th><th>human-readable name</th> </tr></thead>';	
+			// table += '<tbody>';
+			// for(var i=0 ; i< resources.length ; i++){
+				// var resource_attr = /<resource><uri>(.*?)<\/uri><title>(.*?)<\/title><watch>(.*?)<\/watch><\/resource>/.exec(resources[i]);
+				// if(i%2 == 0){
+					// table += '<tr class="even">';
+				// }
+				// else{
+					// table += '<tr class="odd">';
+				// }
+				// table += '<td><div class="form-item form-type-checkbox form-item-table-' + i + '">' +
+						 // '<input type="checkbox" id="edit-table-' + i + '" name="table[' + i + ']" value="' + i + '" class="form-checkbox";';
+				// if(resource_attr[3] == 1) table += ' checked="yes"';
+				// table += '></div></td><td>' + resource_attr[1] + '</td><td>' + resource_attr[2] + '</td> </tr>';
+			// }
+		// }
+		// else{
+			// table += '<table class="sticky-enabled table-select-processed tableheader-processed sticky-table"><thead><tr><th>uri</th><th>human-readable name</th> </tr></thead>';	
+			// table += '<tbody><tr class="odd"><td colspan="2" class="empty message">' + xml + '</td> </tr>';
+		// }		
+		// table += '</tbody>';
+		// table += '</table>';
+		// $('#edit-tableselect-container').append(table);
+	// }
 }
 
 function drawChart() {
