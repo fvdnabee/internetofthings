@@ -164,17 +164,28 @@ function coap_resource_node_view($node, $view_mode, $langcode) {
 }
 
 function coap_resource_form_alter(&$form,$form_state,$form_id){
-
-  if($form_id == 'coap_resource_node_form') {
-       $form['#validate'][] = '_coap_resource_node_form_validate';
-      }
+	if($form_id == 'coap_resource_node_form') {
+		$form['#validate'][] = '_coap_resource_node_form_validate';
+    }
+	if($form_id == 'coap_device_node_form') {
+		$form['#validate'][] = '_coap_device_node_form_validate';
+    }
+	
 }
 
 function _coap_resource_node_form_validate(&$from,&$form_state) {
 	$regex = '/^(((?=(?>.*?(::))(?!.+\3)))\3?|([\dA-F]{1,4}(\3|:(?!$)|$)|\2))(?4){5}((?4){2}|(25[0-5]|(2[0-4]|1\d|[1-9])?\d)(\.(?7)){3}).+\z/i';
 	$value = $form_state['values']['field_resource_uri'][LANGUAGE_NONE][0]['value'];
 	if (empty($value) || !preg_match($regex, $value, $matches)) {
-		form_set_error('field_resource_uri', 'Please enter a valid IPv6-adress.');
+		form_set_error('field_resource_uri', 'Please enter a valid IPv6-adress for a resource.');
+	}
+}
+
+function _coap_device_node_form_validate(&$from,&$form_state) {
+	$regex = '/^(((?=(?>.*?(::))(?!.+\3)))\3?|([\dA-F]{1,4}(\3|:(?!$)|$)|\2))(?4){5}((?4){2}|(25[0-5]|(2[0-4]|1\d|[1-9])?\d)(\.(?7)){3})\z/i';
+	$value = $form_state['values']['field_device_uri'][LANGUAGE_NONE][0]['value'];
+	if (empty($value) || !preg_match($regex, $value, $matches)) {
+		form_set_error('field_device_uri', 'Please enter a valid IPv6-adress for a device.');
 	}
 }
 
@@ -199,10 +210,10 @@ function partial_discover($nid){
 	$uri = '2001:6a8:1d80:200::2/validate';
 	$parts = explode('/',$uri);
 	$device_uri = $parts[0];
-	$name = '\/' . $parts[1]; //slashes moeten ge-escaped worden met een backslash
+	$name = '/' . $parts[1]; //slashes moeten ge-escaped worden met een backslash
 	// dpm($device_uri . $name);
 	$coap_factory = new CoAPMessageFactory('coap_resource', $device_uri, '', false);
-	$request = $coap_factory->create_basic_get_request(".well-known/core?href=$name");
+	$request = $coap_factory->create_basic_get_request(".well-known//core");
 	$response = $request->send_message();
 	//$payloads = $response->get_payload();
 	//coap_discovery_parse_discovery_payloads($device_uri, $nid, $payloads);
@@ -214,6 +225,11 @@ function coap_resource_form($form, &$form_state, $node) {
 	global $user;
 	//create_my_node();
 	//partial_discover($node->nid);
+	
+	
+	
+	//dpm(coap_library_string_to_hex_with_padding(6));
+	//dpm(bin2hex(6));
 	
 	$nid = $node->nid;
 	$form['nid'] = array
@@ -913,12 +929,11 @@ function coap_resource_node_insert($node){
 			->execute();
 		
 		if($result->rowCount() == 0){
-			$id = db_insert('coap_resource_resources')
-				->fields(array(
-					'uri' => $uri,
-					'last_error' => 'none',
-				))
-				->execute();
+			//Query filtering is niet noodzakelijk ondersteund -> daarom doen we een complete discovery i.p.v. te specifiëren over welk resource we informatie willen
+			//indien we toch query filtering zouden toepassen: we moeten een get request sturen met als uri_path = .well-known//core?href=/$parts[1]
+			$parts = explode('/',$uri);
+			$device_uri = $parts[0];
+			coap_discovery_start_discover($device_uri, $node->nid);
 		}
 		
 		$id = db_insert('coap_resource_users')

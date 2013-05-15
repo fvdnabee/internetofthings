@@ -140,7 +140,7 @@ class CoAPMessage {
 		//	Add options
 		ksort($this->options);	//	Order options array by growing option deltas to keep option deltas in the hex message consistent
 		foreach($this->options as $option_nr => $option_value){
-			$values = preg_split("/\//", $option_value);
+			$values = explode('/', $option_value);
 			foreach($values as $value){
 				coap_library_add_option_to_hex_message($hex, $option_nr, $value);
 			}
@@ -286,8 +286,7 @@ class CoAPMessage {
 					$binary_message = pack('H*', $this->get_hex_message());
 					$returnvalue = fwrite($socket, $binary_message); //	Write to socket
 					if($returnvalue != FALSE){
-						dpm($returnvalue);
-						//$response = fread($socket, 512); //	Read from socket
+						$response = fread($socket, 512); //	Read from socket
 					}
 				}
 			}
@@ -418,7 +417,7 @@ class CoAPMessage {
 			}
 			
 			//	Only notify the using module that there went something wrong if the message type of the request was CON
-			else if($this->is_confirmable() && false){
+			else if($this->is_confirmable()){
 				$function_name = $this->module . '_receive_error';
 				$function_name('broken', $this->ip, $this->resource);
 			}
@@ -531,7 +530,6 @@ class CoAPMessage {
 			$request_option_value = '';
 			if($carry) $request_option_value .= '01';
 			$request_option_value .= $first_hex_digits . $last_hex_digit;
-			//dpm($request_option_value);
 			$this->add_option(23, $request_option_value);
 			
 			//	Send the request
@@ -553,14 +551,14 @@ class CoAPMessage {
 	
 	//	Add an URI path option to this message
 	//	Expects a normal ASCII string as option value
+	//  Multiple uri_paths can be combined by placing double slashes (//) between them.
+	//  This allows the use of a single slash in the uri_path.
 	public function add_uri_path($uri_path){
-		$paths = preg_split("/[^\\\\]\//", $uri_path);
+		$paths = explode("//", $uri_path);
 		$hex_paths = array();
 		foreach($paths as $path){
-			$path = str_replace('\/', '/', $path);
 			array_push($hex_paths, coap_library_string_to_hex_with_padding($path));
 		}
-		//dpm($hex_paths);
 		$option_value_hex = implode("/", $hex_paths);
 		$this->add_option(11, $option_value_hex);
 	}

@@ -98,7 +98,7 @@ function coap_discovery_form($form, &$form_state, $node) {
 		$form['device_uri'] = array
 		(
 			'#type' => 'hidden',
-			'#value' => $image[0]['uri'],
+			'#value' => $image[0]['value'],
 		);	
 	}
 	
@@ -214,9 +214,30 @@ function coap_discovery_load_device_core_submit($form, &$form_state) {
 }
 
 function coap_discovery_refresh_device_core_submit($form, &$form_state) {
+	global $user;
 	//dpm($form_state['values']['device_uri']);
 	//background_process_start('coap_discovery_start_discover', $form_state['values']['device_uri', $form_state['values']['nid']]);
 	coap_discovery_start_discover($form_state['values']['device_uri'],$form_state['values']['nid']); //voorgrond
+	
+	$result = db_select('coap_resource_users', 'coap_user')
+			->fields('coap_user', array('uri','nid','device','uid'))
+			->condition('uid', $user->uid, '=')
+			->condition('uri', $form_state['values']['device_uri'], '=')
+			->condition('nid', $form_state['values']['nid'],'=')
+			->condition('device', 1, '=')
+			->execute();
+		
+	if($result->rowCount() == 0 && $user->uid != 0){ //tweede stuk is eigenlijk overbodig, maar je weet nooit
+		$id = db_insert('coap_resource_users')
+			->fields(array(
+				'uid' => $user->uid,
+				'uri' => $form_state['values']['device_uri'],				
+				'nid' => $form_state['values']['nid'],
+				'device' => 1,
+				))
+			->execute();
+	}
+	
 	$form_state['rebuild'] = TRUE;
 }
 
@@ -389,7 +410,7 @@ function coap_discovery_load_device_core($device_uri, $nid){
 
 function coap_discovery_start_discover($device_uri, $nid){
 	$coap_factory = new CoAPMessageFactory('coap_resource', $device_uri, '', false);
-	$request = $coap_factory->create_basic_get_request('.well-known/core');
+	$request = $coap_factory->create_basic_get_request('.well-known//core');
 	$response = $request->send_message();
 	$payloads = $response->get_payload();
 	coap_discovery_parse_discovery_payloads($device_uri, $nid, $payloads);
@@ -453,14 +474,4 @@ function coap_discovery_parse_discovery_payloads($device_uri, $nid, $payloads){
 		}		
 	}
 	if($user->uid == 0) $_SESSION[$user->sid]['resources'] = $resources;
-	if($id != -1 && $user->uid != 0){ //tweede stuk is eigenlijk overbodig, maar je weet nooit
-		$id = db_insert('coap_resource_users')
-			->fields(array(
-				'uid' => $user->uid,
-				'uri' => $device_uri,
-				'device' => 1,
-				'nid' => $nid,
-				))
-			->execute();
-	}
 }

@@ -42,6 +42,7 @@ require_once('coap_library_classes.inc');
 //////////////////////////////////////////////////////////////////////////////////////////
 function coap_library_string_to_hex_with_padding($string){
     $hex='';
+	$string = '' . $string;
     for ($i=0; $i < strlen($string); $i++){
 		$byte = dechex(ord($string[$i]));
 		if(strlen($byte) == 1){
@@ -287,7 +288,6 @@ function coap_library_get_option_value_from_hex_message($hex_message, $option_nu
 //	Returns null if message is smaller than 4 bytes
 //	IMPORTANT: options MUST be added in order of growing option deltas
 function coap_library_add_option_to_hex_message(&$hex_message, $option_number, $value){
-	//dpm($value);
 	if(strlen($hex_message) < 8){
 		return null;
 	}
@@ -295,6 +295,7 @@ function coap_library_add_option_to_hex_message(&$hex_message, $option_number, $
 	if(strlen($hex_message) < 8 + ($token_length*2)){
 		return null;
 	}
+	//pointer pos goedzetten om volgende optie toe te voegen
 	$pos = 8 + ($token_length*2);
 	$current_number = 0;
 	$option_delta = hexdec(substr($hex_message, $pos, 1));
@@ -332,7 +333,7 @@ function coap_library_add_option_to_hex_message(&$hex_message, $option_number, $
 	if($option_number-$current_number > 268){
 		$mid .= "e";
 	}
-	else if($option_number-$current_number > 13){
+	else if($option_number-$current_number > 13){		
 		$mid .= "d";
 	}
 	else{
@@ -373,7 +374,6 @@ function coap_library_add_option_to_hex_message(&$hex_message, $option_number, $
 		str_pad($temp, 2, "0", STR_PAD_LEFT);
 		$mid .= $temp;
 	}
-	
 	// Add Option Value
 	$mid .= $value;
 	
