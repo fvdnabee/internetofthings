@@ -213,6 +213,7 @@ function coap_discovery_load_device_core_submit($form, &$form_state) {
 	$form_state['rebuild'] = TRUE;
 }
 
+//start de discovery-procedure en voegt toe aan de db dat de user geïnteresseerd is in dit device
 function coap_discovery_refresh_device_core_submit($form, &$form_state) {
 	global $user;
 	//dpm($form_state['values']['device_uri']);
@@ -416,6 +417,7 @@ function coap_discovery_start_discover($device_uri, $nid){
 	coap_discovery_parse_discovery_payloads($device_uri, $nid, $payloads);
 }
 
+//verwerkt de payload en voegt info over de resources toe aan db
 function coap_discovery_parse_discovery_payloads($device_uri, $nid, $payloads){
 	$payloads_string = coap_library_hex_to_string($payloads);
 	global $user;

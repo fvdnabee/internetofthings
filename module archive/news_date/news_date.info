@@ -1,0 +1,6 @@
+name = News Date Field
+description = A Simple Date Field for Drupal 7
+package = zzz
+core = 7.x
+files[] = news_date.module
+files[] = news_date.install

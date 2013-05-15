@@ -117,10 +117,6 @@ function coap_resource_menu() {
   return $items;
 }
 
-// function coap_resource_form_alter(&$form, &$form_state, $form_id){
-	// dpm($form);
-// }
-
 function coap_resource_admin_settings() {
 	$form['message_container'] = array
 	(
@@ -163,6 +159,7 @@ function coap_resource_node_view($node, $view_mode, $langcode) {
 	return $node;
 }
 
+//custom validatie van de uri velden wordt hier toegevoegd
 function coap_resource_form_alter(&$form,$form_state,$form_id){
 	if($form_id == 'coap_resource_node_form') {
 		$form['#validate'][] = '_coap_resource_node_form_validate';
@@ -173,6 +170,7 @@ function coap_resource_form_alter(&$form,$form_state,$form_id){
 	
 }
 
+//custom validatie voor resource_uri
 function _coap_resource_node_form_validate(&$from,&$form_state) {
 	$regex = '/^(((?=(?>.*?(::))(?!.+\3)))\3?|([\dA-F]{1,4}(\3|:(?!$)|$)|\2))(?4){5}((?4){2}|(25[0-5]|(2[0-4]|1\d|[1-9])?\d)(\.(?7)){3}).+\z/i';
 	$value = $form_state['values']['field_resource_uri'][LANGUAGE_NONE][0]['value'];
@@ -181,6 +179,7 @@ function _coap_resource_node_form_validate(&$from,&$form_state) {
 	}
 }
 
+//custom validatie voor device_uri
 function _coap_device_node_form_validate(&$from,&$form_state) {
 	$regex = '/^(((?=(?>.*?(::))(?!.+\3)))\3?|([\dA-F]{1,4}(\3|:(?!$)|$)|\2))(?4){5}((?4){2}|(25[0-5]|(2[0-4]|1\d|[1-9])?\d)(\.(?7)){3})\z/i';
 	$value = $form_state['values']['field_device_uri'][LANGUAGE_NONE][0]['value'];
@@ -206,30 +205,10 @@ function create_my_node(){
 	//$entity->save();
 }
 
-function partial_discover($nid){
-	$uri = '2001:6a8:1d80:200::2/validate';
-	$parts = explode('/',$uri);
-	$device_uri = $parts[0];
-	$name = '/' . $parts[1]; //slashes moeten ge-escaped worden met een backslash
-	// dpm($device_uri . $name);
-	$coap_factory = new CoAPMessageFactory('coap_resource', $device_uri, '', false);
-	$request = $coap_factory->create_basic_get_request(".well-known//core");
-	$response = $request->send_message();
-	//$payloads = $response->get_payload();
-	//coap_discovery_parse_discovery_payloads($device_uri, $nid, $payloads);
-}
-
 function coap_resource_form($form, &$form_state, $node) {
 	drupal_add_js('https://www.google.com/jsapi'); // JavaScript bestand toevoegen
 	drupal_add_js(drupal_get_path('module', 'coap_resource') . '/js/coap_resource.js'); // JavaScript bestand toevoegen	
 	global $user;
-	//create_my_node();
-	//partial_discover($node->nid);
-	
-	
-	
-	//dpm(coap_library_string_to_hex_with_padding(6));
-	//dpm(bin2hex(6));
 	
 	$nid = $node->nid;
 	$form['nid'] = array
@@ -913,21 +892,23 @@ function coap_resource_delete_request_form_submit($form, $form_state) {
 	$handle = background_process_start('coap_resource_start_request', 'DELETE', $form_state['values']['nid']);
 }
 
-/////////////////
-// node insert //
-/////////////////
+////////////////////
+// NODE INSERTION //
+////////////////////
+
 function coap_resource_node_insert($node){
 	global $user;
-	//haal informatie op door discovery met query filter optie toe te voegen, indien de remote server
-	//dit niet ondersteunt, wordt een complete discovery request uitgevoerd.
 	
 	if($node->type == 'coap_resource'){
+		//haal de resource_uri uit $node
 		$uri = $node->field_resource_uri['und'][0]['value'];
+		//kijk in de db of er al informatie over deze resource intzit
 		$result = db_select('coap_resource_resources', 'resources')
 			->fields('resources', array('uri'))
 			->condition('uri', $uri, '=')
 			->execute();
 		
+		//zoniet
 		if($result->rowCount() == 0){
 			//Query filtering is niet noodzakelijk ondersteund -> daarom doen we een complete discovery i.p.v. te specifiëren over welk resource we informatie willen
 			//indien we toch query filtering zouden toepassen: we moeten een get request sturen met als uri_path = .well-known//core?href=/$parts[1]
@@ -936,6 +917,7 @@ function coap_resource_node_insert($node){
 			coap_discovery_start_discover($device_uri, $node->nid);
 		}
 		
+		//voeg toe in de db dat de user geïnteresseerd is in deze resource op deze node
 		$id = db_insert('coap_resource_users')
 			->fields(array(
 				'uid' => $user->uid,

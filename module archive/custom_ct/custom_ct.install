@@ -1,0 +1,91 @@
+<?php
+
+//op het einde moet van enable install gemaakt worden
+function custom_ct_enable() {
+	// Ensure the forum node type is available.
+	node_types_rebuild();
+	$types = node_type_get_types();
+	//node_add_body_field($types['custom_ct']);
+	
+	foreach (_custom_ct_installed_fields() as $field) {
+		field_create_field($field);
+	}
+	
+	foreach (_custom_ct_installed_instances() as $instance) {
+		field_create_instance($instance);
+	}
+	
+	//comments default disabled
+	variable_set('comment_custom_ct', COMMENT_NODE_DISABLED);
+	//promote to front page default unchecked
+	variable_set('node_options_custom_ct', array('status'));
+	//preview default disabled
+	variable_set('node_preview_custom_ct', 0);
+	variable_set('node_submitted_custom_ct', 0);
+}
+ 
+function _custom_ct_installed_fields() {
+	$t = get_t();
+	return array(
+		'multiple_lines' => array(
+		'field_name' => 'multiple_lines',
+		'cardinality' => 1,
+		'type'        => 'custom_field',
+		),
+	); 
+}
+
+function _custom_ct_installed_instances() {
+	$t = get_t();
+	return array( 
+		'multiple_lines' => array(
+			'field_name' => 'multiple_lines',
+			'label'       => $t('Multiple Lines'),
+			'bundle' => 'custom_ct',
+			'entity_type' => 'node',
+			'widget'      => array(
+				'type'    => 'custom_field',
+			),
+			'display' => array(
+				'default' => array(
+					'label' => 'above',
+					'type' => 'custom_field_formatter',
+				),
+			),
+			'description' => 'Write something',
+		),
+	);
+}
+
+//op het einde moet van disable uninstall gemaakt worden
+function custom_ct_disable() { 
+	$sql = 'SELECT nid FROM {node} n WHERE n.type = :type';
+	$result = db_query($sql, array(':type' => 'custom_ct'));
+	$nids = array();
+	foreach ($result as $row) {
+		$nids[] = $row->nid;
+	}
+	
+	//delete any  variables made by module
+	variable_del('comment_custom_ct');
+	variable_del('node_preview_custom_ct');
+	variable_del('node_submitted_custom_ct');
+	variable_del('node_options_custom_ct');
+	
+	// Delete all the nodes at once
+	node_delete_multiple($nids);
+	
+	$instance = array('field_name' => 'comment_body','bundle' => 'comment_node_custom_ct','entity_type' => 'comment');
+	field_delete_instance($instance);
+	
+	$instance = array('field_name' => 'body','bundle' => 'custom_ct','entity_type' => 'node');
+	field_delete_instance($instance);
+	
+	$fields = array_keys(_custom_ct_installed_fields());
+	foreach ($fields as $field) {
+		field_delete_field($field);
+	}
+	
+	// Purge all field infromation
+	field_purge_batch(1000);
+}

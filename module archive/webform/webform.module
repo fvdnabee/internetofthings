@@ -1,0 +1,105 @@
+<?php
+
+
+/**
+ * Implements hook_menu().
+ */
+function webform_menu() {
+  $items = array();
+  
+  $items['node/%webform_menu/view/submissions'] = array(
+    'title' => 'Submissions',    
+    'access callback' => TRUE,
+    'weight' => 2,
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+  );
+
+  $items['node/%webform_menu/view/clear'] = array(
+    'title' => 'Clear',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('webform_results_clear_form'),
+    'access callback' => TRUE,
+    'weight' => 4,
+    'type' => MENU_LOCAL_TASK,
+  );
+
+  return $items;
+}
+
+
+/**
+ * Menu loader callback. Load a webform node if the given nid is a webform.
+ */
+function webform_menu_load($nid) {
+  if (!is_numeric($nid)) {
+    return FALSE;
+  }
+  $node = node_load($nid);
+  if (!isset($node->type) || $node->type != 'webform') {
+    return FALSE;
+  }
+  return $node;
+}
+
+function webform_node_view($node, $view_mode, $langcode) {
+	if($node->type == 'webform'){
+		$node->content['webform_form'] = drupal_get_form('webform_form', $node);
+	}
+	return $node;
+}
+
+/**
+ * Retrieve lists of submissions for a given webform.
+ */
+function webform_form($form, &$form_state) {
+	
+  $form['device_uri'] = array
+	(
+		'#type' => 'textfield',
+		'#title' => t('Device IPv6 adress'),
+		'#size' => 60,
+		'#required' => TRUE,
+	);
+  return $form;
+
+}
+
+/**
+ * Delete all submissions for a node.
+ *
+ * @param $nid
+ *   The node id whose submissions will be deleted.
+ */
+function webform_results_clear($nid) {
+  $node = node_load($nid);
+  $submissions = webform_get_submissions($nid);
+  foreach ($submissions as $submission) {
+    webform_submission_delete($node, $submission);
+  }
+}
+
+/**
+ * Confirmation form to delete all submissions for a node.
+ *
+ * @param $nid
+ *   ID of node for which to clear submissions.
+ */
+function webform_results_clear_form($form, $form_state) {
+  drupal_set_title(t('Clear Form Submissions'));
+
+  $form = array();
+  $question = t('Are you sure you want to delete all submissions for this form?');
+  
+  //return $form;
+  return confirm_form($form, $question, '', NULL, t('Clear'), t('Cancel'));
+}
+
+function webform_results_clear_form_submit($form, &$form_state) {
+  webform_results_clear($form_state['values']['nid']);
+  $node = node_load($form_state['values']['nid']);
+  $title = $node->title;
+  $message = t('Webform %title entries cleared.', array('%title' => $title));
+  drupal_set_message($message);
+  watchdog('webform', $message);
+  $form_state['redirect'] = 'node/' . $form_state['values']['nid'] . '/webform-results';
+}

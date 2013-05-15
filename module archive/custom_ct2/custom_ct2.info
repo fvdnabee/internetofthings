@@ -1,0 +1,6 @@
+name = custom_ct2
+description = Development for custom content-types.
+configure = admin/config/content/custom_ct2
+package = zzz
+core = 7.x
+dependencies[] = custom_field2

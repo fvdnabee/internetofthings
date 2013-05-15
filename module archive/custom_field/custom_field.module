@@ -1,0 +1,196 @@
+<?php
+// $Id$
+
+
+/**
+ * Implementation of hook_field_info().
+ */
+function custom_field_field_info() {
+  return array(
+    'custom_field' => array(
+      'label' => t('Custom Field'),
+      'description' => t('Custom Custom Fields field.'),
+      'default_widget' => 'custom_field_widget',
+      'default_formatter' => 'custom_field_formatter',
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_widget_info().
+ */
+function custom_field_field_widget_info() {
+  return array(
+    'custom_field_widget' => array(
+      'label' => t('custom_field form'),
+      'field types' => array('custom_field'),
+      'behaviors' => array(
+        'multiple values' => FIELD_BEHAVIOR_DEFAULT,
+        //Use FIELD_BEHAVIOR_NONE for no default value.
+        'default value' => FIELD_BEHAVIOR_DEFAULT,
+      ),
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_formatter_info().
+ */
+function custom_field_field_formatter_info() {
+  return array(
+    'custom_field_formatter' => array(
+      'label' => t('Default'),
+      'field types' => array('custom_field'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_formatter_view().
+ * opgeroepen als content toegevoegd is en de pagina gerenderd w
+ */
+function custom_field_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+  $element = array();
+
+  switch ($display['type']) {
+    case 'custom_field_formatter':
+      foreach ($items as $delta => $item) {
+        $element[$delta]['#markup'] = theme('custom_field_formatter_default', $item);
+      }
+      break;
+  }
+
+  return $element;
+}
+
+/**
+ * Implements hook_field_widget_form().
+ * wordt uitgevoerd nadat field toegevoegd wordt aan content type en er opties van het veld ingesteld worden
+ * en als je op add content van dit nieuwe content type klikt
+ */
+function custom_field_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
+  $base = $element;
+  if ($instance['widget']['type'] == 'custom_field_widget') {
+    $widget = $instance['widget'];
+    $settings = $widget['settings'];
+    
+    $element['name'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Name'),
+      '#default_value' => isset($items[$delta]['name']) ? $items[$delta]['name'] : NULL,
+    );
+    $element['value'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Value'),
+      '#default_value' => isset($items[$delta]['value']) ? $items[$delta]['value'] : NULL,
+    );
+	$element['max_age'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Max age'),
+      '#default_value' => isset($items[$delta]['max_age']) ? $items[$delta]['max_age'] : NULL,
+      '#element_validate' => array('_custom_field_max_age_validate'),
+	);
+	$element['automatic'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Automatic refresh'),
+      '#default_value' => isset($items[$delta]['automatic']) ? $items[$delta]['automatic'] : NULL,
+    );
+	$element['forced'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Force refresh'),
+      '#default_value' => isset($items[$delta]['forced']) ? $items[$delta]['forced'] : NULL,
+    );
+    $element['link'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Link'),
+      '#default_value' => isset($items[$delta]['link']) ? $items[$delta]['link'] : NULL,
+      '#element_validate' => array('_custom_field_link_validate'),
+    );
+
+  }
+  return $element;
+}
+
+/**
+ * Implementation of hook_field_is_empty().
+ */
+function custom_field_field_is_empty($item, $field) {
+  if ($field['type'] == 'custom_field') {
+  
+    if (empty($item['name'])
+	 && empty($item['value'])
+	 && empty($item['link'])
+	 && empty($item['max_age'])
+	 && empty($item['automatic'])
+	 && empty($item['forced'])
+	 ) {
+     return TRUE;
+	}
+	 
+  }
+  return FALSE;
+}
+
+/**
+ * Implementation of hook_field_settings_form().
+ */
+function custom_field_field_settings_form($field, $instance, $has_data) {
+  if ($field['type'] == 'custom_field') {
+    $settings = $field['settings'];
+    $form = array();
+    return $form;
+  }
+}
+
+/**
+ * Implementation of hook_field_validate().
+ */
+function custom_field_field_validate($obj_type, $object, $field, $instance, $langcode, &$items, &$errors) {
+  if ($field['type'] == 'custom_field') {
+
+  }
+}
+
+/**
+ * Validation callback for a custom_field max_age element.
+ */
+function _custom_field_max_age_validate($element, &$form_state, $form) {
+  $value = $element['#value'];
+  if (!empty($value) && !is_numeric($value)) {
+    form_error($element, t('Submit an age in seconds.'));
+  }
+}
+
+/**
+ * Validation callback for a custom_field link element.
+ */
+function _custom_field_link_validate($element, &$form_state, $form) {
+  $value = $element['#value'];
+  if (!empty($value) && !valid_url($value, TRUE)) {
+    form_error($element, t('Invalid URL.'));
+  }
+}
+
+function custom_field_theme($existing, $type, $theme, $path) {
+  return array(
+    'custom_field_formatter_default' => array(
+      'variables' => array('item' => NULL),
+    ),
+  );
+}
+
+
+function theme_custom_field_formatter_default($item) {
+  
+  $output = '';
+  $output .= '<div class="custom_field-wrapper">';
+  $output .= 'Name: ' . $item['name'] . "<br>";
+  $output .= 'Value: ' . $item['value'] . "<br>";
+  $output .= 'Max age: ' . $item['max_age'] . "<br>";
+  $output .= 'Automatic refresh: ' . $item['automatic'] . "<br>";
+  $output .= 'Forced refresh: ' . $item['forced'] . "<br>";
+  $output .= 'Link: ' . l($item['link'], $item['link'], array('options' =>  array('absolute' => TRUE)));
+  $output .= '</div><br />';
+
+  return $output;
+}

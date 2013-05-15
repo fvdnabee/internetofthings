@@ -59,6 +59,7 @@ function coap_library_string_to_hex_with_padding($string){
 /////////////////////////////////////////////////////////////
 function coap_library_string_to_hex_without_padding($string){
     $hex='';
+	$string = '' . $string;
     for ($i=0; $i < strlen($string); $i++){
 		$byte = dechex(ord($string[$i]));
 		$hex .= $byte;

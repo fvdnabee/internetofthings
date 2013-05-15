@@ -1,0 +1,57 @@
+<?php
+
+function custom_field_field_schema($field) {
+
+  if ($field['type'] == 'custom_field') {
+
+    $schema['columns']['name'] = array(
+      'type' => 'varchar',
+      'length' => '255',
+      'not null' => FALSE,
+    );
+
+    $schema['columns']['value'] = array(
+      'type' => 'varchar',
+      'length' => '255',
+      'not null' => FALSE,
+    );
+	
+	$schema['columns']['max_age'] = array(
+      'type' => 'int',
+      'not null' => FALSE,
+    );
+
+    $schema['columns']['link'] = array(
+      'type' => 'varchar',
+      'length' => '255',
+      'not null' => FALSE,
+    );
+	
+	$schema['columns']['forced'] = array(
+	  'description' => 'Boolean value',
+      'type' => 'int',
+      'size' => 'tiny',
+	  'not null' => TRUE,
+	  'default' => 0,
+    );
+	
+	$schema['columns']['automatic'] = array(
+      'description' => 'Boolean value',
+      'type' => 'int',
+      'size' => 'tiny',
+	  'not null' => TRUE,
+	  'default' => 0,
+    );
+
+    $schema['indexes'] = array(
+      'name' => array('name'),
+      'value' => array('value'),
+	  'max_age' => array('max_age'),
+	  'automatic' => array('automatic'),
+	  'forced' => array('forced'),
+      'link' => array('link'),
+    );
+
+    return $schema;
+  }
+}

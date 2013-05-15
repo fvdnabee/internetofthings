@@ -1,0 +1,15 @@
+; $Id: $
+name = Webform
+description = Enables the creation of forms and questionnaires.
+core = 7.x
+package = Webform
+configure = admin/config/content/webform
+
+
+
+; Information added by drupal.org packaging script on 2012-05-13
+version = "7.x-3.18"
+core = "7.x"
+project = "webform"
+datestamp = "1336890411"
+
