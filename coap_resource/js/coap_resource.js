@@ -3,6 +3,12 @@
 var polling;
 var refreshId;
 
+var get_pending = false;
+var put_pending = false;
+var post_pending = false;
+var delete_pending = false;
+var observe_pending = false;
+
 Drupal.behaviors.coap_resource = {
   attach: 	function(context) {
 				refreshId = setInterval(function(){
@@ -65,6 +71,20 @@ $(document).ready(function() {
 				dataType: "text",
 				success: getResponse
 			});
+			switch(method){
+				case "GET":
+					get_pending = true;
+					break;
+				case "PUT":
+					put_pending = true;
+					break;
+				case "POST":
+					post_pending = true;
+					break;
+				case "DELETE":
+					delete_pending = true;
+					break;
+			}
 		}
 	);
 	
@@ -80,6 +100,7 @@ $(document).ready(function() {
 					dataType: "text",
 					success: observeResponse
 				});
+				observe_pending = true;
 			}
 			else if($(this).val() == "Stop Observing"){
 				console.log("Button clicked: stopping observe for " + uri);
@@ -139,14 +160,64 @@ function valueReceived(html){
 			table.find('.row1').fadeIn('slow');
 		}
 	);
-	// var label = '#lbl_OBSERVE_' + uri;
-	// if(new_value != null && new_value != ''){
-		// label = label.replace(/\:/g, '\\\:');
-		// label = label.replace(/\//g, '\\\/');
-		// $(label).html(new_value);
-	// }
 	
-	
+	var error_str = $($xml.find('error')).text();
+	resource_div = '#' + uri;
+	resource_div = resource_div.replace(/\:/g, '\\\:');
+	resource_div = resource_div.replace(/\//g, '\\\/');
+	var img_status = $(resource_div).find('.img_status');
+	var src;
+	if(error_str == "none" /*&& img_status.attr("src") != Drupal.settings.basePath + Drupal.settings.coap_resource.module_path + "/images/valid.ico"*/){
+		src = "";
+		// img_status.attr("src", "");
+		// img_status.attr("style", "display: none");
+	}
+	else if(error_str == "delay" && img_status.attr("src") != Drupal.settings.basePath + Drupal.settings.coap_resource.module_path + "/images/delay.gif"){
+		src = Drupal.settings.basePath + Drupal.settings.coap_resource.module_path + "/images/delay.gif";
+		// img_status.attr("src", Drupal.settings.basePath + Drupal.settings.coap_resource.module_path + "/images/delay.gif");
+		// img_status.attr("style", "display: inline");
+	}
+	else if((error_str == "broken" || error_str == "unreachable") && img_status.attr("src") != Drupal.settings.basePath + Drupal.settings.coap_resource.module_path + "/images/error.ico"){
+		src = Drupal.settings.basePath + Drupal.settings.coap_resource.module_path + "/images/error.ico";
+		// img_status.attr("src", Drupal.settings.basePath + Drupal.settings.coap_resource.module_path + "/images/error.ico");
+		// img_status.attr("style", "display: inline");
+	}
+	if(get_pending){
+		$(resource_div + ' > .' + 'GET > .img_status').attr("src", src);
+		if(src == "" && $(resource_div + ' > .' + 'GET > .img_status').attr("src") != Drupal.settings.basePath + Drupal.settings.coap_resource.module_path + "/images/valid.ico"){
+			$(resource_div + ' > .' + 'GET > .img_status').attr("style", "display: none");
+		}
+		else{
+			$(resource_div + ' > .' + 'GET > .img_status').attr("style", "display: inline");
+		}
+	}
+	if(put_pending){
+		$(resource_div + ' > .' + 'PUT > .img_status').attr("src", src);
+		if(src == ""){
+			$(resource_div + ' > .' + 'PUT > .img_status').attr("style", "display: none");
+		}
+		else{
+			$(resource_div + ' > .' + 'PUT > .img_status').attr("style", "display: inline");
+		}
+	}
+	if(post_pending){
+		$(resource_div + ' > .' + 'POST > .img_status').attr("src", src);
+		if(src == ""){
+			$(resource_div + ' > .' + 'POST > .img_status').attr("style", "display: none");
+		}
+		else{
+			$(resource_div + ' > .' + 'POST > .img_status').attr("style", "display: inline");
+		}
+	}
+	if(delete_pending){
+		$(resource_div + ' > .' + 'DELETE > .img_status').attr("src", src);
+		if(src == ""){
+			$(resource_div + ' > .' + 'DELETE > .img_status').attr("style", "display: none");
+		}
+		else{
+			$(resource_div + ' > .' + 'DELETE > .img_status').attr("style", "display: inline");
+		}
+	}
 	
 	
 	
@@ -341,6 +412,26 @@ function getResponse(input){
 		$(label).hide();
 		$(label).html(matches[3]);
 		$(label).fadeIn('slow');
+		resource_div = '#' + matches[1];
+		resource_div = resource_div.replace(/\:/g, '\\\:');
+		resource_div = resource_div.replace(/\//g, '\\\/');
+		var img_status = $(resource_div + " > ." + matches[2] + " > .img_status");
+		img_status.attr("src", Drupal.settings.basePath + Drupal.settings.coap_resource.module_path + "/images/valid.ico");
+		img_status.attr("style", "display: inline");
+		switch(matches[2]){
+			case "GET":
+				get_pending = false;
+				break;
+			case "PUT":
+				put_pending = false;
+				break;
+			case "POST":
+				post_pending = false;
+				break;
+			case "DELETE":
+				delete_pending = false;
+				break;
+		}
 	}
 }
 

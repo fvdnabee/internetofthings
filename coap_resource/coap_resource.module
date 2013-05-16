@@ -210,6 +210,7 @@ function create_my_node(){
 function coap_resource_form($form, &$form_state, $node) {
 	drupal_add_js('https://www.google.com/jsapi'); // JavaScript bestand toevoegen
 	drupal_add_js(drupal_get_path('module', 'coap_resource') . '/js/coap_resource.js'); // JavaScript bestand toevoegen	
+	drupal_add_js(array('coap_resource' => array('module_path' => drupal_get_path('module', 'coap_resource'))), array('type' => 'setting'));
 	global $user;
 	
 	//create_my_node();
