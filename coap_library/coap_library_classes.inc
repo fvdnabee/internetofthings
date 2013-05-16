@@ -294,7 +294,6 @@ class CoAPMessage {
 			//	Check if response isn't empty
 			if($response != '' && $response != 'empty'){
 				$response_obj = $coap_factory->create_message_with_given_hex_message(coap_library_string_to_hex_with_padding($response)); //	Put response in CoAPMessage-object
-				echo "response: " . coap_library_string_to_hex_with_padding($response);
 				//	notify using module that there are no difficulties at the moment
 				$function_name = $this->module . '_receive_error';
 				$function_name('none', $this->ip, $this->resource);
@@ -375,7 +374,7 @@ class CoAPMessage {
 						$returnvalue = fwrite($socket, $reset_message); // wegschrijven naar udp-socket
 					}
 				}
-				else if(($response_obj->get_payload() == null || $response_obj->get_payload() == '') && $this->message_id == $response_obj->get_message_id()){
+				else if(($response_obj->get_payload() == null || $response_obj->get_payload() == '') && $this->message_id == $response_obj->get_message_id() && $this->code == 0){
 					//	Resource has returned an empty ACK
 					$response = 'empty';
 					stream_set_timeout($socket, 20, 0); //	Timeout for separate response currently set to 20 seconds, but can be chosen
@@ -481,7 +480,7 @@ class CoAPMessage {
 	
 	//	Retrieves the numeric code of this message
 	public function get_numeric_message_code(){
-		return $code;
+		return $this->code;
 	}
 	
 	//	Checks if this message is confirmable or not

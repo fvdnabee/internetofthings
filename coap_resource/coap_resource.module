@@ -1271,7 +1271,7 @@ function coap_resource_start_request_for_uri($method, $uri, $payload=''){
 		}
 		
 		if($response_obj != null){
-			print "<uri>" . $uri . "</uri><method>" . $method . "</method><response>" . $response_obj->get_payload_text() . "</response>";
+			print "<uri>" . $uri . "</uri><method>" . $method . "</method><response>" . $response_obj->get_payload_text() . "</response><code>" . $response_obj->get_numeric_message_code() . "</code>";
 		}
 	}
 }
