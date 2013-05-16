@@ -1299,7 +1299,7 @@ function coap_resource_start_request_for_uri($method, $uri, $payload=''){
 		}
 		
 		if($response_obj != null){
-			print "<uri>" . $uri . "</uri><method>" . $method . "</method><response>" . $response_obj->get_payload_text() . "</response>";
+			print "<uri>" . $uri . "</uri><method>" . $method . "</method><response>" . $response_obj->get_payload_text() . "</response><code>" . $response_obj->get_numeric_message_code() . "</code>";
 		}
 	}
 }
@@ -1419,7 +1419,7 @@ function coap_resource_handle_observing_for_uri($uri, $state){
 	//	Store in database that this user is observing or not observing the current URI
 	$num_updated = db_update('coap_resource_users')
 		->fields(array(
-			'observe' => ($start == "start" ? 1 : 0),
+			'observe' => ($state == "start" ? 1 : 0),
 		))
 		->condition('uri', $uri, '=')
 		->condition('uid', $user->uid, '=')

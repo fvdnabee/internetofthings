@@ -85,6 +85,8 @@ $(document).ready(function() {
 					delete_pending = true;
 					break;
 			}
+			$(this).parent().find('.img_status').attr("src", "");
+			$(this).parent().find('.img_status').attr("style", "display: none");
 		}
 	);
 	
@@ -167,20 +169,14 @@ function valueReceived(html){
 	resource_div = resource_div.replace(/\//g, '\\\/');
 	var img_status = $(resource_div).find('.img_status');
 	var src;
-	if(error_str == "none" /*&& img_status.attr("src") != Drupal.settings.basePath + Drupal.settings.coap_resource.module_path + "/images/valid.ico"*/){
+	if(error_str == "none"){
 		src = "";
-		// img_status.attr("src", "");
-		// img_status.attr("style", "display: none");
 	}
 	else if(error_str == "delay" && img_status.attr("src") != Drupal.settings.basePath + Drupal.settings.coap_resource.module_path + "/images/delay.gif"){
 		src = Drupal.settings.basePath + Drupal.settings.coap_resource.module_path + "/images/delay.gif";
-		// img_status.attr("src", Drupal.settings.basePath + Drupal.settings.coap_resource.module_path + "/images/delay.gif");
-		// img_status.attr("style", "display: inline");
 	}
 	else if((error_str == "broken" || error_str == "unreachable") && img_status.attr("src") != Drupal.settings.basePath + Drupal.settings.coap_resource.module_path + "/images/error.ico"){
 		src = Drupal.settings.basePath + Drupal.settings.coap_resource.module_path + "/images/error.ico";
-		// img_status.attr("src", Drupal.settings.basePath + Drupal.settings.coap_resource.module_path + "/images/error.ico");
-		// img_status.attr("style", "display: inline");
 	}
 	if(get_pending){
 		$(resource_div + ' > .' + 'GET > .img_status').attr("src", src);
@@ -218,121 +214,15 @@ function valueReceived(html){
 			$(resource_div + ' > .' + 'DELETE > .img_status').attr("style", "display: inline");
 		}
 	}
-	
-	
-	
-	// var regex = /<error>(.*)<\/error><responded>(.*)<\/responded><get_response>(.*)<\/get_response><method>(.*)<\/method><response_type>(.*)<\/response_type><tr><td>(\d+)<\/td><td>(.*)<\/td><td>(.*)<\/td><td>(.*)<\/td><\/tr>/;
-	// var matches = regex.exec(html);
-	// console.log('input ajax call: ' + html);
-	// if(matches && matches[1] == 'none'){
-		// $('#error').hide();
-		// $('#errorimg').attr('style', 'visibility:hidden;');
-		// console.log('nieuwe hid: ' + matches[6] + ', oude hid: ' + $('#hid1').html());
-		// var nieuw = parseInt(matches[6]);
-		// var oud = parseInt($('#hid1').html());
-		// if(nieuw > oud){
-			// $('#error').html('');
-			// $('#historytable').hide();
-			// for (var i = 5; i >= 2; i--){
-				// var nr = i-1;
-				// $('#hid' + i).html($('#hid' + nr).html());
-				// $('#temperatuur' + i).html($('#temperatuur' + nr).html());
-				// $('#max_age' + i).html($('#max_age' + nr).html());
-				// $('#timestamp' + i).html($('#timestamp' + nr).html());
-			// }
-			// $('#hid1').html(matches[6]);
-			// $('#temperatuur1').html(matches[7]);
-			// $('#max_age1').html(matches[8]);
-			// $('#timestamp1').html(matches[9]);
-			// $('#historytable').fadeIn('slow');
-			// drawChart();
-		// }
-		// if(matches[2] == 1){
-			// $('#response').hide();
-			// $('#response_type').hide();
-			// $('#response').html("Response: " + matches[3]);
-			// $('#response_type').html("Response type: " + matches[5]);
-			// $('#response').fadeIn('slow');
-			// $('#response_type').fadeIn('slow');
-		// }
-		// drawChart();
-	// }
-	// else{
-		// var regex = /<error>(.*)<\/error><responded>(.*)<\/responded><get_response>(.*)<\/get_response><method>(.*)<\/method><response_type>(.*)<\/response_type>/;
-		// var matches = regex.exec(html);
-		// if(matches){
-			// if(matches[1] == 'unreachable'){
-				// if($('#errorimg').attr('src') != 'sites/all/modules/custom/coap_resource/images/error.ico'){
-					// $('#errorimg').attr('src', 'sites/all/modules/custom/coap_resource/images/error.ico');
-				// }
-				// $('#errorimg').attr('style', 'visibility:visible;width:25px;height:25px;');
-				// $('#error').html('De sensor kon tijdens de laatste poging niet worden bereikt. Probeer later opnieuw.');
-			// }
-			// else if(matches[1] == 'delay'){
-				// if($('#errorimg').attr('src') != 'sites/all/modules/custom/coap_resource/images/delay.gif'){
-					// $('#errorimg').attr('src', 'sites/all/modules/custom/coap_resource/images/delay.gif');
-				// }
-				// $('#errorimg').attr('style', 'visibility:visible;width:25px;height:25px;');
-				// $('#error').html('De sensor reageert trager dan normaal');
-			// }
-			// else if(matches[1] == 'broken'){
-				// if($('#errorimg').attr('src') != 'sites/all/modules/custom/coap_resource/images/error.ico'){
-					// $('#errorimg').attr('src', 'sites/all/modules/custom/coap_resource/images/error.ico');
-				// }
-				// $('#errorimg').attr('style', 'visibility:visible;width:25px;height:25px;');
-				// $('#error').html('De sensor stopte tijdens de laatste poging met reageren. Probeer later opnieuw.');
-			// }
-			// else if(matches[1] == 'bad_uri'){
-				// if($('#errorimg').attr('src') != 'sites/all/modules/custom/coap_resource/images/error.ico'){
-					// $('#errorimg').attr('src', 'sites/all/modules/custom/coap_resource/images/error.ico');
-				// }
-				// $('#errorimg').attr('style', 'visibility:visible;width:25px;height:25px;');
-				// $('#error').html('Er werd een ongeldige URI opgegeven');
-			// }
-				// if(matches[2] == '1'){
-				// $('#response').hide();
-				// $('#response_type').hide();
-				// $('#response').html("Response: " + matches[3]);
-				// $('#response_type').html("Response type: " + matches[5]);
-				// $('#response').fadeIn('slow');
-				// $('#response_type').fadeIn('slow');
-			// }
-		// }
-		// else{
-			// var regex = /<error>(.*)<\/error>/;
-			// var matches = regex.exec(html);
-			// if(matches){
-				// if(matches[1] == 'unreachable'){
-					// if($('#errorimg').attr('src') != 'sites/all/modules/custom/coap_resource/images/error.ico'){
-						// $('#errorimg').attr('src', 'sites/all/modules/custom/coap_resource/images/error.ico');
-					// }
-					// $('#errorimg').attr('style', 'visibility:visible;width:25px;height:25px;');
-					// $('#error').html('De sensor kon tijdens de laatste poging niet worden bereikt. Probeer later opnieuw.');
-				// }
-				// else if(matches[1] == 'delay'){
-					// if($('#errorimg').attr('src') != 'sites/all/modules/custom/coap_resource/images/delay.gif'){
-						// $('#errorimg').attr('src', 'sites/all/modules/custom/coap_resource/images/delay.gif');
-					// }
-					// $('#errorimg').attr('style', 'visibility:visible;width:25px;height:25px;');
-					// $('#error').html('De sensor reageert trager dan normaal');
-				// }
-				// else if(matches[1] == 'broken'){
-					// if($('#errorimg').attr('src') != 'sites/all/modules/custom/coap_resource/images/error.ico'){
-						// $('#errorimg').attr('src', 'sites/all/modules/custom/coap_resource/images/error.ico');
-					// }
-					// $('#errorimg').attr('style', 'visibility:visible;width:25px;height:25px;');
-					// $('#error').html('De sensor stopte tijdens de laatste poging met reageren. Probeer later opnieuw.');
-				// }
-				// else if(matches[1] == 'bad_uri'){
-					// if($('#errorimg').attr('src') != 'sites/all/modules/custom/coap_resource/images/error.ico'){
-						// $('#errorimg').attr('src', 'sites/all/modules/custom/coap_resource/images/error.ico');
-					// }
-					// $('#errorimg').attr('style', 'visibility:visible;width:25px;height:25px;');
-					// $('#error').html('Er werd een ongeldige URI opgegeven');
-				// }
-			// }
-		// }
-	// }
+	if(observe_pending){
+		$(resource_div + ' > .' + 'OBSERVE > .img_status').attr("src", src);
+		if(src == ""){
+			$(resource_div + ' > .' + 'OBSERVE > .img_status').attr("style", "display: none");
+		}
+		else{
+			$(resource_div + ' > .' + 'OBSERVE > .img_status').attr("style", "display: inline");
+		}
+	}
 }
 
 function discoverReady(xml){
@@ -403,20 +293,30 @@ function drawChart() {
 
 function getResponse(input){
 	console.log("Response for GET request: " + input);
-	var regex = /<uri>(.*)<\/uri><method>(.*)<\/method><response>(.*)<\/response>/;
+	var regex = /<uri>(.*)<\/uri><method>(.*)<\/method><response>(.*)<\/response><code>(.*)<\/code>/;
 	var matches = regex.exec(input);
 	if(matches){
 		var label = '#lbl_' + matches[2] + "_" + matches[1];
 		label = label.replace(/\:/g, '\\\:');
 		label = label.replace(/\//g, '\\\/');
 		$(label).hide();
-		$(label).html(matches[3]);
+		if(matches[4] == "133"){
+			$(label).html("This method is not supported on this resource");
+		}
+		else{
+			$(label).html(matches[3]);
+		}
 		$(label).fadeIn('slow');
 		resource_div = '#' + matches[1];
 		resource_div = resource_div.replace(/\:/g, '\\\:');
 		resource_div = resource_div.replace(/\//g, '\\\/');
 		var img_status = $(resource_div + " > ." + matches[2] + " > .img_status");
-		img_status.attr("src", Drupal.settings.basePath + Drupal.settings.coap_resource.module_path + "/images/valid.ico");
+		if(matches[4] == "133"){
+			img_status.attr("src", Drupal.settings.basePath + Drupal.settings.coap_resource.module_path + "/images/error.ico");
+		}
+		else{
+			img_status.attr("src", Drupal.settings.basePath + Drupal.settings.coap_resource.module_path + "/images/valid.ico");
+		}
 		img_status.attr("style", "display: inline");
 		switch(matches[2]){
 			case "GET":
@@ -436,7 +336,7 @@ function getResponse(input){
 }
 
 function observeResponse(input){
-	console.log("Response for observe: " + input);
+	console.log("Response for observe request: " + input);
 	var regex = /<uri>(.*)<\/uri><response>(.*)<\/response>/;
 	var matches = regex.exec(input);
 	if(matches){

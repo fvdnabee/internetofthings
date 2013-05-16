@@ -374,7 +374,7 @@ class CoAPMessage {
 						$returnvalue = fwrite($socket, $reset_message); // wegschrijven naar udp-socket
 					}
 				}
-				else if(($response_obj->get_payload() == null || $response_obj->get_payload() == '') && $this->message_id == $response_obj->get_message_id()){
+				else if(($response_obj->get_payload() == null || $response_obj->get_payload() == '') && $this->message_id == $response_obj->get_message_id() && $response_obj->code == 0){
 					//	Resource has returned an empty ACK
 					$response = 'empty';
 					stream_set_timeout($socket, 20, 0); //	Timeout for separate response currently set to 20 seconds, but can be chosen
@@ -480,7 +480,7 @@ class CoAPMessage {
 	
 	//	Retrieves the numeric code of this message
 	public function get_numeric_message_code(){
-		return $code;
+		return $this->code;
 	}
 	
 	//	Checks if this message is confirmable or not
@@ -671,6 +671,7 @@ class CoAPMessageFactory{
 	public function create_basic_get_request($uri_path){
 		$coap_message = $this->create_message_with_header_and_token("CON", "GET", 0);
 		if(isset($uri_path) && $uri_path != ''){
+			$uri_path = str_replace('/', '//', $uri_path);
 			$coap_message->add_uri_path($uri_path);
 		}
 		return $coap_message;
@@ -679,6 +680,7 @@ class CoAPMessageFactory{
 	public function create_basic_post_request($uri_path){
 		$coap_message = $this->create_message_with_header_and_token("CON", "POST", 0);
 		if(isset($uri_path) && $uri_path != ''){
+			$uri_path = str_replace('/', '//', $uri_path);
 			$coap_message->add_uri_path($uri_path);
 		}
 		return $coap_message;
@@ -687,6 +689,7 @@ class CoAPMessageFactory{
 	public function create_basic_put_request($uri_path){
 		$coap_message = $this->create_message_with_header_and_token("CON", "PUT", 0);
 		if(isset($uri_path) && $uri_path != ''){
+			$uri_path = str_replace('/', '//', $uri_path);
 			$coap_message->add_uri_path($uri_path);
 		}
 		return $coap_message;
@@ -695,6 +698,7 @@ class CoAPMessageFactory{
 	public function create_basic_delete_request($uri_path){
 		$coap_message = $this->create_message_with_header_and_token("CON", "DELETE", 0);
 		if(isset($uri_path) && $uri_path != ''){
+			$uri_path = str_replace('/', '//', $uri_path);
 			$coap_message->add_uri_path($uri_path);
 		}
 		return $coap_message;
