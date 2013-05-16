@@ -918,6 +918,17 @@ function coap_resource_node_insert($node){
 			//indien we toch query filtering zouden toepassen: we moeten een get request sturen met als uri_path = .well-known//core?href=/$parts[1]
 			$parts = explode('/',$uri);
 			$device_uri = $parts[0];
+			
+			//$coap_factory = new CoAPMessageFactory('coap_resource', $device_uri, '', false);
+			//$request = $coap_factory->create_basic_get_request('.well-known//core');
+			
+			
+			//$request->add_option(15,"?href=//$parts[1]");
+			//$response = $request->send_message();
+			//$payloads = $response->get_payload();
+			//coap_discovery_parse_discovery_payloads($device_uri, $nid, $payloads);
+			
+			
 			//laat dit effe achterwege
 			//coap_discovery_start_discover($device_uri, $nid);
 			//background_process_start('coap_discovery_start_discover', $device_uri, $nid);
@@ -925,7 +936,7 @@ function coap_resource_node_insert($node){
 		
 		
 	}
-	else if($node->type == 'coap_device'){
+	else if($node->type == 'coap_device' && false){
 		$device_uri = $node->field_device_uri['und'][0]['value'];
 		
 		//discovery moet niet uitgevoerd worden als iemand al geïnteresseerd is, gebruik deze sub-optimale oplossing als query filtering geïmplementeerd wordt

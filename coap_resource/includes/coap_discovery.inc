@@ -63,6 +63,20 @@ function coap_discovery_form($form, &$form_state, $node) {
 	drupal_add_js('https://www.google.com/jsapi'); // JavaScript bestand toevoegen
 	global $user;
 	
+	$uri_test = '2001:6a8:1d80:200::2/validate';	
+	$parts = explode('/',$uri_test);
+	$device_uri_test = $parts[0];
+	$coap_factory = new CoAPMessageFactory('coap_resource', $device_uri_test, '', false);
+	$request = $coap_factory->create_basic_get_request('.well-known//core');
+	dpm($request->get_hex_message());
+	$request->add_option(15,coap_library_string_to_hex_with_padding("href=/$parts[1]"));
+	dpm($request->get_hex_message());
+	$response = $request->send_message();
+	//$payloads = $response->get_payload();
+	//coap_discovery_parse_discovery_payloads($device_uri_test, 697, $payloads);
+	
+	//dpm(dechex(10));///////////////////////////////zelf functie maken of pack ofzo
+	
 	// $new_node = node_load($node->nid);
 	// $wrapper = entity_metadata_wrapper('node', $new_node);
 	// dpm($wrapper->info());
