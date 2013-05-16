@@ -294,7 +294,6 @@ class CoAPMessage {
 			//	Check if response isn't empty
 			if($response != '' && $response != 'empty'){
 				$response_obj = $coap_factory->create_message_with_given_hex_message(coap_library_string_to_hex_with_padding($response)); //	Put response in CoAPMessage-object
-				echo "response: " . coap_library_string_to_hex_with_padding($response);
 				//	notify using module that there are no difficulties at the moment
 				$function_name = $this->module . '_receive_error';
 				$function_name('none', $this->ip, $this->resource);
