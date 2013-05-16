@@ -24,7 +24,7 @@ Drupal.behaviors.coap_resource = {
 };
 
 $(document).ready(function() {
-	setTimeout(function(){google.load('visualization', '1', {'callback':'', 'packages':['corechart']})}, 10);
+	setTimeout(function(){google.load('visualization', '1', {'callback':'', 'packages':['corechart']})}, 20);
 	$('.POLLING_BUTTON').click(
 		function(){
 			var uri = $($(this).parent().parent().find('.uri')[0]).html();
@@ -132,9 +132,13 @@ $(document).ready(function() {
 		}
 	);
 	
-	$('.POLLING_BUTTON').trigger('click');
+	$('.graphselect').change(
+		function(){
+			drawChart($(this).parent().parent().attr("id"));
+		}
+	);
 	
-	drawChart();
+	$('.POLLING_BUTTON').trigger('click');
 });
 
 function valueReceived(html){
@@ -223,6 +227,8 @@ function valueReceived(html){
 			$(resource_div + ' > .' + 'OBSERVE > .img_status').attr("style", "display: inline");
 		}
 	}
+	
+	drawChart(uri);
 }
 
 function discoverReady(xml){
@@ -272,23 +278,55 @@ function discoverReady(xml){
 	// }
 }
 
-function drawChart() {
-	var data = google.visualization.arrayToDataTable([
-		['Timestamp', 'Temperatuur'],
-		[parseInt($('#hid5').html()), parseFloat($('#temperatuur5').html())],
-		[parseInt($('#hid4').html()), parseFloat($('#temperatuur4').html())],
-		[parseInt($('#hid3').html()), parseFloat($('#temperatuur3').html())],
-		[parseInt($('#hid2').html()), parseFloat($('#temperatuur2').html())],
-		[parseInt($('#hid1').html()), parseFloat($('#temperatuur1').html())]
-    ]);
+function drawChart(uri) {
+	var data_array = [['Nr', 'Value']];
+	// var data = google.visualization.arrayToDataTable([
+		// ['Timestamp', 'Value'],
+		// [parseInt($('#hid5').html()), parseFloat($('#temperatuur5').html())],
+		// [parseInt($('#hid4').html()), parseFloat($('#temperatuur4').html())],
+		// [parseInt($('#hid3').html()), parseFloat($('#temperatuur3').html())],
+		// [parseInt($('#hid2').html()), parseFloat($('#temperatuur2').html())],
+		// [parseInt($('#hid1').html()), parseFloat($('#temperatuur1').html())]
+    // ]);
+	
+	var resource_div = '#' + uri;
+	resource_div = resource_div.replace(/\:/g, '\\\:');
+	resource_div = resource_div.replace(/\//g, '\\\/');
+	resource_div = $(resource_div);
+	var amount = resource_div.find('.history > .historyselect > option:selected').val();
+	var type = resource_div.find(".graphselect > option:selected").val();
+	if(type == "Pie"){
+		for(var i = amount; i > 0; i--){
+			data_array.push([(amount-i+1).toString(), parseFloat(resource_div.find('.row' + i + ' > .coap_value').html())]);
+		}
+	}
+	else{
+		for(var i = amount; i > 0; i--){
+			data_array.push([amount-i+1, parseFloat(resource_div.find('.row' + i + ' > .coap_value').html())]);
+		}
+	}
+	var data = google.visualization.arrayToDataTable(data_array);
 
     var options = {
-      title: 'Geschiedenis temperatuur',
+      title: 'History of fetched values',
 	  legend: {position: 'top', alignment: 'end'}
     };
 
-    var chart = new google.visualization.LineChart(document.getElementById('grafiek'));
-    chart.draw(data, options);
+	if(type == "Line"){
+		var chart = new google.visualization.LineChart(document.getElementById("div_graphimage_" + uri));
+	}
+	else if(type == "Pie"){
+		var chart = new google.visualization.PieChart(document.getElementById("div_graphimage_" + uri));
+	}
+	else if(type == "Column"){
+		var chart = new google.visualization.ColumnChart(document.getElementById("div_graphimage_" + uri));
+	}
+	if(type != "None"){
+		chart.draw(data, options);
+	}
+	else{
+		resource_div.find(".graphimage").empty();
+	}
 }
 
 function getResponse(input){
