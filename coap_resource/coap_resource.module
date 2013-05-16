@@ -1391,7 +1391,7 @@ function coap_resource_handle_observing_for_uri($uri, $state){
 	//	Store in database that this user is observing or not observing the current URI
 	$num_updated = db_update('coap_resource_users')
 		->fields(array(
-			'observe' => ($start == "start" ? 1 : 0),
+			'observe' => ($state == "start" ? 1 : 0),
 		))
 		->condition('uri', $uri, '=')
 		->condition('uid', $user->uid, '=')
