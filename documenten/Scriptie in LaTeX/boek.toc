@@ -59,14 +59,14 @@
 \contentsline {chapter}{\numberline {4}CoAP library module}{26}
 \contentsline {section}{\numberline {4.1}Doel}{26}
 \contentsline {subsection}{\numberline {4.1.1}Essenti\"{e}le, te ondersteunen functies}{27}
-\contentsline {subsection}{\numberline {4.1.2}Optionele, handige functies}{28}
-\contentsline {section}{\numberline {4.2}Implementatie}{29}
-\contentsline {subsection}{\numberline {4.2.1}Proceduregericht}{29}
+\contentsline {subsection}{\numberline {4.1.2}Optionele, handige functies}{29}
+\contentsline {section}{\numberline {4.2}Implementatie}{30}
+\contentsline {subsection}{\numberline {4.2.1}Proceduregericht}{30}
 \contentsline {subsection}{\numberline {4.2.2}Objectgericht}{30}
 \contentsline {subsubsection}{CoAPFactory klasse}{30}
 \contentsline {subsubsection}{CoAPMessage klasse}{31}
 \contentsline {subsection}{\numberline {4.2.3}Hooks voor notificaties}{31}
-\contentsline {subsection}{\numberline {4.2.4}Opvangen van verloren berichten}{32}
+\contentsline {subsection}{\numberline {4.2.4}Opvangen van verloren berichten}{33}
 \contentsline {chapter}{\numberline {5}CoAP resource module}{34}
 \contentsline {section}{\numberline {5.1}Architectuur}{34}
 \contentsline {subsection}{\numberline {5.1.1}Functionaliteit}{34}
