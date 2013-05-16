@@ -88,31 +88,6 @@ function coap_resource_menu() {
 		"access callback" => true,
 		"type" => MENU_CALLBACK
 	);
-	
-	// $items['node/%coap_resource_menu/view/discovery'] = array(
-		// 'title' => 'Discovery',    
-		// 'access callback' => TRUE,
-		// 'weight' => 2,
-		// 'type' => MENU_DEFAULT_LOCAL_TASK,
-	// );
-	
-	// $items['node/%coap_resource_menu/view/resources'] = array(
-		// 'title' => 'Resources',
-		// 'page callback' => 'drupal_get_form',
-		// 'page arguments' => array('coap_resource_form', 1),
-		// 'access callback' => TRUE,
-		// 'weight' => 4,
-		// 'type' => MENU_LOCAL_TASK,
-	// );
-	
-	// $items['node/%coap_resource_menu/view/configuration'] = array(
-		// 'title' => 'Configuration',
-		// 'page callback' => 'drupal_get_form',
-		// 'page arguments' => array('coap_resource_admin_settings'),
-		// 'access callback' => TRUE,
-		// 'weight' => 8,
-		// 'type' => MENU_LOCAL_TASK,
-	// );
 
   return $items;
 }
@@ -147,10 +122,7 @@ function coap_resource_menu_load($nid) {
 
 //Act on a node that is being assembled before rendering.
 function coap_resource_node_view($node, $view_mode, $langcode) {
-	if($node->type == 'coap_general'){
-		$node->content['coap_discovery_form'] = drupal_get_form('coap_discovery_form', $node);
-	}
-	else if($node->type == 'coap_resource'){
+	if($node->type == 'coap_resource'){
 		$node->content['coap_resource_form'] = drupal_get_form('coap_resource_form', $node);
 	}
 	else if($node->type == 'coap_device'){
@@ -190,22 +162,6 @@ function _coap_device_node_form_validate(&$from,&$form_state) {
 	}
 }
 
-function create_my_node(){
-	global $user;
-	// Create an Entity
-	$new_node = entity_create('node', array('type' => 'coap_resource'));
-	// Specify the author
-	$new_node->uid = $user->uid;
-	// Create a Entity Wrapper of that new Entity
-	$entity = entity_metadata_wrapper('node',$new_node);
-
-	// Specify the title
-	$entity->title = 'Test node';
-	// Add field data... SO MUCH BETTER!
-	$entity->field_resource_uri->set('2001:6a8:1d80:200::2/large-update');
-	// Save the node.
-	//$entity->save();
-}
 
 function coap_resource_form($form, &$form_state, $node) {
 	drupal_add_js('https://www.google.com/jsapi'); // JavaScript bestand toevoegen
@@ -916,101 +872,124 @@ function coap_resource_node_insert($node){
 		
 		//zoniet
 		if($result->rowCount() == 0){
-			//Query filtering is niet noodzakelijk ondersteund -> daarom doen we een complete discovery i.p.v. te specifiëren over welk resource we informatie willen
-			//indien we toch query filtering zouden toepassen: we moeten een get request sturen met als uri_path = .well-known//core?href=/$parts[1]
-			
-			background_process_start('_query_filter', $uri, $nid);
-			
-			//laat dit effe achterwege
-			
-			
-			
-			
-			
-			
-			
-			//coap_discovery_start_discover($device_uri, $nid);
-			//background_process_start('coap_discovery_start_discover', $device_uri, $nid);
+			//Query filtering 			
+			background_process_start('_start_filtered_discovery', $uri, $nid);
 		}
-		
 		
 	}
-	else if($node->type == 'coap_device' && false){
+	else if($node->type == 'coap_device'){
 		$device_uri = $node->field_device_uri['und'][0]['value'];
 		
-		//discovery moet niet uitgevoerd worden als iemand al geïnteresseerd is, gebruik deze sub-optimale oplossing als query filtering geïmplementeerd wordt
-		// $result = db_select('coap_resource_users', 'coap_user')
-				// ->fields('coap_user', array('uri','nid','device'))
-				// ->condition('uri', $device_uri, '=')
-				// ->condition('device', 1, '=')
-				// ->execute();
-		
-		//discovery moet niet uitgevoerd worden er ooit al een discovery is uitgevoerd voor dit device, gebruik deze oplossing als er geen query filtering geïmplementeerd is
-		//indien het wel het geval zou zijn, zijn er partial discoveries gebeurt en geeft volgende query een vertekend beeld.
-		$result = db_select('coap_resource_resources', 'resources')
-					->fields('resources', array('uri','title'))
-					->condition('uri', "$device_uri%", 'LIKE')
-					->execute();
+		//heeft de gebruiker dit device al toegevoegd?
+		$result = db_select('coap_resource_users', 'coap_user')
+			->fields('coap_user', array('uri','uid','device'))
+			->condition('uri', $device_uri, '=')
+			->condition('uid', $user->uid, '=')
+			->condition('device', 1, '=')
+			->execute();
 		
 		if($result->rowCount() == 0){
-			//coap_discovery_start_discover($device_uri, $nid);
-			background_process_start('coap_discovery_start_discover', $device_uri, $nid);
-		}
-		else{		
-			//er is al een discovery uitgevoerd, maar was dit door de huidige user? 
+			//heeft iemand interesse in het device? m.a.w. is er al een discovery uitgevoerd?
 			$result = db_select('coap_resource_users', 'coap_user')
-					->fields('coap_user', array('uri','nid','device','uid'))
-					->condition('uid', $user->uid, '=')
-					->condition('uri', $device_uri, '=')
-					->execute();
-			
-			//het was door een ander user -> voeg nieuwe content toe
+				->fields('coap_user', array('uri','device'))
+				->condition('uri', $device_uri, '=')
+				->condition('device', 1, '=')
+				->execute();
+				
 			if($result->rowCount() == 0){
-				//coap_discovery_start_discover($device_uri, $nid);
-				background_process_start('coap_discovery_start_discover', $device_uri, $nid);
+				//voer discovery uit, zet flag zodat de resources gecreëerd en gereferenced worden in de discovery callback -> vlag wordt onderaan gezet
+				$new = 1;
+				background_process_start('_start_discovery', $device_uri, $nid);
 			}
-			//het was door de huidige user, waarom voegt hij dit device nog eens toe?
-			// 2 denkpistes:
-			//	- melding dat hij dit device al eens toegevoegd heeft
-			//	- toevoegen van device voeg node references toe
-			//	- toevoegen en maak nieuwe resource content aan
 			else{
-				// ? te beslissen ?
+				//zet de vlag zodat de resources gecreëerd en gereferenced worden in de discovery callback -> vlag wordt onderaan gezet
+				$new = 2;
+				dpm('zet vlag');
 			}
-		}		
-		
-		//toevoegen dat de user geïnteresseerd is moet sowieso
-		$id = db_insert('coap_resource_users')
-		->fields(array(
-			'uid' => $user->uid,
-			'uri' => $device_uri,				
-			'nid' => $nid,
-			'device' => 1,
-			'new' => 1,
+			
+			//toevoegen dat de user geïnteresseerd is moet sowieso
+			$id = db_insert('coap_resource_users')
+			->fields(array(
+				'uid' => $user->uid,
+				'uri' => $device_uri,				
+				'nid' => $nid,
+				'device' => 1,
+				'new' => $new,
 			))
-		->execute();
+			->execute();
+			
+		}
+		else{
+			dpm('hier zou je niet mogen komen, validatie van het formulier om een nieuwe toe te voegen zou je moeten tegenhouden');
+		}
 		 
 	}
 	
 }
 
-function _query_filter($uri,$nid){
+function _start_discovery($device_uri,$nid){
+	global $user;
+	$coap_factory = new CoAPMessageFactory('coap_resource', $device_uri, '', false);
+	$request = $coap_factory->create_basic_get_request('.well-known/core');
+	$response = $request->send_message();
+	$payloads = $response->get_payload();
+	$resources = coap_discovery_parse_discovery_payloads($device_uri, $nid, $payloads);
+	//ofwel verwijderen we alle entries die in de core zitten en voegen we ze opnieuw toe, of we updaten ze, voegen nieuwe toe en verwijderen degene die er niet meer inzitten
+	//we gaan voor optie 1
+	db_delete('coap_resource_resources')
+		->condition('uri', "$device_uri%", 'LIKE')
+		->execute();
+	foreach($resources as $resource){
+		db_insert('coap_resource_resources')
+			->fields($resource)
+			->execute();
+	}
+	
+	$result = db_select('coap_resource_users','user_device')
+		->fields('user_device', array('uid','uri','device'))
+		->condition('uid', $user->uid, '=')
+		->condition('device',1,'=')
+		->condition('nid',$nid,'=')
+		->execute();
+	$counter = 0;
+	while($result->rowCount() == 0 && $counter < 100){
+		sleep(3);
+		$result = db_select('coap_resource_users','user_device')
+			->fields('user_device', array('uid','uri','device'))
+			->condition('uid', $user->uid, '=')
+			->condition('device',1,'=')
+			->condition('nid',$nid,'=')
+			->execute();
+		$counter++;
+	}
+	
+	db_update('coap_resource_users')
+		->fields(array(
+			'new' => 2,
+		))
+		->condition('uid',$user->uid ,'=')
+		->condition('uri',$device_uri ,'=')
+		->condition('nid',$nid ,'=')
+		->condition('device',1 ,'=')
+		->execute();
+}
+
+function _start_filtered_discovery($uri,$nid){
+	global $user;
 	$parts = explode('/',$uri);
 	$device_uri = $parts[0];
 	$resource_name = '/' . $parts[1];
 	
 	$coap_factory = new CoAPMessageFactory('coap_resource', $device_uri, '', false);
-	$request = $coap_factory->create_basic_get_request('.well-known//core');
-	dpm($request->get_hex_message());
-	dpm("href=$resource_name");
+	$request = $coap_factory->create_basic_get_request('.well-known/core');
 	$request->add_option(15,coap_library_string_to_hex_with_padding("href=$resource_name"));
-	dpm($request->get_hex_message());
-	dpm($device_uri);
-	dpm($nid);
 	$response = $request->send_message();
 	$payloads = $response->get_payload();
-	//$resources = coap_discovery_parse_discovery_payloads($device_uri, $nid, $payloads); //nu deze methode fixen
-	//dpm($resources);
+	$resources = coap_discovery_parse_discovery_payloads($device_uri, $nid, $payloads);
+	
+	db_insert('coap_resource_resources')
+		->fields($resources[0])
+		->execute();
 }
 
 function coap_resource_node_delete($node){

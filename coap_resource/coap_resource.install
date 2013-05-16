@@ -9,17 +9,10 @@ function coap_resource_node_info() {
 	  'has_body' => FALSE,
       'description' => t('CoAP resource form, displaying one resource.'),
     ),
-	// 'coap_general' => array(
-      // 'name' => t('CoAP general'),
-      // 'base' => 'node_content',
-	  // 'has_body' => FALSE,
-      // 'description' => t('General CoAP form, most flexible.'),
-    // ),
 	'coap_device' => array(
       'name' => t('CoAP device'),
       'base' => 'node_content',
 	  'has_body' => FALSE,
-	  //'has_title' => FALSE,
 	  'locked' => TRUE,
       'description' => t('CoAP devce form, managing one device with a well-known/core.'),
     ),
@@ -56,34 +49,6 @@ function _coap_resource_installed_fields()  {
 	'cardinality' => 1,
     'type' => 'text',
   );
-  // $fields['field_obs_checkbox'] = array(
-    // 'field_name' => 'field_obs_checkbox',
-    // 'label' => t('Is this an observable resource?'),
-    // 'cardinality' => 1,
-	// 'type' => 'list_boolean',
-	// 'settings' => array(
-		// 'allowed_values' => array(
-			// '0' => 'The resource is currently not observable.',
-			// '1' => 'The resource is currently observable.',
-		// ),
-	// ), 
-  // );
-  // $fields['field_ct_checkboxes'] = array(
-    // 'field_name' => 'field_ct_checkboxes',
-    // 'label' => t('Select the content-type.'),
-    // 'type' => 'list_integer',
-    // 'cardinality' => '-1', // change this to 1 to get radio buttons instead
-    // 'foreign keys' => array(),
-    // 'indexes' => array(
-      // 'value' => array(
-        // 0 => 'value',
-      // ),
-    // ),
-    // 'module' => 'list',
-    // 'settings' => array(
-      // 'allowed_values_function' => '_field_ct_checkboxes_options_list',
-    // ),
-  // );
   $fields['field_resource_references'] = array(
     'field_name' => 'field_resource_references',
     'label' => 'Resource References',
@@ -108,22 +73,7 @@ function _coap_resource_installed_instances()  {
 		'bundle' => 'coap_device',
 		'type' => 'text',
 		'label' => t('Device URI') ,    
-		// 'widget' => array(
-			// 'type' => 'custom_field',
-		// ),
-		// 'display' => array(
-			// 'default' => array(
-				// 'label' => 'above',
-				// 'type' => 'custom_field_formatter',
-			// ),
-			// 'teaser' => array(
-				// 'label' => 'above',
-				// 'settings' => array(),
-				// 'type' => 'hidden',
-				// 'weight' => -1,
-			// ),
-		// ),
-	'description' => 'Enter URI',
+		'description' => 'Enter URI',
 	);
 	
 	$instances['field_resource_uri'] = array(
@@ -133,71 +83,8 @@ function _coap_resource_installed_instances()  {
 		'bundle' => 'coap_resource',
 		'type' => 'text',
 		'label' => t('Resource URI') ,    
-		// 'widget' => array(
-			// 'type' => 'custom_field',
-		// ),
-		// 'display' => array(
-			// 'default' => array(
-				// 'label' => 'above',
-				// 'type' => 'custom_field_formatter',
-			// ),
-			// 'teaser' => array(
-				// 'label' => 'above',
-				// 'settings' => array(),
-				// 'type' => 'hidden',
-				// 'weight' => -1,
-			// ),
-		// ),
-	'description' => 'Enter URI',
+		'description' => 'Enter URI',
 	);
-	
-	// $instances['field_obs_checkbox'] = array(
-		// 'field_name' => 'field_obs_checkbox',
-		// 'entity_type' => 'node',
-		// 'required' => TRUE,		
-		// 'label' => t('Is this an observable resource?'),
-		// 'bundle' => 'coap_resource',
-		// 'type' => 'list_boolean',
-		// 'description' => 'Check to indicate that the resource supports the observable option.',
-		// 'widget' => array(
-			// 'type' => 'options_onoff',
-		// ),		
-	// );
-	
-	// $instances['field_ct_checkboxes'] = array(
-		// 'field_name' => 'field_ct_checkboxes',
-		// 'entity_type' => 'node',
-		// 'label' => t('Checkboxes'),
-		// 'bundle' => 'coap_resource',
-		// 'description' => t('Select some checkboxes'),
-		// 'default_value' => NULL,	// add a default value here that matches your key => index values
-		// 'display' => array(
-			// 'default' => array(
-				// 'label' => 'above',
-				// 'module' => 'list',
-				// 'settings' => array(),
-				// 'type' => 'list_default',
-				// 'weight' => -1,
-			// ),
-			// 'teaser' => array(
-				// 'label' => 'above',
-				// 'settings' => array(),
-				// 'type' => 'hidden',
-				// 'weight' => -1,
-			// ),
-		// ),
-		// 'required' => 1,
-		// 'settings' => array(
-			// 'user_register_form' => FALSE,
-		// ),
-		// 'widget' => array(
-			// 'active' => 1,
-			// 'module' => 'options',
-			// 'settings' => array(),
-			// 'type' => 'options_buttons',
-			// 'weight' => '-1',
-		// ),
-	// );
 	
 	$instances['field_resource_references'] = array(
 		'field_name' => 'field_resource_references',
@@ -213,20 +100,7 @@ function _coap_resource_installed_instances()  {
 	return $instances;
 }
 
-// function _field_ct_checkboxes_options_list()  {
-  // $options = array(
-    // 1 => 'text/plain;charset=utf-8 (0)',
-    // 2 => 'application/link-format (40)',
-    // 3 => 'application/xml (41)',
-    // 4 => 'application/octet-stream (42)',
-    // 5 => 'application/exi (47)',
-    // 6 => 'application/json (50)',
-  // );
-  // return $options;
-// }
-
 function coap_resource_schema() {
-	
 	// Tabel om resources bij te houden
 	$schema['coap_resource_resources'] = array(
 		'description' => "Tabel om resources en hun karakteristieken bij te houden",
@@ -496,15 +370,6 @@ function coap_resource_enable() {
 }
 
 function coap_resource_disable(){
-	// $instance = array('field_name' => 'field_device_uri','bundle' => 'coap_device','entity_type' => 'node');
-	// field_delete_instance($instance);
-	// $instance = array('field_name' => 'field_resource_uri','bundle' => 'coap_resource','entity_type' => 'node');
-	// field_delete_instance($instance);
-	// $instance = array('field_name' => 'field_obs_checkbox','bundle' => 'coap_resource','entity_type' => 'node');
-	// field_delete_instance($instance);
-	// $instance = array('field_name' => 'field_ct_checkboxes','bundle' => 'coap_resource','entity_type' => 'node');
-	// field_delete_instance($instance);
-	
 	$content_types = array('coap_general','coap_resource', 'coap_device');
 	foreach($content_types as $content_type){
 		$result = db_select('node','nodes')
