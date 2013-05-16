@@ -892,20 +892,6 @@ function coap_resource_node_insert($node){
 	if($node->type == 'coap_resource'){
 		//haal de resource_uri uit $node
 		$uri = $node->field_resource_uri['und'][0]['value'];
-		//kijk in de db of er al informatie over deze resource intzit
-		$result = db_select('coap_resource_resources', 'resources')
-			->fields('resources', array('uri'))
-			->condition('uri', $uri, '=')
-			->execute();
-		
-		//zoniet
-		if($result->rowCount() == 0){
-			//Query filtering is niet noodzakelijk ondersteund -> daarom doen we een complete discovery i.p.v. te specifiëren over welk resource we informatie willen
-			//indien we toch query filtering zouden toepassen: we moeten een get request sturen met als uri_path = .well-known//core?href=/$parts[1]
-			$parts = explode('/',$uri);
-			$device_uri = $parts[0];
-			coap_discovery_start_discover($device_uri, $nid);
-		}
 		
 		//voeg toe in de db dat de user geïnteresseerd is in deze resource op deze node
 		$id = db_insert('coap_resource_users')
@@ -919,6 +905,25 @@ function coap_resource_node_insert($node){
 				'responded' => 0,
 			))
 			->execute();
+		
+		//kijk in de db of er al informatie over deze resource intzit
+		$result = db_select('coap_resource_resources', 'resources')
+			->fields('resources', array('uri'))
+			->condition('uri', $uri, '=')
+			->execute();
+		
+		//zoniet
+		if($result->rowCount() == 0){
+			//Query filtering is niet noodzakelijk ondersteund -> daarom doen we een complete discovery i.p.v. te specifiëren over welk resource we informatie willen
+			//indien we toch query filtering zouden toepassen: we moeten een get request sturen met als uri_path = .well-known//core?href=/$parts[1]
+			$parts = explode('/',$uri);
+			$device_uri = $parts[0];
+			//laat dit effe achterwege
+			//coap_discovery_start_discover($device_uri, $nid);
+			//background_process_start('coap_discovery_start_discover', $device_uri, $nid);
+		}
+		
+		
 	}
 	else if($node->type == 'coap_device'){
 		$device_uri = $node->field_device_uri['und'][0]['value'];
