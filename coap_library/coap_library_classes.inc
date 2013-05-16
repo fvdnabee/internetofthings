@@ -509,7 +509,22 @@ class CoAPMessage {
 	//	Gets the next blocks following to the given response and appends the resulting payloads
 	private function get_next_responses_in_blocks(&$response_obj){
 		$current_response = $response_obj;
-		$payloads_left = true;
+		
+		//	Determine if there are still payloads to fetch
+		$block_option_value = $current_response->get_option_value(23);
+		switch (strlen($block_option_value)) {
+			case 2:
+				$payloads_left = coap_library_get_bit_from_hex(substr($block_option_value, 1, 1), 3);
+				break;
+			case 4:
+				$payloads_left = coap_library_get_bit_from_hex(substr($block_option_value, 3, 1), 3);
+				break;
+			case 6:
+				$payloads_left = coap_library_get_bit_from_hex(substr($block_option_value, 5, 1), 3);
+				break;
+			default:
+				return null;
+		}
 		
 		//	Get payloads and append them
 		while($payloads_left){
@@ -543,10 +558,29 @@ class CoAPMessage {
 				if($option_value != null){
 					$payloads_left = coap_library_get_bit_from_hex(substr($option_value,strlen($option_value)-1,1),3);
 					$response_obj->set_payload($response_obj->get_payload() . $current_response->get_payload());
+					
+					//	Determine if there are still payloads to fetch
+					switch (strlen($option_value)) {
+						case 2:
+							$payloads_left = coap_library_get_bit_from_hex(substr($option_value, 1, 1), 3);
+							break;
+						case 4:
+							$payloads_left = coap_library_get_bit_from_hex(substr($option_value, 3, 1), 3);
+							break;
+						case 6:
+							$payloads_left = coap_library_get_bit_from_hex(substr($option_value, 5, 1), 3);
+							break;
+						default:
+							return null;
+					}
 				}
-				else $payloads_left = false;
+				else{
+					$payloads_left = false;
+				}
 			}
-			else $payloads_left = false;
+			else{
+				$payloads_left = false;
+			}
 		}
 	}
 	
