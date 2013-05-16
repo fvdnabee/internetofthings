@@ -357,7 +357,6 @@ function coap_discovery_save_resources($form, &$form_state) {
 //////////
 function coap_discovery_page_callback($nid){
 	global $user;
-	$output ='';
 	
 	$output = '';
 	$result = db_select('coap_resource_users','user_device')

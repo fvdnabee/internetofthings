@@ -20,6 +20,7 @@
 				class = "REQUEST_BUTTON form-submit" value = "GET" />
 		<label id = "<?php echo 'lbl_GET_' . $content['field_resource_uri']['#items'][0]['value'] ?>"
 				style="display:inline" >Perform a GET request</label>
+		<img class = "img_status" src = "" style = "display: none" width = "15" height = "15" hspace = "5" />
 	</div>
 	<div class = 'PUT'>
 		<input type = "button" id = "<?php echo "btn_PUT_" . $content['field_resource_uri']['#items'][0]['value'] ?>"
@@ -30,6 +31,7 @@
 				class = "PUT_INPUT" >
 		<label 	id = "<?php echo 'lbl_PUT_' . $content['field_resource_uri']['#items'][0]['value'] ?>"
 				style = "display:inline" >Perform a PUT request with given value</label>
+		<img class = "img_status" src = "" style = "display: none" width = "15" height = "15" hspace = "5" />
 	</div>
 	<div class = 'POST'>
 		<input type = "button" id = "<?php echo "btn_POST_" . $content['field_resource_uri']['#items'][0]['value'] ?>"
@@ -40,12 +42,14 @@
 				class = "POST_INPUT" >
 		<label 	id = "<?php echo 'lbl_POST_' . $content['field_resource_uri']['#items'][0]['value'] ?>"
 				style = "display:inline" >Perform a POST request with given value</label>
+		<img class = "img_status" src = "" style = "display: none" width = "15" height = "15" hspace = "5" />
 	</div>
 	<div class = 'DELETE'>
 		<input type = "button" id = "<?php echo "btn_DELETE_" . $content['field_resource_uri']['#items'][0]['value'] ?>"
 				class = "REQUEST_BUTTON form-submit" value = "DELETE" />
 		<label 	id = "<?php echo 'lbl_DELETE_' . $content['field_resource_uri']['#items'][0]['value'] ?>"
 				style = "display:inline" >Perform a DELETE request</label>
+		<img class = "img_status" src = "" style = "display: none" width = "15" height = "15" hspace = "5" />
 	</div>
 	<div class = 'OBSERVE' align = "center" >
 		<input type = "button" id = "<?php echo "btn_OBSERVE_" . $content['field_resource_uri']['#items'][0]['value'] ?>"
@@ -57,6 +61,7 @@
 																	->condition('observe', 1, '=')
 																	->execute();
 																	echo ($result->rowCount() ? 'Stop' : 'Start'); ?> Observing" />
+		<img class = "img_status" src = "" style = "display: none" width = "15" height = "15" hspace = "5" />
 		<label id = "<?php echo "lbl_OBSERVE_" . $content['field_resource_uri']['#items'][0]['value'] ?>" style = "text-align:center" >Observe input comes here</label>
 	</div>
 	<div class = "history" >

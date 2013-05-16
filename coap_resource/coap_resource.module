@@ -210,6 +210,7 @@ function create_my_node(){
 function coap_resource_form($form, &$form_state, $node) {
 	drupal_add_js('https://www.google.com/jsapi'); // JavaScript bestand toevoegen
 	drupal_add_js(drupal_get_path('module', 'coap_resource') . '/js/coap_resource.js'); // JavaScript bestand toevoegen	
+	drupal_add_js(array('coap_resource' => array('module_path' => drupal_get_path('module', 'coap_resource'))), array('type' => 'setting'));
 	global $user;
 	
 	//create_my_node();
@@ -1095,7 +1096,7 @@ function coap_resource_start_observing($uri){
 		
 		$coap_factory = new CoAPMessageFactory('coap_resource', $ip, $resource);
 		
-		//	Get the record from the databse for given URI if it's observable, to check if the resource is observable
+		//	Get the record from the database for given URI if it's observable, to check if the resource is observable
 		$query = db_select('coap_resource_resources', 'resources');
 		$query
 			->fields('resources', array('uri', 'obs'))
@@ -1398,11 +1399,6 @@ function coap_resource_handle_observing_for_uri($uri, $state){
 		->execute();
 	$num_observers = $observe_result->rowCount();
 	
-	//	Start observing the current URI if this user is interested and no one else was already observing
-	if($state == "start" && $num_observers == 0){
-		background_process_start('coap_resource_start_observing', $uri);
-	}
-	
 	//	Store in database that this user is observing or not observing the current URI
 	$num_updated = db_update('coap_resource_users')
 		->fields(array(
@@ -1412,6 +1408,11 @@ function coap_resource_handle_observing_for_uri($uri, $state){
 		->condition('uid', $user->uid, '=')
 		->condition('device', 0, '=')
 		->execute();
+	
+	//	Start observing the current URI if this user is interested and no one else was already observing
+	if($state == "start" && $num_observers == 0){
+		background_process_start('coap_resource_start_observing', $uri);
+	}
 	
 	//	Get number of users that is still observing the current URI
 	$observe_result = db_select('coap_resource_users', 'users')
