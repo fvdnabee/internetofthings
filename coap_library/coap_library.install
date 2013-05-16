@@ -1,29 +1,26 @@
 <?php
 
-// /**
- // * Implements hook_schema().
- // */
+/**
+ * Implements hook_schema().
+ */
 function coap_library_schema() {
-	
-	// Tabel om opgevraagde waarden op te slaan
 	$schema['coap_library_observe_resources'] = array(
-		'description' => 'Tabel om te observeren resources bij te houden',
+		'description' => 'Table that holds the information which modules are observing which resources.',
 		'fields' => array(
-				'module' => array(
-					'type' => 'varchar',
-					'not null' => TRUE,
-					'length' => '128',
-					'description' => 'De module die de resource observeert',
-				),
-				'uri' => array(
-					'type' => 'varchar',
-					'not null' => TRUE,
-					'length' => '128',
-					'description' => 'De URI van de resource',
-				),
+			'module' => array(
+				'type' => 'varchar',
+				'not null' => TRUE,
+				'length' => '128',
+				'description' => 'The module observing the resource.',
 			),
-			'primary key' => array('module', 'uri'),
+			'uri' => array(
+				'type' => 'varchar',
+				'not null' => TRUE,
+				'length' => '128',
+				'description' => 'URI from the resource.',
+			),
+		),
+		'primary key' => array('module', 'uri'),
 	);
-
 	return $schema;
 }

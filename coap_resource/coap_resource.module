@@ -145,23 +145,47 @@ function coap_resource_form_alter(&$form,$form_state,$form_id){
 }
 
 //custom validatie voor resource_uri
-function _coap_resource_node_form_validate(&$from,&$form_state) {
+function _coap_resource_node_form_validate(&$form,&$form_state) {
+	global $user;;
 	$regex = '/^(((?=(?>.*?(::))(?!.+\3)))\3?|([\dA-F]{1,4}(\3|:(?!$)|$)|\2))(?4){5}((?4){2}|(25[0-5]|(2[0-4]|1\d|[1-9])?\d)(\.(?7)){3}).+\z/i';
 	$value = $form_state['values']['field_resource_uri'][LANGUAGE_NONE][0]['value'];
 	if (empty($value) || !preg_match($regex, $value, $matches)) {
 		form_set_error('field_resource_uri', 'Please enter a valid IPv6-adress for a resource.');
 	}
+	else if(!isset($form_state['values']['nid'])){
+		$result = db_select('coap_resource_users','resource')
+			->fields('resource', array('uri'))
+			->condition('uri', $matches[0], '=')
+			->condition('uid', $user->uid, '=')
+			->execute();
+		
+		if($result->rowCount() != 0){
+			form_set_error('field_resource_uri', 'You have already submitted this resource. Please enter another.');
+		}
+	}
 }
 
 //custom validatie voor device_uri
 function _coap_device_node_form_validate(&$from,&$form_state) {
+	global $user;
 	$regex = '/^(((?=(?>.*?(::))(?!.+\3)))\3?|([\dA-F]{1,4}(\3|:(?!$)|$)|\2))(?4){5}((?4){2}|(25[0-5]|(2[0-4]|1\d|[1-9])?\d)(\.(?7)){3})\z/i';
 	$value = $form_state['values']['field_device_uri'][LANGUAGE_NONE][0]['value'];
+	
 	if (empty($value) || !preg_match($regex, $value, $matches)) {
 		form_set_error('field_device_uri', 'Please enter a valid IPv6-adress for a device.');
 	}
+	else if(!isset($form_state['values']['nid'])){
+		$result = db_select('coap_resource_users','device')
+			->fields('device', array('uri'))
+			->condition('uri', $matches[0], '=')
+			->condition('uid', $user->uid, '=')
+			->execute();
+		
+		if($result->rowCount() != 0){
+			form_set_error('field_device_uri', 'You have already submitted this resource. Please enter another.');
+		}
+	}
 }
-
 
 function coap_resource_form($form, &$form_state, $node) {
 	drupal_add_js('https://www.google.com/jsapi'); // JavaScript bestand toevoegen
@@ -188,8 +212,7 @@ function coap_resource_form($form, &$form_state, $node) {
 		->fields('resources')
 		->condition('uid', $user->uid, '=')
 		->condition('device',0,'=')
-		->condition('nid',$nid,'=')
-		->condition('watch', 1, '=');
+		->condition('nid',$nid,'=');
 	$resources = $query->execute();
 	
 	$first_resource  = $resources->fetchAssoc();
@@ -198,31 +221,12 @@ function coap_resource_form($form, &$form_state, $node) {
 		$current_interval = $first_resource['polling_interval'];
 		$uri = $first_resource['uri'];
 	}
-	// foreach($resources as $record){
-		
-	// }
-	// foreach ($resources as $record){
-		// $empty = 0;
-		// $current_interval = $record->polling_interval;
-		// $uri = $record->uri;
-	// }		
-	
-	if($node->type == 'coap_general')
-		coap_resource_uri_form($form, $form_state);
 		
 	if(!$empty && $empty != 1){
 		$form['polling_container'] = array(
 			'#type' => 'container',
 			'#prefix' => "Polling gebeurt om de <input id='polling_invoer' type='text' size='1' value='" . $current_interval . "' > seconden. <button id='polling_button' type='button' >Wijzigen</button></br>",
 		);
-		
-		// $form['polling_button'] = array(
-			// '#type' => 'submit',
-			// '#value' => 'Wijzigen',
-			// '#prefix' => "Polling gebeurt om de <input id='polling_invoer' type='text' size='1' value='" . $current_interval . "' > seconden.",
-			// '#id' => 'polling_button',
-			// '#submit' => 'do_nothing',
-		// );
 		
 		if($node->type != 'coap_resource'){
 			coap_resource_observe_form($form, $form_state, $nid);
@@ -291,6 +295,7 @@ function coap_resource_form($form, &$form_state, $node) {
 	}	
 	return $form;
 }
+
 
 ///////////
 // BLOCK //
@@ -373,9 +378,8 @@ function coap_resource_block_view($delta='') {
 	// Te bekijken URI ophalen
 	$query = db_select('coap_resource_users', 'users');
 	$query
-		->fields('users', array('uid', 'uri', 'watch'))
-		->condition('uid', $user->uid, '=')
-		->condition('watch', 1, '=');
+		->fields('users', array('uid', 'uri'))
+		->condition('uid', $user->uid, '=');
 	$result = $query->execute();
 	$empty = TRUE;
 	foreach($result as $record){
@@ -416,88 +420,6 @@ function coap_resource_block_view($delta='') {
 	// drupal_add_js('https://www.google.com/jsapi'); // JavaScript bestand toevoegen
 	// drupal_add_js(drupal_get_path('module', 'coap_resource') . '/js/coap_resource.js'); // JavaScript bestand toevoegen
 	return $block;
-}
-
-//////////////
-// URI FORM //
-//////////////
-
-/**
- * Implements hook_form().
- * Voegt componenten toe aan de form
- */
-function coap_resource_uri_form(&$form, &$form_state) {
-	// Eventuele fout
-	$form['uri']['error'] = array(
-		'#type' => 'item',
-		'#markup' => variable_get('bad_uri', ''),
-	);
-	variable_del('bad_uri');
-
-	// Invoer textbox voor URI
-	$form['uri']['invoer'] = array(
-		'#type' => 'textfield',
-		'#title' => 'Geef een URI',
-		'#default_value' => '',	
-	);
-	
-	// Submit-knop
-	$form['uri']['submit'] = array (
-		'#type' => 'submit',
-		'#value' => t('Invoeren'),
-		'#submit' => array('coap_resource_uri_form_submit'),
-	);
-		
-	return $form;
-}
-
-/**
- * Implements hook_form_submit().
- * functie die wordt uitgevoerd als het formulier ingediend wordt
- */
-function coap_resource_uri_form_submit($form, $form_state) {
-	global $user;
-	$nid = $form_state['values']['nid'];
-	$pattern = '/([^\/]+)\/(.*)/i';
-	if(preg_match($pattern, $form_state['values']['invoer'], $matches)){
-		$query = db_select('coap_resource_resources', 'resources');
-		$query
-			->fields('resources', array('uri'))
-			->condition('uri', $form_state['values']['invoer'], '=');
-		$result = $query->execute();
-		
-		if($result->rowCount() == 0){
-			$id = db_insert('coap_resource_resources')
-				->fields(array(
-					'uri' => $form_state['values']['invoer'],
-					'last_error' => 'none',
-				))
-				->execute();
-		}
-		
-		// Watch bij alle rijen van de user op nul zetten
-		$num_updated = db_update('coap_resource_users')
-			->fields(array(
-				'watch' => 0,
-			))
-			->condition('uid', $user->uid, '=')
-			->condition('nid',$nid,'=')
-			->execute();
-		
-		// Watch van net toegevoegde URI op 1 zetten
-		$id = db_insert('coap_resource_users')
-			->fields(array(
-				'uid' => $user->uid,
-				'uri' => $form_state['values']['invoer'],
-				'observe' => 0,
-				'watch' => 1,
-				'responded' => 0,
-			))
-			->execute();
-	}
-	else{
-		variable_set('bad_uri', 'Er werd een ongeldige URI opgegeven.');
-	}
 }
 
 //////////////////////
@@ -614,98 +536,6 @@ function coap_resource_observe_form_submit($form, $form_state) {
 	}
 }
 
-///////////////////
-// BEKIJKEN FORM //
-///////////////////
-
-/**
- * Implements hook_form().
- * Voegt componenten toe aan de form
- */
-function coap_resource_bekijken_form(&$form, &$form_state, $nid) {
-	global $user;
-	$result = db_select('coap_resource_users', 'users')
-		->fields('users', array('uid', 'uri', 'device', 'watch'))
-		->condition('uid', $user->uid,'=')
-		->condition('device', 0,'=')
-		->condition('nid', $nid,'=')
-	->execute();
-	
-	// Radio buttons om URI te selecteren
-	if($result->rowCount() > 0){
-		$options = array();
-		foreach ($result as $record){
-			$options[$record->uri] = $record->uri;
-			if($record->watch == 1){
-				$uri = $record->uri;
-			}
-		}
-		$form['bekijken']['uri'] = array(
-			'#type' => 'radios',
-			'#title' => t('Selecteer een resource'),
-			'#default_value' => $uri, // Default value moet geselecteerde URI worden
-			'#options' => $options,
-		);
-		// Submit-knop
-		$form['bekijken']['select'] = array (
-			'#type' => 'submit',
-			'#value' => t("Bekijken"),
-			'#submit' => array('coap_resource_bekijken_form_select_submit'),
-		);
-		$form['bekijken']['delete'] = array (
-			'#type' => 'submit',
-			'#value' => t("Verwijderen"),
-			'#submit' => array('coap_resource_bekijken_form_delete_submit'),
-		);
-	}
-	
-	return $form;
-}
-
-/**
- * Implements hook_form_submit().
- * functie die wordt uitgevoerd als het formulier ingediend wordt
- */
-function coap_resource_bekijken_form_select_submit($form, $form_state) {
-	global $user;
-	$nid = $form_state['values']['nid'];
-	
-	// Variabele 'bekijken' van elk URI voor de user in de databank op 0 zetten
-	$num_updated = db_update('coap_resource_users')
-		->fields(array(
-			'watch' => 0,
-		))
-		->condition('uid', $user->uid, '=')
-		->condition('nid', $nid, '=')
-		->execute();
-	
-	// Als observen opgestart wordt, variabele 'bekijken' op 1 zetten voor de gekozen URI
-	$num_updated = db_update('coap_resource_users')
-		->fields(array(
-			'watch' => 1,
-		))
-		->condition('uid', $user->uid, '=')
-		->condition('uri', $form_state['values']['uri'], '=')
-		->execute();
-}
-
-function coap_resource_bekijken_form_delete_submit($form, $form_state) {
-	global $user;
-	
-	// Variabele 'bekijken' van elk URI voor de user in de databank op 0 zetten
-	// $num_updated = db_update('coap_resource_users')
-		// ->fields(array(
-			// 'watch' => 0,
-		// ))
-		// ->condition('uid', $user->uid, '=')
-		// ->execute();
-	
-	// Als observen opgestart wordt, variabele 'bekijken' op 1 zetten voor de gekozen URI
-	db_delete('coap_resource_users')
-		->condition('uid', $user->uid, '=')
-		->condition('uri', $form_state['values']['uri'], '=')
-		->execute();
-}
 
 //////////////////////
 // GET REQUEST FORM //
@@ -859,12 +689,12 @@ function coap_resource_node_insert($node){
 				'device' => 0,
 				'nid' => $nid,
 				'observe' => 0,
-				'watch' => 1,
 				'responded' => 0,
+				'version_time' => time(),
 			))
 			->execute();
 		
-		//kijk in de db of er al informatie over deze resource intzit
+		//kijk in de db of er al informatie over deze resource inzit
 		$result = db_select('coap_resource_resources', 'resources')
 			->fields('resources', array('uri'))
 			->condition('uri', $uri, '=')
@@ -899,12 +729,13 @@ function coap_resource_node_insert($node){
 			if($result->rowCount() == 0){
 				//voer discovery uit, zet flag zodat de resources gecreëerd en gereferenced worden in de discovery callback -> vlag wordt onderaan gezet
 				$new = 1;
+				$version_time = time();
 				background_process_start('_start_discovery', $device_uri, $nid);
 			}
 			else{
 				//zet de vlag zodat de resources gecreëerd en gereferenced worden in de discovery callback -> vlag wordt onderaan gezet
 				$new = 2;
-				dpm('zet vlag');
+				$version_time = time();
 			}
 			
 			//toevoegen dat de user geïnteresseerd is moet sowieso
@@ -915,81 +746,16 @@ function coap_resource_node_insert($node){
 				'nid' => $nid,
 				'device' => 1,
 				'new' => $new,
+				'version_time' => $version_time,
 			))
 			->execute();
 			
 		}
 		else{
-			dpm('hier zou je niet mogen komen, validatie van het formulier om een nieuwe toe te voegen zou je moeten tegenhouden');
+			//throw exception
 		}
-		 
 	}
 	
-}
-
-function _start_discovery($device_uri,$nid){
-	global $user;
-	$coap_factory = new CoAPMessageFactory('coap_resource', $device_uri, '', false);
-	$request = $coap_factory->create_basic_get_request('.well-known/core');
-	$response = $request->send_message();
-	$payloads = $response->get_payload();
-	$resources = coap_discovery_parse_discovery_payloads($device_uri, $nid, $payloads);
-	//ofwel verwijderen we alle entries die in de core zitten en voegen we ze opnieuw toe, of we updaten ze, voegen nieuwe toe en verwijderen degene die er niet meer inzitten
-	//we gaan voor optie 1
-	db_delete('coap_resource_resources')
-		->condition('uri', "$device_uri%", 'LIKE')
-		->execute();
-	foreach($resources as $resource){
-		db_insert('coap_resource_resources')
-			->fields($resource)
-			->execute();
-	}
-	
-	$result = db_select('coap_resource_users','user_device')
-		->fields('user_device', array('uid','uri','device'))
-		->condition('uid', $user->uid, '=')
-		->condition('device',1,'=')
-		->condition('nid',$nid,'=')
-		->execute();
-	$counter = 0;
-	while($result->rowCount() == 0 && $counter < 100){
-		sleep(3);
-		$result = db_select('coap_resource_users','user_device')
-			->fields('user_device', array('uid','uri','device'))
-			->condition('uid', $user->uid, '=')
-			->condition('device',1,'=')
-			->condition('nid',$nid,'=')
-			->execute();
-		$counter++;
-	}
-	
-	db_update('coap_resource_users')
-		->fields(array(
-			'new' => 2,
-		))
-		->condition('uid',$user->uid ,'=')
-		->condition('uri',$device_uri ,'=')
-		->condition('nid',$nid ,'=')
-		->condition('device',1 ,'=')
-		->execute();
-}
-
-function _start_filtered_discovery($uri,$nid){
-	global $user;
-	$parts = explode('/',$uri);
-	$device_uri = $parts[0];
-	$resource_name = '/' . $parts[1];
-	
-	$coap_factory = new CoAPMessageFactory('coap_resource', $device_uri, '', false);
-	$request = $coap_factory->create_basic_get_request('.well-known/core');
-	$request->add_option(15,coap_library_string_to_hex_with_padding("href=$resource_name"));
-	$response = $request->send_message();
-	$payloads = $response->get_payload();
-	$resources = coap_discovery_parse_discovery_payloads($device_uri, $nid, $payloads);
-	
-	db_insert('coap_resource_resources')
-		->fields($resources[0])
-		->execute();
 }
 
 function coap_resource_node_delete($node){
@@ -998,14 +764,14 @@ function coap_resource_node_delete($node){
 	//eigenlijk mag volgende query voor beide content types gebruikt worden en de device conditie weggelaten
 	if($node->type == 'coap_resource'){
 		db_delete('coap_resource_users')
-			->condition('uid', $user->uid, '=')
+			//->condition('uid', $user->uid, '=')
 			->condition('nid', $nid, '=')
 			->condition('device',0,'=')
 			->execute();
 	}
 	else if($node->type == 'coap_device'){
 		db_delete('coap_resource_users')
-			->condition('uid', $user->uid, '=')
+			//->condition('uid', $user->uid, '=')
 			->condition('nid', $nid, '=')
 			->condition('device',1,'=')
 			->execute();
@@ -1152,8 +918,7 @@ function coap_resource_start_request($method, $nid, $payload=''){
 	
 	//	Gets the URI for the resource that is selected by the user
 	$result = db_select('coap_resource_users', 'users')
-		->fields('users', array('uid', 'uri', 'nid', 'device', 'watch'))
-		->condition('watch', 1, '=')
+		->fields('users', array('uid', 'uri', 'nid', 'device'))
 		->condition('uid', $user->uid, '=')
 		->condition('device', 0, '=')
 		->condition('nid', $nid, '=')
