@@ -66,7 +66,7 @@
 	</div>
 	<div class = "history" >
 		<h1>History</h1>
-		<label style = "display:inline" >Selecteer het aantal gewenste rijen: </label>
+		<label style = "display:inline" >Select the amount of rows to show: </label>
 		<select style = "display:inline" class = 'historyselect' >
 			<option class = "option1" value = "1" >1</option>
 			<option class = "option2" value = "2" >2</option>
@@ -101,15 +101,26 @@
 						if($nr_entrys > 5){
 							$output .= " style = 'display: none'";
 						}
-						$output .= " ><td>" . $record->timestamp . "</td><td>" . $record->parsed_value . "</td></tr>";
+						$output .= " ><td>" . $record->timestamp . "</td><td class = 'coap_value' >" . $record->parsed_value . "</td></tr>";
 						echo $output;
 					}
 					while($nr_entrys < 5){
 						$nr_entrys++;
-						echo "<tr class = 'row" . $nr_entrys . "' ><td></td><td></td></tr>";
+						echo "<tr class = 'row" . $nr_entrys . "' ><td></td><td class = 'coap_value' ></td></tr>";
 					}
 				?>
 			</tbody>
 		</table>
+	</div>
+	<div class = "graph" >
+		<h1>Graph</h1>
+		<label style = "display: inline" >Select a type of graph: </label>
+		<select style = "display: inline" class = "graphselect" >
+			<option class = "none" >None</option>
+			<option class = "line" >Line</option>
+			<option class = "pie" >Pie</option>
+			<option class = "column" >Column</option>
+		</select>
+		<div id = "div_graphimage_<?php echo $content['field_resource_uri']['#items'][0]['value']; ?>" class = "graphimage" ></div>
 	</div>
 </div>

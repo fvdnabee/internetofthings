@@ -70,7 +70,7 @@ function coap_discovery_form($form, &$form_state, $node) {
 	dpm($nid);
 	
 	$coap_factory = new CoAPMessageFactory('coap_resource', $device_uri, '', false);
-	$request = $coap_factory->create_basic_get_request('.well-known//core');
+	$request = $coap_factory->create_basic_get_request('.well-known/core');
 	dpm($request->get_hex_message());
 	$request->add_option(15,coap_library_string_to_hex_with_padding("href=$resource_name"));
 	dpm($request->get_hex_message());	
