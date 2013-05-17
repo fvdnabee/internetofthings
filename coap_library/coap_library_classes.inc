@@ -1,8 +1,9 @@
 <?php
 
-//	DESIGN NOTE: 	Different options with the same option number should be added together, divided by a slash (/)
-//					Example: instead of add_option(11, 'seg1') and add_option(11, 'seg2'), use add_option(11, 'seg1/seg2')
-
+/**
+ *	DESIGN NOTE: 	Different options with the same option number should be added together divided by a slash (/).
+ *					Example: When adding option 11 twice: instead of add_option(11, 'seg1') and add_option(11, 'seg2'), use add_option(11, 'seg1/seg2').
+ */
 
 ////////////////////////////////
 // CoAP Message Factory Class //

@@ -8,6 +8,3 @@ dependencies[] = coap_library
 dependencies[] = node_reference
 dependencies[] = entity
 dependencies[] = views
-//dependencies[] = coap_resource_value
-//dependencies[] = field_device_uri
-//dependencies[] = field_resource_uri

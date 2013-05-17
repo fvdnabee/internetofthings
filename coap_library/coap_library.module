@@ -1,9 +1,9 @@
 <?php
-/*
-	Title: CoAP library
-	Author: Kobe Wright
-	
-*/
+/**
+ *	Title: 		CoAP library
+ *	Author: 	Kobe Wright
+ *	Date:		16/05/2013
+ */
 
 
 //////////////////////////////////////////////////////////////////////////////////////////

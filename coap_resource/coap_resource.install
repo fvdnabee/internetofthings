@@ -1,33 +1,34 @@
 <?php
 
-
+/**
+ * Implements hook_menu().
+ * We use it to to describe the content types installed by the module.
+ */
 function coap_resource_node_info() {
   return array(
     'coap_resource' => array(
       'name' => t('CoAP resource'),
       'base' => 'node_content',
 	  'has_body' => FALSE,
-      'description' => t('CoAP resource form, displaying one resource.'),
+	  'locked' => TRUE,
+      'description' => t('CoAP resource. Instances of this content-type repressent one resource.'),
     ),
-	// 'coap_general' => array(
-      // 'name' => t('CoAP general'),
-      // 'base' => 'node_content',
-	  // 'has_body' => FALSE,
-      // 'description' => t('General CoAP form, most flexible.'),
-    // ),
 	'coap_device' => array(
       'name' => t('CoAP device'),
       'base' => 'node_content',
 	  'has_body' => FALSE,
-	  //'has_title' => FALSE,
 	  'locked' => TRUE,
-      'description' => t('CoAP devce form, managing one device with a well-known/core.'),
+      'description' => t('CoAP device. Instances of this content-type repressent a device with a well-known/core. You can send discovery requests to this device. '),
     ),
   );
 }
 
+/**
+ * Implements hook_install().
+ * We use it to install the fields used by the content types and define the instances of the fields used by our content types.
+ */
 function coap_resource_install(){
-	// create the simple content type
+	// create a simple content type
 	node_types_rebuild();
 	$types = node_type_get_types();
 	
@@ -42,65 +43,37 @@ function coap_resource_install(){
 	}
 }
 
-function _coap_resource_installed_fields()  {
-  // textfield
-  $fields['field_device_uri'] = array(
-    'field_name' => 'field_device_uri',
-    'label' => t('Device URI'),
-	'cardinality' => 1,
-    'type' => 'text',
-  );  
-  $fields['field_resource_uri'] = array(
-    'field_name' => 'field_resource_uri',
-    'label' => t('Resource URI'),
-	'cardinality' => 1,
-    'type' => 'text',
-  );
-  // $fields['field_obs_checkbox'] = array(
-    // 'field_name' => 'field_obs_checkbox',
-    // 'label' => t('Is this an observable resource?'),
-    // 'cardinality' => 1,
-	// 'type' => 'list_boolean',
-	// 'settings' => array(
-		// 'allowed_values' => array(
-			// '0' => 'The resource is currently not observable.',
-			// '1' => 'The resource is currently observable.',
-		// ),
-	// ), 
-  // );
-  // $fields['field_ct_checkboxes'] = array(
-    // 'field_name' => 'field_ct_checkboxes',
-    // 'label' => t('Select the content-type.'),
-    // 'type' => 'list_integer',
-    // 'cardinality' => '-1', // change this to 1 to get radio buttons instead
-    // 'foreign keys' => array(),
-    // 'indexes' => array(
-      // 'value' => array(
-        // 0 => 'value',
-      // ),
-    // ),
-    // 'module' => 'list',
-    // 'settings' => array(
-      // 'allowed_values_function' => '_field_ct_checkboxes_options_list',
-    // ),
-  // );
-  $fields['field_resource_references'] = array(
-    'field_name' => 'field_resource_references',
-    'label' => 'Resource References',
-    'type' => 'node_reference',
-    'settings' => array(
-      'referenceable_types' => array(
-        'coap_resource' => 'coap_resource'
-      ),
-    ),
-    'cardinality' => '-1',
-  );
-  
-  return $fields;
+function _coap_resource_installed_fields(){
+	$fields['field_device_uri'] = array(
+		'field_name' => 'field_device_uri',
+		'label' => t('Device URI'),
+		'cardinality' => 1,
+		'type' => 'text',
+	);  
+	
+	$fields['field_resource_uri'] = array(
+		'field_name' => 'field_resource_uri',
+		'label' => t('Resource URI'),
+		'cardinality' => 1,
+		'type' => 'text',
+	);
+	
+	$fields['field_resource_references'] = array(
+		'field_name' => 'field_resource_references',
+		'label' => 'Resource References',
+		'type' => 'node_reference',
+		'settings' => array(
+			'referenceable_types' => array(
+				'coap_resource' => 'coap_resource'
+			),
+		),
+		'cardinality' => '-1',
+	);  
+	
+	return $fields;
 }
 
-function _coap_resource_installed_instances()  {
-	// textfield
+function _coap_resource_installed_instances(){
 	$instances['field_device_uri'] = array(
 		'field_name' => 'field_device_uri',
 		'entity_type' => 'node',
@@ -108,22 +81,7 @@ function _coap_resource_installed_instances()  {
 		'bundle' => 'coap_device',
 		'type' => 'text',
 		'label' => t('Device URI') ,    
-		// 'widget' => array(
-			// 'type' => 'custom_field',
-		// ),
-		// 'display' => array(
-			// 'default' => array(
-				// 'label' => 'above',
-				// 'type' => 'custom_field_formatter',
-			// ),
-			// 'teaser' => array(
-				// 'label' => 'above',
-				// 'settings' => array(),
-				// 'type' => 'hidden',
-				// 'weight' => -1,
-			// ),
-		// ),
-	'description' => 'Enter URI',
+		'description' => 'Enter URI',
 	);
 	
 	$instances['field_resource_uri'] = array(
@@ -133,71 +91,8 @@ function _coap_resource_installed_instances()  {
 		'bundle' => 'coap_resource',
 		'type' => 'text',
 		'label' => t('Resource URI') ,    
-		// 'widget' => array(
-			// 'type' => 'custom_field',
-		// ),
-		// 'display' => array(
-			// 'default' => array(
-				// 'label' => 'above',
-				// 'type' => 'custom_field_formatter',
-			// ),
-			// 'teaser' => array(
-				// 'label' => 'above',
-				// 'settings' => array(),
-				// 'type' => 'hidden',
-				// 'weight' => -1,
-			// ),
-		// ),
-	'description' => 'Enter URI',
+		'description' => 'Enter URI',
 	);
-	
-	// $instances['field_obs_checkbox'] = array(
-		// 'field_name' => 'field_obs_checkbox',
-		// 'entity_type' => 'node',
-		// 'required' => TRUE,		
-		// 'label' => t('Is this an observable resource?'),
-		// 'bundle' => 'coap_resource',
-		// 'type' => 'list_boolean',
-		// 'description' => 'Check to indicate that the resource supports the observable option.',
-		// 'widget' => array(
-			// 'type' => 'options_onoff',
-		// ),		
-	// );
-	
-	// $instances['field_ct_checkboxes'] = array(
-		// 'field_name' => 'field_ct_checkboxes',
-		// 'entity_type' => 'node',
-		// 'label' => t('Checkboxes'),
-		// 'bundle' => 'coap_resource',
-		// 'description' => t('Select some checkboxes'),
-		// 'default_value' => NULL,	// add a default value here that matches your key => index values
-		// 'display' => array(
-			// 'default' => array(
-				// 'label' => 'above',
-				// 'module' => 'list',
-				// 'settings' => array(),
-				// 'type' => 'list_default',
-				// 'weight' => -1,
-			// ),
-			// 'teaser' => array(
-				// 'label' => 'above',
-				// 'settings' => array(),
-				// 'type' => 'hidden',
-				// 'weight' => -1,
-			// ),
-		// ),
-		// 'required' => 1,
-		// 'settings' => array(
-			// 'user_register_form' => FALSE,
-		// ),
-		// 'widget' => array(
-			// 'active' => 1,
-			// 'module' => 'options',
-			// 'settings' => array(),
-			// 'type' => 'options_buttons',
-			// 'weight' => '-1',
-		// ),
-	// );
 	
 	$instances['field_resource_references'] = array(
 		'field_name' => 'field_resource_references',
@@ -213,21 +108,11 @@ function _coap_resource_installed_instances()  {
 	return $instances;
 }
 
-// function _field_ct_checkboxes_options_list()  {
-  // $options = array(
-    // 1 => 'text/plain;charset=utf-8 (0)',
-    // 2 => 'application/link-format (40)',
-    // 3 => 'application/xml (41)',
-    // 4 => 'application/octet-stream (42)',
-    // 5 => 'application/exi (47)',
-    // 6 => 'application/json (50)',
-  // );
-  // return $options;
-// }
-
+/**
+ * Implements hook_schema().
+ * Defines the tables that have to be installed.
+ */
 function coap_resource_schema() {
-	
-	// Tabel om resources bij te houden
 	$schema['coap_resource_resources'] = array(
 		'description' => "Tabel om resources en hun karakteristieken bij te houden",
 		'fields' => array(
@@ -293,6 +178,25 @@ function coap_resource_schema() {
 					'default' => 'none',
 					'length' => '128',
 				),
+				'created' => array(
+					'description' => 'The Unix timestamp when the coap_resource_resource was created.',
+					'type' => 'int',
+					'not null' => TRUE,
+					'default' => 0,
+				),
+				'changed' => array(
+					'description' => 'The Unix timestamp when the coap_resource_resource was most recently saved.',
+					'type' => 'int',
+					'not null' => TRUE,
+					'default' => 0,
+				),
+				'deleted' => array(
+					'description' => 'Value indicating if this resource is no longer in a core.',
+					'type' => 'int',
+					'not null' => TRUE,
+					'default' => 0,
+				),
+				
 			),
 			'primary key' => array('uri'),
 	);
@@ -328,13 +232,6 @@ function coap_resource_schema() {
 				),
 				'observe' => array(
 					'description' => 'Waarde om te bepalen of de gebruiker het device wil observeren of niet --> 0 = niet observeren, 1 = wel observeren',
-					'type' => 'int',
-					'unsigned' => TRUE,
-					'not null' => TRUE,
-					'default' => 0,
-				),
-				'watch' => array(
-					'description' => 'Waarde om te bepalen of de gebruiker de waardes wil zien verschijnen of niet --> 0 = niet verschijnen, 1 = wel verschijnen',
 					'type' => 'int',
 					'unsigned' => TRUE,
 					'not null' => TRUE,
@@ -376,6 +273,12 @@ function coap_resource_schema() {
 					'description' => 'value indicating if discovery values are in',
 					'type' => 'int',
 					'unsigned' => TRUE,
+					'not null' => TRUE,
+					'default' => 0,
+				),
+				'version_time' => array(
+					'description' => 'The Unix timestamp when the link to the corresponding coap_resource_resource was created.',
+					'type' => 'int',
 					'not null' => TRUE,
 					'default' => 0,
 				),
@@ -472,18 +375,26 @@ function coap_resource_schema() {
 	return $schema;
 }
 
+/**
+ * Implements hook_uninstall().
+ * Drops tables when the module is uninstalled.
+ */
 function coap_resource_uninstall(){
 	db_drop_table('coap_resource_resources');
 	db_drop_table('coap_resource_users');
 	db_drop_table('coap_resource_values');
 }
 
+/**
+ * Implements hook_enable().
+ * Sets values in the variable table that have an effect on the content types.
+ */
 function coap_resource_enable() {
-	$content_types = array('coap_general','coap_resource', 'coap_device');
+	$content_types = array('coap_resource', 'coap_device');
 	foreach($content_types as $content_type){
-		variable_set("comment_$content_type", 0);					//comments default disabled
+		variable_set("comment_$content_type", 0);						//comments default disabled
 		variable_set("node_options_$content_type", array('status'));	//promote to front page default unchecked
-		variable_set("node_preview_$content_type", 0);				//preview default disabled
+		variable_set("node_preview_$content_type", 0);					//preview default disabled
 		variable_set("node_submitted_$content_type", 0);
 	}
 	
@@ -495,17 +406,12 @@ function coap_resource_enable() {
 	);
 }
 
+/**
+ * Implements hook_disable().
+ * Removes any trace of the module except for the tables in the database.
+ */
 function coap_resource_disable(){
-	// $instance = array('field_name' => 'field_device_uri','bundle' => 'coap_device','entity_type' => 'node');
-	// field_delete_instance($instance);
-	// $instance = array('field_name' => 'field_resource_uri','bundle' => 'coap_resource','entity_type' => 'node');
-	// field_delete_instance($instance);
-	// $instance = array('field_name' => 'field_obs_checkbox','bundle' => 'coap_resource','entity_type' => 'node');
-	// field_delete_instance($instance);
-	// $instance = array('field_name' => 'field_ct_checkboxes','bundle' => 'coap_resource','entity_type' => 'node');
-	// field_delete_instance($instance);
-	
-	$content_types = array('coap_general','coap_resource', 'coap_device');
+	$content_types = array('coap_resource', 'coap_device');
 	foreach($content_types as $content_type){
 		$result = db_select('node','nodes')
 					->fields('nodes', array('nid','type'))
@@ -519,15 +425,17 @@ function coap_resource_disable(){
 		// Delete all the nodes at once
 		node_delete_multiple($nids);
 		
-		//delete any  variables made by module
+		//delete any variables made by module
 		variable_del("comment_$content_type");
 		variable_del("node_preview_$content_type");
 		variable_del("node_submitted_$content_type");
 		variable_del("node_options_$content_type");	
 		
+		//remove comment instances (we currently don't have the possibility enabled for leaving comments).
 		$instance = array('field_name' => 'comment_body','bundle' => "comment_node_$content_type",'entity_type' => 'comment');
 		field_delete_instance($instance);
 		
+		//remove field instances
 		$instance = array('field_name' => 'body','bundle' => $content_type,'entity_type' => 'node');
 		field_delete_instance($instance);
 		
