@@ -71,20 +71,22 @@
 \contentsline {section}{\numberline {5.1}Architectuur}{34}
 \contentsline {subsection}{\numberline {5.1.1}Functionaliteit}{34}
 \contentsline {subsection}{\numberline {5.1.2}Belangrijke aspecten}{35}
-\contentsline {subsubsection}{Modulariteit}{35}
+\contentsline {subsubsection}{Modulariteit}{36}
 \contentsline {subsubsection}{Minimalisatie van netwerkbelasting}{36}
-\contentsline {subsubsection}{Caching}{36}
-\contentsline {subsection}{\numberline {5.1.3}Content-type in de databank}{36}
-\contentsline {subsection}{\numberline {5.1.4}Content-type in Drupal}{36}
-\contentsline {chapter}{\numberline {6}Deze inhoud is nog niet verwerkt in de scriptie}{37}
-\contentsline {section}{\numberline {6.1}Evolutie}{38}
-\contentsline {section}{\numberline {6.2}Temperatuurmodule met HTTP/CoAP-proxy}{38}
-\contentsline {subsection}{\numberline {6.2.1}Proxy}{39}
-\contentsline {subsection}{\numberline {6.2.2}Achtergrondprocessen}{39}
-\contentsline {subsection}{\numberline {6.2.3}Geschiedenis van opvragingen}{40}
-\contentsline {subsection}{\numberline {6.2.4}Push-strategie: node.js}{41}
-\contentsline {subsection}{\numberline {6.2.5}Pull-strategie}{42}
-\contentsline {section}{\numberline {6.3}Temperatuurmodule met native CoAP}{43}
+\contentsline {subsubsection}{Caching}{37}
+\contentsline {subsection}{\numberline {5.1.3}Content-type in de databank}{37}
+\contentsline {subsection}{\numberline {5.1.4}Content-types in Drupal}{37}
+\contentsline {subsubsection}{CoAP Resource}{37}
+\contentsline {subsubsection}{CoAP Device}{38}
+\contentsline {chapter}{\numberline {6}Deze inhoud is nog niet verwerkt in de scriptie}{39}
+\contentsline {section}{\numberline {6.1}Evolutie}{40}
+\contentsline {section}{\numberline {6.2}Temperatuurmodule met HTTP/CoAP-proxy}{40}
+\contentsline {subsection}{\numberline {6.2.1}Proxy}{41}
+\contentsline {subsection}{\numberline {6.2.2}Achtergrondprocessen}{41}
+\contentsline {subsection}{\numberline {6.2.3}Geschiedenis van opvragingen}{42}
+\contentsline {subsection}{\numberline {6.2.4}Push-strategie: node.js}{43}
+\contentsline {subsection}{\numberline {6.2.5}Pull-strategie}{44}
+\contentsline {section}{\numberline {6.3}Temperatuurmodule met native CoAP}{45}
 \select@language {english}
 \select@language {dutch}
 \select@language {dutch}
