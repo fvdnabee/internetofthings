@@ -69,24 +69,24 @@
 \contentsline {subsection}{\numberline {4.2.4}Opvangen van verloren berichten}{33}
 \contentsline {chapter}{\numberline {5}CoAP resource module}{34}
 \contentsline {section}{\numberline {5.1}Architectuur}{34}
-\contentsline {subsection}{\numberline {5.1.1}Functionaliteit}{34}
-\contentsline {subsection}{\numberline {5.1.2}Belangrijke aspecten}{35}
-\contentsline {subsubsection}{Modulariteit}{36}
-\contentsline {subsubsection}{Minimalisatie van netwerkbelasting}{36}
-\contentsline {subsubsection}{Caching}{37}
-\contentsline {subsection}{\numberline {5.1.3}Content-type in de databank}{37}
-\contentsline {subsection}{\numberline {5.1.4}Content-types in Drupal}{37}
-\contentsline {subsubsection}{CoAP Resource}{37}
-\contentsline {subsubsection}{CoAP Device}{38}
-\contentsline {chapter}{\numberline {6}Deze inhoud is nog niet verwerkt in de scriptie}{39}
-\contentsline {section}{\numberline {6.1}Evolutie}{40}
-\contentsline {section}{\numberline {6.2}Temperatuurmodule met HTTP/CoAP-proxy}{40}
-\contentsline {subsection}{\numberline {6.2.1}Proxy}{41}
-\contentsline {subsection}{\numberline {6.2.2}Achtergrondprocessen}{41}
-\contentsline {subsection}{\numberline {6.2.3}Geschiedenis van opvragingen}{42}
-\contentsline {subsection}{\numberline {6.2.4}Push-strategie: node.js}{43}
-\contentsline {subsection}{\numberline {6.2.5}Pull-strategie}{44}
-\contentsline {section}{\numberline {6.3}Temperatuurmodule met native CoAP}{45}
+\contentsline {subsection}{\numberline {5.1.1}Functionaliteit}{35}
+\contentsline {subsection}{\numberline {5.1.2}Belangrijke aspecten}{37}
+\contentsline {subsubsection}{Modulariteit}{38}
+\contentsline {subsubsection}{Minimalisatie van netwerkbelasting}{38}
+\contentsline {subsubsection}{Caching}{39}
+\contentsline {subsection}{\numberline {5.1.3}Content-type in de databank}{39}
+\contentsline {subsection}{\numberline {5.1.4}Content-types in Drupal}{39}
+\contentsline {subsubsection}{CoAP Resource}{40}
+\contentsline {subsubsection}{CoAP Device}{42}
+\contentsline {chapter}{\numberline {6}Deze inhoud is nog niet verwerkt in de scriptie}{43}
+\contentsline {section}{\numberline {6.1}Evolutie}{44}
+\contentsline {section}{\numberline {6.2}Temperatuurmodule met HTTP/CoAP-proxy}{44}
+\contentsline {subsection}{\numberline {6.2.1}Proxy}{45}
+\contentsline {subsection}{\numberline {6.2.2}Achtergrondprocessen}{45}
+\contentsline {subsection}{\numberline {6.2.3}Geschiedenis van opvragingen}{46}
+\contentsline {subsection}{\numberline {6.2.4}Push-strategie: node.js}{47}
+\contentsline {subsection}{\numberline {6.2.5}Pull-strategie}{48}
+\contentsline {section}{\numberline {6.3}Temperatuurmodule met native CoAP}{49}
 \select@language {english}
 \select@language {dutch}
 \select@language {dutch}
