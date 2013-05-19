@@ -1,5 +1,5 @@
 \select@language {dutch}
-\contentsline {chapter}{Lijst van gebruikte afkortingen}{iii}
+\contentsline {chapter}{Lijst van gebruikte afkortingen}{iv}
 \contentsline {chapter}{\numberline {1}Inleiding}{1}
 \contentsline {subsubsection}{Is het internet klaar voor het IoT?}{2}
 \contentsline {section}{\numberline {1.1}Doel}{2}
@@ -83,19 +83,22 @@
 \contentsline {subsubsection}{CoAP Resource}{43}
 \contentsline {subsubsection}{CoAP Device}{45}
 \contentsline {section}{\numberline {5.2}Evolutie van de module}{46}
-\contentsline {subsection}{\numberline {5.2.1}temperatuurmodule met HTTP/CoAP-proxy}{46}
+\contentsline {subsection}{\numberline {5.2.1}Temperatuurmodule met HTTP/CoAP-proxy}{46}
 \contentsline {subsubsection}{Proxy}{46}
-\contentsline {subsection}{\numberline {5.2.2}temperatuurmodule met native CoAP}{47}
-\contentsline {subsection}{\numberline {5.2.3}CoAP Resource module met externe CoAP library}{47}
-\contentsline {subsection}{\numberline {5.2.4}CoAP Resource module met content type CoAP Resource}{47}
-\contentsline {subsection}{\numberline {5.2.5}CoAP Resource module met resource discovery}{47}
-\contentsline {subsection}{\numberline {5.2.6}CoAP resource met volledige REST functionaliteit}{47}
-\contentsline {subsection}{\numberline {5.2.7}CoAP resource met meerdere CoAP devices}{47}
-\contentsline {chapter}{\numberline {6}Mogelijke uitbreidingen}{48}
-\contentsline {section}{\numberline {6.1}Keuze interval bij automatisch ophalen}{48}
-\contentsline {section}{\numberline {6.2}Opvragen devices in subnetwerk met resource directory}{48}
-\contentsline {section}{\numberline {6.3}Conditional observe}{48}
-\contentsline {section}{\numberline {6.4}Drupal Entities}{48}
+\contentsline {subsubsection}{Polling}{47}
+\contentsline {subsection}{\numberline {5.2.2}Temperatuurmodule met native CoAP}{48}
+\contentsline {subsubsection}{Observe}{48}
+\contentsline {subsection}{\numberline {5.2.3}CoAP Resource module met externe CoAP library}{49}
+\contentsline {subsection}{\numberline {5.2.4}CoAP Resource module met content type CoAP Resource}{49}
+\contentsline {subsection}{\numberline {5.2.5}CoAP Resource module met resource discovery}{49}
+\contentsline {subsection}{\numberline {5.2.6}CoAP resource met volledige REST functionaliteit}{49}
+\contentsline {subsection}{\numberline {5.2.7}CoAP resource met meerdere CoAP devices}{49}
+\contentsline {chapter}{\numberline {6}Mogelijke uitbreidingen}{50}
+\contentsline {section}{\numberline {6.1}Keuze interval bij automatisch ophalen}{50}
+\contentsline {section}{\numberline {6.2}Opvragen devices in subnetwerk met resource directory}{50}
+\contentsline {section}{\numberline {6.3}Conditional observe}{51}
+\contentsline {subsection}{\numberline {6.3.1}Keep-alive}{52}
+\contentsline {section}{\numberline {6.4}Drupal Entities}{53}
 \select@language {english}
 \select@language {dutch}
 \select@language {dutch}

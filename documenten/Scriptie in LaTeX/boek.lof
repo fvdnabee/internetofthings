@@ -26,8 +26,11 @@
 \contentsline {figure}{\numberline {5.4}{\ignorespaces Visuele representatie van het content type CoAP resource.\relax }}{44}
 \contentsline {figure}{\numberline {5.5}{\ignorespaces Adding content of content type CoAP device\relax }}{45}
 \contentsline {figure}{\numberline {5.6}{\ignorespaces Visuele representatie van het content type CoAP device.\relax }}{45}
-\contentsline {figure}{\numberline {5.7}{\ignorespaces Temperatuurmodule met HTTP/COAP-proxy\relax }}{46}
+\contentsline {figure}{\numberline {5.7}{\ignorespaces Temperatuurmodule met HTTP/COAP-proxy\relax }}{47}
 \addvspace {10\p@ }
+\contentsline {figure}{\numberline {6.1}{\ignorespaces Conditional observe optie (nr. 18)\relax }}{51}
+\contentsline {figure}{\numberline {6.2}{\ignorespaces Conditional observe optie formaat \relax }}{52}
+\contentsline {figure}{\numberline {6.3}{\ignorespaces De Keep-alive optie met nummer 30\relax }}{53}
 \select@language {english}
 \select@language {dutch}
 \select@language {dutch}

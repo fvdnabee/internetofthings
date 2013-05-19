@@ -157,10 +157,13 @@ Dit content type stelt een volledig embedded device voor waarop \'{e}\'{e}n of m
 
 \section{Evolutie van de module}
 
-\subsection{temperatuurmodule met HTTP/CoAP-proxy}
-In deze paragraaf wordt besproken hoe de temperatuurmodule wordt gemaakt die gebruik maakt van een HTTP/CoAP-proxy. Bovendien wordt ook aangetoond hoe waarden opgeslagen worden in de databank om de geschiedenis van opvragingen bij te houden.\\
+\subsection{Temperatuurmodule met HTTP/CoAP-proxy} \label{proxy}
+In deze paragraaf wordt besproken hoe de eerste versie van de module werd gemaakt die gebruik maakt van een HTTP/CoAP-proxy. Bovendien wordt ook aangetoond hoe waarden opgeslagen worden in de databank om de geschiedenis van opvragingen bij te houden. Eigenlijk spreken we hier (en in enkele volgende paragrafen) beter van een temperatuurmodule, aangezien deze module slechts \'{e}\'{e}n resource bevraagt. Het betreft een resource die de waarde van een temperatuursensor terugstuurt. Deze resource werd gekozen vanwege de numerieke waarde die teruggestuurd wordt en omwille van het feit dat de resource observable is.\\
 
-De gebruiker klikt op een knop die het automatisch periodiek bevragen van een embedded device initialiseert. Periodiek wordt een HTTP GET-request naar een HTML-pagina uitgevoerd. Wanneer de response ontvangen wordt, wordt de HTML-pagina geparsed, waarna de nuttige informatie in de databank wordt geplaatst. Met jQuery worden dan nieuwe waarden opgehaald en getoond aan de gebruiker.
+De module wordt aan de gebruiker gepresenteerd onder de vorm van een Drupal block. Deze block bevat een HTML-formulier met twee componenten als invoer. Een checkbox die aanduidt of de gebruiker waarden automatisch wil laten ophalen. En een knop die het formulier indient wanneer de gebruiker erop klikt.\\
+Wanneer de gebruiker op de knop klikt en de checkbox heeft aangevinkt, worden waarden automatisch opgehaald met een interval gelijk aan de waarde van de max age. Merk op dat het hier nog niet om een CoAP observe gaat, want die is enkel mogelijk met native CoAP, in deze module werken we met een HTTP proxy. Periodiek wordt een HTTP GET-request naar een HTML-pagina uitgevoerd. Wanneer de response ontvangen wordt, wordt de HTML-pagina geparsed, waarna de nuttige informatie in de databank wordt geplaatst. Met jQuery worden dan nieuwe waarden opgehaald en getoond aan de gebruiker.\\
+
+Er is bij deze versie nog geen sprake van achtergrondprocessen waardoor het lang kan duren eer een pagina geladen wordt. Bovendien krijgt de gebruiker enkel een foutmelding te zien wanneer er geen communicatie mogelijk is.
 
 \begin{figure}[h]
 \vspace{10pt}
@@ -175,14 +178,31 @@ Als proxy werd de coap.me website gebruikt van iMinds. Deze biedt de mogelijkhei
 
 Het is deze laatste pagina die periodiek wordt opgehaald en geparsed. De communicatie vanwege de Drupal-module bestaat dus enkel uit HTTP-communicatie, de proxy verzorgt de nodige CoAP-berichten tussen zichzelf en het embedded device.
 
-\subsection{temperatuurmodule met native CoAP}
+\subsubsection{Polling}
+In deze eerste versie van de module bestond het antwoord bij de polling uit de volgende velden:
+\begin{itemize}
+\item Hid: De History ID die een numerieke ID is voor de opgevraagde waarde. Het is tevens de index in de databanktabel met waarden en dus uniek.
+\item Temperatuur: Dit is de effectieve waarde in graden Celsius. De werd geparsed uit een string die de resource teruggaf.
+\item Max age: De antwoorden van de betreffende resource bevatten een Max-age optie. Dit is het aantal seconden dat deze waarde als geldig mag beschouwd worden.
+\item Timestamp: Het tijdstip waarop de waarde ontvangen werd.
+\end{itemize}
+
+\subsection{Temperatuurmodule met native CoAP}
+Nu de omliggende structuur opgezet en uitgetest is, kan de communicatie veranderen van HTTP berichten naar native CoAP. Er is in deze versie echter nog geen sprake van de CoAP library. Deze versie beperkt zich tot een eerste test met CoAP communicatie.\\
+
+Voor CoAP verkeer zal het UDP protocol gebruikt worden zoals voorgeschreven in de CoAP draft (versie 16). Eerst wordt een UDP socket geopend naar het betreffende IPv6-adres van het embedded device waarop de resource is aangesloten. Dit gebeurt met de functie pfsockopen() van PHP, deze opent een persistente socket. Vervolgens wordt een hexadecimale string opgesteld die het bericht voorstelt, ook deze opstelling gebeurt aan de hand van de CoAP draft (versie 16). Het bericht wordt verstuurd met de fwrite() functie. Hierna kan het antwoord opgehaald worden van de socket met de fread() functie die als enige parameter een grootte in bytes ontvangt. Belangrijk hierbij is dat die grootte minstens voldoende is om het volledige antwoord te omvatten.\\
+
+\subsubsection{Observe}
+Nu er gebruik gemaakt wordt van native CoAP is nu ook een echte CoAP observe mogelijk. Hierbij is het noodzakelijk dat de socket opengehouden wordt, dit omdat het embedded device nu op eigen initiatief berichten kan sturen. Aangezien de socket moet worden opengehouden, kan de code niet meer op de voorgrond draaien. Indien dit wel zo zou zijn, zou de pagina blijven laden. De gebruiker zal dan geconfronteerd worden met een timeout van de webserver waarop Drupal draait. Achtergrondprocessen zijn nu dus geen optie meer, maar een noodzaak. De code om een socket open te houden en te beheren zal dus opgestart worden in een achtergrondproces aan de hand van de Background Process module die eerder al vermeld werd.\\
+Bij ontvangst van een notificatie van de CoAP resource zal de waarde in de databank worden gestopt met bijbehorende velden. Deze velden zijn dezelfde als in de vorige versie van de module (Zie paragraaf \ref{proxy}). Het zijn deze waarden waarop de client zal pollen. Ook deze polling gebeurt op dezelfde manier als in de vorige versie van de module.
 
 \subsection{CoAP Resource module met externe CoAP library}
+Alle code die te maken had met CoAP communicatie was hardgecodeerde code wat onvermijdelijk leidde tot duplicatie van code. Bovendien bevond deze code zich in dezelfde module als diegene die nu wordt besproken. Dit heeft als gevolg dat andere gebruikers van Drupal geen gebruik kunnen maken van onze code om CoAP berichten te sturen en te ontvangen. Dit alles heeft geleid tot de ontwikkeling van onze eigen CoAP library in PHP onder de vorm van een externe module die apart kan worden gebruikt. Deze library werd eerder al besproken in hoofdstuk \ref{coaplibrary}.
 
 \subsection{CoAP Resource module met content type CoAP Resource}
 
 \subsection{CoAP Resource module met resource discovery}
 
-\subsection{CoAP resource met volledige REST functionaliteit}
+\subsection{CoAP resource met volledige REST functionaliteit} \label{rest}
 
 \subsection{CoAP resource met meerdere CoAP devices}
