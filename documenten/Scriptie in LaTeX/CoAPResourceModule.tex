@@ -3,15 +3,40 @@
 Nu we genoeg kennis hebben over Drupal en CoAP en een CoAP library ter beschikking hebben, kunnen we overgaan tot de uiteindelijk te ontwikkelen module. Het is deze module die een eindgebruiker zal installeren. Ze biedt dan de mogelijkheid om op een gebruiksvriendelijke en dynamische manier sensoren te bekijken en beheren van op de Drupal website, en dit zonder technische kennis nodig te hebben van het CoAP protocol of programmatie in Drupal. We bekijken eerst globaal wat de module concreet moet aanbieden. Daarna bekijken we hoe de module zal opgebouwd worden. Eens we dit weten, kunnen we overgaan tot de verschillende versies van de ontwikkelde module en de implementatie ervan.
 
 \section{Architectuur}
+In deze paragraaf bespreken we de architectuur van de module en hoe die inpast in het Drupal systeem. We behandelen tevens ook enkele belangrijke aspecten die in rekening werden gebracht. Vervolgens lichten we enkele belangrijke onderdelen van de module.\\
+De architectuur wordt weergegeven in figuur \ref{fig:architectuur}. De acties aangeduid met een gekleurd bolletje gebeuren altijd bij een request, de acties aangeduid met een leeg bolletje zullen pas gebeuren wanneer geen geldige waarde uit de databank kan worden gehaald(Zie paragraaf \ref{caching}).\\
+We overlopen de opeenvolgende stappen bij een request aan de hand van figuur \ref{fig:architectuur}:
+\begin{enumerate}
+\item De client start een periodiek poll naar de webserver waarop Drupal draait. Deze poll gebeurt onder vorm van een AJAX call.
+\item De CoAP Resource module voert een query uit op de databank om een geldige waarde op te vragen indien die aanwezig is.
+\item De databank stuurt een resultatenset terug die een geldige waarde bevat, of leeg is indien er geen geldige waarde meer is.
+\item In deze stap zijn er twee mogelijkheden:
+\begin{itemize}
+\item Indien er een geldige waarde aanwezig is in de databank, wordt deze teruggestuurd naar de client als antwoord op de AJAX call. De request eindigt dan hier.
+\item Indien er geen geldige waarde aanwezig is in de databank, wordt een beroep gedaan op de CoAP library module om een nieuwe waarde op te vragen aan de resource. 
+\end{itemize}
+Dit mechanisme zorgt ervoor dat de resource niet onnodig belast wordt (Zie paragraaf \ref{caching}).
+\item De CoAP library module stuurt een CoAP GET request naar de resource.
+\item De resource stuurt zijn waarde terug op in een response bericht als antwoord op de GET request.
+\item De CoAP library roept een hook op die de CoAP Resource module ge\"{i}mplementeerd heeft, om die ervan op de hoogte te brengen dat er een waarde is binnengekomen.
+\item De hook zal ervoor zorgen dat de nieuwe, ontvangen waarde opgeslagen wordt in de databank.
+\item Uiteindelijk wordt de waarde ook teruggestuurd naar de client die de request heeft gestart.
+\end{enumerate}
+\begin{figure}
+\includegraphics[width=1\textwidth]{fig/architectuur}
+\caption{Architectuur van de CoAP resource module in Drupal}
+\label{fig:architectuur}
+\end{figure}
 
 \subsection{Functionaliteit}
 
-De bedoeling van deze module is de eindgebruiker in staat te stellen om gemakkelijk sensoren te beheren op zijn/haar website. Belangrijk hierbij is dat elke Drupal gebruiker die een website maakt, deze kan gebruiken zonder extra kennis nodig te hebben over het CoAP protocol. Ook is het niet de bedoeling dat de eindgebruiker zelf nog moet programmeren in Drupal om de module te kunnen gebruiken. Kortom, de module moet out-of-the box werken en zoveel mogelijk omvatten wat mogelijk is met CoAP sensoren. Concreet houdt dit onder andere in dat bij installatie van de module een content type mee wordt ge\"{i}nstalleerd, zodat de gebruiker slechts met enkele muisklikken het content type kan toevoegen en onmiddellijk kan beginnen met het gebruiken van de sensoren. Verder worden bij installatie ook alle benodigde databanktabellen gecre\"{e}erd.\\
+De bedoeling van deze module is de eindgebruiker in staat te stellen om gemakkelijk sensoren te beheren op zijn/haar website. Belangrijk hierbij is dat elke Drupal gebruiker die een website maakt, deze kan gebruiken zonder extra kennis nodig te hebben over het CoAP protocol. Ook is het niet de bedoeling dat de eindgebruiker zelf nog moet programmeren in Drupal om de module te kunnen gebruiken. Kortom, de module moet out-of-the box werken en zoveel mogelijk omvatten wat mogelijk is met CoAP sensoren.\\
+Concreet houdt dit onder andere in dat bij installatie van de module enkele content types mee worden ge\"{i}nstalleerd. Het betreft hier een content type voor een enkele CoAP resource en een content type voor een CoAP device waarop meerdere resources zitten. Ook hier werd weer modulair gewerkt, de resources worden bij een CoAP device aangegeven onder vorm van het content type CoAP resource. Deze content types zorgen ervoor dat de gebruiker slechts met enkele muisklikken het resources en devices kan toevoegen en onmiddellijk kan beginnen met het beheren en bevragen van de resources. Verder worden bij installatie ook alle benodigde databanktabellen gecre\"{e}erd.\\
 
-De configuratie die de gebruiker moet doen zoals bijvoorbeeld het toevoegen van een resource, moet gebruiksvriendelijk verlopen. Hiervoor wordt gebruik gemaakt van resource discovery, een gebruiker hoeft enkel het IPv6-adres van een embedded device op te geven. De sensoren die aangesloten zijn op dat embedded device worden dan opgesomd voor de gebruiker, die dan de mogelijkheid krijgt de sensoren aan te vinken om ze toe te voegen aan de website.\\
-Dit principe wordt zelfs verder doorgetrokken. Een gebruiker zal tevens de mogelijkheid krijgen om alle embedded devices in een subnetwerk op te vragen. Dit gebeurt aan de hand van een resource directory waarin alle well-known/core's zich bevinden van de embedded devices die in het subnetwerk aanwezig zijn. De gebruiker krijgt dan de kans een embedded device te kiezen om daarna eventueel resources te selecteren.\\
+De configuratie die de gebruiker moet doen zoals bijvoorbeeld het toevoegen van een resource, moet gebruiksvriendelijk verlopen. Hiervoor wordt gebruik gemaakt van resource discovery. In het geval van een CoAP device hoeft de gebruiker enkel het IPv6-adres ervan op te geven. Aan de hand van resource discovery wordt dan een lijst gegenereerd van resources. Wanneer de gebruiker op een resource klikt, krijgt die een visuele representatie van het content type CoAP resource.\\
+Wanneer de gebruiker een enkele resource wil toevoegen, hoeft die enkel de URI van de resource op te geven. Deze bestaat uit een IPv6-adres en een URI-path, gescheiden door een '/'. De module zal aan de hand van een specifieke resource discovery voor deze resource, de overige informatie en parameters van de resource ophalen en opslaan in de databank. De resource wordt bij de discovery gespecifieerd door een Uri-Query optie toe te voegen aan het CoAP pakket met een waarde onder de vorm van 'href=/resource'. De parameters bestaan onder andere uit het content type dat de resource teruggeeft (plain text, JSON, XML, ...), of de resource al dan niet observable is, enzovoort...\\
 
-Eens de gebruiker de gewenste resources heeft toegevoegd aan zijn/haar website, is het de bedoeling dat de 4 REST-methodes GET, PUT, POST, DELETE kunnen uitgevoerd worden, op voorwaarde dat de desbetreffende sensor de methode ondersteunt (dit wordt weergegeven bij het toevoegen van sensoren). Naast deze methodes kan een sensor ook nog observable zijn (zie hoofdstuk \ref{CoAP}), de gebruiker moet dus ook in staat gesteld worden om notificaties te ontvangen van een resource.
+Eens de gebruiker de gewenste resources heeft toegevoegd aan zijn/haar website, is het de bedoeling dat de 4 REST-methodes GET, PUT, POST, DELETE kunnen uitgevoerd worden, de gebruiker zal ervan op de hoogte gebracht worden wanneer een methode niet ondersteund wordt. Naast deze methodes kan een sensor ook nog observable zijn (zie hoofdstuk \ref{CoAP}), de gebruiker moet dus ook in staat gesteld worden om notificaties te ontvangen van een resource. Ook wanneer een gebruiker de website verlaat moet het mogelijk zijn de observe te laten doorlopen.
 
 \subsection{Belangrijke aspecten}
 
@@ -19,21 +44,79 @@ Deze module werd ontworpen met het oog op bepaalde aspecten waarmee rekening moe
 
 \subsubsection{Modulariteit}
 Een van de grote troeven van Drupal is de modulariteit die aangeboden wordt. Het is dan ook van uiterst belang dat onze module dit principe niet verbreekt, maar juist doorzet. In hoofdstuk \ref{coaplibrary} zagen we al hoe een aparte CoAP library ontwikkeld werd. Dit heeft als gevolg dat elke Drupal gebruiker de kans heeft gebruik te maken van de library en dus zelf een module zou kunnen bouwen gelijkaardig aan de onze.\\
-Dit geldt ook voor deze module die we nu bespreken, deze is ook bruikbaar voor elke gebruiker die dat wil. Naast het installeren van de CoAP library en deze module, hoeft de gebruiker niets extra te doen om deze module te gebruiken. Databanktabellen worden gecre\"{e}erd en content types worden ge\"{i}nstalleerd, zonder dat de gebruiker daar iets hoeft voor te configureren.
+Dit geldt ook voor deze module die we nu bespreken, deze is ook bruikbaar voor elke gebruiker die dat wil. Naast het installeren van de CoAP library en deze module, hoeft de gebruiker niets extra te doen om deze module te gebruiken. Databanktabellen worden gecre\"{e}erd en content types worden ge\"{i}nstalleerd, zonder dat de gebruiker daar iets hoeft voor te configureren.\\
+Onze module heeft zo ook enkele modules nodig die de gebruiker eerst moet installeren. Drupal zal hierbij automatisch de gebruiker aangeven welke modules eerst moeten worden geïnstalleerd. Het betreft de volgende modules:
+\begin{itemize}
+\item Background process: Deze module maakt namelijk gebruik van achtergrondprocessen (bvb voor observe)
+\item CoAP library: onze eigen geschreven module die instaat voor alle CoAP communicatie
+\item Entity: Een veelgebruikte module (wordt namelijk opgenomen in Drupal 8) om data in een vaste en gemakkelijk te behandelen structuur te gieten
+\item Node reference: Een module die gebruikt wordt om in een bepaalde node te verwijzen naar andere nodes
+\end{itemize}
 
 \subsubsection{Minimalisatie van netwerkbelasting}
-Mogelijks zijn meerdere gebruikers van een Drupal website ge\"{i}nteresseerd in een observable resource. Het is niet aanvaardbaar dat de netwerkbelasting zou stijgen met het aantal ge\"{i}nteresseerden. Daarom gedraagt Drupal zich eigenlijk als intermediaire server voor de eindgebruikers. Er wordt namelijk maar \'{e}\'{e}n observe uitgevoerd door Drupal, ongeacht het aantal gebruikers dat ge\'{i}nteresseerd is. De notificaties worden op de server in de databank gestopt en het zijn deze waarden waarop de gebruikers uiteindelijk pollen.\\
+Mogelijks zijn meerdere gebruikers van een Drupal website ge\"{i}nteresseerd in een observable resource. Het is niet aanvaardbaar dat de netwerkbelasting zou stijgen met het aantal ge\"{i}nteresseerden. Daarom gedraagt Drupal zich eigenlijk als intermediaire server voor de eindgebruikers. Er wordt namelijk maar \'{e}\'{e}n observe uitgevoerd door Drupal, ongeacht het aantal gebruikers dat ge\"{i}nteresseerd is. De notificaties worden op de server in de databank gestopt en het zijn deze waarden waarop de gebruikers uiteindelijk pollen.\\
 Bovendien zorgt dit voor een vorm van controle over verkeer naar de resources, de gebruikers van de website kunnen namelijk niet zelfstandig CoAP praten met de resources. Een voorbeeld hiervan is de demo van de module op onze website. Enkel ingelogde gebruikers zijn in staat een observe uit te voeren. Dit om te vermijden dat gelijk wie een observe kan starten, men kan namelijk vergeten de observe af te sluiten, waardoor de databank meer en meer opgevuld wordt.
 
-\subsubsection{Caching}
-Een bericht kan een maximum levensduur hebben, dit wordt aangegeven met een max-age option in het bericht. Deze bevat dan een numerieke waarde die aangeeft in seconden hoelang de waarde als geldig mag worden beschouwd. Wanneer deze maximum levensduur overschreden wordt, mag deze waarde niet meer worden gebruikt. Dan moet bij een volgende aanvraag door een gebruiker een nieuwe waarde worden opgehaald van de resource. Bijgevolg wordt een opgehaalde waarde in de databank gestopt,. Wanneer de maximum levensduur nog niet overschreden is bij een aanvraag, wordt de waarde uit de databank gehaald. De resource wordt dan dus niet belast. Dit zorgt er ook voor dat de resource niet overmatig wordt belast wanneer veel gebruikers er een waarde van willen opvragen.\\
-Dit aspect is zeker een van de meer belangrijke omdat verbindingen naar een resource vaak een beperkte bandbreedte kennen. Bovendien komt de energievoorziening voor sensoren vaak van een batterij. Het werk dat zo'n sensor moet verrichten, moet dus worden geminimaliseerd.
+\subsubsection{Caching}\label{caching}
+Een bericht kan een maximum levensduur hebben, dit wordt aangegeven met een max-age optie in het bericht. Deze bevat dan een numerieke waarde die aangeeft in seconden hoelang de waarde als geldig mag worden beschouwd. Wanneer deze maximum levensduur overschreden wordt, mag deze waarde niet meer worden gebruikt. Dan moet bij een volgende aanvraag door een gebruiker een nieuwe waarde worden opgehaald van de resource. Bijgevolg wordt een opgehaalde waarde in de databank gestopt. Wanneer de maximum levensduur nog niet overschreden is bij een aanvraag, wordt de waarde uit de databank gehaald. De resource wordt dan dus niet onnodig belast. Dit zorgt er ook voor dat de belasting op een resource niet evenredig stijgt met het aantal gebruikers die er een waarde van willen opvragen.\\
+Dit aspect is zeker een van de meer belangrijke omdat verbindingen naar een resource vaak een beperkte bandbreedte kennen. Bovendien bestaat de energievoorziening van sensoren vaak uit een batterij. Het werk dat zo'n sensor moet verrichten, moet dus worden geminimaliseerd.
 
 \subsection{Content-type in de databank}
+Onder content-type van de databank verstaan we de definitie van nodige databanktabellen en -kolommen. ----- nog te bekijken
 
-\subsection{Content-type in Drupal}
+\subsection{Content-types in Drupal}
 
+Bij installatie van de module worden twee content types mee ge\"{i}nstalleerd. We bespreken wat de mogelijkheden ervan zijn en hoe ze eruitzien. Het laten installeren van content types zorgt ervoor dat een Drupal gebruiker op een eenvoudige manier content kan toevoegen, in dit geval onderdelen van een CoAP sensornetwerk. Concreet moet de gebruiker enkel op 'Add content' klikken op zijn/haar Drupal website en het gewenste content type aanklikken. Na invullen van enkele vereiste velden wordt een node gecre\"{e}erd die de content voorstelt.
+\newpage
+\begin{figure}[h!]
+\caption{Content toevoegen door op 'Add content' te klikken.}
+\centering
+\includegraphics[width=1\textwidth]{fig/add_content}
+\end{figure}
 
+\subsubsection{CoAP Resource}
+\begin{wrapfigure}{r}{0.6\textwidth}
+\vspace{-10pt}
+%\hspace{-10pt}
+\centering
+\label{fig:drupalLogo}
+\includegraphics[width=0.6\textwidth]{fig/add_coap_resource}
+\vspace{-20pt}
+%\hspace{-10pt}
+\centering
+\caption{Adding content of content type CoAP resource}
+\centering
+\vspace{-20pt}
+\end{wrapfigure}
+Dit content type stelt \'{e}\'{e}n resource voor. Bij het toevoegen wordt de URI opgegeven, deze bestaat uit het IPv6-adres van het embedded device waarop de resource is aangesloten en een URI-path. IPv6-adres en URI-path worden gescheiden door een slash ('/'). Een voorbeeld van een door ons vaak gebruikte URI is: 2001:6a8:1d80:200::2/test.\\
+Er wordt gevalideerd op de structuur van de URI, wanneer de gebruiker een foute URI opgeeft wordt er een foutmelding getoond en krijgt de gebruiker opnieuw de kans om een geldige URI op te geven. Wanneer de URI gevalideerd is, krijgt de gebruiker de visuele representatie te zien. De gebruiker krijgt nu de kans om de REST-methodes  GET, PUT, POST en DELETE uit te voeren en een observe. Bovendien krijgt de gebruiker een geschiedenis van opvragingen voor deze resource te zien en krijgt ook de kans een grafiek te laten genereren. Voor het type grafiek heeft de gebruiker de keuze uit een lijn-, staaf-, of taartgrafiek.
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.8\textwidth]{fig/coap_resource}
+\caption{Visuele representatie van het content type CoAP resource.}
+\end{figure}
+
+\newpage
+\subsubsection{CoAP Device}
+\begin{wrapfigure}{r}{0.6\textwidth}
+\vspace{-10pt}
+%\hspace{-10pt}
+\centering
+\label{fig:drupalLogo}
+\includegraphics[width=0.6\textwidth]{fig/add_coap_device}
+\vspace{-20pt}
+%\hspace{-10pt}
+\centering
+\caption{Adding content of content type CoAP device}
+\centering
+\vspace{-20pt}
+\end{wrapfigure}
+Dit content type stelt een volledig embedded device voor waarop \'{e}\'{e}n of meerdere resources zich bevinden. Bij toevoegen van dit content type hoeft de gebruiker enkel het IPv6-adres op te geven. Aan de hand van resource discovery wordt dan een lijst van aangesloten resources opgebouwd en getoond aan de gebruiker. Nu kan de gebruiker doorklikken naar een resource die voorgesteld wordt aan de hand van het content type CoAP resource beschreven in de vorige paragraaf.
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.6\textwidth]{fig/coap_device}
+\caption{Visuele representatie van het content type CoAP device.}
+\end{figure}
 
 
 
