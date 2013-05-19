@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2013.4.11)  18 MAY 2013 15:50
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2013.4.11)  19 MAY 2013 11:58
 entering extended mode
 **boek.tex
 
@@ -185,6 +185,8 @@ LaTeX Warning: Label `fig:drupalLogo' multiply defined.
 LaTeX Warning: Label `fig:drupalLogo' multiply defined.
 
 )
+("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
+iptie in LaTeX\uitbreidingen.aux")
 ("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
 iptie in LaTeX\referenties.aux"))
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 70.
@@ -663,179 +665,113 @@ Overfull \hbox (16.96507pt too wide) in paragraph at lines 57--59
 ng zou stij-gen met het aan-tal ge[]nteresseerden.
  []
 
-[38] [39] <fig/add_content.jpg, id=188, 963.6pt x 770.88pt>
+[38]
+Underfull \hbox (badness 10000) in paragraph at lines 61--62
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 70--73
+
+ []
+
+[39]
+Underfull \hbox (badness 10000) in paragraph at lines 74--76
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 81--82
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 83--85
+
+ []
+
+[40]
+Underfull \hbox (badness 10000) in paragraph at lines 93--94
+
+ []
+
+[41] [42] <fig/add_content.jpg, id=197, 963.6pt x 770.88pt>
 File: fig/add_content.jpg Graphic file (type jpg)
 
 <use fig/add_content.jpg>
-Package pdftex.def Info: fig/add_content.jpg used on input line 74.
+Package pdftex.def Info: fig/add_content.jpg used on input line 111.
 (pdftex.def)             Requested size: 455.24408pt x 364.19568pt.
 
-<fig/add_coap_resource.jpg, id=189, 379.4175pt x 173.14688pt>
+<fig/add_coap_resource.jpg, id=198, 379.4175pt x 173.14688pt>
 File: fig/add_coap_resource.jpg Graphic file (type jpg)
 
 <use fig/add_coap_resource.jpg>
-Package pdftex.def Info: fig/add_coap_resource.jpg used on input line 83.
+Package pdftex.def Info: fig/add_coap_resource.jpg used on input line 120.
 (pdftex.def)             Requested size: 273.14922pt x 124.65244pt.
 
-<fig/coap_resource.jpg, id=190, 540.51938pt x 666.99188pt>
+<fig/coap_resource.jpg, id=199, 540.51938pt x 666.99188pt>
 File: fig/coap_resource.jpg Graphic file (type jpg)
 
 <use fig/coap_resource.jpg>
-Package pdftex.def Info: fig/coap_resource.jpg used on input line 95.
+Package pdftex.def Info: fig/coap_resource.jpg used on input line 132.
 (pdftex.def)             Requested size: 364.19664pt x 449.4266pt.
- [40 <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/documenten
+ [43 <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/documenten
 /Scriptie in LaTeX/fig/add_content.jpg> <C:/Program Files/wamp/www/drupal-7.19/
 sites/all/modules/custom/documenten/Scriptie in LaTeX/fig/add_coap_resource.jpg
->] [41 <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/document
+>] [44 <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/document
 en/Scriptie in LaTeX/fig/coap_resource.jpg>]
-<fig/add_coap_device.jpg, id=197, 350.81062pt x 173.89969pt>
+<fig/add_coap_device.jpg, id=206, 350.81062pt x 173.89969pt>
 File: fig/add_coap_device.jpg Graphic file (type jpg)
 
 <use fig/add_coap_device.jpg>
-Package pdftex.def Info: fig/add_coap_device.jpg used on input line 106.
+Package pdftex.def Info: fig/add_coap_device.jpg used on input line 143.
 (pdftex.def)             Requested size: 273.14922pt x 135.413pt.
 
-<fig/coap_device.jpg, id=198, 299.61937pt x 388.45125pt>
+<fig/coap_device.jpg, id=207, 299.61937pt x 388.45125pt>
 File: fig/coap_device.jpg Graphic file (type jpg)
 
 <use fig/coap_device.jpg>
-Package pdftex.def Info: fig/coap_device.jpg used on input line 117.
+Package pdftex.def Info: fig/coap_device.jpg used on input line 154.
 (pdftex.def)             Requested size: 273.14922pt x 354.16096pt.
- [42 <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/documenten
-/Scriptie in LaTeX/fig/add_coap_device.jpg> <C:/Program Files/wamp/www/drupal-7
-.19/sites/all/modules/custom/documenten/Scriptie in LaTeX/fig/coap_device.jpg>]
 
-Hoofdstuk 6.
-
-Underfull \hbox (badness 10000) in paragraph at lines 129--130
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 131--132
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 133--134
-
- []
-
-
-Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
-less on input line 143.
-
-
-Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
-less on input line 143.
-
-[43
-
-]
-Missing character: There is no é in font cmr10!
-Missing character: There is no é in font cmr10!
-
-Underfull \hbox (badness 10000) in paragraph at lines 163--164
-
- []
-
-<fig/TemperatuurModuleHTTPCOAPProxy.png, id=205, 455.45157pt x 259.7203pt>
-File: fig/TemperatuurModuleHTTPCOAPProxy.png Graphic file (type png)
-
-<use fig/TemperatuurModuleHTTPCOAPProxy.png>
-Package pdftex.def Info: fig/TemperatuurModuleHTTPCOAPProxy.png used on input l
-ine 169.
-(pdftex.def)             Requested size: 455.24408pt x 259.60869pt.
-
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 177--178
-
- []
-
-[44]
-Underfull \hbox (badness 10000) in paragraph at lines 183--184
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 185--186
+Underfull \hbox (badness 10000) in paragraph at lines 161--162
 
  []
 
 [45 <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/documenten/
-Scriptie in LaTeX/fig/TemperatuurModuleHTTPCOAPProxy.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 187--188
+Scriptie in LaTeX/fig/add_coap_device.jpg> <C:/Program Files/wamp/www/drupal-7.
+19/sites/all/modules/custom/documenten/Scriptie in LaTeX/fig/coap_device.jpg>]
+<fig/TemperatuurModuleHTTPCOAPProxy.png, id=212, 455.45157pt x 259.7203pt>
+File: fig/TemperatuurModuleHTTPCOAPProxy.png Graphic file (type png)
+
+<use fig/TemperatuurModuleHTTPCOAPProxy.png>
+Package pdftex.def Info: fig/TemperatuurModuleHTTPCOAPProxy.png used on input l
+ine 167.
+(pdftex.def)             Requested size: 455.24408pt x 259.60869pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 174--175
 
  []
 
+[46 <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/documenten/
+Scriptie in LaTeX/fig/TemperatuurModuleHTTPCOAPProxy.png>]) [47]
+("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
+iptie in LaTeX\uitbreidingen.tex"
+Hoofdstuk 6.
+)
 
-Underfull \hbox (badness 10000) in paragraph at lines 193--194
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 195--196
-
- []
-
-Missing character: There is no é in font cmr10!
-Missing character: There is no é in font cmr10!
-Missing character: There is no é in font cmr10!
-Missing character: There is no é in font cmr10!
-
-Underfull \hbox (badness 10000) in paragraph at lines 201--202
-
- []
-
-[46]
-Underfull \hbox (badness 10000) in paragraph at lines 203--204
-
- []
+Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
+less on input line 119.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 205--206
+Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
+less on input line 119.
 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 207--208
-
- []
+[48
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 209--211
 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 212--213
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 218--219
-
- []
-
-[47]
-Underfull \hbox (badness 10000) in paragraph at lines 220--221
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 222--223
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 224--226
-
- []
-
-) [48] [49]
+]
 ("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
 iptie in LaTeX\referenties.tex"
 Missing character: There is no Ã in font cmr10!
@@ -853,13 +789,13 @@ calhost-is-not-allowed-by-
 )
 
 Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
-less on input line 126.
+less on input line 127.
 
 
 Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
-less on input line 126.
+less on input line 127.
 
-[50
+[49
 
 
 
@@ -870,17 +806,17 @@ iptie in LaTeX\boek.lof")
 
 
 Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
-less on input line 138.
+less on input line 139.
 
 
 Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
-less on input line 138.
+less on input line 139.
 
-[51
+[50
 
 
 
-] [52]
+]
 ("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
 iptie in LaTeX\boek.aux"
 ("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
@@ -904,16 +840,18 @@ iptie in LaTeX\CoAPLibraryModule.aux")
 ("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
 iptie in LaTeX\CoAPResourceModule.aux")
 ("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
+iptie in LaTeX\uitbreidingen.aux")
+("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
 iptie in LaTeX\referenties.aux"))
 
 LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 3211 strings out of 494045
- 55675 string characters out of 3148390
- 101176 words of memory out of 3000000
- 6380 multiletter control sequences out of 15000+200000
+ 3220 strings out of 494045
+ 56373 string characters out of 3148390
+ 101487 words of memory out of 3000000
+ 6382 multiletter control sequences out of 15000+200000
  11547 words of font info for 40 fonts, out of 3000000 for 9000
  717 hyphenation exceptions out of 8191
  36i,11n,47p,1490b,427s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -926,9 +864,9 @@ ts/type1/public/amsfonts/cm/cmss10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1
 /amsfonts/cm/cmsy10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfont
 s/cm/cmti10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/eurosym/feymr10
 .pfb>
-Output written on boek.pdf (62 pages, 1418125 bytes).
+Output written on boek.pdf (60 pages, 1414770 bytes).
 PDF statistics:
- 266 PDF objects out of 1000 (max. 8388607)
+ 259 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  131 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -21,13 +21,13 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {5.1}{\ignorespaces Architectuur van de CoAP resource module in Drupal\relax }}{36}
-\contentsline {figure}{\numberline {5.2}{\ignorespaces Content toevoegen door op 'Add content' te klikken.\relax }}{40}
-\contentsline {figure}{\numberline {5.3}{\ignorespaces Adding content of content type CoAP resource\relax }}{40}
-\contentsline {figure}{\numberline {5.4}{\ignorespaces Visuele representatie van het content type CoAP resource.\relax }}{41}
-\contentsline {figure}{\numberline {5.5}{\ignorespaces Adding content of content type CoAP device\relax }}{42}
-\contentsline {figure}{\numberline {5.6}{\ignorespaces Visuele representatie van het content type CoAP device.\relax }}{42}
+\contentsline {figure}{\numberline {5.2}{\ignorespaces Content toevoegen door op 'Add content' te klikken.\relax }}{43}
+\contentsline {figure}{\numberline {5.3}{\ignorespaces Adding content of content type CoAP resource\relax }}{43}
+\contentsline {figure}{\numberline {5.4}{\ignorespaces Visuele representatie van het content type CoAP resource.\relax }}{44}
+\contentsline {figure}{\numberline {5.5}{\ignorespaces Adding content of content type CoAP device\relax }}{45}
+\contentsline {figure}{\numberline {5.6}{\ignorespaces Visuele representatie van het content type CoAP device.\relax }}{45}
+\contentsline {figure}{\numberline {5.7}{\ignorespaces Temperatuurmodule met HTTP/COAP-proxy\relax }}{46}
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {6.1}{\ignorespaces Temperatuurmodule met HTTP/COAP-proxy\relax }}{45}
 \select@language {english}
 \select@language {dutch}
 \select@language {dutch}
