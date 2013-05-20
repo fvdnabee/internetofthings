@@ -91,16 +91,17 @@
 \contentsline {subsection}{\numberline {5.2.2}Temperatuurmodule met native CoAP}{49}
 \contentsline {subsubsection}{Observe}{49}
 \contentsline {subsection}{\numberline {5.2.3}CoAP Resource module met externe CoAP library}{50}
-\contentsline {subsection}{\numberline {5.2.4}CoAP Resource module met content type CoAP Resource}{50}
-\contentsline {subsection}{\numberline {5.2.5}CoAP Resource module met resource discovery}{50}
-\contentsline {subsection}{\numberline {5.2.6}CoAP resource met volledige REST functionaliteit}{50}
-\contentsline {subsection}{\numberline {5.2.7}CoAP resource met meerdere CoAP devices}{50}
-\contentsline {chapter}{\numberline {6}Uitbreidingen}{51}
-\contentsline {section}{\numberline {6.1}Keuze van interval bij automatisch ophalen}{51}
-\contentsline {section}{\numberline {6.2}Opvragen devices in subnetwerk met resource directory}{51}
-\contentsline {section}{\numberline {6.3}Conditional observe}{52}
-\contentsline {subsection}{\numberline {6.3.1}Keep-alive}{53}
-\contentsline {section}{\numberline {6.4}Drupal Entities}{54}
+\contentsline {subsubsection}{Nieuwe block}{50}
+\contentsline {subsection}{\numberline {5.2.4}CoAP Resource module met content type CoAP Resource}{51}
+\contentsline {subsection}{\numberline {5.2.5}CoAP Resource module met resource discovery}{52}
+\contentsline {subsection}{\numberline {5.2.6}CoAP resource met volledige REST functionaliteit}{52}
+\contentsline {subsection}{\numberline {5.2.7}CoAP resource met meerdere CoAP devices}{52}
+\contentsline {chapter}{\numberline {6}Uitbreidingen}{53}
+\contentsline {section}{\numberline {6.1}Keuze van interval bij automatisch ophalen}{53}
+\contentsline {section}{\numberline {6.2}Opvragen devices in subnetwerk met resource directory}{53}
+\contentsline {section}{\numberline {6.3}Conditional observe}{54}
+\contentsline {subsection}{\numberline {6.3.1}Keep-alive}{55}
+\contentsline {section}{\numberline {6.4}Drupal Entities}{56}
 \select@language {english}
 \select@language {dutch}
 \select@language {dutch}

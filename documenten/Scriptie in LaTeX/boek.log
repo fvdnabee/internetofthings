@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2013.4.11)  20 MAY 2013 09:50
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2013.4.11)  20 MAY 2013 12:16
 entering extended mode
 **boek.tex
 
@@ -704,21 +704,21 @@ Underfull \hbox (badness 10000) in paragraph at lines 93--94
 File: fig/add_content.jpg Graphic file (type jpg)
 
 <use fig/add_content.jpg>
-Package pdftex.def Info: fig/add_content.jpg used on input line 111.
+Package pdftex.def Info: fig/add_content.jpg used on input line 110.
 (pdftex.def)             Requested size: 455.24408pt x 364.19568pt.
 
 <fig/add_coap_resource.jpg, id=204, 379.4175pt x 173.14688pt>
 File: fig/add_coap_resource.jpg Graphic file (type jpg)
 
 <use fig/add_coap_resource.jpg>
-Package pdftex.def Info: fig/add_coap_resource.jpg used on input line 120.
+Package pdftex.def Info: fig/add_coap_resource.jpg used on input line 121.
 (pdftex.def)             Requested size: 273.14922pt x 124.65244pt.
 
 <fig/coap_resource.jpg, id=205, 540.51938pt x 666.99188pt>
 File: fig/coap_resource.jpg Graphic file (type jpg)
 
 <use fig/coap_resource.jpg>
-Package pdftex.def Info: fig/coap_resource.jpg used on input line 132.
+Package pdftex.def Info: fig/coap_resource.jpg used on input line 133.
 (pdftex.def)             Requested size: 364.19664pt x 449.4266pt.
  [44 <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/documenten
 /Scriptie in LaTeX/fig/add_content.jpg> <C:/Program Files/wamp/www/drupal-7.19/
@@ -729,24 +729,24 @@ en/Scriptie in LaTeX/fig/coap_resource.jpg>]
 File: fig/add_coap_device.jpg Graphic file (type jpg)
 
 <use fig/add_coap_device.jpg>
-Package pdftex.def Info: fig/add_coap_device.jpg used on input line 143.
+Package pdftex.def Info: fig/add_coap_device.jpg used on input line 144.
 (pdftex.def)             Requested size: 273.14922pt x 135.413pt.
 
 <fig/coap_device.jpg, id=214, 299.61937pt x 388.45125pt>
 File: fig/coap_device.jpg Graphic file (type jpg)
 
 <use fig/coap_device.jpg>
-Package pdftex.def Info: fig/coap_device.jpg used on input line 154.
+Package pdftex.def Info: fig/coap_device.jpg used on input line 155.
 (pdftex.def)             Requested size: 273.14922pt x 354.16096pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 161--162
+Underfull \hbox (badness 10000) in paragraph at lines 162--163
 
  []
 
 [46 <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/documenten/
 Scriptie in LaTeX/fig/add_coap_device.jpg> <C:/Program Files/wamp/www/drupal-7.
 19/sites/all/modules/custom/documenten/Scriptie in LaTeX/fig/coap_device.jpg>]
-Underfull \hbox (badness 10000) in paragraph at lines 163--165
+Underfull \hbox (badness 10000) in paragraph at lines 164--166
 
  []
 
@@ -755,29 +755,60 @@ File: fig/TemperatuurModuleHTTPCOAPProxy.png Graphic file (type png)
 
 <use fig/TemperatuurModuleHTTPCOAPProxy.png>
 Package pdftex.def Info: fig/TemperatuurModuleHTTPCOAPProxy.png used on input l
-ine 170.
+ine 171.
 (pdftex.def)             Requested size: 455.24408pt x 259.60869pt.
 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 177--178
+Underfull \hbox (badness 10000) in paragraph at lines 178--179
 
  []
 
 [47]
-Underfull \hbox (badness 10000) in paragraph at lines 191--192
+Underfull \hbox (badness 10000) in paragraph at lines 192--193
 
  []
 
 [48 <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/documenten/
 Scriptie in LaTeX/fig/TemperatuurModuleHTTPCOAPProxy.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 193--194
+Underfull \hbox (badness 10000) in paragraph at lines 194--195
 
  []
 
-[49]) [50]
+
+Underfull \hbox (badness 10000) in paragraph at lines 201--202
+
+ []
+
+[49]
+Underfull \hbox (badness 10000) in paragraph at lines 204--205
+
+ []
+
+<fig/meerdere_resources.jpg, id=228, 526.21594pt x 560.8453pt>
+File: fig/meerdere_resources.jpg Graphic file (type jpg)
+
+<use fig/meerdere_resources.jpg>
+Package pdftex.def Info: fig/meerdere_resources.jpg used on input line 212.
+(pdftex.def)             Requested size: 455.24408pt x 485.22722pt.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[50]
+Underfull \hbox (badness 10000) in paragraph at lines 220--221
+
+ []
+
+[51 <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/documenten/
+Scriptie in LaTeX/fig/meerdere_resources.jpg>]
+Underfull \hbox (badness 10000) in paragraph at lines 222--223
+
+ []
+
+) [52]
 ("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
 iptie in LaTeX\uitbreidingen.tex"
 Hoofdstuk 6.
@@ -794,7 +825,7 @@ less on input line 16.
 Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
 less on input line 16.
 
-[51
+[53
 
 
 
@@ -803,15 +834,15 @@ Underfull \hbox (badness 10000) in paragraph at lines 23--25
 
  []
 
-<fig/conditional.jpg, id=235, 402.75468pt x 70.76437pt>
+<fig/conditional.jpg, id=242, 402.75468pt x 70.76437pt>
 File: fig/conditional.jpg Graphic file (type jpg)
 
 <use fig/conditional.jpg>
 Package pdftex.def Info: fig/conditional.jpg used on input line 32.
 (pdftex.def)             Requested size: 364.19664pt x 63.98967pt.
- [52 <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/documenten
+ [54 <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/documenten
 /Scriptie in LaTeX/fig/conditional.jpg>]
-<fig/conditional_format.jpg, id=239, 369.63094pt x 359.84438pt>
+<fig/conditional_format.jpg, id=246, 369.63094pt x 359.84438pt>
 File: fig/conditional_format.jpg Graphic file (type jpg)
 
 <use fig/conditional_format.jpg>
@@ -822,7 +853,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 52--53
 
  []
 
-<fig/keep_alive.jpg, id=240, 390.70969pt x 65.49469pt>
+<fig/keep_alive.jpg, id=247, 390.70969pt x 65.49469pt>
 File: fig/keep_alive.jpg Graphic file (type jpg)
 
 <use fig/keep_alive.jpg>
@@ -832,8 +863,8 @@ Package pdftex.def Info: fig/keep_alive.jpg used on input line 56.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[53 <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/documenten/
-Scriptie in LaTeX/fig/conditional_format.jpg>]) [54 <C:/Program Files/wamp/www/
+[55 <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/documenten/
+Scriptie in LaTeX/fig/conditional_format.jpg>]) [56 <C:/Program Files/wamp/www/
 drupal-7.19/sites/all/modules/custom/documenten/Scriptie in LaTeX/fig/keep_aliv
 e.jpg>]
 ("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
@@ -859,7 +890,7 @@ less on input line 127.
 Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
 less on input line 127.
 
-[55
+[57
 
 
 
@@ -874,13 +905,13 @@ less on input line 32.
 Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
 less on input line 32.
 
-[56
+[58
 
 
 
 ])
 \tf@lof=\write6
- [57]
+ [59]
 ("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
 iptie in LaTeX\boek.aux"
 ("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
@@ -912,10 +943,10 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 3237 strings out of 494045
- 56746 string characters out of 3148390
- 102512 words of memory out of 3000000
- 6396 multiletter control sequences out of 15000+200000
+ 3244 strings out of 494045
+ 56930 string characters out of 3148390
+ 102534 words of memory out of 3000000
+ 6402 multiletter control sequences out of 15000+200000
  11547 words of font info for 40 fonts, out of 3000000 for 9000
  717 hyphenation exceptions out of 8191
  36i,11n,47p,1490b,432s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -928,9 +959,9 @@ ts/type1/public/amsfonts/cm/cmss10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1
 /amsfonts/cm/cmsy10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfont
 s/cm/cmti10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/eurosym/feymr10
 .pfb>
-Output written on boek.pdf (68 pages, 1538208 bytes).
+Output written on boek.pdf (70 pages, 1603029 bytes).
 PDF statistics:
- 288 PDF objects out of 1000 (max. 8388607)
+ 295 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 146 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 151 words of extra memory for PDF output out of 10000 (max. 10000000)
 
