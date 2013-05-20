@@ -106,9 +106,10 @@ Onder content-type van de databank verstaan we de definitie van nodige databankt
 Bij installatie van de module worden twee content types mee ge\"{i}nstalleerd. We bespreken wat de mogelijkheden ervan zijn en hoe ze eruitzien. Het laten installeren van content types zorgt ervoor dat een Drupal gebruiker op een eenvoudige manier content kan toevoegen, in dit geval onderdelen van een CoAP sensornetwerk. Concreet moet de gebruiker enkel op 'Add content' klikken op zijn/haar Drupal website en het gewenste content type aanklikken. Na invullen van enkele vereiste velden wordt een node gecre\"{e}erd die de content voorstelt.
 \newpage
 \begin{figure}[h!]
-\caption{Content toevoegen door op 'Add content' te klikken.}
 \centering
 \includegraphics[width=1\textwidth]{fig/add_content}
+\caption{Content toevoegen door op 'Add content' te klikken.}
+\label{fig:addContent}
 \end{figure}
 
 \subsubsection{CoAP Resource}
@@ -197,9 +198,28 @@ Nu er gebruik gemaakt wordt van native CoAP is nu ook een echte CoAP observe mog
 Bij ontvangst van een notificatie van de CoAP resource zal de waarde in de databank worden gestopt met bijbehorende velden. Deze velden zijn dezelfde als in de vorige versie van de module (Zie paragraaf \ref{proxy}). Het zijn deze waarden waarop de client zal pollen. Ook deze polling gebeurt op dezelfde manier als in de vorige versie van de module.
 
 \subsection{CoAP Resource module met externe CoAP library}
-Alle code die te maken had met CoAP communicatie was hardgecodeerde code wat onvermijdelijk leidde tot duplicatie van code. Bovendien bevond deze code zich in dezelfde module als diegene die nu wordt besproken. Dit heeft als gevolg dat andere gebruikers van Drupal geen gebruik kunnen maken van onze code om CoAP berichten te sturen en te ontvangen. Dit alles heeft geleid tot de ontwikkeling van onze eigen CoAP library in PHP onder de vorm van een externe module die apart kan worden gebruikt. Deze library werd eerder al besproken in hoofdstuk \ref{coaplibrary}.
+Alle code die te maken had met CoAP communicatie was hardgecodeerde code wat onvermijdelijk leidde tot duplicatie van code. Bovendien bevond deze code zich in dezelfde module als diegene die nu wordt besproken. Dit heeft als gevolg dat andere gebruikers van Drupal geen gebruik kunnen maken van onze code om CoAP berichten te sturen en te ontvangen. Dit alles heeft geleid tot de ontwikkeling van onze eigen CoAP library in PHP onder de vorm van een externe module die apart kan worden gebruikt. Deze library werd eerder al besproken in hoofdstuk \ref{coaplibrary}.\\
+
+\subsubsection{Nieuwe block}
+De module onderging in deze stap ook een visuele verbetering, maar ook een verbetering qua functionaliteit (Zie figuur \ref{fig:meerdereResources}). Zo kan de gebruiker nu met \'{e}\'{e}n block meerdere resources bevragen.\\
+
+De gebruiker kan \'{e}\'{e}n resource selecteren met radio buttons, wanneer de gebruiker dan op de knop 'Bekijken' klikt, wordt de pagina herladen en is de geselecteerde resource te bevragen. Door op de knop 'GET' te klikken, wordt een GET request uitgevoerd op de geselecteerde resource.\\
+Er wordt ook een lijst met checkboxes ter beschikking gesteld. De gebruiker kan hierbij de resources aanvinken waarop een observe moet worden uitgevoerd. Wanneer de gebruiker een aangevinkte checkbox uitvinkt, zal de observe stoppen. De instellingen worden opgeslagen en de benodigde acties worden uitgevoerd wanneer de gebruiker op de knop 'Observe' klikt. Belangrijk hierbij is dat wanneer de pagina herladen wordt, de juiste checkboxes al worden aangevinkt zodat de gebruiker ten allen tijde weet welke resources al geobserveerd worden.\\
+Een laatste verbetering bestaat uit een grafiek die automatisch wordt gegenereerd op basis van de geschiedenis van opvragingen. De grafiek wordt aan de hand van een AJAX call en de Google Charts API gerealiseerd. Het betreft hier de waarden van de resource die momenteel bekeken wordt en dus aangeduidt is met een radiobutton.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=1\textwidth]{fig/meerdere_resources}
+\caption{Block met HTML-formulieren die de gebruiker toelaat meerdere resources met \'{e}\'{e}n block te bevragen.}
+\label{fig:meerdereResources}
+\end{figure}
+
+\newpage
 
 \subsection{CoAP Resource module met content type CoAP Resource}
+In de vorige versies werd de module weergegeven aan de hand van een HTML-formulier in een Drupal block. Het nadeel hiervan is dat men standaard slechts \'{e}\'{e}n instantie van het block gebruikt. Men kan echter wel het een en het ander verbeteren met de Views module, maar het is niet de bedoeling dat wij dit verlangen van de gebruiker. Bovendien is een block slechts een visuele blok op de website, het is niet echt een node of een stuk content.\\
+
+Een beter en vaak gebruikt alternatief is het maken van een eigen content type. Wanneer men nu deze module installeert worden de eigen content types mee ge\"{i}nstalleerd. Dit heeft als gevolg dat de gebruiker slechts op 'Add content' hoeft te klikken (Zie figuur \ref{fig:addContent}), enkele benodigde velden in moet vullen en de content wordt automatisch gegenereerd en opgeslagen. Bij deze methode wordt al deze configuratie afgehandeld door Drupal mechanismen, zo worden bijvoorbeeld de velden opgeslagen in tabellen die behoren tot de Drupal core. Dit betekent dat onze content effectief wordt ingepast en geen losstaand geheel is. Het beheer van de content, manipulatie en dergelijke zal dus gebeuren met Drupal zoals dat gebeurt voor andere content types.\\
 
 \subsection{CoAP Resource module met resource discovery}
 

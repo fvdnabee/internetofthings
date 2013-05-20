@@ -1,0 +1,853 @@
+<?php
+
+/**
+ * Implements hook_menu().
+ * Creëert het pad waarnaar jQuery een ajax call kan uitvoeren en de callback-functie
+ */
+function temperatuursensor_udp_menu() {
+  $items = array();
+  $items["observe/ajax"] = array(
+    "title" => "Nieuwe temperatuur",
+    "page callback" => "temperatuur_udp_page_callback",
+    "access callback" => true,
+    "type" => MENU_CALLBACK
+  );
+  return $items;
+}
+
+///////////
+// BLOCK //
+///////////
+
+/**
+ * Implements hook_block_info().
+ * Geeft informatie over de block die de module aanbiedt
+ */
+function temperatuursensor_udp_block_info() {
+	$blocks['user_custom'] = array(
+		'info' => t('Blok met mogelijkheid tot opvragen temperatuur met udp-sockets als onderliggende technologie'),
+	);
+	return $blocks;
+}
+
+/**
+ * Implements hook_block_info().
+ * Definieert de titel en inhoud van de block
+ */
+function temperatuursensor_udp_block_view($delta='') {
+	global $user;
+	
+	$block = null;
+	$block['subject'] = 'Sensoren bevragen met het CoAP protocol';
+	$block_content = null;
+	
+	$data = hex2bin('42');
+	$block_content = "<label>Message: " . $data[0] . "</label>";
+	
+	// URI form
+	$temp = drupal_get_form('uri_form');
+	$block_content .= drupal_render($temp);
+	
+	// Observe form
+	$temp = drupal_get_form('observe_form');
+	$block_content .= drupal_render($temp);
+	
+	$block_content .= "<img style = 'visibility:hidden;' src = '' id = 'errorimg' /><label id='error' ></label>"; // elementen om fouten te tonen
+	
+	// Te bekijken URI ophalen
+	$query = db_select('CoAP_users', 'users');
+	$query
+		->fields('users', array('uid', 'uri', 'watch'))
+		->condition('uid', $user->uid, '=')
+		->condition('watch', 1, '=');
+	$result = $query->execute();
+	$empty = TRUE;
+	foreach($result as $record){
+		$empty = FALSE;
+		$uri = $record->uri;
+	}
+	
+	if(!$empty){
+		// Tabel met geschiedenis van opvragingen(5 laatste)
+		$query = db_select('CoAP_values', 'coap_values');
+		$query
+			->fields('coap_values', array('hid', 'value', 'max_age', 'timestamp', 'uri', 'uid'))
+			->condition('uri', $uri, '=')
+			->condition('uid', $user->uid, '=')
+			->orderBy('hid', 'DESC')
+			->range(0,5);
+		$result = $query->execute();
+		$block_content .= "<table id='historytable' ><tr><td>Hid</td><td>Value</td><td>Max age</td><td>Timestamp</td></tr>";
+		$nr = 1;
+		foreach ($result as $record){ // voegt telkens een rij toe aan de tabel, waarbij de elementen een id met een rij-nr erna krijgen
+			$value = $record->value;
+			$hid = $record->hid;
+			$max_age = $record->max_age;
+			$timestamp = $record->timestamp;
+			$block_content .= "<tr><td id='hid" . $nr . "' >" . $hid . "</td><td id='temperatuur" . $nr . "' >" . $value . "</td><td id='max_age" . $nr . "' >" . $max_age . "</td><td id='timestamp" . $nr . "' >" . $timestamp . "</td></tr>";
+			$nr++;
+		}
+		$block_content .= "</table>";
+		
+		$block_content .= "<div id = 'grafiek' ></div>"; // Grafiek
+	}
+	
+	// Bekijken form
+	$temp = drupal_get_form('bekijken_form');
+	$block_content .= drupal_render($temp);
+	
+	// GET form
+	$block_content .= "<label id = 'get_response' >Response: </label>";
+	$temp = drupal_get_form('get_request_form');
+	$block_content .= drupal_render($temp);
+	
+	$block['content'] = $block_content;
+	drupal_add_js('https://www.google.com/jsapi'); // JavaScript bestand toevoegen
+	drupal_add_js(drupal_get_path('module', 'temperatuursensor_udp') . '/js/temperatuursensor_udp.js'); // JavaScript bestand toevoegen
+	return $block;
+}
+
+//////////////////
+// BEKIJKEN FORM //
+//////////////////
+
+/**
+ * Implements hook_form().
+ * Voegt componenten toe aan de form
+ */
+function bekijken_form($form_in, &$form_state) {
+	// Titel van form
+	$form['title'] = array (
+		'#value' => t('Observe'),
+	);
+	
+	global $user;
+	$query = db_select('CoAP_users', 'users');
+	$query
+		->fields('users', array('uid', 'uri', 'watch'))
+		->condition('uid', $user->uid,'=');
+	$result = $query->execute();
+	
+	// Radio buttons om URI te selecteren
+	if($result->rowCount() > 0){
+		$options = array();
+		foreach ($result as $record){
+			$options[$record->uri] = $record->uri;
+			if($record->watch == 1){
+				$uri = $record->uri;
+			}
+		}
+		$form['bekijken']['uri'] = array(
+			'#type' => 'radios',
+			'#title' => t('Selecteer een resource'),
+			'#default_value' => $uri, // Default value moet geselecteerde URI worden
+			'#options' => $options,
+		);
+	}
+	
+	// Submit-knop
+	$form['bekijken']['submit'] = array (
+		'#type' => 'submit',
+		'#value' => t("Bekijken"),
+		);
+		
+	$form['#action'] = '';
+	return $form;
+}
+
+/**
+ * Implements hook_form_submit().
+ * functie die wordt uitgevoerd als het formulier ingediend wordt
+ */
+function bekijken_form_submit($form, $form_state) {
+	global $user;
+	
+	// Variabele 'bekijken' van elk URI voor de user in de databank op 0 zetten
+	$num_updated = db_update('CoAP_users')
+		->fields(array(
+			'watch' => 0,
+		))
+		->condition('uid', $user->uid, '=')
+		->execute();
+	
+	// Als observen opgestart wordt, variabele 'bekijken' op 1 zetten voor de gekozen URI
+	$num_updated = db_update('CoAP_users')
+		->fields(array(
+			'watch' => 1,
+		))
+		->condition('uid', $user->uid, '=')
+		->condition('uri', $form_state['values']['uri'], '=')
+		->execute();
+}
+
+//////////////////////
+// GET REQUEST FORM //
+//////////////////////
+
+/**
+ * Implements hook_form().
+ * Voegt componenten toe aan de form
+ */
+function get_request_form($form_in, &$form_state) {
+	// Titel van form
+	$form['title'] = array (
+		'#value' => t('GET Request'),
+	);
+	
+	// Submit-knop
+	$form['wx_info']['temperatuur_udp_url_submit'] = array (
+		'#type' => 'submit',
+		'#value' => t('GET'),
+		);
+		
+	$form['#action'] = '';
+	return $form;
+}
+
+/**
+ * Implements hook_form_submit().
+ * functie die wordt uitgevoerd als het formulier ingediend wordt
+ */
+function get_request_form_submit($form, $form_state) {
+	$handle = background_process_start('start_get_request');
+}
+
+//////////////
+// URI FORM //
+//////////////
+
+/**
+ * Implements hook_form().
+ * Voegt componenten toe aan de form
+ */
+function uri_form($form_in, &$form_state) {
+	// Titel van form
+	$form['title'] = array (
+		'#value' => t('URI form'),
+	);
+	
+	// Eventuele fout
+	$form['uri']['error'] = array(
+		'#type' => 'item',
+		'#markup' => variable_get('bad_uri', ''),
+	);
+	variable_del('bad_uri');
+	
+	// Invoer textbox voor URI
+	$form['uri']['invoer'] = array(
+		'#type' => 'textfield',
+		'#title' => 'Geef een URI',
+		'#default_value' => '',
+	);
+	
+	// Submit-knop
+	$form['uri']['submit'] = array (
+		'#type' => 'submit',
+		'#value' => t('Invoeren'),
+	);
+		
+	$form['#action'] = '';
+	
+	return $form;
+}
+
+/**
+ * Implements hook_form_submit().
+ * functie die wordt uitgevoerd als het formulier ingediend wordt
+ */
+function uri_form_submit($form, $form_state) {
+	global $user;
+	
+	$pattern = '/([^\/]+)\/(.*)/i';
+	if(preg_match($pattern, $form_state['values']['invoer'], $matches)){
+		$query = db_select('CoAP_resources', 'resources');
+		$query
+			->fields('resources', array('uri'))
+			->condition('uri', $form_state['values']['invoer'], '=');
+		$result = $query->execute();
+		
+		if($result->rowCount() == 0){
+			$id = db_insert('CoAP_resources')
+				->fields(array(
+					'uri' => $form_state['values']['invoer'],
+					'observable' => 1,
+					'last_error' => 'none',
+				))
+				->execute();
+		}
+		
+		// Watch bij alle rijen van de user op nul zetten
+		$num_updated = db_update('CoAP_users')
+			->fields(array(
+				'watch' => 0,
+			))
+			->condition('uid', $user->uid, '=')
+			->execute();
+		
+		// Watch van net toegevoegde URI op 1 zetten
+		$id = db_insert('CoAP_users')
+			->fields(array(
+				'uid' => $user->uid,
+				'uri' => $form_state['values']['invoer'],
+				'observe' => 0,
+				'watch' => 1,
+			))
+			->execute();
+	}
+	else{
+		variable_set('bad_uri', 'Er werd een ongeldige URI opgegeven.');
+	}
+}
+
+//////////////////////
+// OBSERVE FORM //
+//////////////////////
+
+/**
+ * Implements hook_form().
+ * Voegt componenten toe aan de form
+ */
+function observe_form($form_in, &$form_state) {
+	// Titel van form
+	$form['title'] = array (
+		'#value' => t('Observe form'),
+	);
+	
+	global $user;
+	
+	// Checkbox per observable resource
+	$query = db_select('CoAP_users', 'users');
+	$query
+		->fields('users', array('uid', 'uri', 'observe'))
+		->condition('uid', $user->uid,'=');
+	$result = $query->execute();
+	foreach ($result as $record){
+		$form['observe'][$record->uri] = array(
+			'#type' => 'checkbox',
+			'#title' => $record->uri,
+			'#default_value' => $record->observe,
+		);
+	}
+	
+	// Submit-knop
+	$form['observe']['temperatuur_udp_url_submit'] = array (
+		'#type' => 'submit',
+		'#value' => t('Observe'),
+		);
+		
+	$form['#action'] = '';
+	return $form;
+}
+
+/**
+ * Implements hook_form_submit().
+ * functie die wordt uitgevoerd als het formulier ingediend wordt
+ */
+function observe_form_submit($form, $form_state) {
+	global $user;
+	
+	$query = db_select('CoAP_users', 'users');
+	$query
+		->fields('users', array('uid', 'uri'))
+		->condition('uid', $user->uid, '=');
+	$result = $query->execute();
+	foreach ($result as $record){
+		$observe_query = db_select('CoAP_users', 'users');
+		$observe_query
+			->fields('users', array('uid', 'uri', 'observe'))
+			->condition('uri', $record->uri, '=')
+			->condition('observe', 1, '=');
+		$observe_result = $observe_query->execute();
+	
+		if($form_state['values'][$record->uri] != 0 && $observe_result->rowCount() == 0){
+			background_process_start('start_observing', $record->uri);
+		}
+		$num_updated = db_update('CoAP_users')
+			->fields(array(
+				'observe' => $form_state['values'][$record->uri],
+			))
+			->condition('uri', $record->uri, '=')
+			->execute();
+	}
+}
+
+
+//////////////////////
+// PRIVATE FUNCTIES //
+//////////////////////
+
+// Functie die wordt uitgevoerd als een ajax call wordt uitgevoerd naar /observe/ajax, geeft de laatste entry terug
+function temperatuur_udp_page_callback(){
+	global $user;
+	
+	// bekeken URI bepalen
+	$query = db_select('CoAP_users', 'users');
+	$query
+		->fields('users', array('uid', 'uri', 'watch'))
+		->condition('uid', $user->uid, '=')
+		->condition('watch', 1, '=')
+		->range(0,1);
+	$result = $query->execute();
+	$uri = '';
+	foreach($result as $record){
+		$uri = $record->uri;
+	}
+	
+	// Laatste opvraging ophalen
+	$query = db_select('CoAP_values', 'coap_values');
+	$query
+		->fields('coap_values', array('hid', 'uid', 'timestamp', 'max_age', 'value', 'uri'))
+		->condition('uri', $uri, '=')
+		->condition('uid', $user->uid, '=')
+		->orderBy('hid', 'DESC')
+		->range(0,1);
+	$result = $query->execute();
+	
+	// print een rij uit in tabelformaat zodat jQuery die kan gebruiken om in de tabel te stoppen
+	foreach ($result as $record){
+		$resources_query = db_select('CoAP_resources', 'resources');
+		$resources_query
+			->fields('resources', array('uri', 'last_error'))
+			->condition('uri', $record->uri, '=');
+		$resources_result = $resources_query->execute();
+		
+		foreach($resources_result as $resources_record){
+			$output = "<error>" . $resources_record->last_error . "</error><responded>" . variable_get('responded', 'no') . "</responded><get_response>" . variable_get('get_response', '') . "</get_response>";
+			$hid = $record->hid;
+			$timestamp = $record->timestamp;
+			$temperatuur = $record->value;
+			$max_age = $record->max_age;
+			$output .= "<tr><td>" . $hid . "</td><td>" . $temperatuur . "</td><td>" . $max_age . "</td><td>" . $timestamp . "</td></tr>";
+		}
+	}
+	variable_set('responded', 'no');
+	if(!isset($output)){
+		$query = db_select('CoAP_resources', 'resources');
+		$query
+			->fields('resources', array('uri', 'last_error'))
+			->condition('uri', $uri, '=');
+		$result = $query->execute();
+		
+		if($result->rowCount() > 0){
+			foreach($result as $record){
+				$output = "<error>" . $record->last_error . "</error>";
+			}
+		}
+		else{
+			$output = "no values";
+		}
+	}
+	print $output;
+}
+
+function start_observing($uri){
+	global $user;
+	
+	$pattern = '/([^\/]+)\/(.*)/i';
+	if(preg_match($pattern, $uri, $matches)){
+		$query = db_select('CoAP_users', 'users');
+		$query
+			->fields('users', array('uri', 'observe'))
+			->condition('uri', $uri, '=')
+			->condition('observe', 1, '=');
+		$result = $query->execute();
+		$num_observers = $result->rowCount();
+		
+		$ip = $matches[1];
+		$sensor = $matches[2];
+		$port = 5683;
+		$socket = pfsockopen("udp://[" . $ip . "]", $port, $errno, $errstr); // udp-socket openen
+		if (!$socket) {
+			// Error zetten
+			$error = TRUE;
+			$num_updated = db_update('CoAP_resources')
+				->fields(array(
+					'last_error' => 'unreachable',
+				))
+				->condition('uri', $uri, '=')
+				->execute();
+		} else { 
+			// Error zetten
+			$error = FALSE;
+			$num_updated = db_update('CoAP_resources')
+				->fields(array(
+					'last_error' => 'none',
+				))
+				->condition('uri', $uri, '=')
+				->execute();
+			
+			stream_set_timeout($socket, 5, 0);
+			$retries = 0;
+			$response = 'empty';
+			$token = generate_token();
+			$message = generate_coap_get_request_observe($token, $sensor);
+			$returnvalue = fwrite($socket, $message); // wegschrijven naar udp-socket
+			if($returnvalue != FALSE){
+				$response = fread($socket, 128); // lezen van udp-socket
+			}
+			while($retries < 5 && ($response == '' || $response == 'empty')){
+				// Error zetten
+				$error = TRUE;
+				$num_updated = db_update('CoAP_resources')
+					->fields(array(
+						'last_error' => 'delay',
+					))
+					->condition('uri', $uri, '=')
+					->execute();
+				
+				$token = generate_token();
+				$message = generate_coap_get_request_observe($token, $sensor);
+				$returnvalue = fwrite($socket, $message); // wegschrijven naar udp-socket
+				if($returnvalue != FALSE){
+					$response = fread($socket, 128); // lezen van udp-socket
+				}
+				$retries++;
+			}
+			
+			$query = db_select('CoAP_users', 'users');
+			$query
+				->fields('users', array('uri', 'observe'))
+				->condition('uri', $uri, '=')
+				->condition('observe', 1, '=');
+			$result = $query->execute();
+			$num_observers = $result->rowCount();
+			
+			if($response != '' && $response != 'empty'){
+				// Error zetten
+				$error = FALSE;
+				$num_updated = db_update('CoAP_resources')
+					->fields(array(
+						'last_error' => 'none',
+					))
+					->condition('uri', $uri, '=')
+					->execute();
+				
+				stream_set_timeout($socket, intval(get_max_age($response)), 0);
+				
+				while($num_observers > 0 && $response != '' && $response != 'empty'){
+					// Error zetten
+					$error = TRUE;
+					$num_updated = db_update('CoAP_resources')
+						->fields(array(
+							'last_error' => 'none',
+						))
+						->condition('uri', $uri, '=')
+						->execute();
+					
+					insert_response_into_database($response, $uri);
+					$ack = generate_coap_acknowledgement($response);
+					$returnvalue = fwrite($socket, $ack); // Acknowledgement wegschrijven naar udp-socket
+					$retries = 0;
+					$response = 'empty';
+					$response = fread($socket, 128); // lezen van udp-socket
+					while($retries < 3 && ($response == '' || $response == 'empty')){
+						// Error zetten
+						$error = TRUE;
+						$num_updated = db_update('CoAP_resources')
+							->fields(array(
+								'last_error' => 'delay',
+							))
+							->condition('uri', $uri, '=')
+							->execute();
+						
+						$token = generate_token();
+						$message = generate_coap_get_request_observe($token, $sensor);
+						$returnvalue = fwrite($socket, $message); // wegschrijven naar udp-socket
+						if($returnvalue != FALSE){
+							$response = fread($socket, 128); // lezen van udp-socket
+						}
+						$retries++;
+					}
+					
+					$query = db_select('CoAP_users', 'users');
+					$query
+						->fields('users', array('uri', 'observe'))
+						->condition('uri', $uri, '=')
+						->condition('observe', 1, '=');
+					$result = $query->execute();
+					$num_observers = $result->rowCount();
+				}
+			}
+			else{
+				// Error zetten
+				$error = TRUE;
+				$num_updated = db_update('CoAP_resources')
+					->fields(array(
+						'last_error' => 'broken',
+					))
+					->condition('uri', $uri, '=')
+					->execute();
+			}
+			if($num_observers > 0){
+				$num_updated = db_update('CoAP_users')
+					->fields(array(
+						'observe' => 0,
+					))
+					->condition('uri', $uri, '=')
+					->execute();
+				
+				// Error zetten
+				$error = TRUE;
+				$num_updated = db_update('CoAP_resources')
+					->fields(array(
+						'last_error' => 'broken',
+					))
+					->condition('uri', $uri, '=')
+					->execute();
+			}
+			else{
+				$reset = generate_coap_reset($response);
+				$returnvalue = fwrite($socket, $reset); // wegschrijven naar udp-socket
+			}
+			fclose($socket);
+		}
+		if($num_observers == 0){
+			// Error zetten
+			$error = FALSE;
+			$num_updated = db_update('CoAP_resources')
+				->fields(array(
+					'last_error' => 'none',
+				))
+				->condition('uri', $uri, '=')
+				->execute();
+		}
+		if($error){
+			$num_updated = db_update('CoAP_users')
+				->fields(array(
+					'observe' => 0,
+				))
+				->condition('uri', $uri, '=')
+				->execute();
+		}
+	}
+	else{
+		// Error zetten
+		$error = TRUE;
+		$num_updated = db_update('CoAP_resources')
+			->fields(array(
+				'last_error' => 'bad_uri',
+			))
+			->condition('uri', $uri, '=')
+			->execute();
+			
+		$num_updated = db_update('CoAP_users')
+			->fields(array(
+				'observe' => 0,
+			))
+			->condition('uri', $uri, '=')
+			->execute();
+	}
+}
+
+function start_get_request(){
+	$ip = '2001:6a8:1d80:200::2';
+	$port = 5683;
+	$socket = pfsockopen("udp://[" . $ip . "]", $port, $errno, $errstr); // udp-socket openen
+	if (!$socket) {
+		variable_set('error', 'unreachable');
+	} else {
+		variable_set('error', 'none');
+		stream_set_timeout($socket, 5);
+		$retries = 0;
+		$response = 'empty';
+		$message = generate_coap_get_request();
+		$returnvalue = fwrite($socket, $message); // wegschrijven naar udp-socket
+		if($returnvalue != FALSE){
+			$response = fread($socket, 128); // lezen van udp-socket
+		}
+		while($retries < 5 && ($response == '' || $response == 'empty')){
+			variable_set('error', 'delay');
+			$message = generate_coap_get_request();
+			$returnvalue = fwrite($socket, $message); // wegschrijven naar udp-socket
+			if($returnvalue != FALSE){
+				$response = fread($socket, 128); // lezen van udp-socket
+			}
+			$retries++;
+		}
+		if($response != '' && $response != 'empty'){
+			variable_set('error', 'none');
+			variable_set('responded', 'yes');
+			variable_set('get_response', get_coap_payload($response));
+		}
+		else{
+			variable_set('error', 'broken');
+		}
+	}
+}
+
+// Stelt de binaire data op om een GET-request te sturen
+function generate_coap_get_request(){
+	$out = "40"; // Versie = 1, Message Type = Confirmable, Token Length = 2
+	$out .= "01"; // Method = GET
+	$out .= generate_message_id_udp(); // Message ID
+	$out .= "b36f6273"; // Uri-Path optie, Value = obs
+	$binary = pack("H*", $out); // hexadecimaal omzetten naar binair
+	return $binary;
+}
+
+// Stelt de binaire data op om een GET-request te sturen om te starten met observe
+function generate_coap_get_request_observe($token, $sensor){
+	$out = "42"; // Versie = 1, Message Type = Confirmable, Token Length = 2
+	$out .= "01"; // Method = GET
+	$out .= generate_message_id_udp(); // Message ID
+	$out .= $token; // Token
+	$out .= "60"; // Lege observe optie
+	$out .= "53" . String2Hex($sensor); // Uri-Path optie, Value = obs
+	$binary = pack("H*", $out); // hexadecimaal omzetten naar binair
+	return $binary;
+}
+
+// Response verwerken en naar databank schrijven
+function insert_response_into_database($response, $uri){
+	$max_age = intval(get_max_age($response));
+	$temperature = (double) get_temperature($response);
+	
+	$query = db_select('CoAP_users', 'users');
+	$query
+		->fields('users', array('uri', 'uid', 'observe'))
+		->condition('uri', $uri, '=')
+		->condition('observe', 1, '=');
+	$result = $query->execute();
+	
+	foreach($result as $record){
+		$hid = db_insert('CoAP_values')
+			->fields(array(
+				'original_response' => String2Hex($response),
+				'value' => $temperature,
+				'max_age' => $max_age,
+				'uri' => $uri,
+				'uid' => $record->uid,
+			))
+			->execute();
+	}
+}
+
+// Haalt max-age uit een response
+function get_max_age($response){
+	$max_age_hex = get_coap_option_value($response, 14);
+	return hexdec($max_age_hex);
+}
+
+// Haalt de inhoud van de optie met opgegeven nr uit de response
+function get_coap_option_value($response, $nr){
+	$hex_string = String2Hex($response);
+	$token_length = hexdec(substr($hex_string, 1, 1));
+	$position = 8 + $token_length*2;
+	$option_nr = hexdec(substr($hex_string, $position, 1));
+	while($position < strlen($hex_string) && $option_nr != $nr && substr($hex_string, $position, 2) != 'ff' && substr($hex_string, $position, 2) != 'FF'){
+		$option_length = hexdec(substr($hex_string, $position+1, 1));
+		$position += 2 + $option_length*2;
+		$option_nr += hexdec(substr($hex_string, $position, 1));
+	}
+	if($position >= strlen($hex_string) || substr($hex_string, $position, 2) == 'ff' || substr($hex_string, $position, 2) == 'FF'){
+		return 'optie niet gevonden --> ' . $response;
+	}
+	else{
+		$option_length = hexdec(substr($hex_string, $position+1, 1));
+		return substr($hex_string, $position+2, $option_length*2);
+	}
+}
+
+// Haalt de payload uit een response
+function get_coap_payload($response){
+	$hex_string = String2Hex($response);
+	$token_length = hexdec(substr($hex_string, 1, 1));
+	$position = 8 + $token_length*2;
+	while($position < strlen($hex_string) && substr($hex_string, $position, 2) != 'ff' && substr($hex_string, $position, 2) != 'FF'){
+		$position += 2;
+	}
+	if($position >= strlen($response)){
+		return FALSE;
+	}
+	else{
+		return substr($response, ($position/2)+1);
+	}
+}
+
+// Haalt de temperatuur uit de payload van een response
+function get_temperature($response){
+	$pos_temperature = get_coap_payload($response);
+	if($pos_temperature == FALSE){
+		return 'temperatuur niet gevonden';
+	}
+	else{
+		$pattern = '/value\s+(.*)C/i';
+		if(preg_match($pattern, $pos_temperature, $matches)){
+			$temperature = $matches[1];
+			return $temperature;
+		}
+		else{
+			return 'temperatuur niet gevonden';
+		}
+	}
+}
+
+// Stelt de binaire data op om een Acknowledgement terug te sturen naar de server
+function generate_coap_acknowledgement($response){
+	$out = "60"; // Versie = 1, Message Type = Acknowledgement, Token Length = 0
+	$out .= "00"; // Method = GET
+	$out .= get_message_id($response); // Message ID
+	$binary = pack("H*", $out); // hexadecimaal omzetten naar binair
+	return $binary;
+}
+
+// Stelt de binaire data op om een Acknowledgement terug te sturen naar de server
+function generate_coap_reset($response){
+	$out = "70"; // Versie = 1, Message Type = Reset, Token Length = 0
+	$out .= "00"; // Method = GET
+	$out .= get_message_id($response); // Message ID
+	$binary = pack("H*", $out); // hexadecimaal omzetten naar binair
+	return $binary;
+}
+
+// Message id genereren dat nog niet gebruikt werd door telkens te incrementeren
+function generate_message_id_udp(){
+	$message_id = variable_get('current_message_id', null);
+	if(!isset($message_id)){
+		$message_id = rand(0, 65535);
+	}
+	else{
+		$message_id++;
+		$message_id % 65536;
+	}
+	$message_id = dechex($message_id);
+	$message_id_string = strval($message_id);
+	$message_id_string = str_pad($message_id_string, 4, "0", STR_PAD_LEFT);
+	return $message_id_string;
+}
+
+// Token genereren dat nog niet gebruikt werd door telkens te incrementeren
+function generate_token(){
+	$token = variable_get('current_token', null);
+	if(!isset($token)){
+		$token = rand(0, 65535);
+	}
+	else{
+		$token++;
+		$token % 65536;
+	}
+	$token = dechex($token);
+	$token_string = strval($token);
+	$token_string = str_pad($token_string, 4, "0", STR_PAD_LEFT);
+	return $token_string;
+}
+
+// karakterstring omzetten naar string met hexadecimalen
+function String2Hex($string){
+    $hex='';
+    for ($i=0; $i < strlen($string); $i++){
+		$byte = dechex(ord($string[$i]));
+		if(strlen($byte) == 1){
+			$byte = "0" . $byte;
+		}
+        $hex .= $byte;
+    }
+    return $hex;
+}
+
+// Verwacht als parameter de input van een socket en geeft het message_id terug
+function get_message_id($input){
+	$hex = String2Hex($input);
+	$message_id = substr($hex, 4, 4);
+	return $message_id;
+}

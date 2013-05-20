@@ -27,10 +27,11 @@
 \contentsline {figure}{\numberline {5.5}{\ignorespaces Adding content of content type CoAP device\relax }}{46}
 \contentsline {figure}{\numberline {5.6}{\ignorespaces Visuele representatie van het content type CoAP device.\relax }}{46}
 \contentsline {figure}{\numberline {5.7}{\ignorespaces Temperatuurmodule met HTTP/COAP-proxy\relax }}{48}
+\contentsline {figure}{\numberline {5.8}{\ignorespaces Block met HTML-formulieren die de gebruiker toelaat meerdere resources met \'{e}\'{e}n block te bevragen.\relax }}{51}
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {6.1}{\ignorespaces Conditional observe optie (Option Delta 18)\relax }}{52}
-\contentsline {figure}{\numberline {6.2}{\ignorespaces Conditional observe optie formaat\relax }}{53}
-\contentsline {figure}{\numberline {6.3}{\ignorespaces De Keep-alive optie met Option Delta 30\relax }}{54}
+\contentsline {figure}{\numberline {6.1}{\ignorespaces Conditional observe optie (Option Delta 18)\relax }}{54}
+\contentsline {figure}{\numberline {6.2}{\ignorespaces Conditional observe optie formaat\relax }}{55}
+\contentsline {figure}{\numberline {6.3}{\ignorespaces De Keep-alive optie met Option Delta 30\relax }}{56}
 \select@language {english}
 \select@language {dutch}
 \select@language {dutch}
