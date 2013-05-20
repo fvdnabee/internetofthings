@@ -28,8 +28,8 @@
 \contentsline {subsubsection}{Entities}{14}
 \contentsline {subsection}{\numberline {2.3.2}Pagina aanroepen}{14}
 \contentsline {subsubsection}{Initialisatie van de configuratie}{14}
-\contentsline {subsubsection}{Poging tot opvragen van een gecachte pagina}{14}
-\contentsline {subsubsection}{Initialisatie van de database abstraction layer}{14}
+\contentsline {subsubsection}{Poging tot opvragen van een gecachte pagina}{16}
+\contentsline {subsubsection}{Initialisatie van de database abstraction layer}{16}
 \contentsline {subsubsection}{Initialisatie van het Variable System}{16}
 \contentsline {subsubsection}{Initialisatie Session Handling}{16}
 \contentsline {subsubsection}{Page Header opbouwen}{16}
