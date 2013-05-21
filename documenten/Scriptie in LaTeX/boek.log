@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.4.6)  20 MAY 2013 12:19
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.4.6)  21 MAY 2013 08:46
 entering extended mode
 **boek.tex
 
@@ -514,7 +514,7 @@ LaTeX/fig/CoAPMessageFormat.png>] [21]
 File: fig/CoAPOpties.png Graphic file (type png)
 
 <use fig/CoAPOpties.png>
-Package pdftex.def Info: fig/CoAPOpties.png used on input line 72.
+Package pdftex.def Info: fig/CoAPOpties.png used on input line 76.
 (pdftex.def)             Requested size: 273.14922pt x 238.05905pt.
  [22 <C:/xampp/htdocs/sites/all/modules/custom/documenten/Scriptie in LaTeX/fig
 /CoAPOpties.png>]
@@ -523,7 +523,7 @@ File: fig/HTTPRequestMessageFormat.jpeg Graphic file (type jpg)
 
 <use fig/HTTPRequestMessageFormat.jpeg>
 Package pdftex.def Info: fig/HTTPRequestMessageFormat.jpeg used on input line 9
-3.
+7.
 (pdftex.def)             Requested size: 204.85844pt x 121.1388pt.
 
 <fig/HTTPResponseMessageFormat.jpeg, id=129, 763.85374pt x 451.6875pt>
@@ -531,7 +531,7 @@ File: fig/HTTPResponseMessageFormat.jpeg Graphic file (type jpg)
 
 <use fig/HTTPResponseMessageFormat.jpeg>
 Package pdftex.def Info: fig/HTTPResponseMessageFormat.jpeg used on input line 
-95.
+99.
 (pdftex.def)             Requested size: 204.85844pt x 121.13707pt.
  [23 <C:/xampp/htdocs/sites/all/modules/custom/documenten/Scriptie in LaTeX/fig
 /HTTPRequestMessageFormat.jpeg> <C:/xampp/htdocs/sites/all/modules/custom/docum
@@ -540,21 +540,21 @@ enten/Scriptie in LaTeX/fig/HTTPResponseMessageFormat.jpeg (PNG copy)>] [24]
 File: fig/CoAPConfirmable.png Graphic file (type png)
 
 <use fig/CoAPConfirmable.png>
-Package pdftex.def Info: fig/CoAPConfirmable.png used on input line 121.
+Package pdftex.def Info: fig/CoAPConfirmable.png used on input line 125.
 (pdftex.def)             Requested size: 136.5746pt x 83.81909pt.
 
 <fig/CoAPNonConfirmable.png, id=137, 243.91125pt x 147.55125pt>
 File: fig/CoAPNonConfirmable.png Graphic file (type png)
 
 <use fig/CoAPNonConfirmable.png>
-Package pdftex.def Info: fig/CoAPNonConfirmable.png used on input line 124.
+Package pdftex.def Info: fig/CoAPNonConfirmable.png used on input line 128.
 (pdftex.def)             Requested size: 136.5746pt x 82.61911pt.
 
 <fig/CoAPPiggyBacked.png, id=139, 547.2947pt x 233.37187pt>
 File: fig/CoAPPiggyBacked.png Graphic file (type png)
 
 <use fig/CoAPPiggyBacked.png>
-Package pdftex.def Info: fig/CoAPPiggyBacked.png used on input line 137.
+Package pdftex.def Info: fig/CoAPPiggyBacked.png used on input line 141.
 (pdftex.def)             Requested size: 318.66946pt x 135.88635pt.
  [25 <C:/xampp/htdocs/sites/all/modules/custom/documenten/Scriptie in LaTeX/fig
 /CoAPConfirmable.png> <C:/xampp/htdocs/sites/all/modules/custom/documenten/Scri
@@ -564,30 +564,30 @@ sponse.png, id=144, 252.19218pt x 354.57469pt>
 File: fig/CoAPSeperateResponse.png Graphic file (type png)
 
 <use fig/CoAPSeperateResponse.png>
-Package pdftex.def Info: fig/CoAPSeperateResponse.png used on input line 150.
+Package pdftex.def Info: fig/CoAPSeperateResponse.png used on input line 154.
 (pdftex.def)             Requested size: 136.5746pt x 192.01933pt.
 
-Underfull \hbox (badness 2401) in paragraph at lines 152--152
+Underfull \hbox (badness 2401) in paragraph at lines 156--156
 []\OT1/cmr/bx/n/10 Figuur 3.7: |\OT1/cmr/m/it/10 GET re-quest
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 156--161
+Underfull \hbox (badness 10000) in paragraph at lines 160--165
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 156--161
+Underfull \hbox (badness 10000) in paragraph at lines 160--165
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 156--161
+Underfull \hbox (badness 10000) in paragraph at lines 160--165
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 156--161
+Underfull \hbox (badness 10000) in paragraph at lines 160--165
 
  []
 
@@ -951,7 +951,7 @@ ts/type1/public/amsfonts/cm/cmss10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1
 /amsfonts/cm/cmsy10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfont
 s/cm/cmti10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/eurosym/feymr10
 .pfb>
-Output written on boek.pdf (70 pages, 1603971 bytes).
+Output written on boek.pdf (70 pages, 1604495 bytes).
 PDF statistics:
  295 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)

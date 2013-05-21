@@ -24,3 +24,11 @@ function coap_library_schema() {
 	);
 	return $schema;
 }
+
+/**
+ * Implements hook_uninstall().
+ * Drops tables when the module is uninstalled.
+ */
+function coap_resource_uninstall(){
+	db_drop_table('coap_library_observe_resources');
+}

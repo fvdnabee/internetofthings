@@ -1,7 +1,0 @@
-; $Id$
-name = Temperatuursensor over udp sockets
-description = Een block die de waarde van een temperatuurssensor ophaalt, opslaat en toont met udp sockets
-core = 7.x
-package = custom
-dependencies[] = background_process
-files[] = temperatuursensor_udp.module
