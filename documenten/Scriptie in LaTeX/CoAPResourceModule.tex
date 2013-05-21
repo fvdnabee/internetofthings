@@ -92,7 +92,7 @@ Wij hebben geopteerd het mechanisme licht te wijzigen in plaats van de module ze
 
 De aangepaste methode gaat als volgt: Wanneer de pagina geladen wordt bij de client, start een timer die periodiek een AJAX call uitvoert naar de Drupal server. De gebruiker kan hierbij bepalen hoe lang die periode moet zijn. Op de Drupal server is dan een AJAX callback functie gedefinieerd aan de hand van de hook hook\_menu(). Deze hook wordt gebruikt om menu items toe te voegen aan de site en om AJAX callbacks te definieren. Alle output die gegenereerd wordt in deze callback wordt als antwoord teruggestuurd op de AJAX callback.\\
 
-Wat de callback terugstuurt en hoe die inhoud wordt verwerkt, verschilt per versie van onze module. Dit zal dan ook besproken worden in de gepaste paragrafen.
+Wat de callback terugstuurt en hoe die inhoud wordt verwerkt, verschilt per versie van onze module. Dit zal dan ook besproken worden in de gepaste paragrafen (Zie paragraaf \ref{evolutie}).
 
 \subsubsection{Caching}\label{caching}
 Een bericht kan een maximum levensduur hebben, dit wordt aangegeven met een max-age optie in het bericht. Deze bevat dan een numerieke waarde die aangeeft in seconden hoelang de waarde als geldig mag worden beschouwd. Wanneer deze maximum levensduur overschreden wordt, mag deze waarde niet meer worden gebruikt. Dan moet bij een volgende aanvraag door een gebruiker een nieuwe waarde worden opgehaald van de resource. Bijgevolg wordt een opgehaalde waarde in de databank gestopt. Wanneer de maximum levensduur nog niet overschreden is bij een aanvraag, wordt de waarde uit de databank gehaald. De resource wordt dan dus niet onnodig belast. Dit zorgt er ook voor dat de belasting op een resource niet evenredig stijgt met het aantal gebruikers die er een waarde van willen opvragen.\\
@@ -117,7 +117,7 @@ Bij installatie van de module worden twee content types mee ge\"{i}nstalleerd. W
 \vspace{-10pt}
 %\hspace{-10pt}
 \centering
-\label{fig:drupalLogo}
+\label{fig:addCoapResource}
 \includegraphics[width=0.6\textwidth]{fig/add_coap_resource}
 \vspace{-20pt}
 %\hspace{-10pt}
@@ -132,6 +132,7 @@ Er wordt gevalideerd op de structuur van de URI, wanneer de gebruiker een foute 
 \centering
 \includegraphics[width=0.8\textwidth]{fig/coap_resource}
 \caption{Visuele representatie van het content type CoAP resource.}
+\label{fig:coapResource}
 \end{figure}
 
 \newpage
@@ -140,7 +141,7 @@ Er wordt gevalideerd op de structuur van de URI, wanneer de gebruiker een foute 
 \vspace{-10pt}
 %\hspace{-10pt}
 \centering
-\label{fig:drupalLogo}
+\label{fig:addCoapDevice}
 \includegraphics[width=0.6\textwidth]{fig/add_coap_device}
 \vspace{-20pt}
 %\hspace{-10pt}
@@ -154,9 +155,10 @@ Dit content type stelt een volledig embedded device voor waarop \'{e}\'{e}n of m
 \centering
 \includegraphics[width=0.6\textwidth]{fig/coap_device}
 \caption{Visuele representatie van het content type CoAP device.}
+\label{coapDevice}
 \end{figure}
 
-\section{Evolutie van de module}
+\section{Evolutie van de module} \label{evolutie}
 
 \subsection{Temperatuurmodule met HTTP/CoAP-proxy} \label{proxy}
 In deze paragraaf wordt besproken hoe de eerste versie van de module werd gemaakt die gebruik maakt van een HTTP/CoAP-proxy. Bovendien wordt ook aangetoond hoe waarden opgeslagen worden in de databank om de geschiedenis van opvragingen bij te houden. Eigenlijk spreken we hier (en in enkele volgende paragrafen) beter van een temperatuurmodule, aangezien deze module slechts \'{e}\'{e}n resource bevraagt. Het betreft een resource die de waarde van een temperatuursensor terugstuurt. Deze resource werd gekozen vanwege de numerieke waarde die teruggestuurd wordt en omwille van het feit dat de resource observable is.\\
@@ -221,8 +223,129 @@ In de vorige versies werd de module weergegeven aan de hand van een HTML-formuli
 
 Een beter en vaak gebruikt alternatief is het maken van een eigen content type. Wanneer men nu deze module installeert worden de eigen content types mee ge\"{i}nstalleerd. Dit heeft als gevolg dat de gebruiker slechts op 'Add content' hoeft te klikken (Zie figuur \ref{fig:addContent}), enkele benodigde velden in moet vullen en de content wordt automatisch gegenereerd en opgeslagen. Bij deze methode wordt al deze configuratie afgehandeld door Drupal mechanismen, zo worden bijvoorbeeld de velden opgeslagen in tabellen die behoren tot de Drupal core. Dit betekent dat onze content effectief wordt ingepast en geen losstaand geheel is. Het beheer van de content, manipulatie en dergelijke zal dus gebeuren met Drupal zoals dat gebeurt voor andere content types.\\
 
-\subsection{CoAP Resource module met resource discovery}
-
 \subsection{CoAP resource met volledige REST functionaliteit} \label{rest}
+Tot hiertoe was enkel een GET request mogelijk naar een resource, maar vaak ondersteunt een resource ook nog andere REST methodes (GET, PUT, POST, DELETE). Het is dus van groot belang dat onze module ook de mogelijkheid biedt om alle REST methodes uit te voeren.\\
 
-\subsection{CoAP resource met meerdere CoAP devices}
+Dit brengt ook mee dat de visuele representatie zal wijzigen (Zie figuur \ref{fig:rest}). De vier methodes worden met knoppen weergegeven in een tabel, eventueel vergezeld van een textbox indien invoer vereist is (PUT en POST). Onderaan de tabel wordt de response en response method getoond (205 Content, 405 Bad method,...).\\
+Wij hebben ervoor gekozen dat de gebruiker voor elke resource, op elk moment elke REST methode kan uitvoeren. Er wordt namelijk al een gepaste response getoond wanneer een methode niet ondersteund is. Bovendien wordt in een discovery niet aangegeven welke methodes ondersteund zijn. Wil men toch methodes uitschakelen die niet ondersteund zijn, dan zou men al een keer moeten proberen en testen of een 405 Bad Request teruggestuurd wordt.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=1\textwidth]{fig/rest}
+\caption{Alle vier de REST methodes zijn nu ondersteund.}
+\label{fig:rest}
+\end{figure}
+
+\subsection{CoAP Resource module met resource discovery}
+De gebruiker kan nu al meerdere CoAP resources toevoegen aan zijn/haar website. Het kan echter moeilijk zijn een overzicht te behouden over al deze resources en bovendien moet men van elke resource de specifieke URI kennen.\\
+
+Deze nadelen kunnen worden weggewerkt door gebruik te maken van resource discovery. De technische uitleg en implementatiedetails werden al besproken in paragraaf \ref{resourceDiscovery}. In deze module krijgt nu de gebruiker een lijst van CoAP resources te zien die aangesloten zijn op het embedded device. Om performantieredenen en omwille van het feit dat een well-known/core weinig of nooit verandert, wordt het resultaat van de resource discovery opgeslagen in de databank. Dit gebeurt in verschillende kolommen, een kolom per attribuut dat geleverd wordt door de resource discovery. Er wordt echter op de website wel nog een knop voorzien mocht de gebruiker de well-known/core toch willen vernieuwen.\\
+Op de website wordt een resource weergegeven door de URI en de human readable name. Bovendien is voor elke resource ook een checkbox voorzien om aan te duiden dat de gebruiker ge\"{i}nteresseerd is in de resource. De geïnteresseerde resources worden dan opgesomd en ter beschikking gesteld op dezelfde manier als in de vorige versie van de module (Zie figuur \ref{fig:meerdereResources}). In de volgende twee subparagrafen bespreken we twee mogelijke vormen die wij gemaakt hebben om de resource discovery en opsomming van de resources te combineren.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=1\textwidth]{fig/tabbladen}
+\caption{Opsomming van resources aan de hand van resource discovery.}
+\label{fig:tabbladen}
+\end{figure}
+
+\subsubsection{Multi-form}
+Een eerste mogelijkheid bestaat erin eerst de lijst te presenteren aan de gebruiker. De gebruiker kiest dan een aantal resources die hij/zij wil toevoegen aan de website, waarna hij/zij op de knop 'Save' klikt. Hierna wordt een nieuwe pagina getoond die de gebruiker toelaat de resources te beheren en te bevragen (Zie figuur \ref{fig:meerdereResources}).
+
+\subsubsection{Tabbladen}
+Het nadeel bij het gebruik van een Multi-form is dat de gebruiker slechts \'{e}\'{e}n keer de kans krijgt om resources aan te duiden. De tweede mogelijkheid bestaat uit een pagina met tabbladen, zo kan de gebruiker steeds terugkeren naar de discovery om resources toe te voegen of te verwijderen. Merk op dat wanneer een resource verwijderd wordt, dit niet het geval is voor de waarden die ervan opgehaald zijn. Deze blijven aanwezig in de databank en zullen ook weer te zien zijn wanneer de resource later opnieuw wordt toegevoegd. Er zijn 3 tabbladen voorzien (Zie figuur \ref{fig:tabbladen}):
+\begin{itemize}
+\item Resources: Dit tabblad bestaat uit het block dat de gebruiker in staat stelt de resources te beheren en te bevragen zoals bij Multi-form en in de vorige versie van de module (Zie figuur \ref{fig:meerdereResources}).
+\item Discovery: Dit tabblad toont de lijst van resources met bijbehorende checkbox.
+\item Configuration: Dit tabblad is voorzien voor een configuratie die door de gebruiker kan worden ingesteld. Deze is echter niet ge\"{i}mplementeerd in deze module, maar kan wel toegevoegd worden in verder ontwerp.
+\end{itemize}
+
+\subsection{CoAP resource met meerdere content types}
+Er is nog \'{e}\'{e}n nadeel dat de kop opsteekt bij de vorige versie van de module. De gebruiker kan nu namelijk geen aparte resource toevoegen zonder dat daar de functionaliteit van resource discovery bijkomt. We gaan er in deze, voor ons laatste, versie van de module voor zorgen dat een gebruiker kan kiezen of hij/zij een CoAP resource of een CoAP device toevoegt. Dit wordt gerealiseerd met de al eerder behandelde content types. Er worden nu twee content types gecre\"{e}erd bij installatie van de module, \'{e}\'{e}n voor een CoAP resource (Zie figuur \ref{fig:coapResource}) en \'{e}\'{e}n voor een CoAP device (Zie figuur \ref{coapDevice}).\\
+
+Wanneer een CoAP device wordt toegevoegd door de gebruiker, wordt er automatisch een resource discovery op uitgevoerd. De gebruiker krijgt dan een lijst van links te zien, \'{e}\'{e}n link per aangesloten CoAP resource. Bovendien wordt voor elk van die resources content aangemaakt van het content type CoAP resource. De gebruiker zal geen 2 gelijke resources kunnen toevoegen om duplicatie van content te vermijden. Wanneer de gebruiker toch dezelfde resource op verschillende plaatsen van de website wil krijgen, raden wij aan de Views module te gebruiken. Deze is hiervoor uitermate geschikt.
+
+\subsubsection{Polling}
+In vorige versies van de module had de gebruiker niet de kans om meerdere resources op \'{e}\'{e}n pagina te zetten met de Views module. Dit is wel mogelijk, maar er zouden fouten optreden daar de polling gebeurde op basis van welke resource geselecteerd was. Dit selecteren van resources is in deze versie weggewerkt, elke resource is een op zichzelf staand geheel (Zie figuur \ref{fig:coapResource}). In deze versie is dit wel mogelijk omdat het polling mechanisme grondig werd aangepast zoals nu zal blijken.\\
+
+Een poll gebeurt nu specifiek voor een URI die opgegeven wordt in de URI waarnaar een AJAX call wordt uitgevoerd. Bovendien werd in de databank een extra kolom 'New' toegevoegd aan de waardentabel. Deze duidt aan of een waarde reeds is opgehaald of nog niet (0 = reeds opgehaald, 1 = nog niet opgehaald). De kolom heeft als default waarde 1, dus nieuwe waarden worden automatisch als nieuw aangeduid. Wanneer een waarde opgehaald wordt uit de databank wordt de waarde in de kolom 'New' op 0 gezet.\\
+Het pollen naar waarden voor een specifieke URI gebeurt nu als volgt:
+\begin{itemize}
+\item Er wordt in jQuery een AJAX call uitgevoerd naar een bepaalde URI, bijvoorbeeld http://localhost/coap\_resource/poll/2001:6a8:1d80:200::2|test. In de URI wordt een slash vervangen door een rechte streep ('|'), anders wordt de slash geïnterpreteerd.
+\item Op de webserver wordt in Drupal de URI uit de aanvraag-URL gehaald en worden de slashes terug geplaatst.
+\item De URI wordt gebruikt in een select-query om de nog niet opgehaalde waarden op te halen, dit wil zeggen de rijen waarvan de waarde in de kolom 'New' op 1 staat.
+\item Er wordt een update-query uitgevoerd om van de opgehaalde rijen de waarde in de kolom 'New' te wijzigen naar 0. Dit om aan te geven dat de waarden reeds opgehaald werden.
+\item De opgehaalde rijen worden in een XML-structuur gegoten samen met identificatie van de resource (de URI) en een eventuele errorstring. Deze XML-structuur wordt na deze stappen toegelicht.
+\item De XML-structuur wordt uitgeprint en dus teruggestuurd als antwoord op de AJAX call.
+\item in jQuery wordt dan het antwoord geparsed. De errorstring wordt eruit gehaald en eventuele fouten worden getoond aan de gebruiker (Zie paragraaf \ref{foutmechanisme}). Daarna wordt elke opgehaalde rij \'{e}\'{e}n voor \'{e}\'{e}n overlopen en toegevoegd aan de visuele content die de gebruiker ziet.
+\end{itemize}
+
+De XML-structuur die eerder werd aangehaald bestaat uit een allesomvattend hoofdelement \textless poll\textgreater. Dit element bevat 3 andere soorten elementen:
+\begin{itemize}
+\item \textless uri\textgreater: Dit element komt \'{e}\'{e}n keer voor, het bevat de URI en dus de identificatie van de resource.
+\item \textless error\textgreater: Net als het vorige element komt dit element ook \'{e}\'{e}n keer voor, het bevat de eventuele errorstring. Deze kan \'{e}\'{e}n van de volgende zijn: none, delay, broken of unreachable.
+\item \textless entry\textgreater: Dit element stelt een rij voor met een waarde. Dit element kan dus nul of meer keren voorkomen. Het bestaat zelf uit de volgende elementen:
+\begin{itemize}
+\item \textless Hid\textgreater: de history ID van de rij.
+\item \textless Value\textgreater: de effectieve (eventueel geparsete) waarde van de rij.
+\item \textless Max age\textgreater: Het aantal seconden dat deze waarde als geldig mag worden beschouwd.
+\item \textless Timestamp\textgreater: Het tijdstip waarop de waarde ontvangen werd op de Drupal server.
+\end{itemize}
+\end{itemize}
+
+Een voorbeeld van een antwoord op een AJAX call bij polling:
+
+\lstset{language=XML}
+
+\begin{lstlisting}[label=xmlPolling,caption=Voorbeeld antwoord op AJAX call bij polling]
+<poll>
+	<uri>2001:6a8:1d80:200::2</uri>
+	<error>none</error>
+	<entrys>
+		<entry>
+			<hid>76</hid>
+			<value>20.2</value>
+			<max_age>30</max_age>
+			<timestamp>2013-05-20 20:36:32</timestamp>
+		</entry>
+		<entry>
+			<hid>77</hid>
+			<value>20.4</value>
+			<max_age>30</max_age>
+			<timestamp>2013-05-20 20:36:37</timestamp>
+		</entry>
+	</entrys>
+</poll>
+\end{lstlisting}
+
+\subsubsection{Templating}
+Nu de functionaliteit min of meer op het punt staat, wordt het tijd voor een visuele opmaak. En dit op een manier die aangeraden wordt door de Drupal community, waarbij de view netjes gescheiden wordt. Concreet maken we een template voor het content type CoAP resource. Drupal voorziet hier een handig mechanisme voor, men kan namelijk template maken voor een specifiek content type. Het enige wat men moet doen om ervoor te zorgen dat die template wordt opgeroep voor het content type, is het bestand de juiste naam geven. Drupal voorziet namelijk in alle themes een standaard template voor een node, namelijk node.tpl.php. Om nu onze template te defini\"{e}ren, moet deze de naam node--coap\_resource.tpl.php dragen, daar de naam van ons content type coap\_resource is.\\
+
+Het voordeel van deze benadering is dat men in dit bestand html kan schrijven. Wanneer men bepaalde attributen of content nodig heeft voor de visuele representatie, kan men die variabelen voorzien door gebruik te maken van de hook hook\_preprocess\_node(). Deze hook wordt op voorhand opgeroepen en variabelen worden klaargezet. In het template kan men deze variabelen bereiken aan de hand van PHP-scriptlets (Zie listing \ref{template}). Men kan in deze templates dus ook php code laten uitvoeren, al beperkt men dit best om de view gescheiden te houden. Concreet worden bij ons de URI van de resource en enkele waarden gebruikt in de view.
+
+\lstset{language=HTML}
+
+\begin{lstlisting}[label=template,caption=Voorbeeld van een template met PHP-scriptlets (node.tpl.php)]
+<div id='node-<?php print $node->nid; ?>' >
+	<?php print render($title_prefix); ?>
+	<?php if (!$page): ?>
+	<h2<?php print $title_attributes; ?>>
+		<a href='<?php print $node_url; ?>'>
+			<?php print $title; ?>
+		</a>
+	</h2>
+	<?php endif; ?>
+	<?php print render($title_suffix); ?>
+</div>
+\end{lstlisting}
+
+\subsubsection{Foutmechanisme} \label{foutmechanisme}
+Tot nog toe bleef de gebruiker in het ongewisse wanneer er iets foutliep in de communicatie met een CoAP resource. Dit is niet gebruiksvriendelijk en kan voor ergernissen zorgen.\\
+Nu hebben we in de vorige hoofdstukken al gezien dat fouten al geregistreerd worden aan de hand van enkele errorstrings. Deze zijn zelfs al ter beschikking in jQuery bij elke poll (Zie polling hierboven). Het enige wat nu nog moet gebeuren is een gepaste boodschap tonen in de visuele representatie. Zoals te zien in figuur \ref{fig:foutmechanisme} wordt in het groen een vinkje getoond wanneer een operatie geslaagd is. Wanneer de communicatie niet gelukt of foutgelopen is wordt de methode geannuleerd en wordt een kruisje in het rood getoond. Ook wanneer een methode niet ondersteund is, wordt dit kruisje getoond. Wanneer het antwoord op zich laat wachten worden roterende blauwe pijltjes getoond.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=1\textwidth]{fig/foutmechanisme}
+\caption{Mechanisme om fouten te tonen aan de gebruiker.}
+\label{fig:foutmechanisme}
+\end{figure}
