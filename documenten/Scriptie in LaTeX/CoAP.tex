@@ -66,9 +66,13 @@ Opties worden opgesteld d.m.v. de Type-Length-Value (TLV)\nomenclature{TLV}{Type
 
 Elke optie heeft een uniek nummer, maar wanneer meerdere opties in \'{e}\'{e}n pakket worden gestopt, worden de opties niet door dat nummer aangeduid, maar door de Option Delta. De Option Delta is het verschil tussen het nummer van een optie en dat van de vorige optie.
 Concreet, stel dat men na een optie met nummer 6 een optie met nummer 11 wil plaatsen, dan wordt deze laatste aangeduid met Option Delta gelijk aan 5 (11 - 6). Dit alles samen maakt dat een minimale (lege, maar daarom niet nutteloze) optie slechts 1 byte in beslag neemt. Dit heeft als gevolg dat opties na elkaar moeten worden geplaatst met oplopende Option Numbers.
+
+Indien de Option Delta 13 of meer is, schiet dit systeem tekort. Daarom zijn er speciale waarden ingevoerd die het gebruik van extended een extended Option Delta aangeven. Indien de waarde 13 gebruikt wordt, wordt er een extra byte voor de payload gezet dat opgevuld wordt met de echte Option Delta - 13. Indien de Option delta meer is dan 268, wordt als Option Delta de waarde 14 gebruikt. Deze waarde geeft aan dat er twee extra bytes gebruikt worden. Deze bytes worden opgevuld met de echte Option Delta - 269. De waarde 15 mag niet als Option Delta gebruikt worden want deze geeft het begin van de payload aan. Voor Option Length zijn de regels analoog.
+
+
 \begin{figure}[h]
 \centering
-\vspace{10pt}
+%\vspace{10pt}
 \includegraphics[width=0.6\textwidth]{fig/CoAPOpties}
 \vspace{-10pt}
 \caption{CoAP optie (CoAP 14 draft)}
