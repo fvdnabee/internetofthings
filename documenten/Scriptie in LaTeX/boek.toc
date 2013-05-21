@@ -93,15 +93,20 @@
 \contentsline {subsection}{\numberline {5.2.3}CoAP Resource module met externe CoAP library}{50}
 \contentsline {subsubsection}{Nieuwe block}{50}
 \contentsline {subsection}{\numberline {5.2.4}CoAP Resource module met content type CoAP Resource}{51}
-\contentsline {subsection}{\numberline {5.2.5}CoAP Resource module met resource discovery}{52}
-\contentsline {subsection}{\numberline {5.2.6}CoAP resource met volledige REST functionaliteit}{52}
-\contentsline {subsection}{\numberline {5.2.7}CoAP resource met meerdere CoAP devices}{52}
-\contentsline {chapter}{\numberline {6}Uitbreidingen}{53}
-\contentsline {section}{\numberline {6.1}Keuze van interval bij automatisch ophalen}{53}
-\contentsline {section}{\numberline {6.2}Opvragen devices in subnetwerk met resource directory}{53}
-\contentsline {section}{\numberline {6.3}Conditional observe}{54}
-\contentsline {subsection}{\numberline {6.3.1}Keep-alive}{55}
-\contentsline {section}{\numberline {6.4}Drupal Entities}{56}
+\contentsline {subsection}{\numberline {5.2.5}CoAP resource met volledige REST functionaliteit}{52}
+\contentsline {subsection}{\numberline {5.2.6}CoAP Resource module met resource discovery}{52}
+\contentsline {subsubsection}{Multi-form}{54}
+\contentsline {subsubsection}{Tabbladen}{54}
+\contentsline {subsection}{\numberline {5.2.7}CoAP resource met meerdere content types}{55}
+\contentsline {subsubsection}{Polling}{55}
+\contentsline {subsubsection}{Templating}{58}
+\contentsline {subsubsection}{Foutmechanisme}{59}
+\contentsline {chapter}{\numberline {6}Uitbreidingen}{60}
+\contentsline {section}{\numberline {6.1}Keuze van interval bij automatisch ophalen}{60}
+\contentsline {section}{\numberline {6.2}Opvragen devices in subnetwerk met resource directory}{60}
+\contentsline {section}{\numberline {6.3}Conditional observe}{61}
+\contentsline {subsection}{\numberline {6.3.1}Keep-alive}{62}
+\contentsline {section}{\numberline {6.4}Drupal Entities}{63}
 \select@language {english}
 \select@language {dutch}
 \select@language {dutch}
