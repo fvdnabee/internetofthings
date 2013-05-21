@@ -2,8 +2,8 @@
 \nomenclatureentry{aIPv4@[{IPv4}]\begingroup Internet Protocol versie 4\nomeqref {1.0}|nompageref}{2}
 \nomenclatureentry{aIPv6@[{IPv6}]\begingroup Internet Protocol versie 6\nomeqref {1.0}|nompageref}{2}
 \nomenclatureentry{aHTTP@[{HTTP}]\begingroup HyperText Transfer Protocol\nomeqref {1.0}|nompageref}{2}
-\nomenclatureentry{aUDP@[{UDP}]\begingroup User Datagram Protocol\nomeqref {1.0}|nompageref}{2}
 \nomenclatureentry{aCoAP@[{CoAP}]\begingroup Constrained Application Protocol\nomeqref {1.0}|nompageref}{2}
+\nomenclatureentry{aUDP@[{UDP}]\begingroup User Datagram Protocol\nomeqref {1.0}|nompageref}{2}
 \nomenclatureentry{aPHP@[{PHP}]\begingroup PHP Hypertext Preprocessor\nomeqref {1.0}|nompageref}{3}
 \nomenclatureentry{aWOEID@[{WOEID}]\begingroup Where On Earth ID\nomeqref {1.0}|nompageref}{3}
 \nomenclatureentry{aCMS@[{CMS}]\begingroup Content Management System\nomeqref {2.0}|nompageref}{6}

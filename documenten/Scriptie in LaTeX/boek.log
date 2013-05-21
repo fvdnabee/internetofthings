@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2013.4.11)  21 MAY 2013 17:25
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2013.4.11)  21 MAY 2013 18:01
 entering extended mode
 **boek.tex
 
@@ -232,11 +232,7 @@ iptie in LaTeX\CoAPResourceModule.aux")
 ("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
 iptie in LaTeX\uitbreidingen.aux")
 ("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
-iptie in LaTeX\referenties.aux"
-
-LaTeX Warning: Label `beginDrupal' multiply defined.
-
-))
+iptie in LaTeX\referenties.aux"))
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 78.
 LaTeX Font Info:    ... okay on input line 78.
 LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 78.
@@ -253,7 +249,8 @@ Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: listings package is loaded.
 Package caption Info: End \AtBeginDocument code.
 \c@lstlisting=\count102
- ("C:\Program Files\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
+
+("C:\Program Files\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count103
 \scratchdimen=\dimen121
@@ -397,7 +394,29 @@ Underfull \hbox (badness 10000) in paragraph at lines 28--30
 
  []
 
-[3] [4]) [5]
+Missing character: There is no Ã in font cmr10!
+Missing character: There is no ¯ in font cmr10!
+[3]
+Underfull \hbox (badness 10000) in paragraph at lines 43--44
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 45--46
+
+ []
+
+[4]
+Underfull \hbox (badness 10000) in paragraph at lines 47--48
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 49--50
+
+ []
+
+) [5]
 ("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
 iptie in LaTeX\Drupal.tex"
 Hoofdstuk 2.
@@ -409,11 +428,11 @@ Package pdftex.def Info: fig/drupalLogo.png used on input line 10.
 
 
 Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
-less on input line 32.
+less on input line 29.
 
 
 Package Fancyhdr Warning: \fancyhead's `E' option without twoside option is use
-less on input line 32.
+less on input line 29.
 
 [6
 
@@ -1118,15 +1137,12 @@ iptie in LaTeX\referenties.aux"))
 
 LaTeX Warning: There were undefined references.
 
-
-LaTeX Warning: There were multiply-defined labels.
-
  ) 
 Here is how much of TeX's memory you used:
- 5290 strings out of 494045
- 85044 string characters out of 3148390
- 160801 words of memory out of 3000000
- 8411 multiletter control sequences out of 15000+200000
+ 5294 strings out of 494045
+ 85094 string characters out of 3148390
+ 160796 words of memory out of 3000000
+ 8415 multiletter control sequences out of 15000+200000
  11547 words of font info for 40 fonts, out of 3000000 for 9000
  717 hyphenation exceptions out of 8191
  36i,12n,51p,1490b,1131s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -1141,7 +1157,7 @@ msfonts/cm/cmr8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm
 .pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:
 /Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Program
  Files/MiKTeX 2.9/fonts/type1/public/eurosym/feymr10.pfb>
-Output written on boek.pdf (81 pages, 1748075 bytes).
+Output written on boek.pdf (81 pages, 1749038 bytes).
 PDF statistics:
  348 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
