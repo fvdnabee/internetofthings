@@ -55,59 +55,64 @@
 \contentsline {subsubsection}{Piggy-backed response}{25}
 \contentsline {subsubsection}{Seperate response}{26}
 \contentsline {subsection}{\numberline {3.2.3}Blocks}{26}
-\contentsline {section}{\numberline {3.3}Extra Features}{27}
-\contentsline {subsection}{\numberline {3.3.1}Observe}{27}
-\contentsline {subsection}{\numberline {3.3.2}Resource discovery}{27}
-\contentsline {subsection}{\numberline {3.3.3}Resource directory}{27}
-\contentsline {chapter}{\numberline {4}CoAP library module}{28}
-\contentsline {section}{\numberline {4.1}Doel}{28}
-\contentsline {subsection}{\numberline {4.1.1}Essenti\"{e}le, te ondersteunen functies}{29}
-\contentsline {subsection}{\numberline {4.1.2}Optionele, handige functies}{31}
-\contentsline {section}{\numberline {4.2}Implementatie}{32}
-\contentsline {subsection}{\numberline {4.2.1}Proceduregericht}{32}
-\contentsline {subsection}{\numberline {4.2.2}Objectgericht}{32}
-\contentsline {subsubsection}{CoAPFactory klasse}{32}
-\contentsline {subsubsection}{CoAPMessage klasse}{33}
-\contentsline {subsection}{\numberline {4.2.3}Hooks voor notificaties}{33}
-\contentsline {subsection}{\numberline {4.2.4}Opvangen van verloren berichten}{35}
-\contentsline {chapter}{\numberline {5}CoAP resource module}{36}
-\contentsline {section}{\numberline {5.1}Architectuur}{36}
-\contentsline {subsection}{\numberline {5.1.1}Functionaliteit}{37}
-\contentsline {subsection}{\numberline {5.1.2}Belangrijke aspecten}{39}
-\contentsline {subsubsection}{Modulariteit}{40}
-\contentsline {subsubsection}{Minimalisatie van netwerkbelasting}{40}
-\contentsline {subsubsection}{Asynchroniteit}{41}
-\contentsline {subsubsection}{Strategie bij ontvangst van waarden}{41}
-\contentsline {paragraph}{Push-strategie:}{41}
-\contentsline {paragraph}{Pull-strategie: }{42}
-\contentsline {subsubsection}{Caching}{43}
-\contentsline {subsection}{\numberline {5.1.3}Content-type in de databank}{44}
-\contentsline {subsection}{\numberline {5.1.4}Content-types in Drupal}{44}
-\contentsline {subsubsection}{CoAP Resource}{45}
-\contentsline {subsubsection}{CoAP Device}{47}
-\contentsline {section}{\numberline {5.2}Evolutie van de module}{48}
-\contentsline {subsection}{\numberline {5.2.1}Temperatuurmodule met HTTP/CoAP-proxy}{48}
-\contentsline {subsubsection}{Proxy}{48}
-\contentsline {subsubsection}{Polling}{49}
-\contentsline {subsection}{\numberline {5.2.2}Temperatuurmodule met native CoAP}{50}
-\contentsline {subsubsection}{Observe}{50}
-\contentsline {subsection}{\numberline {5.2.3}CoAP Resource module met externe CoAP library}{51}
-\contentsline {subsubsection}{Nieuwe block}{51}
-\contentsline {subsection}{\numberline {5.2.4}CoAP Resource module met content type CoAP Resource}{52}
-\contentsline {subsection}{\numberline {5.2.5}CoAP resource met volledige REST functionaliteit}{53}
-\contentsline {subsection}{\numberline {5.2.6}CoAP Resource module met resource discovery}{53}
-\contentsline {subsubsection}{Multi-form}{55}
-\contentsline {subsubsection}{Tabbladen}{55}
-\contentsline {subsection}{\numberline {5.2.7}CoAP resource met meerdere content types}{56}
-\contentsline {subsubsection}{Polling}{56}
-\contentsline {subsubsection}{Templating}{59}
-\contentsline {subsubsection}{Foutmechanisme}{60}
-\contentsline {chapter}{\numberline {6}Uitbreidingen}{61}
-\contentsline {section}{\numberline {6.1}Keuze van interval bij automatisch ophalen}{61}
-\contentsline {section}{\numberline {6.2}Opvragen devices in subnetwerk met resource directory}{61}
-\contentsline {section}{\numberline {6.3}Conditional observe}{62}
-\contentsline {subsection}{\numberline {6.3.1}Keep-alive}{63}
-\contentsline {section}{\numberline {6.4}Drupal Entities}{64}
+\contentsline {subsubsection}{Block Options}{27}
+\contentsline {subsubsection}{Structuur}{27}
+\contentsline {section}{\numberline {3.3}Extra Features}{28}
+\contentsline {subsection}{\numberline {3.3.1}Observe}{28}
+\contentsline {subsection}{\numberline {3.3.2}Resource discovery}{28}
+\contentsline {subsubsection}{Werking}{28}
+\contentsline {subsubsection}{CoRE Link Format}{28}
+\contentsline {subsubsection}{Use-case}{28}
+\contentsline {subsection}{\numberline {3.3.3}Resource directory}{29}
+\contentsline {chapter}{\numberline {4}CoAP library module}{30}
+\contentsline {section}{\numberline {4.1}Doel}{30}
+\contentsline {subsection}{\numberline {4.1.1}Essenti\"{e}le, te ondersteunen functies}{31}
+\contentsline {subsection}{\numberline {4.1.2}Optionele, handige functies}{33}
+\contentsline {section}{\numberline {4.2}Implementatie}{34}
+\contentsline {subsection}{\numberline {4.2.1}Proceduregericht}{34}
+\contentsline {subsection}{\numberline {4.2.2}Objectgericht}{34}
+\contentsline {subsubsection}{CoAPFactory klasse}{34}
+\contentsline {subsubsection}{CoAPMessage klasse}{35}
+\contentsline {subsection}{\numberline {4.2.3}Hooks voor notificaties}{35}
+\contentsline {subsection}{\numberline {4.2.4}Opvangen van verloren berichten}{37}
+\contentsline {chapter}{\numberline {5}CoAP resource module}{38}
+\contentsline {section}{\numberline {5.1}Architectuur}{38}
+\contentsline {subsection}{\numberline {5.1.1}Functionaliteit}{39}
+\contentsline {subsection}{\numberline {5.1.2}Belangrijke aspecten}{41}
+\contentsline {subsubsection}{Modulariteit}{42}
+\contentsline {subsubsection}{Minimalisatie van netwerkbelasting}{42}
+\contentsline {subsubsection}{Asynchroniteit}{43}
+\contentsline {subsubsection}{Strategie bij ontvangst van waarden}{43}
+\contentsline {paragraph}{Push-strategie:}{43}
+\contentsline {paragraph}{Pull-strategie: }{44}
+\contentsline {subsubsection}{Caching}{45}
+\contentsline {subsection}{\numberline {5.1.3}Content-type in de databank}{46}
+\contentsline {subsection}{\numberline {5.1.4}Content-types in Drupal}{46}
+\contentsline {subsubsection}{CoAP Resource}{47}
+\contentsline {subsubsection}{CoAP Device}{49}
+\contentsline {section}{\numberline {5.2}Evolutie van de module}{50}
+\contentsline {subsection}{\numberline {5.2.1}Temperatuurmodule met HTTP/CoAP-proxy}{50}
+\contentsline {subsubsection}{Proxy}{50}
+\contentsline {subsubsection}{Polling}{51}
+\contentsline {subsection}{\numberline {5.2.2}Temperatuurmodule met native CoAP}{52}
+\contentsline {subsubsection}{Observe}{52}
+\contentsline {subsection}{\numberline {5.2.3}CoAP Resource module met externe CoAP library}{53}
+\contentsline {subsubsection}{Nieuwe block}{53}
+\contentsline {subsection}{\numberline {5.2.4}CoAP Resource module met content type CoAP Resource}{54}
+\contentsline {subsection}{\numberline {5.2.5}CoAP resource met volledige REST functionaliteit}{55}
+\contentsline {subsection}{\numberline {5.2.6}CoAP Resource module met resource discovery}{55}
+\contentsline {subsubsection}{Multi-form}{57}
+\contentsline {subsubsection}{Tabbladen}{57}
+\contentsline {subsection}{\numberline {5.2.7}CoAP resource met meerdere content types}{58}
+\contentsline {subsubsection}{Polling}{58}
+\contentsline {subsubsection}{Templating}{61}
+\contentsline {subsubsection}{Foutmechanisme}{62}
+\contentsline {chapter}{\numberline {6}Uitbreidingen}{63}
+\contentsline {section}{\numberline {6.1}Keuze van interval bij automatisch ophalen}{63}
+\contentsline {section}{\numberline {6.2}Opvragen devices in subnetwerk met resource directory}{63}
+\contentsline {section}{\numberline {6.3}Conditional observe}{64}
+\contentsline {subsection}{\numberline {6.3.1}Keep-alive}{65}
+\contentsline {section}{\numberline {6.4}Drupal Entities}{66}
 \select@language {english}
 \select@language {dutch}
 \select@language {dutch}
