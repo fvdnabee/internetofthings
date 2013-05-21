@@ -17,5 +17,5 @@
 \nomenclatureentry{aCON@[{CON}]\begingroup Confirmable\nomeqref {3.0}|nompageref}{24}
 \nomenclatureentry{aACK@[{ACK}]\begingroup Acknowledgement\nomeqref {3.0}|nompageref}{24}
 \nomenclatureentry{aRST@[{RST}]\begingroup Reset\nomeqref {3.0}|nompageref}{24}
-\nomenclatureentry{aNON@[{NON}]\begingroup Non-confirmable\nomeqref {3.0}|nompageref}{24}
-\nomenclatureentry{aASCII@[{ASCII}]\begingroup American Standard Code for Information Interchange\nomeqref {4.0}|nompageref}{31}
+\nomenclatureentry{aNON@[{NON}]\begingroup Non-confirmable\nomeqref {3.0}|nompageref}{25}
+\nomenclatureentry{aASCII@[{ASCII}]\begingroup American Standard Code for Information Interchange\nomeqref {4.0}|nompageref}{32}
