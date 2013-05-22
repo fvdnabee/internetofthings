@@ -6,36 +6,36 @@
 \contentsline {figure}{\numberline {2.2}{\ignorespaces Wat is Drupal?\relax }}{7}
 \contentsline {figure}{\numberline {2.3}{\ignorespaces Basiswebsite van Drupal met Bartik-theme\relax }}{8}
 \contentsline {figure}{\numberline {2.4}{\ignorespaces Grafische weergave van hoe Drupal content aanbiedt.\relax }}{10}
-\contentsline {figure}{\numberline {2.5}{\ignorespaces Organisatie van Drupalmodules\relax }}{12}
-\contentsline {figure}{\numberline {2.6}{\ignorespaces Implementatie van hook\_node\_view door de module coap\_resource\relax }}{13}
+\contentsline {figure}{\numberline {2.5}{\ignorespaces Organisatie van Drupalmodules\relax }}{13}
+\contentsline {figure}{\numberline {2.6}{\ignorespaces Implementatie van hook\_node\_view door de module coap\_resource\relax }}{14}
 \contentsline {figure}{\numberline {2.7}{\ignorespaces Pagina renderen in Drupal\relax }}{15}
-\contentsline {figure}{\numberline {2.8}{\ignorespaces Weermodule\relax }}{17}
+\contentsline {figure}{\numberline {2.8}{\ignorespaces Weermodule\relax }}{18}
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {3.1}{\ignorespaces CoAP lagen (CoAP 14 draft)\relax }}{20}
-\contentsline {figure}{\numberline {3.2}{\ignorespaces Berichtformaat (CoAP 14 draft)\relax }}{20}
-\contentsline {figure}{\numberline {3.3}{\ignorespaces CoAP optie (CoAP 14 draft)\relax }}{22}
-\contentsline {figure}{\numberline {3.4}{\ignorespaces HTTP Message Format\relax }}{23}
-\contentsline {figure}{\numberline {3.5}{\ignorespaces Berichtuitwisseling (CoAP 14 draft)\relax }}{25}
-\contentsline {figure}{\numberline {3.6}{\ignorespaces Twee GET requests met piggy-backed responses (CoAP 14 draft)\relax }}{25}
-\contentsline {figure}{\numberline {3.7}{\ignorespaces GET request met seperate response (CoAP 14 draft)\relax }}{26}
-\contentsline {figure}{\numberline {3.8}{\ignorespaces Blokoptiewaarde - bytes en bits worden aangegeven bovenaan de figuur\relax }}{27}
+\contentsline {figure}{\numberline {3.1}{\ignorespaces CoAP lagen (CoAP 14 draft)\relax }}{21}
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Berichtformaat (CoAP 14 draft)\relax }}{21}
+\contentsline {figure}{\numberline {3.3}{\ignorespaces CoAP optie (CoAP draft 16)\relax }}{24}
+\contentsline {figure}{\numberline {3.4}{\ignorespaces HTTP Message Format\relax }}{25}
+\contentsline {figure}{\numberline {3.5}{\ignorespaces Berichtuitwisseling (CoAP 14 draft)\relax }}{26}
+\contentsline {figure}{\numberline {3.6}{\ignorespaces Twee GET requests met piggy-backed responses (CoAP 14 draft)\relax }}{27}
+\contentsline {figure}{\numberline {3.7}{\ignorespaces GET request met seperate response (CoAP 14 draft)\relax }}{27}
+\contentsline {figure}{\numberline {3.8}{\ignorespaces Blokoptiewaarde - bytes en bits worden aangegeven bovenaan de figuur\relax }}{28}
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {5.1}{\ignorespaces Architectuur van de CoAP resource module in Drupal\relax }}{40}
-\contentsline {figure}{\numberline {5.2}{\ignorespaces Content toevoegen door op 'Add content' te klikken.\relax }}{47}
-\contentsline {figure}{\numberline {5.3}{\ignorespaces Adding content of content type CoAP resource\relax }}{47}
-\contentsline {figure}{\numberline {5.4}{\ignorespaces Visuele representatie van het content type CoAP resource.\relax }}{48}
-\contentsline {figure}{\numberline {5.5}{\ignorespaces Adding content of content type CoAP device\relax }}{49}
-\contentsline {figure}{\numberline {5.6}{\ignorespaces Visuele representatie van het content type CoAP device.\relax }}{49}
-\contentsline {figure}{\numberline {5.7}{\ignorespaces Temperatuurmodule met HTTP/COAP-proxy\relax }}{51}
-\contentsline {figure}{\numberline {5.8}{\ignorespaces Block met HTML-formulieren die de gebruiker toelaat meerdere resources met \'{e}\'{e}n block te bevragen.\relax }}{54}
-\contentsline {figure}{\numberline {5.9}{\ignorespaces Alle vier de REST methodes zijn nu ondersteund.\relax }}{56}
-\contentsline {figure}{\numberline {5.10}{\ignorespaces Opsomming van resources aan de hand van resource discovery.\relax }}{57}
-\contentsline {figure}{\numberline {5.11}{\ignorespaces Mechanisme om fouten te tonen aan de gebruiker.\relax }}{62}
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Architectuur van de CoAP resource module in Drupal\relax }}{41}
+\contentsline {figure}{\numberline {5.2}{\ignorespaces Content toevoegen door op 'Add content' te klikken.\relax }}{48}
+\contentsline {figure}{\numberline {5.3}{\ignorespaces Adding content of content type CoAP resource\relax }}{48}
+\contentsline {figure}{\numberline {5.4}{\ignorespaces Visuele representatie van het content type CoAP resource.\relax }}{49}
+\contentsline {figure}{\numberline {5.5}{\ignorespaces Adding content of content type CoAP device\relax }}{50}
+\contentsline {figure}{\numberline {5.6}{\ignorespaces Visuele representatie van het content type CoAP device.\relax }}{50}
+\contentsline {figure}{\numberline {5.7}{\ignorespaces Temperatuurmodule met HTTP/COAP-proxy\relax }}{53}
+\contentsline {figure}{\numberline {5.8}{\ignorespaces Block met HTML-formulieren die de gebruiker toelaat meerdere resources met \'{e}\'{e}n block te bevragen.\relax }}{56}
+\contentsline {figure}{\numberline {5.9}{\ignorespaces Alle vier de REST methodes zijn nu ondersteund.\relax }}{58}
+\contentsline {figure}{\numberline {5.10}{\ignorespaces Opsomming van resources aan de hand van resource discovery.\relax }}{59}
+\contentsline {figure}{\numberline {5.11}{\ignorespaces Mechanisme om fouten te tonen aan de gebruiker.\relax }}{65}
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {6.1}{\ignorespaces Conditional observe optie (Option Delta 18)\relax }}{64}
-\contentsline {figure}{\numberline {6.2}{\ignorespaces Conditional observe optie formaat\relax }}{65}
-\contentsline {figure}{\numberline {6.3}{\ignorespaces De Keep-alive optie met Option Delta 30\relax }}{66}
+\contentsline {figure}{\numberline {6.1}{\ignorespaces Conditional observe optie (Option Delta 18)\relax }}{67}
+\contentsline {figure}{\numberline {6.2}{\ignorespaces Conditional observe optie formaat\relax }}{68}
+\contentsline {figure}{\numberline {6.3}{\ignorespaces De Keep-alive optie met Option Delta 30\relax }}{69}
 \select@language {english}
 \select@language {dutch}
 \select@language {dutch}

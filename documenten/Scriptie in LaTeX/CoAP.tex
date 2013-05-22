@@ -2,11 +2,11 @@
 
 \section{Wat is CoAP?}
 
-CoAP is een web transfer protocol speciaal ontwikkeld voor netwerkcomponenten die beperkt zijn in zowel geheugen als energieverbruik als machine-to-machine (M2M)\nomenclature{M2M}{Machine-to-machine}communicatie. Naast het minimaliseren van de overhead concentreert CoAP zich ook op het automatiseren van taken. Het mechanisme van built-in discovery is hier een voorbeeld van. Met het verminderen van energieverbruik in het achterhoofd biedt CoAP naast synchrone ook asynchrone communicatie aan. Het biedt ook nieuwe soorten berichten aan zoals non-confirmable, piggy-backed, etc.\\
+CoAP is een web transfer protocol speciaal ontwikkeld voor netwerkcomponenten die beperkt zijn in zowel geheugen als energievoorziening. Het verzorgt machine-to-machine (M2M)\nomenclature{M2M}{Machine-to-machine} -communicatie. Naast het minimaliseren van overhead concentreert CoAP zich ook op het automatiseren van taken. Het mechanisme van resource discovery (Zie paragraaf \ref{resourceDiscovery}) is hier een voorbeeld van. Met het verminderen van energieverbruik in het achterhoofd biedt CoAP naast synchrone ook asynchrone communicatie aan. Het biedt ook nieuwe soorten berichten aan zoals non-confirmable, piggy-backed, etc. Deze worden toegelicht in paragraaf \ref{betrouwbaarheid}\\
 
 Het interactiemodel van CoAP is vergelijkbaar met het client/server model van HTTP. Hoewel, bij een CoAP implementatie voor M2M interacties kan een device bij de ene berichtuitwisseling client zijn, en bij de andere server. Een CoAP request is equivalent aan een HTTP request en wordt ook gestuurd van de client naar de server om een actie aan te vragen op een resource die zich op die server bevindt. De actie wordt bepaald door een method code (GET, PUT, POST of DELETE) en de resource wordt aangeduid met een Uniform Resource Identifier (URI).\nomenclature{URI}{Uniform Resource Identifier} De server antwoordt met een response die onder andere een response code bevat.\\
 
-Verschillend met HTTP, gebeurt de berichtenuitwisseling asynchroon over een datagram-ge\"{o}ri\"{e}nteerd transport. Dit houdt in dat berichten mogelijks verloren gaan of in een andere volgorde kunnen aankomen dan dat ze verzonden zijn. Toch voorziet CoAP enige vorm van betrouwbaarheid met een soort bericht dat kan worden bevestigd door een acknowledgement (zie verder). Wanneer zo'n bericht niet wordt bevestigd, wordt het bericht meermaals opnieuw gestuurd volgens het exponential back-off mechanisme.
+Verschillend met HTTP, gebeurt de berichtenuitwisseling asynchroon over een datagram-ge\"{o}ri\"{e}nteerd transport. Dit houdt in dat berichten mogelijks verloren gaan of in een andere volgorde kunnen aankomen dan dat ze verzonden zijn. Toch voorziet CoAP enige vorm van betrouwbaarheid met een soort bericht dat kan worden bevestigd door een acknowledgement (zie paragraaf \ref{betrouwbaarheid}). Wanneer zo'n bericht niet wordt bevestigd, wordt het bericht meermaals opnieuw gestuurd volgens het exponential back-off mechanisme (Zie paragraaf \ref{exponentialBackoff}).
 
 CoAP definieert vier soorten berichten: Confirmable, Non-confirmable, Acknowledgement en Reset. Door gebruik te maken van method codes en response codes transporteren sommige van deze berichten requests of responses. In paragraaf \ref{communicatieMogelijkheden} gaan we hier dieper op in.\\
 
@@ -18,7 +18,7 @@ CoAP definieert vier soorten berichten: Confirmable, Non-confirmable, Acknowledg
 \vspace{-5pt}
 \label{fig:CoAPLaag}
 \end{wrapfigure}
-We kunnen CoAP ook in het 7-lagen model plaatsen. Logisch gezien hebben we een CoAP berichtenlaag die het UDP gedeelte en de asynchroniteit van de berichten afhandelt en een request/response laag die gebruik maakt van method en response codes (zie Figuur~\ref{fig:CoAPLaag}). Nochtans bestaat CoAP in werkelijkheid slechts uit \'{e}\'{e}n laag waarbij berichtenuitwisseling en het request/response mechanisme enkel en alleen door manipulatie van de header verwezenlijkt wordt.
+We kunnen CoAP ook in het Open Systems Interconnection (OSI) -model \nomenclature{OSI}{Open Systems Interconnection} met 7 lagen plaatsen. Logisch gezien hebben we een CoAP berichtenlaag die het UDP gedeelte en de asynchroniteit van de berichten afhandelt en een request/response laag die gebruik maakt van method en response codes (zie Figuur~\ref{fig:CoAPLaag}). Nochtans bestaat CoAP in werkelijkheid slechts uit \'{e}\'{e}n laag waarbij berichtenuitwisseling en het request/response-mechanisme enkel en alleen door manipulatie van de header verwezenlijkt wordt.
 
 \subsection{Berichtformaat}
 
@@ -40,15 +40,15 @@ We merken hier op dat een token, opties en een payload optioneel zijn. Dit zorgt
 Deze vier bytes worden opgedeeld in drie delen:
 \begin{itemize}
 \item Versiegetal (Ver): een 2-bit unsigned integer die de CoAP versie aangeeft. 
-\item Typeaanduiding (T): een 2-bit unsigned integer die het berichttype aangeeft. De mogelijkheden zijn: Confirmable (0), Non-confirmable (1), Acknowledgement (2) of Reset (3).
-\item Tokenlengte (TKL)\nomenclature{TKL}{ToKen Length}: een 4-bit unsigend integer die de variabele tokenlengte aangeeft.
+\item Type-aanduiding (T): een 2-bit unsigned integer die het berichttype aangeeft. De mogelijkheden zijn: Confirmable (CON) \nomenclature{CON}{Confirmable CoAP message} (0), Non-confirmable (NON)) \nomenclature{NON}{Non-Confirmable CoAP message} (1), Acknowledgement (ACK) \nomenclature{ACK}{Acknowledgement CoAP message} (2) of Reset (RST) \nomenclature{RST}{Reset CoAP message} (3).
+\item Tokenlengte (TKL)\nomenclature{TKL}{ToKen Length}: een 4-bit unsigned integer die de variabele tokenlengte aangeeft.
 \item Code: 8-bit unsigned integer die aangeeft of het bericht een request of een response overbrengt, of leeg is.
-\item Message ID: een 16-bit unsigned integer die gebruikt wordt om duplicatie van berichten op te merken. Het wordt ook gebruikt om berichten van het type acknowledgement/Reset te linken aan berichten van het type confirmable/non-confirmable.
+\item Message ID: een 16-bit unsigned integer die gebruikt wordt om duplicatie van berichten op te merken. Het wordt ook gebruikt om berichten van het type ACK/RST te linken aan berichten van het type CON/NON.
 \end{itemize}
 
 \subsubsection{Token}
 
-Een token wordt gebruikt om een response te linken met een request. De lengte wordt bepaald door de TKL en is nul tot acht bytes lang. Elk bericht heeft een token, dit kan lengte nul hebben. Elke request bevat een token gegenereerd door de client. Indien de server wil dat zijn response geaccepteerd wordt, moet hij dit token zonder meer overnemen in zijn response.
+Een token wordt gebruikt om een response te linken aan een request. De lengte wordt bepaald door de TKL en is nul tot acht bytes lang. Elk bericht heeft een token, dit kan lengte nul hebben. Wanneer een token nodig is, moet dat worden gegenereerd door de client. Indien de server wil dat zijn response geaccepteerd wordt, moet hij dit token zonder meer overnemen in zijn response.
 
 \newpage
 
@@ -62,12 +62,12 @@ Een token wordt gebruikt om een response te linken met een request. De lengte wo
 %\vspace{-10pt}
 %\label{fig:CoAPOpties}
 %\end{wrapfigure}
-Opties worden opgesteld d.m.v. de Type-Length-Value (TLV)\nomenclature{TLV}{Type Length Value} notatie (zie Figuur~\ref{fig:CoAPOpties}). Er wordt een mechanisme toegepast om opties in een pakket te stoppen, dat ervoor zorgt dat het pakket compact blijft en dus bijdraagt tot een minimale overhead.
+Opties worden opgesteld door middel van de Type-Length-Value (TLV)\nomenclature{TLV}{Type Length Value} notatie (zie Figuur~\ref{fig:CoAPOpties}). Er wordt een mechanisme toegepast om opties in een pakket te stoppen, dat ervoor zorgt dat het pakket compact blijft en dus bijdraagt tot een minimale overhead.\\
 
 Elke optie heeft een uniek nummer, maar wanneer meerdere opties in \'{e}\'{e}n pakket worden gestopt, worden de opties niet door dat nummer aangeduid, maar door de Option Delta. De Option Delta is het verschil tussen het nummer van een optie en dat van de vorige optie.
-Concreet, stel dat men na een optie met nummer 6 een optie met nummer 11 wil plaatsen, dan wordt deze laatste aangeduid met Option Delta gelijk aan 5 (11 - 6). Dit alles samen maakt dat een minimale (lege, maar daarom niet nutteloze) optie slechts 1 byte in beslag neemt. Dit heeft als gevolg dat opties na elkaar moeten worden geplaatst met oplopende Option Numbers.
+Concreet, stel dat men na een optie met nummer 6 een optie met nummer 11 wil plaatsen, dan wordt deze laatste aangeduid met Option Delta gelijk aan 5 (11 - 6). Dit alles samen maakt dat een minimale (lege, maar daarom niet nutteloze) optie slechts 1 byte in beslag neemt. Dit heeft als gevolg dat opties na elkaar moeten worden geplaatst met oplopende Option Numbers.\\
 
-Indien de Option Delta 13 of meer is, schiet dit systeem tekort. Daarom zijn er speciale waarden ingevoerd die het gebruik van extended een extended Option Delta aangeven. Indien de waarde 13 gebruikt wordt, wordt er een extra byte voor de payload gezet dat opgevuld wordt met de echte Option Delta - 13. Indien de Option delta meer is dan 268, wordt als Option Delta de waarde 14 gebruikt. Deze waarde geeft aan dat er twee extra bytes gebruikt worden. Deze bytes worden opgevuld met de echte Option Delta - 269. De waarde 15 mag niet als Option Delta gebruikt worden want deze geeft het begin van de payload aan. Voor Option Length zijn de regels analoog.
+Indien de Option Delta 13 of meer is, schiet dit systeem tekort. Daarom zijn er speciale waarden ingevoerd die het gebruik van extended een extended Option Delta aangeven. Indien de Option Delta groter is dan 12, maar kleiner is dan 269, wordt als Option Delta waarde 13 gebruikt. Er wordt dan een extra byte voor de Option Value gezet dat opgevuld wordt met de echte Option Delta - 13. Indien de Option delta meer is dan 268, wordt als Option Delta de waarde 14 gebruikt. Deze waarde geeft aan dat er twee extra bytes gebruikt worden. Deze bytes worden opgevuld met de echte Option Delta - 269. De waarde 15 mag niet als Option Delta gebruikt worden want deze geeft het begin van de payload aan. Voor Option Length zijn de regels analoog.
 
 
 \begin{figure}[h]
@@ -75,7 +75,7 @@ Indien de Option Delta 13 of meer is, schiet dit systeem tekort. Daarom zijn er 
 %\vspace{10pt}
 \includegraphics[width=0.6\textwidth]{fig/CoAPOpties}
 \vspace{-10pt}
-\caption{CoAP optie (CoAP 14 draft)}
+\caption{CoAP optie (CoAP draft 16)}
 \label{fig:CoAPOpties}
 \end{figure}
 
@@ -104,19 +104,19 @@ Het is dus duidelijk dat een HTTP bericht aanzienlijk groter zal zijn dan een Co
 
 \section{Communicatiemogelijkheden} \label{communicatieMogelijkheden}
 
-In deze paragraaf bespreken we de communicatiemogelijkheden van CoAP. We bekijken de variabele betrouwbaarheid van CoAP berichten en gaan na hoe het request/response model bij CoAP werkt aan de hand van voorbeelden. Als laatste lichten we het gebruik van blocks even toe.
+In deze paragraaf bespreken we de communicatiemogelijkheden van CoAP. We bekijken de variabele betrouwbaarheid van CoAP berichten en gaan na hoe het request/response model bij CoAP werkt aan de hand van voorbeelden. Als laatste lichten we het principe van blockwise transfer even toe.
 
-\subsection{Betrouwbaarheid}
+\subsection{Betrouwbaarheid} \label{betrouwbaarheid}
 
-HTTP realiseert een betrouwbare en robuuste vorm van communicatie. Het is gebaseerd op het Transmission Control Protocol (TCP), dit protocol zet een verbinding op aan de hand van stream sockets. Het zorgt ervoor dat pakketten gegarandeerd aankomen bij de bestemming en dit in volgorde van verzending. Maar deze betrouwbaarheid komt met een prijs, namelijk extra netwerkbelasting voor het opzetten en beheren van die verbinding. In tegenstelling tot HTTP dat gebouwd is op TCP, is CoAP gebaseerd op berichtenuitwisseling over UDP. Wanneer men met dit protocol werkt, is er echter geen garantie dat pakketten aankomen en wanneer dat wel het geval is, kan de volgorde van aankomst gewijzigd zijn ten opzichte van verzending. Daarom moet men bij CoAP zelf de betrouwbaarheid implementeren indien nodig.
+HTTP realiseert een betrouwbare en robuuste vorm van communicatie. Het is gebaseerd op het Transmission Control Protocol (TCP), dit protocol zet een verbinding op aan de hand van stream sockets. Het zorgt ervoor dat pakketten gegarandeerd aankomen bij de bestemming en dit in volgorde van verzending. Maar deze betrouwbaarheid komt met een prijs, namelijk extra netwerkbelasting voor het opzetten en beheren van die verbinding. In tegenstelling tot HTTP dat gebouwd is op TCP, is CoAP gebaseerd op berichtenuitwisseling over UDP. Wanneer men met dit protocol werkt, is er echter geen garantie dat pakketten aankomen en wanneer dat wel het geval is, kan de volgorde van aankomst gewijzigd zijn ten opzichte van verzending. Daarom moet men bij CoAP zelf de betrouwbaarheid verzorgen indien nodig.
 
 \subsubsection{Confirmable berichten}
 
-Wanneer we de betrouwbaarheid van de berichtenuitwisseling willen opdrijven, merken we de berichten als confirmable (CON)\nomenclature{CON}{Confirmable}. Een CON bericht moet door de server worden beantwoord met een Acknowledgement (ACK)\nomenclature{ACK}{Acknowledgement} bericht (zie Figuur~\ref{fig:berichtuitwisseling}), dit ACK bericht moet hetzelfde message ID bevatten als het CON bericht waarop geantwoord wordt. Wanneer CON berichten niet worden beantwoord met een ACK bericht v\'{o}\'{o}r een bepaalde timeout, wordt het bericht opnieuw verzonden. Bij het opnieuw verzenden wordt een exponential back-off mechanisme toegepast. Eerst wordt een timeout bepaald tussen een ACK\_TIMEOUT en ACK\_TIMEOUT x ACK\_RANDOM\_FACTOR, wanneer die timeout verstrijkt wordt het CON bericht opnieuw verzonden en de timeout verdubbeld. Wanneer de server niet in staat is het CON bericht te verwerken, wat betekent dat die zelfs geen geldige error response kan geven, antwoordt die met een reset (RST)\nomenclature{RST}{Reset} bericht in plaats van een ACK bericht.
+Wanneer we de betrouwbaarheid van de berichtenuitwisseling willen opdrijven, merken we de berichten als CON. Een CON-bericht moet door de server worden beantwoord met een ACK-bericht (zie Figuur~\ref{fig:berichtuitwisseling}), dit ACK-bericht moet hetzelfde message ID bevatten als het CON-bericht waarop geantwoord wordt. Wanneer CON-berichten niet worden beantwoord met een ACK-bericht v\'{o}\'{o}r een bepaalde timeout, wordt het bericht opnieuw verzonden. Bij het opnieuw verzenden wordt een exponential back-off mechanisme toegepast. Eerst wordt een timeout bepaald tussen een ACK\_TIMEOUT en ACK\_TIMEOUT x ACK\_RANDOM\_FACTOR, wanneer die timeout verstrijkt wordt het CON-bericht opnieuw verzonden en de timeout verdubbeld. Wanneer de server niet in staat is het CON-bericht te verwerken, wat betekent dat die zelfs geen geldige error response kan geven, antwoordt die met een RST-bericht in plaats van met een ACK-bericht.
 
 \subsubsection{Non-confirmable berichten}
 
-Soms heeft een bericht geen betrouwbaar transport nodig. Een voorbeeld hiervan is een stroom van sensordata waarbij elke meting verstuurd wordt met een Non-confirmable bericht(NON)\nomenclature{NON}{Non-confirmable}. Dit soort berichten wordt niet bevestigd met een ACK bericht, maar de berichten hebben wel nog steeds een message id om duplicatie van berichten te detecteren (zie Figuur~\ref{fig:berichtuitwisseling}). Wanneer een ontvanger niet in staat is het bericht te verwerken, opnieuw bedoelen we daarmee dat het geen geldige error response kan geven, zendt hij een RST naar de zender.
+Soms heeft een bericht geen betrouwbaar transport nodig. Een voorbeeld hiervan is een stroom van sensordata waarbij elke meting verstuurd wordt met een NON-bericht. Dit soort berichten wordt niet bevestigd met een ACK bericht, maar de berichten hebben wel nog steeds een message id om duplicatie van berichten te detecteren (zie Figuur~\ref{fig:berichtuitwisseling}). Wanneer een ontvanger niet in staat is het bericht te verwerken, opnieuw bedoelen we daarmee dat het geen geldige error response kan geven, zendt die een RST-bericht naar de zender.
 
 \begin{figure}[h]
 \vspace{10pt}
@@ -147,17 +147,17 @@ Wanneer een request met een CON bericht verstuurd wordt, is het mogelijk dat het
 
 \newpage
 
-\subsubsection{Seperate response}
+\subsubsection{Separate response} \label{separate}
 
 \begin{wrapfigure}{r}{0.3\textwidth}
 \vspace{-40pt}
 \includegraphics[width=0.3\textwidth]{fig/CoAPSeperateResponse}
 \vspace{-30pt}
 \caption{GET request met seperate response (CoAP 14 draft)}
-\label{fig:SeperateResponse}
+\label{fig:SeparateResponse}
 \vspace{-100pt}
 \end{wrapfigure}
-Wanneer de server niet onmiddellijk kan antwoorden op de request van de client, antwoordt die met een leeg ACK bericht zodat de client niet zou beginnen heruitzenden als gevolg van het exponential back-off mechanisme. Wanneer de response klaar is, stuurt de server dit antwoord in een nieuw CON bericht dat op zijn beurt beantwoord moet worden door de client. Dit soort van berichtenuitwisseling heet seperate response (zie Figuur~\ref{fig:SeperateResponse}).
+Wanneer de server niet onmiddellijk kan antwoorden op de request van de client, antwoordt die met een leeg ACK bericht zodat de client niet zou beginnen heruitzenden als gevolg van het exponential back-off mechanisme. Wanneer de response klaar is, stuurt de server dit antwoord in een nieuw CON bericht dat op zijn beurt beantwoord moet worden door de client. Dit soort van berichtenuitwisseling heet separate response (zie Figuur~\ref{fig:SeparateResponse}).
 \\
 \\
 \\

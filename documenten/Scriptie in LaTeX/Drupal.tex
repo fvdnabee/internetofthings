@@ -94,7 +94,7 @@ Beginnende Drupal-ontwikkelaars zullen evenwel merken dat Drupal een erg steile 
 
 \section{Werking van Drupal}
 
-Aan de hand van een voorbeeld proberen we de lezer een idee te geven van de werking van Drupal. Bekijk Drupal als een digitale postzegelsorteerder. De nodes zijn de postzegels en de content types zijn de verschillende soorten postzegels (postzegels van \euro~0,67, \euro~1,34, ... ). Naast content types, kan je taxonomy gebruiken om een verdere onderverdeling te maken in de postzegels. De mate waarin en de criteria waarop je je onderverdeling maakt, kan je zelf kiezen (land, kleur, ...). Views is het mechanisme dat je postzegels sorteert en weergeeft in de vorm van pagina's en blocks. Van deze pagina's en blocks kan je zelf grootte, vorm, kleur en andere criteria opstellen zodat je deze helemaal kan personaliseren. Zie Figuur~\ref{fig:drupalGrafischeWeergave}.
+Aan de hand van een voorbeeld \cite{drupalDefGuide} proberen we de lezer een idee te geven van de werking van Drupal. Bekijk Drupal als een digitale postzegelsorteerder. De nodes zijn de postzegels en de content types zijn de verschillende soorten postzegels (postzegels van \euro~0,67, \euro~1,34, ... ). Naast content types, kan je taxonomy gebruiken om een verdere onderverdeling te maken in de postzegels. De mate waarin en de criteria waarop je je onderverdeling maakt, kan je zelf kiezen (land, kleur, ...). Views is het mechanisme dat je postzegels sorteert en weergeeft in de vorm van pagina's en blocks. Van deze pagina's en blocks kan je zelf grootte, vorm, kleur en andere criteria opstellen zodat je deze helemaal kan personaliseren. Zie Figuur~\ref{fig:drupalGrafischeWeergave}.
 
 \begin{figure}[h]
 \centering
@@ -111,7 +111,7 @@ Aan de hand van een voorbeeld proberen we de lezer een idee te geven van de werk
 We gaan dieper in op de begrippen die gebruikt worden in het voorbeeld en lichten enkele extra termen toe die ook gebruikt worden in Drupal.
 
 \subsubsection{Content type}
-Een content type bepaalt de soort content. Het bundelt soorten gegevens tot een logisch geheel. De gegevens worden ingevuld d.m.v. Fields. Een instantie van een content vult de soorten gegevens op en wordt een node genoemd. Ook biedt een content type de mogelijkheid om verschillende soorten content te onderscheiden van elkaar op basis van het type.
+Een content type bepaalt het soort content. Het bundelt soorten gegevens tot een logisch geheel. De gegevens worden ingevuld aan de hand van Fields. Een instantie van een content vult de soorten gegevens op en wordt een node genoemd. Ook biedt een content type de mogelijkheid om verschillende soorten content te onderscheiden van elkaar op basis van het type.
 Drupal biedt gebruikers de mogelijkheid aan om hun eigen custom content types te maken.
 %figuur van add content type
 
@@ -120,23 +120,22 @@ Nodes zijn instanties van een content type. Een node kan maar aan \'{e}\'{e}n co
 Alle nodes hebben enkele eigenschappen gemeenschappelijk:
 \begin{itemize}
 \item Node id: zorgt voor een unieke identificatie.
-\item Menu-instellingen: hier kan je een optionele menu link instellingen zodanig dat je het menu op je website volledig kan personaliseren.
-\item Mogelijkhedne i.v.m. revisie: in de levensloop van de content kan je revisies maken zodat je terug kan keren naar een vorig moment indien er iets fout gaat met de content.
-\item URL pad instellingen: standaard is content beschikbaar via een URL van de vorm /node/node\_id. Maar via deze instellingen kan je een alias opgeven waarlangs de content ook beschikbaar is.
-\item Commentaarinstellingen: je kan zelf instellen of gebruikers een commentaar kunnen achterlaten bij deze node.
+\item Menu-instellingen: hier kan je een optionele menu link instellen zodanig dat je het menu op je website volledig kan personaliseren.
+\item Mogelijkheden in verband met revisie: in de levensloop van de content kan je revisies maken zodat je terug kan keren naar een vorig moment indien er iets fout gaat met de content.
+\item Uniform Resource Locator (URL) \nomenclature{URL}{Uniform Resource Locator} pad instellingen: standaard is content beschikbaar via een URL van de vorm /node/node\_id. Maar via deze instellingen kan je een alias opgeven waarlangs de content ook (en dus gemakkelijker) beschikbaar is, dit principe heet in Drupal "Clean URL's". De URL zal dan van de vorm '/alias' zijn.
+\item Commentaarinstellingen: je kan zelf instellen of gebruikers commentaar kunnen achterlaten bij deze node.
 \item Auteurinstellingen: hier stel je in of de creatietijd en auteur getoond moeten worden bij deze node.
-\item Publicatieinstellingen: soms is het mogelijk dat je deze content nog niet beschikbaar wil stellen op de website, of je wil het tijdelijk offline halen. Via deze instellingen is dit mogelijk.
+\item Publicatieinstellingen: soms is het mogelijk dat je deze content nog niet beschikbaar wil stellen op de website, of je wil ze tijdelijk offline halen. Via deze instellingen is dit mogelijk.
 \end{itemize}
 
 \subsubsection{Fields}
-Via fields kan je gegevens voor een content type invullen. Standaard biedt Drupal een aantal velden aan om gegevens toe te voegen, maar soms schieten deze velden tekort. Daarom heeft een gebruiker de mogelijkheid custom velden te maken.
+Via Fields kan je gegevens voor een content type invullen. Standaard biedt Drupal een aantal velden aan om gegevens toe te voegen, maar soms schieten deze velden tekort. Daarom heeft een gebruiker de mogelijkheid custom velden te maken.
 
 \subsubsection{View}
-Views worden gebruikt om content visueel voor te stellen op welke manier dan ook. Een view is dan ook niet meer dan een visuele representatie van een verzameling content die in de database zit.
+Views worden gebruikt om content visueel voor te stellen op welke manier dan ook. Een view is dan ook niet meer dan een visuele representatie van een verzameling content die in de databank zit.
 
 \subsubsection{Block}
-Blocks zijn, zoals de naam al impliceert, blokken die een verzameling van herbruikbare content bevatten. Ze geven het beeld van die content. Blocks kunnen op gemakkelijke wijze toegevoegd worden aan je website waar jij dat wilt en hoe vaak je dat wilt. Het is bijvoorbeeld gemakkelijk om aan te geven dat je een bepaald block enkel op een bepaalde pagina wil laten verschijnen, en bovendien waar op de pagina je dat wilt.
-%eventueel figuur met pagina met blocks
+Blocks zijn, zoals de naam al impliceert, blokken die een verzameling van herbruikbare content bevatten. Ze geven het beeld van die content. Blocks kunnen op gemakkelijke wijze toegevoegd worden aan je website waar jij dat wilt en hoe vaak je dat wilt. Het is bijvoorbeeld gemakkelijk om aan te geven dat je een bepaald block enkel op een bepaalde pagina wil laten verschijnen, en bovendien waar op de pagina je dat wilt. Merk echter wel op dat het hier niet echt content betreft, de inhoud van het block wordt aangemaakt bij opvraging en is dus geen blok beheerbare content. We zien een voorbeeld van een block in paragraaf \ref{jQuery}.
 
 \subsubsection{Theme}
 Themes zijn templates die bepalen hoe jouw website eruit ziet en aanvoelt voor de gebruiker. Net zoals modules zijn themes modulair en zijn ze dus gemakkelijk te wisselen, ook themes kunnen zelf ontwikkeld worden en zijn ter beschikking op de Drupal community.
@@ -153,7 +152,7 @@ Modules bieden je de mogelijkheid om extra functionaliteit in te pluggen op je w
 Taxonomy geeft je de mogelijkheid om eigenschappen en categorie\"{e}n toe te voegen aan je content, zodat bijvoorbeeld een gebruiker content kan filteren uit een grote verzameling. Het biedt dus een manier om je content te organiseren. Een praktijkvoorbeeld is een receptensite, een gebruiker kan dan recepten filteren aan de hand van de eigenschappen van het gerecht (ingredi\"{e}nten, moeilijkheid, ...).
 
 \subsubsection{Users, Roles en Permissions}
-Users zijn de gebruikers van jouw website die zich aangemeld hebben. Alle user functionaliteit zoals registreren, inloggen, enz... zit reeds in de Drupal core. Roles geven weer tot welk type een gebruiker hoort. Meerdere gebruikers kunnen dezelfde role hebben, en een gebruiker kan meerdere roles hebben. Met permissions kan je aangeven welke privileges een user met een bepaalde role, mag of kan doen. Deze permissions worden gekoppeld aan een role zodat alle gebruikers die deze role hebben automatisch de privileges hebben van deze role. Drupal biedt standaard de Administrator role aan die alle privileges heeft.
+Users zijn de gebruikers van jouw website die zich aangemeld hebben. Alle user functionaliteit zoals registreren, inloggen, enz... zit reeds in de Drupal core. Roles geven weer tot welk type een gebruiker hoort. Meerdere gebruikers kunnen dezelfde role hebben, en een gebruiker kan meerdere roles hebben. Met permissions kan je aangeven welke privileges een user met een bepaalde role heeft en dus wat die gebruiker mag en kan doen. Deze permissions worden gekoppeld aan een role zodat alle gebruikers die deze role hebben automatisch de privileges hebben van deze role. Drupal biedt standaard de Administrator role aan die alle privileges heeft.
 
 \subsubsection{Hooks}
 Hooks zijn functies die gedefinieerd zijn door de Drupal core. Ze kunnen worden ge\"{i}mplementeerd door elke module. In de Drupal bootstrap zal de Drupal core dan op bepaalde tijdstippen de bijhorende hooks oproepen van elke module die de hook ge\"{i}mplementeerd heeft. Hiervoor wordt een zeer eenvoudig mechanisme gehanteerd. Een module kan zo'n hook defini\"{e}ren door de naam van de hook te laten voorafgaan door de naam van de module die de hook implementeert (zie figuur~\ref{fig:drupalHookExample}).
@@ -168,10 +167,10 @@ De Drupal core is wat je downloadt van de Drupal website. Het vormt de basis en 
 
 \subsubsection{Entities}
 Een nieuw belangrijk concept in Drupal 7 is entities \cite{entities}. Dit nieuwe concept in combinatie met de Entity API heeft twee positieve effecten. Het eerste effect is dat gebruikers en commentaren dezelfde mogelijkheden krijgen als nodes. In vorige versies van Drupal was het niet mogelijk versies te cre\"{e}eren of velden toe te voegen aan gebruikers of commentaren. Andere voordelen zoals het gebruiken van views in combinatie met gebruikers of commentaren was ook niet mogelijk. Het andere effect is het invoeren van object-ge\"{o}rienteerd programmeren van entities. Vroeger was het nodig specifieke functies van de core te gebruiken om content te bewerken. Een voorbeeld hier van is node\_save() dat nodes opslaat. Deze functie was enkel toepasbaar op een node. Het alternatief bij de Entity API is entity\_save(). Deze functie is niet gelimiteerd tot enkel content of enkel tot gebruikers.
-Het is mogelijk nieuwe entities te maken. We gaan hier dieper op in in hoofdstuk~\ref{uitbreidingen}.
+Het is ook mogelijk nieuwe entities te maken, we gaan hier dieper op in in hoofdstuk~\ref{uitbreidingen}.
 
 \subsection{Pagina aanroepen}
-Elke keer een webbrowser een Drupal pagina opvraagt, gebeuren er een reeks complexe stappen die als eindresultaat de gerenderde pagina hebben. Indien de pagina niet aanwezig is in de cache, worden deze complexe stappen gegroepeerd in twee delen: de bootstrap en de uitvoering van de page callback. De bootstrap bestaat steeds uit dezelfde reeks van acht verschillende fasen die we verder nader toelichten. Na de bootstrap, wordt de page callback uitgevoerd. Indien de pagina wel in de cache aanwezig is, wordt er een subset van de bootstrapstappen uitgevoerd. Het hele proces wordt weergegeven in Figuur~\ref{fig:drupalPageRendering}.
+Elke keer een webbrowser een Drupal pagina opvraagt, gebeurt er een reeks complexe stappen die als eindresultaat de gerenderde pagina hebben. Indien de pagina niet aanwezig is in de cache, worden deze complexe stappen gegroepeerd in twee delen: de bootstrap en de uitvoering van de page callback. De bootstrap bestaat steeds uit dezelfde reeks van acht verschillende fasen die we verder nader toelichten. Na de bootstrap wordt de page callback uitgevoerd. Indien de pagina wel in de cache aanwezig is, wordt er een subset van de stappen van de bootstrap uitgevoerd. Het hele proces wordt weergegeven in Figuur~\ref{fig:drupalPageRendering}.
 
 \begin{figure}
 \includegraphics[width=1\textwidth]{fig/drupalPageRendering}
@@ -186,10 +185,10 @@ Deze fase houdt onder andere in dat globale variabelen worden gezet, zoals de ba
 In deze fase tracht Drupal te vermijden dat de volledige bootstrap moet worden doorlopen. Wanneer de pagina al eens is opgevraagd en deze nog geldig is, wordt deze pagina getoond.
 
 \subsubsection{Initialisatie van de database abstraction layer}
-Basisklassen en functies worden geinitialiseerd, maar nog geen verbindingen met de databank worden opgezet.
+Basisklassen en functies worden ge\"{i}nitialiseerd, maar er worden nog geen verbindingen met de databank opgezet.
 
 \subsubsection{Initialisatie van het Variable System}
-In deze fase worden de waarden van variabelen uit de variabelentabel gehaald die zich in de databank bevindt en ingevuld bij de juiste naam. Als er modules zijn waarvan hooks moeten worden opgeroepen, worden deze ook ingeladen.
+In deze fase worden de waarden van variabelen uit de variabelentabel gehaald, die zich in de databank bevindt, en ingevuld bij de juiste naam. Als er modules zijn waarvan hooks moeten worden opgeroepen, worden deze ook ingeladen.
 
 \subsubsection{Initialisatie Session Handling}
 In deze fase wordt aan elke user een sessie gekoppeld. Een anonieme user krijgt geen sessie toegewezen tenzij er iets in de sessie moet worden opgeslagen.
@@ -198,7 +197,7 @@ In deze fase wordt aan elke user een sessie gekoppeld. Een anonieme user krijgt 
 De eerste HTTP headers worden opgebouwd, deze worden echter nog niet verstuurd, dit gebeurt pas op het einde van de cyclus. In deze fase vormt zich de eerste mogelijkheid voor modules om functionaliteit in te pluggen in de cyclus van de pagina.
 
 \subsubsection{De taal van de pagina bepalen}
-Als de website meerdere talen ondersteunt wordt in deze fase de gekozen taal van de user bepaald.
+Als de website meerdere talen ondersteunt wordt in deze fase de gekozen taal van de gebruiker bepaald.
 
 \subsubsection{Laden van modules en initialisatie van het theme}
 Alle ingeschakelde modules worden ingeladen en het theme wordt ge\"{i}nitialiseerd. Deze fase biedt ook nog de mogelijkheid om variabelen in te stellen die pas later in de request beschikbaar zijn.
@@ -208,7 +207,7 @@ Drupal bouwt en rendert de pagina.
 
 \newpage
 
-\section{jQuery in Drupal}
+\section{jQuery in Drupal} \label{jQuery}
 
 \begin{wrapfigure}{r}{0.25\textwidth}
 \vspace{-40pt}
@@ -245,7 +244,7 @@ Wanneer de gebruiker op de knop klikt, gebeuren volgende stappen:
 		\item het ontvangen xml-bestand wordt in een object gestopt met de PHP-functie SimplexmlElement(), waarna het weerbericht gemakkelijk uit het XML-bestand kan gehaald worden
 		\item Het weerbericht wordt toegevoegd aan de inhoud van het block
 	\end{itemize}
-	\item De pagina wordt in de browser weergegeven met het weerbericht in het blok
+	\item De pagina wordt in de browser weergegeven met het weerbericht in het block
 \end{itemize}
 
 \subsection{Met AJAX in jQuery}
@@ -260,4 +259,4 @@ Zoals de naam suggereert, is dit een asynchrone aanroep, wanneer het antwoord aa
 
 jQuery laat geen cross-domain AJAX calls toe wegens veiligheidsoverwegingen. Een oplossing hiervoor is een proxy-script in PHP gebruiken.
 De AJAX call gebeurt dan naar het proxy script dat zich op de server en dus hetzelfde domein bevindt. Het proxy-script vraagt daar effectief de data op en geeft de uitvoer terug.
-De browser wordt dus eigenlijk om de tuin geleid. \cite{cross-domainProblem}
+De browser wordt dus eigenlijk om de tuin geleid. \cite{crossDomainProblem}
