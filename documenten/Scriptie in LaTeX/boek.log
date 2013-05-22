@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2013.4.11)  22 MAY 2013 17:24
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2013.4.11)  22 MAY 2013 19:50
 entering extended mode
 **boek.tex
 
@@ -806,21 +806,21 @@ Underfull \hbox (badness 10000) in paragraph at lines 94--95
 File: fig/add_content.jpg Graphic file (type jpg)
 
 <use fig/add_content.jpg>
-Package pdftex.def Info: fig/add_content.jpg used on input line 111.
+Package pdftex.def Info: fig/add_content.jpg used on input line 115.
 (pdftex.def)             Requested size: 455.24408pt x 364.19568pt.
 
 <fig/add_coap_resource.jpg, id=220, 379.4175pt x 173.14688pt>
 File: fig/add_coap_resource.jpg Graphic file (type jpg)
 
 <use fig/add_coap_resource.jpg>
-Package pdftex.def Info: fig/add_coap_resource.jpg used on input line 122.
+Package pdftex.def Info: fig/add_coap_resource.jpg used on input line 126.
 (pdftex.def)             Requested size: 273.14922pt x 124.65244pt.
 
 <fig/coap_resource.jpg, id=221, 540.51938pt x 666.99188pt>
 File: fig/coap_resource.jpg Graphic file (type jpg)
 
 <use fig/coap_resource.jpg>
-Package pdftex.def Info: fig/coap_resource.jpg used on input line 134.
+Package pdftex.def Info: fig/coap_resource.jpg used on input line 138.
 (pdftex.def)             Requested size: 364.19664pt x 449.4266pt.
  [48 <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/documenten
 /Scriptie in LaTeX/fig/add_content.jpg> <C:/Program Files/wamp/www/drupal-7.19/
@@ -831,25 +831,25 @@ en/Scriptie in LaTeX/fig/coap_resource.jpg>]
 File: fig/add_coap_device.jpg Graphic file (type jpg)
 
 <use fig/add_coap_device.jpg>
-Package pdftex.def Info: fig/add_coap_device.jpg used on input line 146.
+Package pdftex.def Info: fig/add_coap_device.jpg used on input line 150.
 (pdftex.def)             Requested size: 273.14922pt x 135.413pt.
 
 <fig/coap_device.jpg, id=229, 299.61937pt x 388.45125pt>
 File: fig/coap_device.jpg Graphic file (type jpg)
 
 <use fig/coap_device.jpg>
-Package pdftex.def Info: fig/coap_device.jpg used on input line 157.
+Package pdftex.def Info: fig/coap_device.jpg used on input line 161.
 (pdftex.def)             Requested size: 273.14922pt x 354.16096pt.
  [50 <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/documenten
 /Scriptie in LaTeX/fig/add_coap_device.jpg> <C:/Program Files/wamp/www/drupal-7
 .19/sites/all/modules/custom/documenten/Scriptie in LaTeX/fig/coap_device.jpg>]
  [51]
-Underfull \hbox (badness 10000) in paragraph at lines 191--192
+Underfull \hbox (badness 10000) in paragraph at lines 195--196
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 193--195
+Underfull \hbox (badness 10000) in paragraph at lines 197--199
 
  []
 
@@ -859,31 +859,31 @@ File: fig/TemperatuurModuleHTTPCOAPProxy.png Graphic file (type png)
 
 <use fig/TemperatuurModuleHTTPCOAPProxy.png>
 Package pdftex.def Info: fig/TemperatuurModuleHTTPCOAPProxy.png used on input l
-ine 200.
+ine 204.
 (pdftex.def)             Requested size: 455.24408pt x 259.60869pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 207--208
+Underfull \hbox (badness 10000) in paragraph at lines 211--212
 
  []
 
 [53 <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/documenten/
 Scriptie in LaTeX/fig/TemperatuurModuleHTTPCOAPProxy.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 221--222
+Underfull \hbox (badness 10000) in paragraph at lines 225--226
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 223--224
+Underfull \hbox (badness 10000) in paragraph at lines 227--228
 
  []
 
 [54]
-Underfull \hbox (badness 10000) in paragraph at lines 230--231
+Underfull \hbox (badness 10000) in paragraph at lines 234--235
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 233--234
+Underfull \hbox (badness 10000) in paragraph at lines 237--238
 
  []
 
@@ -891,35 +891,35 @@ Underfull \hbox (badness 10000) in paragraph at lines 233--234
 File: fig/meerdere_resources.jpg Graphic file (type jpg)
 
 <use fig/meerdere_resources.jpg>
-Package pdftex.def Info: fig/meerdere_resources.jpg used on input line 241.
+Package pdftex.def Info: fig/meerdere_resources.jpg used on input line 245.
 (pdftex.def)             Requested size: 455.24408pt x 485.22722pt.
  [56 <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/documenten
 /Scriptie in LaTeX/fig/meerdere_resources.jpg>]
-Underfull \hbox (badness 10000) in paragraph at lines 249--250
+Underfull \hbox (badness 10000) in paragraph at lines 253--254
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 251--252
+Underfull \hbox (badness 10000) in paragraph at lines 255--256
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 254--255
+Underfull \hbox (badness 10000) in paragraph at lines 258--259
 
  []
 
 <fig/rest.png, id=255, 529.22719pt x 432.11438pt>
 File: fig/rest.png Graphic file (type png)
  <use fig/rest.png>
-Package pdftex.def Info: fig/rest.png used on input line 261.
+Package pdftex.def Info: fig/rest.png used on input line 265.
 (pdftex.def)             Requested size: 455.24408pt x 371.71pt.
 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 267--268
+Underfull \hbox (badness 10000) in paragraph at lines 271--272
 
  []
 
@@ -928,28 +928,28 @@ nten/Scriptie in LaTeX/fig/rest.png>]
 <fig/tabbladen.jpg, id=263, 532.23843pt x 289.08pt>
 File: fig/tabbladen.jpg Graphic file (type jpg)
  <use fig/tabbladen.jpg>
-Package pdftex.def Info: fig/tabbladen.jpg used on input line 274.
+Package pdftex.def Info: fig/tabbladen.jpg used on input line 278.
 (pdftex.def)             Requested size: 455.24408pt x 247.26741pt.
 
 [59 <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/documenten/
 Scriptie in LaTeX/fig/tabbladen.jpg>]
-Underfull \hbox (badness 10000) in paragraph at lines 291--292
+Underfull \hbox (badness 10000) in paragraph at lines 295--296
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 296--297
+Underfull \hbox (badness 10000) in paragraph at lines 300--301
 
  []
 
 [60] [61]
-LaTeX Font Info:    Try loading font information for OML+cmr on input line 310.
+LaTeX Font Info:    Try loading font information for OML+cmr on input line 314.
 
  ("C:\Program Files\MiKTeX 2.9\tex\latex\base\omlcmr.fd"
 File: omlcmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OML/cmr/m/n' in size <10.95> not available
-(Font)              Font shape `OML/cmm/m/it' tried instead on input line 310.
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 314.
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\listings\lstlang1.sty"
 File: lstlang1.sty 2004/09/05 1.3 listings language file
@@ -958,28 +958,28 @@ File: lstlang1.sty 2004/09/05 1.3 listings language file
 File: lstmisc.sty 2007/02/22 1.4 (Carsten Heinz)
 )
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 327.
+(Font)              <7> on input line 331.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 327.
+(Font)              <5> on input line 331.
 
-Overfull \hbox (6.0pt too wide) in paragraph at lines 327--327
+Overfull \hbox (6.0pt too wide) in paragraph at lines 331--331
 [][][][][][][] 
  []
 
 [62]
-Underfull \hbox (badness 10000) in paragraph at lines 349--350
+Underfull \hbox (badness 10000) in paragraph at lines 353--354
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 351--352
+Underfull \hbox (badness 10000) in paragraph at lines 355--356
 
  []
 
 [63] ("C:\Program Files\MiKTeX 2.9\tex\latex\listings\lstlang1.sty"
 File: lstlang1.sty 2004/09/05 1.3 listings language file
 )
-Overfull \hbox (6.0pt too wide) in paragraph at lines 357--357
+Overfull \hbox (6.0pt too wide) in paragraph at lines 361--361
 [][][][][][][] 
  []
 
@@ -987,7 +987,7 @@ Overfull \hbox (6.0pt too wide) in paragraph at lines 357--357
 File: fig/foutmechanisme.jpg Graphic file (type jpg)
 
 <use fig/foutmechanisme.jpg>
-Package pdftex.def Info: fig/foutmechanisme.jpg used on input line 377.
+Package pdftex.def Info: fig/foutmechanisme.jpg used on input line 381.
 (pdftex.def)             Requested size: 455.24408pt x 228.8978pt.
 
 
@@ -1173,7 +1173,7 @@ s/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Program Files/MiKTeX 2
 public/amsfonts/cm/cmsy10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/a
 msfonts/cm/cmti10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/eurosym/f
 eymr10.pfb>
-Output written on boek.pdf (84 pages, 1757539 bytes).
+Output written on boek.pdf (84 pages, 1757725 bytes).
 PDF statistics:
  357 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)

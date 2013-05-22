@@ -87,6 +87,9 @@
 \contentsline {paragraph}{Pull-strategie: }{45}
 \contentsline {subsubsection}{Caching}{46}
 \contentsline {subsection}{\numberline {5.1.3}Content-type in de databank}{47}
+\contentsline {subsubsection}{coap\_resource\_resources}{47}
+\contentsline {subsubsection}{coap\_resource\_users}{47}
+\contentsline {subsubsection}{coap\_resource\_values}{47}
 \contentsline {subsection}{\numberline {5.1.4}Content-types in Drupal}{47}
 \contentsline {subsubsection}{CoAP Resource}{48}
 \contentsline {subsubsection}{CoAP Device}{50}
