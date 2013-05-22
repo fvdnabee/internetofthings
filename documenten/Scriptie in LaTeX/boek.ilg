@@ -7,8 +7,8 @@ Scanning style file C:/Program Files/MiKTeX 2.9/makeindex/nomencl/nomencl.ist...
 ** Input style error (file = C:/Program Files/MiKTeX 2.9/makeindex/nomencl/nomencl.ist, line = 72):
    -- Unknown specifier lethead_flag.
 ...done (10 attributes redefined, 3 ignored).
-Scanning input file boek.nlo....done (21 entries accepted, 0 rejected).
-Sorting entries....done (90 comparisons).
-Generating output file boek.nls....done (43 lines written, 0 warnings).
+Scanning input file boek.nlo....done (24 entries accepted, 0 rejected).
+Sorting entries....done (117 comparisons).
+Generating output file boek.nls....done (51 lines written, 0 warnings).
 Output written in boek.nls.
 Transcript written in boek.ilg.

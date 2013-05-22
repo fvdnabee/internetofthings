@@ -7,15 +7,18 @@
 \nomenclatureentry{aPHP@[{PHP}]\begingroup PHP Hypertext Preprocessor\nomeqref {1.0}|nompageref}{3}
 \nomenclatureentry{aWOEID@[{WOEID}]\begingroup Where On Earth ID\nomeqref {1.0}|nompageref}{3}
 \nomenclatureentry{aCMS@[{CMS}]\begingroup Content Management System\nomeqref {2.0}|nompageref}{6}
-\nomenclatureentry{aAJAX@[{AJAX}]\begingroup Asynchronous JavaScript and XML\nomeqref {2.0}|nompageref}{18}
-\nomenclatureentry{aM2M@[{M2M}]\begingroup Machine-to-machine\nomeqref {3.0}|nompageref}{19}
-\nomenclatureentry{aURI@[{URI}]\begingroup Uniform Resource Identifier\nomeqref {3.0}|nompageref}{19}
-\nomenclatureentry{aTKL@[{TKL}]\begingroup ToKen Length\nomeqref {3.0}|nompageref}{21}
-\nomenclatureentry{aTLV@[{TLV}]\begingroup Type Length Value\nomeqref {3.0}|nompageref}{22}
-\nomenclatureentry{aCR@[{CR}]\begingroup Carriage Return\nomeqref {3.0}|nompageref}{23}
-\nomenclatureentry{aLF@[{LF}]\begingroup Line Feed\nomeqref {3.0}|nompageref}{23}
-\nomenclatureentry{aCON@[{CON}]\begingroup Confirmable\nomeqref {3.0}|nompageref}{24}
-\nomenclatureentry{aACK@[{ACK}]\begingroup Acknowledgement\nomeqref {3.0}|nompageref}{24}
-\nomenclatureentry{aRST@[{RST}]\begingroup Reset\nomeqref {3.0}|nompageref}{24}
-\nomenclatureentry{aNON@[{NON}]\begingroup Non-confirmable\nomeqref {3.0}|nompageref}{25}
-\nomenclatureentry{aASCII@[{ASCII}]\begingroup American Standard Code for Information Interchange\nomeqref {4.0}|nompageref}{35}
+\nomenclatureentry{aURL@[{URL}]\begingroup Uniform Resource Locator\nomeqref {2.0}|nompageref}{11}
+\nomenclatureentry{aAJAX@[{AJAX}]\begingroup Asynchronous JavaScript and XML\nomeqref {2.0}|nompageref}{19}
+\nomenclatureentry{aM2M@[{M2M}]\begingroup Machine-to-machine\nomeqref {3.0}|nompageref}{20}
+\nomenclatureentry{aURI@[{URI}]\begingroup Uniform Resource Identifier\nomeqref {3.0}|nompageref}{20}
+\nomenclatureentry{aOSI@[{OSI}]\begingroup Open Systems Interconnection\nomeqref {3.0}|nompageref}{21}
+\nomenclatureentry{aCON@[{CON}]\begingroup Confirmable CoAP message\nomeqref {3.0}|nompageref}{22}
+\nomenclatureentry{aNON@[{NON}]\begingroup Non-Confirmable CoAP message\nomeqref {3.0}|nompageref}{22}
+\nomenclatureentry{aACK@[{ACK}]\begingroup Acknowledgement CoAP message\nomeqref {3.0}|nompageref}{22}
+\nomenclatureentry{aRST@[{RST}]\begingroup Reset CoAP message\nomeqref {3.0}|nompageref}{22}
+\nomenclatureentry{aTKL@[{TKL}]\begingroup ToKen Length\nomeqref {3.0}|nompageref}{22}
+\nomenclatureentry{aTLV@[{TLV}]\begingroup Type Length Value\nomeqref {3.0}|nompageref}{23}
+\nomenclatureentry{aCR@[{CR}]\begingroup Carriage Return\nomeqref {3.0}|nompageref}{24}
+\nomenclatureentry{aLF@[{LF}]\begingroup Line Feed\nomeqref {3.0}|nompageref}{24}
+\nomenclatureentry{aASCII@[{ASCII}]\begingroup American Standard Code for Information Interchange\nomeqref {4.0}|nompageref}{36}
+\nomenclatureentry{aHTML@[{HTML}]\begingroup HyperText Markup Language\nomeqref {5.0}|nompageref}{64}
