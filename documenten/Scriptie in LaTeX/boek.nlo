@@ -1,4 +1,4 @@
-\nomenclatureentry{aIoT@[{IoT}]\begingroup Internet of Things\nomeqref {0}|nompageref}{3}
+\nomenclatureentry{aIoT@[{IoT}]\begingroup Internet of Things\nomeqref {1.0}|nompageref}{1}
 \nomenclatureentry{aIPv4@[{IPv4}]\begingroup Internet Protocol versie 4\nomeqref {1.0}|nompageref}{2}
 \nomenclatureentry{aIPv6@[{IPv6}]\begingroup Internet Protocol versie 6\nomeqref {1.0}|nompageref}{2}
 \nomenclatureentry{aHTTP@[{HTTP}]\begingroup HyperText Transfer Protocol\nomeqref {1.0}|nompageref}{2}
@@ -20,5 +20,5 @@
 \nomenclatureentry{aTLV@[{TLV}]\begingroup Type Length Value\nomeqref {3.0}|nompageref}{23}
 \nomenclatureentry{aCR@[{CR}]\begingroup Carriage Return\nomeqref {3.0}|nompageref}{24}
 \nomenclatureentry{aLF@[{LF}]\begingroup Line Feed\nomeqref {3.0}|nompageref}{24}
-\nomenclatureentry{aASCII@[{ASCII}]\begingroup American Standard Code for Information Interchange\nomeqref {4.0}|nompageref}{35}
-\nomenclatureentry{aHTML@[{HTML}]\begingroup HyperText Markup Language\nomeqref {5.0}|nompageref}{63}
+\nomenclatureentry{aASCII@[{ASCII}]\begingroup American Standard Code for Information Interchange\nomeqref {4.0}|nompageref}{36}
+\nomenclatureentry{aHTML@[{HTML}]\begingroup HyperText Markup Language\nomeqref {5.0}|nompageref}{64}
