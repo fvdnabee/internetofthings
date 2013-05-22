@@ -7,7 +7,7 @@
   \item [{AJAX}]\begingroup Asynchronous JavaScript and XML\nomeqref {2.0}
 		\nompageref{18}
   \item [{ASCII}]\begingroup American Standard Code for Information Interchange\nomeqref {4.0}
-		\nompageref{31}
+		\nompageref{35}
   \item [{CMS}]\begingroup Content Management System\nomeqref {2.0}
 		\nompageref{6}
   \item [{CoAP}]\begingroup Constrained Application Protocol\nomeqref {1.0}
@@ -16,8 +16,8 @@
   \item [{CR}]\begingroup Carriage Return\nomeqref {3.0}\nompageref{23}
   \item [{HTTP}]\begingroup HyperText Transfer Protocol\nomeqref {1.0}
 		\nompageref{2}
-  \item [{IoT}]\begingroup Internet of Things\nomeqref {0}
-		\nompageref{3}
+  \item [{IoT}]\begingroup Internet of Things\nomeqref {1.0}
+		\nompageref{1}
   \item [{IPv4}]\begingroup Internet Protocol versie 4\nomeqref {1.0}
 		\nompageref{2}
   \item [{IPv6}]\begingroup Internet Protocol versie 6\nomeqref {1.0}
@@ -26,7 +26,7 @@
   \item [{M2M}]\begingroup Machine-to-machine\nomeqref {3.0}
 		\nompageref{19}
   \item [{NON}]\begingroup Non-confirmable\nomeqref {3.0}
-		\nompageref{24}
+		\nompageref{25}
   \item [{PHP}]\begingroup PHP Hypertext Preprocessor\nomeqref {1.0}
 		\nompageref{3}
   \item [{RST}]\begingroup Reset\nomeqref {3.0}\nompageref{24}

@@ -2,7 +2,7 @@
 
 \section{Wat is CoAP?}
 
-CoAP is een web transfer protocol speciaal ontwikkeld voor netwerkcomponenten die beperkt zijn in zowel geheugen als energieverbruik als machine-to-machine (M2M)\nomenclature{M2M}{Machine-to-machine}communicatie. Naast het minimaliseren van de overhead concentreert CoAP zich ook op het automatiseren van taken. Het mechanisme van built-in discovery is hier een voorbeeld van. Met het verminderen van energieverbruik in het achterhoofd biedt CoAP naast synchrone ook asynchrone communicatie aan. Het biedt ook nieuwe soorten berichten aan zoals non-confirmable, piggy-backed, etc.\\
+CoAP is een web transfer protocol speciaal ontwikkeld voor netwerkcomponenten die beperkt zijn in zowel geheugen als energieverbruik, als in machine-to-machine (M2M)\nomenclature{M2M}{Machine-to-machine}communicatie. Met M2M-communciatie bedoelen we communciatie tussen machines waar geen menselijke tussenkomst nodig is. Zoals de berichten die routers naar mekaar sturen om hun routingtabel te synchroniseren. Naast het minimaliseren van de overhead concentreert CoAP zich ook op het automatiseren van taken. Het mechanisme van built-in discovery is hier een voorbeeld van. Met het verminderen van energieverbruik in het achterhoofd biedt CoAP naast synchrone ook asynchrone communicatie aan. Het biedt ook nieuwe soorten berichten aan zoals non-confirmable, piggy-backed, etc.\\
 
 Het interactiemodel van CoAP is vergelijkbaar met het client/server model van HTTP. Hoewel, bij een CoAP implementatie voor M2M interacties kan een device bij de ene berichtuitwisseling client zijn, en bij de andere server. Een CoAP request is equivalent aan een HTTP request en wordt ook gestuurd van de client naar de server om een actie aan te vragen op een resource die zich op die server bevindt. De actie wordt bepaald door een method code (GET, PUT, POST of DELETE) en de resource wordt aangeduid met een Uniform Resource Identifier (URI).\nomenclature{URI}{Uniform Resource Identifier} De server antwoordt met een response die onder andere een response code bevat.\\
 
@@ -67,7 +67,7 @@ Opties worden opgesteld d.m.v. de Type-Length-Value (TLV)\nomenclature{TLV}{Type
 Elke optie heeft een uniek nummer, maar wanneer meerdere opties in \'{e}\'{e}n pakket worden gestopt, worden de opties niet door dat nummer aangeduid, maar door de Option Delta. De Option Delta is het verschil tussen het nummer van een optie en dat van de vorige optie.
 Concreet, stel dat men na een optie met nummer 6 een optie met nummer 11 wil plaatsen, dan wordt deze laatste aangeduid met Option Delta gelijk aan 5 (11 - 6). Dit alles samen maakt dat een minimale (lege, maar daarom niet nutteloze) optie slechts 1 byte in beslag neemt. Dit heeft als gevolg dat opties na elkaar moeten worden geplaatst met oplopende Option Numbers.
 
-Indien de Option Delta 13 of meer is, schiet dit systeem tekort. Daarom zijn er speciale waarden ingevoerd die het gebruik van extended een extended Option Delta aangeven. Indien de waarde 13 gebruikt wordt, wordt er een extra byte voor de payload gezet dat opgevuld wordt met de echte Option Delta - 13. Indien de Option delta meer is dan 268, wordt als Option Delta de waarde 14 gebruikt. Deze waarde geeft aan dat er twee extra bytes gebruikt worden. Deze bytes worden opgevuld met de echte Option Delta - 269. De waarde 15 mag niet als Option Delta gebruikt worden want deze geeft het begin van de payload aan. Voor Option Length zijn de regels analoog.
+Indien de Option Delta 13 of meer is, schiet dit systeem tekort. Daarom zijn er speciale waarden ingevoerd die het gebruik van extended een extended Option Delta aangeven. Indien de waarde 13 gebruikt wordt, wordt er een extra byte voor de Option Value gezet dat opgevuld wordt met de echte Option Delta - 13. Indien de Option delta meer is dan 268, wordt als Option Delta de waarde 14 gebruikt. Deze waarde geeft aan dat er twee extra bytes gebruikt worden. Deze bytes worden opgevuld met de echte Option Delta - 269. De waarde 15 mag niet als Option Delta gebruikt worden want deze geeft het begin van de payload aan. Voor Option Length zijn de regels analoog.
 
 
 \begin{figure}[h]
@@ -199,19 +199,35 @@ Wanneer een resource observable is of anders gezegd, de observe functionaliteit 
 \subsection{Resource discovery} \label{resourceDiscovery}
 Resource discovery zorgt ervoor dat lokale client en servers elkaar kunnen vinden en met elkaar kunnen interageren zonder menselijk tussenkomst.
 
-\subsubsection{Werking}
-Resources kunnen maar aangesloten zijn op een device. Dit device maakt een fictieve resource aan met als naam de well-known/core. Deze fictieve resource bevat een opsomming van alle resources verbonden met dit device en een aantal gegevens over deze resources. Sommige well-known/core's bevatten ook verwijzingen naar resources op andere devices. Gebruikers kunnen nu een GET-request sturen om de well-known/core op te halen en hebben dan de informatie welke resources aangesloten zijn op het device waar ze de request naar stuurden. De manier waarop deze informatie weergegeven wordt, is met het CoRE Link Format. Dit formaat wordt later behandeld.\\
-
+\subsubsection{Principe}
 \noindent
-De well-known/core bevat veel informatie die niet in een enkel request-response paar uitgewisseld kan worden. Daarom wordt er gebruik gemaakt van blocks welke uitgelegd worden in \ref{blocks}.
+Resources kunnen maar aangesloten zijn op een device. Dit device maakt een fictieve resource aan met als naam de well-known/core. Deze fictieve resource bevat een opsomming van alle resources verbonden met dit device en een aantal gegevens over deze resources onder de vorm van attributen. Sommige well-known/core's bevatten ook verwijzingen naar resources op andere devices. Gebruikers kunnen een GET-request sturen om de well-known/core op te halen en hebben dan deze informatie tot hun beschikking. De well-known/core bevat echter veel informatie die niet in een enkel request-response paar uitgewisseld kan worden. Daarom wordt er gebruik gemaakt van blocks welke uitgelegd worden in \ref{blocks}. De manier waarop deze informatie doorgegeven wordt, is door gebruik te maken van het CoRE Link Format \cite{coapDiscovery}.
 
 \subsubsection{CoRE Link Format}
+Er worden geen resources opgeslaan in de well-known/core maar links naar deze resources. Als formaat van de links moet het CoRE Link Format gebruikt worden. Een resource wordt uniek ge\"{i}dentificeerd met een uri die tussen kleiner-dan (\textless) en een groter-dan (\textgreater) teken staat. Na de uri worden alle attributen opgesomd gescheiden door een puntkomma (;). De attributen zelf hebben de vorm van een name-value paar. Sommige attributen kunnen meerdere waarden hebben, deze waarden worden dan gescheiden door een spatie. Tot slot worden verschillende links gescheiden met een komma (,).\\
 
-%welke opties worden bijgehouden? (rt, ifd, obs,...)
+\noindent
+Als voorbeeld geven we het antwoord op een GET-request van een well-known/core:\\
+\textless/temp\textgreater;rt="temperature-c";if="sensor",\\
+\textless/light\textgreater;rt="light-lux";if="sensor"\\
+We zien dat het device met deze core twee resources aanbiedt. De eerste resource wordt ge\"{i}dentificeerd met de uri /temp, de andere met /light. Beide resources hebben twee attributen maar er zijn meer attributen mogelijk. We sommen de meest voorkomende attributen op:
+\begin{itemize}
+\item obs (Observable): Geef aan of de resouce observable is, indien deze optie ontbreekt wordt aangenomen dat de resource niet observable is.
+\item rt (Resource Type): Geeft het type van de resource. De waarden zijn afhankelijk van de gebruikte applicatie. Ze hebben als nut dat binnen een applicatie, resources van hetzelfde type herkent kunnen worden. Dan kan via query filtering, alle resources van een type opgehaald worden.
+\item ct (Content Type): Bevat een opsomming van de content formats die ondersteund worden door deze resource. 
+\item if (Interface Description): Bevat een beschrijving van welke methoden deze resource ondersteunt.
+\item sz (Maximum Size Estimate): Geeft aan hoe groot het maximum aantal gegevens ongeveer is als antwoord op een GET-request.
+\item title: Bevat een omschrijving van deze resource.
+\item anchor: 
+\item rel: 
+\end{itemize}
+De lijst met alle attributen vind je in de CoRE Link Format draft \cite{coapDiscovery}.\\
 
-\subsubsection{Use-case}
-+-+-+-+-+-+-+-+-+-+-+-+-+
+\subsubsection{Core ophalen}
+Om een well-known/core op te halen, moet je twee maal de Uri-Path Option (optie 11) toevoegen aan een GET-request die gericht is naar het IP-adres van het device waar de core zich op bevindt. De eerste keer met als value 'well-known' en de tweede keer gebruik je als value 'core'.\\
 
-\subsection{Resource directory} %zeg hier ook wrm we niet voor service discovery gekozen hebben en we resource directory als alternatief verkiezen
+We 
 
-Het concept 'resource directory' moet nog verwerkt en ge\"{i}mplementeerd worden. De vergelijking met het alternatief 'service discovery' komt ook in deze paragraaf.
+\subsubsection{Query Filtering}
+Het is mogelijk een specifieke discovery uit te voeren indien er enkel informatie over één resource moet gekend zijn of enkel de resources waarbij een bepaald attribuut een specifieke waarde heeft. Dit heeft als voordeel dat het netwerk niet overbodig belast moet worden als dat niet nodig is. De query-filter wordt voorgesteld door een name-value pair. Deze wordt toegevoegd door de Uri-Query Option (optie 15) te gebruiken.
+

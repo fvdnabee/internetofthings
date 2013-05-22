@@ -1,4 +1,4 @@
-\nomenclatureentry{aIoT@[{IoT}]\begingroup Internet of Things\nomeqref {0}|nompageref}{3}
+\nomenclatureentry{aIoT@[{IoT}]\begingroup Internet of Things\nomeqref {1.0}|nompageref}{1}
 \nomenclatureentry{aIPv4@[{IPv4}]\begingroup Internet Protocol versie 4\nomeqref {1.0}|nompageref}{2}
 \nomenclatureentry{aIPv6@[{IPv6}]\begingroup Internet Protocol versie 6\nomeqref {1.0}|nompageref}{2}
 \nomenclatureentry{aHTTP@[{HTTP}]\begingroup HyperText Transfer Protocol\nomeqref {1.0}|nompageref}{2}
@@ -18,4 +18,4 @@
 \nomenclatureentry{aACK@[{ACK}]\begingroup Acknowledgement\nomeqref {3.0}|nompageref}{24}
 \nomenclatureentry{aRST@[{RST}]\begingroup Reset\nomeqref {3.0}|nompageref}{24}
 \nomenclatureentry{aNON@[{NON}]\begingroup Non-confirmable\nomeqref {3.0}|nompageref}{25}
-\nomenclatureentry{aASCII@[{ASCII}]\begingroup American Standard Code for Information Interchange\nomeqref {4.0}|nompageref}{34}
+\nomenclatureentry{aASCII@[{ASCII}]\begingroup American Standard Code for Information Interchange\nomeqref {4.0}|nompageref}{35}
