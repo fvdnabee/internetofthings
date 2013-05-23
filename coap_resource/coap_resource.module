@@ -689,7 +689,6 @@ function coap_resource_node_insert($node){
 				'device' => 0,
 				'nid' => $nid,
 				'observe' => 0,
-				'responded' => 0,
 				'version_time' => time(),
 			))
 			->execute();
@@ -977,11 +976,6 @@ function coap_resource_start_request($method, $nid, $payload=''){
 				coap_resource_insert_response_into_database($response_obj, $user->uid);
 			}
 		}
-		
-		if($response_obj != null){
-			//	Insert the response into the database for the current user
-			coap_resource_give_response_to_user($response_obj, $method);
-		}
 	}
 }
 
@@ -1091,33 +1085,6 @@ function coap_resource_receive_notification($response_obj){
 	//	Add response to the database for every user that is interested, except from the current user
 	foreach($result as $record){
 		coap_resource_insert_response_into_database($response_obj, $record->uid);
-	}
-}
-
-//	Adds the given response to the current user so the user can see the response (via database)
-function coap_resource_give_response_to_user($response_obj, $request_method){
-	global $user;
-	
-	if($response_obj != null){
-		$num_updated = db_update('coap_resource_users')
-		->fields(array(
-			'responded' => 1,
-			'last_method' => $request_method,
-			'last_response' => $response_obj->get_payload_text(),
-			'response_type' => $response_obj->get_message_code(),
-		))
-		->condition('uid', $user->uid, '=')
-		->execute();
-	}
-	else{
-		$num_updated = db_update('coap_resource_users')
-		->fields(array(
-			'responded' => 1,
-			'last_method' => $request_method,
-			'last_response' => 'no response returned',
-		))
-		->condition('uid', $user->uid, '=')
-		->execute();
 	}
 }
 

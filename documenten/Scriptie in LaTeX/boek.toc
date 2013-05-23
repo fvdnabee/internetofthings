@@ -88,39 +88,39 @@
 \contentsline {subsubsection}{Caching}{47}
 \contentsline {subsection}{\numberline {5.1.3}Content-type in de databank}{48}
 \contentsline {subsubsection}{coap\_resource\_resources}{48}
-\contentsline {subsubsection}{coap\_resource\_users}{48}
-\contentsline {subsubsection}{coap\_resource\_values}{48}
-\contentsline {subsection}{\numberline {5.1.4}Content-types in Drupal}{48}
-\contentsline {subsubsection}{CoAP Resource}{49}
-\contentsline {subsubsection}{CoAP Device}{51}
-\contentsline {section}{\numberline {5.2}Implementatie van de CoAP library-hooks}{52}
-\contentsline {subsection}{\numberline {5.2.1}hook\_receive\_notification()}{52}
-\contentsline {subsection}{\numberline {5.2.2}hook\_receive\_error()}{52}
-\contentsline {subsection}{\numberline {5.2.3}hook\_stop\_observers()}{53}
-\contentsline {section}{\numberline {5.3}Evolutie van de module}{53}
-\contentsline {subsection}{\numberline {5.3.1}Temperatuurmodule met HTTP/CoAP-proxy}{53}
-\contentsline {subsubsection}{Proxy}{54}
-\contentsline {subsubsection}{Polling}{54}
-\contentsline {subsection}{\numberline {5.3.2}Temperatuurmodule met native CoAP}{55}
-\contentsline {subsubsection}{Observe}{55}
-\contentsline {subsection}{\numberline {5.3.3}CoAP Resource module met externe CoAP library}{56}
-\contentsline {subsubsection}{Nieuwe block}{56}
-\contentsline {subsection}{\numberline {5.3.4}CoAP Resource module met content type CoAP Resource}{58}
-\contentsline {subsection}{\numberline {5.3.5}CoAP resource met volledige REST functionaliteit}{58}
-\contentsline {subsection}{\numberline {5.3.6}CoAP Resource module met resource discovery}{59}
-\contentsline {subsubsection}{Multi-form}{60}
-\contentsline {subsubsection}{Tabbladen}{60}
-\contentsline {subsection}{\numberline {5.3.7}CoAP resource met meerdere content types}{61}
-\contentsline {subsubsection}{Polling}{62}
-\contentsline {subsubsection}{Templating}{64}
-\contentsline {subsubsection}{Foutmechanisme}{65}
-\contentsline {chapter}{\numberline {6}Uitbreidingen}{67}
-\contentsline {section}{\numberline {6.1}Keuze van interval bij automatisch ophalen}{67}
-\contentsline {section}{\numberline {6.2}Opvragen devices in subnetwerk met resource directory}{67}
-\contentsline {section}{\numberline {6.3}Conditional observe}{68}
-\contentsline {subsection}{\numberline {6.3.1}Keep-alive}{69}
-\contentsline {section}{\numberline {6.4}Drupal Entities}{70}
-\contentsline {section}{\numberline {6.5}Configuratie op maat}{70}
+\contentsline {subsubsection}{coap\_resource\_users}{49}
+\contentsline {subsubsection}{coap\_resource\_values}{50}
+\contentsline {subsection}{\numberline {5.1.4}Content-types in Drupal}{51}
+\contentsline {subsubsection}{CoAP Resource}{52}
+\contentsline {subsubsection}{CoAP Device}{54}
+\contentsline {section}{\numberline {5.2}Implementatie van de CoAP library-hooks}{55}
+\contentsline {subsection}{\numberline {5.2.1}hook\_receive\_notification()}{55}
+\contentsline {subsection}{\numberline {5.2.2}hook\_receive\_error()}{55}
+\contentsline {subsection}{\numberline {5.2.3}hook\_stop\_observers()}{56}
+\contentsline {section}{\numberline {5.3}Evolutie van de module}{56}
+\contentsline {subsection}{\numberline {5.3.1}Temperatuurmodule met HTTP/CoAP-proxy}{56}
+\contentsline {subsubsection}{Proxy}{57}
+\contentsline {subsubsection}{Polling}{57}
+\contentsline {subsection}{\numberline {5.3.2}Temperatuurmodule met native CoAP}{58}
+\contentsline {subsubsection}{Observe}{58}
+\contentsline {subsection}{\numberline {5.3.3}CoAP Resource module met externe CoAP library}{59}
+\contentsline {subsubsection}{Nieuwe block}{59}
+\contentsline {subsection}{\numberline {5.3.4}CoAP Resource module met content type CoAP Resource}{61}
+\contentsline {subsection}{\numberline {5.3.5}CoAP resource met volledige REST functionaliteit}{61}
+\contentsline {subsection}{\numberline {5.3.6}CoAP Resource module met resource discovery}{62}
+\contentsline {subsubsection}{Multi-form}{63}
+\contentsline {subsubsection}{Tabbladen}{63}
+\contentsline {subsection}{\numberline {5.3.7}CoAP resource met meerdere content types}{64}
+\contentsline {subsubsection}{Polling}{65}
+\contentsline {subsubsection}{Templating}{67}
+\contentsline {subsubsection}{Foutmechanisme}{68}
+\contentsline {chapter}{\numberline {6}Uitbreidingen}{70}
+\contentsline {section}{\numberline {6.1}Keuze van interval bij automatisch ophalen}{70}
+\contentsline {section}{\numberline {6.2}Opvragen devices in subnetwerk met resource directory}{70}
+\contentsline {section}{\numberline {6.3}Conditional observe}{71}
+\contentsline {subsection}{\numberline {6.3.1}Keep-alive}{72}
+\contentsline {section}{\numberline {6.4}Drupal Entities}{73}
+\contentsline {section}{\numberline {6.5}Configuratie op maat}{73}
 \select@language {english}
 \select@language {dutch}
 \select@language {dutch}

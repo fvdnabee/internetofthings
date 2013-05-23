@@ -101,10 +101,51 @@ Dit aspect is zeker een van de meer belangrijke omdat verbindingen naar een reso
 
 \subsection{Content-type in de databank}
 Onder content-type van de databank verstaan we de definitie van nodige databanktabellen en -kolommen. Er moet namelijk heel wat data opgeslagen worden waaronder de verschillende resources, users en de opgehaalde waarden.\\
-We onderscheiden drie tabellen:
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=1\textwidth]{fig/databankModel}
+\caption{EER-diagram van de door ons toegevoegde tabellen.}
+\label{fig:databankModel}
+\end{figure}
+
+We onderscheiden drie tabellen (Zie figuur \ref{fig:databankModel}):
 \subsubsection{coap\_resource\_resources}
+Deze tabel bevat een entry voor elke CoAP resource die nodig kan zijn en bovendien een entry voor elk embedded device waarop de resources aangesloten zijn. Deze tabel bevat de volgende kolommen (Zie figuur \ref{fig:databankModel}):
+\begin{itemize}
+\item uri: Dit is de volledige URI van de resource, dus IPv6-adres en URI-path. Tenzij het hier een embedded device betreft, dan bestaat de URI enkel uit een IPv6-adres. Dit is tevens de primaire sleutel van deze kolom, elke waarde moet dus uniek zijn.
+\item obs, rt, ct, ifd, sz, title, anchor en rel: Deze kolommen bevatten waarden die bekomen worden bij resource disovery. Deze werden eerder uitgelegd in paragraaf \ref{resourceDiscovery}.
+\item last\_error: Deze kolom bevat voor elke resource de laatst opgetreden fout. Zo kan een browser te weten komen bij polling dat er iets foutliep bij communicatie met de betreffende resource.
+\item created: ?
+\item changed: ?
+\item deleted: ?
+\end{itemize}
 \subsubsection{coap\_resource\_users}
+Deze tabel bevat een entry voor elk koppel user/resource. Op die manier kan per user worden bijgehouden wat een user met een bepaalde resource wil doen. Ze bestaat uit de volgende kolommen:
+\begin{itemize}
+\item uid: een unieke identificatie voor een gebruiker. Dit ID is overgenomen uit Drupal, daar hebben alle gebruikers ook een uniek ID. Deze kolom is tevens deel van de primaire sleutel en is dus uniek.
+\item uri: De URI van de resource waarin de gebruiker ge\{i\}nteresseerd is. Dit is dezelfde URI als in de vorige tabel (coap\_resource\_resources), deze kolom vormt dus een foreign key. Deze kolom maakt tevens uit van de primaire sleutel en dus moeten de waarden ervan uniek zijn.
+\item nid: een unieke identificatie van de node waaraan de resource van deze user gekoppeld is in Drupal. Deze kolom is ook deel van de primaire sleutel en dus moeten de waarden ervan ook uniek zijn in deze tabel.
+\item device: deze waarde geeft aan of het hier een resource of een volledig embedded device betreft (0 = resource, 1 = device).
+\item observe: deze waarde geeft aan of de gebruiker momenteel de resource wil observeren of niet (0 = niet observeren, 1 = wel observeren).
+\item polling\_interval: dit is de periode in seconden tussen twee polls van de browser naar de Drupal server, deze is default drie seconden.
+\item new: ?
+\item version\_time: ?
+\end{itemize}
 \subsubsection{coap\_resource\_values}
+Deze tabel bevat een entry voor elke waarde die is binnengekomen. Bovendien wordt een nieuwe waarde even veel keren toegevoegd als er ge\"{i}nteresseerden zijn voor die waarde op dat moment. Dit lijkt op het eerste zicht redundante informatie, maar het heeft wel degelijk nut. Zo kan men bijvoorbeeld later te weten komen voor een bepaalde user, welke waarden hij/zij in welke periode heeft opgevraagd. De tabel bevat de volgende kolommen:
+\begin{itemize}
+\item hid: dit is een uniek ID voor de entry automatisch gegenereerd bij toevoegen aan de databank. Dit is de primaire sleutel, dus deze waarden moeten uniek zijn.
+\item uid: dit is het ID van de user waarvoor deze waarde opgeslagen is. Dit is hetzelfde ID als in de coap\_resource\_users-tabel en vormt dus een foreign key.
+\item uri: dit is de URI van de resource waarvan deze waarde komt. Dit is dezelfde URI als in de coap\_resource\_resources-tabel en vormt dus een foreign key.
+\item content\_format: deze kolom bevat voor elke entry het formaat van het bericht, aangeduidt met een leesbare naam (bijvoorbeeld plain text, JSON, ...). 
+\item payload: dit is de payload van het bericht in leesbare vorm.
+\item parsed\_value: dit is, indien mogelijk, een waarde die geparset is uit de payload, bijvoorbeeld een numerieke waarde. Indien er geen waarde kon geparset worden bevat deze kolom gewoon de payload.
+\item max\_age: geeft aan wat de geldigheidsduur is voor deze waarde, deze is default nul.
+\item timestamp: het tijdstip waarop de waarde in de databank werd opgeslagen, deze wordt automatisch gegenereerd. Samen met de max-age kan men dus bepalen of de waarde nog geldig is.
+\item original\_response: de originele response op het CoAP request-bericht in hexadecimale vorm.
+\item new: geeft aan of de waarde reeds opgehaald werd om te tonen aan de gebruiker (0 = reeds afgehaald, 1 = nog niet afgehaald, default waarde = 0).
+\end{itemize}
 
 \subsection{Content-types in Drupal}
 

@@ -244,31 +244,6 @@ function coap_resource_schema() {
 					'not null' => TRUE,
 					'default' => 3,
 				),
-				'last_method' => array(
-					'description' => 'Methode van laatste request --> {GET, PUT, POST, DELETE}',
-					'type' => 'varchar',
-					'not null' => FALSE,
-					'length' => '64',
-				),
-				'last_response' => array(
-					'description' => 'Laatst verkregen response',
-					'type' => 'varchar',
-					'not null' => FALSE,
-					'length' => '2048',
-				),
-				'responded' => array(
-					'description' => 'value indicating if server just responded',
-					'type' => 'int',
-					'unsigned' => TRUE,
-					'not null' => TRUE,
-					'default' => 0,
-				),
-				'response_type' => array(
-					'description' => 'Response type of last received response',
-					'type' => 'varchar',
-					'not null' => FALSE,
-					'length' => '2048',
-				),
 				'new' => array(
 					'description' => 'value indicating if discovery values are in',
 					'type' => 'int',
@@ -425,21 +400,21 @@ function coap_resource_disable(){
 		// Delete all the nodes at once
 		node_delete_multiple($nids);
 		
-		//delete any variables made by module
+		// delete any variables made by module
 		variable_del("comment_$content_type");
 		variable_del("node_preview_$content_type");
 		variable_del("node_submitted_$content_type");
 		variable_del("node_options_$content_type");	
 		
-		//remove comment instances (we currently don't have the possibility enabled for leaving comments).
+		// remove comment instances (we currently don't have the possibility enabled for leaving comments).
 		$instance = array('field_name' => 'comment_body','bundle' => "comment_node_$content_type",'entity_type' => 'comment');
 		field_delete_instance($instance);
 		
-		//remove field instances
+		// remove field instances
 		$instance = array('field_name' => 'body','bundle' => $content_type,'entity_type' => 'node');
 		field_delete_instance($instance);
 		
-		//deleting content type
+		// deleting content type
 		node_type_delete($content_type);
 		node_types_rebuild();
 		
