@@ -234,7 +234,7 @@ function valueReceived(html){
 function discoverReady(xml){
 	//omdat we overhevelen naar jquery zal dit interval niet meer gestopt mogen worden, aangezien de pagina niet meer herladen zal worden, moet de jquery code blijven lopen
 	console.log(xml);
-	if(xml == '::new=1'){
+	if(xml == 'reload'){
 		location.reload();
 	}
 }

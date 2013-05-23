@@ -3,7 +3,7 @@
 	<div class = "header" align = "center" >
 		<input type = "text" class = "POLLING_INVOER" size = "2" id = "<?php echo "polling_invoer_" . $content['field_resource_uri']['#items'][0]['value'] ?>" 
 					value = "<?php 	global $user;
-									$result = db_select('coap_resource_users', 'users')
+									$result = db_select('coap_resource_interested_user', 'users')
 									->fields('users', array('uid', 'uri', 'polling_interval'))
 									->condition('uid', $user->uid, '=')
 									->condition('nid', $node->nid, '=')
@@ -53,7 +53,7 @@
 	</div>
 	<div class = 'OBSERVE' align = "center" >
 		<input type = "button" id = "<?php echo "btn_OBSERVE_" . $content['field_resource_uri']['#items'][0]['value'] ?>"
-				class = "OBSERVE_BUTTON form-submit" value = "<?php $result = db_select('coap_resource_users', 'users')
+				class = "OBSERVE_BUTTON form-submit" value = "<?php $result = db_select('coap_resource_interested_user', 'users')
 																	->fields('users', array('uid', 'uri'))
 																	->condition('uid', $user->uid, '=')
 																	->condition('device', 0, '=')

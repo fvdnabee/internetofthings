@@ -153,7 +153,7 @@ function _coap_resource_node_form_validate(&$form,&$form_state) {
 		form_set_error('field_resource_uri', 'Please enter a valid IPv6-adress for a resource.');
 	}
 	else if(!isset($form_state['values']['nid'])){
-		$result = db_select('coap_resource_users','resource')
+		$result = db_select('coap_resource_interested_user','resource')
 			->fields('resource', array('uri'))
 			->condition('uri', $matches[0], '=')
 			->condition('uid', $user->uid, '=')
@@ -175,7 +175,7 @@ function _coap_device_node_form_validate(&$from,&$form_state) {
 		form_set_error('field_device_uri', 'Please enter a valid IPv6-adress for a device.');
 	}
 	else if(!isset($form_state['values']['nid'])){
-		$result = db_select('coap_resource_users','device')
+		$result = db_select('coap_resource_interested_user','device')
 			->fields('device', array('uri'))
 			->condition('uri', $matches[0], '=')
 			->condition('uid', $user->uid, '=')
@@ -205,8 +205,8 @@ function coap_resource_form($form, &$form_state, $node) {
 	$current_interval = 1;
 	$empty = TRUE;
 	
-	$query = db_select('coap_resource_users', 'users');
-	$query->join('coap_resource_resources', 'resources', 'users.uri = resources.uri');
+	$query = db_select('coap_resource_interested_user', 'users');
+	$query->join('coap_resource_resource', 'resources', 'users.uri = resources.uri');
 	$query
 		->fields('users')
 		->fields('resources')
@@ -324,7 +324,7 @@ function coap_resource_block_view($delta='') {
 	$block_content = null;
 	
 	$current_interval = 1;
-	$query = db_select('coap_resource_users', 'users');
+	$query = db_select('coap_resource_interested_user', 'users');
 	$query
 		->fields('users', array('uid', 'polling_interval'))
 		->condition('uid', $user->uid, '=');
@@ -376,7 +376,7 @@ function coap_resource_block_view($delta='') {
 	$block_content .= "<img style = 'visibility:hidden;' src = '' id = 'errorimg' /><label id='error' ></label>"; // elementen om fouten te tonen
 	
 	// Te bekijken URI ophalen
-	$query = db_select('coap_resource_users', 'users');
+	$query = db_select('coap_resource_interested_user', 'users');
 	$query
 		->fields('users', array('uid', 'uri'))
 		->condition('uid', $user->uid, '=');
@@ -437,8 +437,8 @@ function coap_resource_observe_form(&$form, &$form_state, $nid) {
 	);
 	
 	//indien alleen de observables een checkbox mogen krijgen:
-	// $query = db_select('coap_resource_users', 'users');
-	// $query->join('coap_resource_resources', 'resources', 'users.uri = resources.uri');
+	// $query = db_select('coap_resource_interested_user', 'users');
+	// $query->join('coap_resource_resource', 'resources', 'users.uri = resources.uri');
 	// $query
 		// ->fields('users', array('uid', 'uri', 'device', 'observe'))
 		// ->fields('resources', array('obs'))
@@ -458,7 +458,7 @@ function coap_resource_observe_form(&$form, &$form_state, $nid) {
 	// }
 
 	// Checkbox per observable resource
-	$result = db_select('coap_resource_users', 'users')
+	$result = db_select('coap_resource_interested_user', 'users')
 		->fields('users', array('uid', 'uri', 'device', 'observe'))
 		->condition('uid', $user->uid,'=')
 		->condition('device', 0,'=')
@@ -489,7 +489,7 @@ function coap_resource_observe_form_submit($form, $form_state) {
 	global $user;
 	
 	//	Get URI's for this user and for this node
-	$result = db_select('coap_resource_users', 'users')
+	$result = db_select('coap_resource_interested_user', 'users')
 		->fields('users', array('uid', 'uri'))
 		->condition('uid', $user->uid, '=')
 		->condition('device', 0, '=')
@@ -497,7 +497,7 @@ function coap_resource_observe_form_submit($form, $form_state) {
 		->execute();
 	foreach ($result as $record){
 		//	Get number of observers for the current URI
-		$observe_result = db_select('coap_resource_users', 'users')
+		$observe_result = db_select('coap_resource_interested_user', 'users')
 			->fields('users', array('uid', 'uri', 'observe'))
 			->condition('uri', $record->uri, '=')
 			->condition('device', 0, '=')
@@ -511,7 +511,7 @@ function coap_resource_observe_form_submit($form, $form_state) {
 		}
 		
 		//	Store in database that this user is observing or not observing the current URI
-		$num_updated = db_update('coap_resource_users')
+		$num_updated = db_update('coap_resource_interested_user')
 			->fields(array(
 				'observe' => $form_state['values'][$record->uri],
 			))
@@ -522,7 +522,7 @@ function coap_resource_observe_form_submit($form, $form_state) {
 			->execute();
 		
 		//	Get number of users that is still observing the current URI
-		$observe_result = db_select('coap_resource_users', 'users')
+		$observe_result = db_select('coap_resource_interested_user', 'users')
 			->fields('users', array('uid', 'uri', 'observe'))
 			->condition('uri', $record->uri, '=')
 			->condition('device', 0, '=')
@@ -682,20 +682,18 @@ function coap_resource_node_insert($node){
 		$uri = $node->field_resource_uri['und'][0]['value'];
 		
 		//voeg toe in de db dat de user geïnteresseerd is in deze resource op deze node
-		$id = db_insert('coap_resource_users')
+		$id = db_insert('coap_resource_interested_user')
 			->fields(array(
 				'uid' => $user->uid,
 				'uri' => $uri,
 				'device' => 0,
 				'nid' => $nid,
 				'observe' => 0,
-				'responded' => 0,
-				'version_time' => time(),
 			))
 			->execute();
 		
 		//kijk in de db of er al informatie over deze resource inzit
-		$result = db_select('coap_resource_resources', 'resources')
+		$result = db_select('coap_resource_resource', 'resources')
 			->fields('resources', array('uri'))
 			->condition('uri', $uri, '=')
 			->execute();
@@ -711,7 +709,7 @@ function coap_resource_node_insert($node){
 		$device_uri = $node->field_device_uri['und'][0]['value'];
 		
 		//heeft de gebruiker dit device al toegevoegd?
-		$result = db_select('coap_resource_users', 'coap_user')
+		$result = db_select('coap_resource_interested_user', 'coap_user')
 			->fields('coap_user', array('uri','uid','device'))
 			->condition('uri', $device_uri, '=')
 			->condition('uid', $user->uid, '=')
@@ -720,7 +718,7 @@ function coap_resource_node_insert($node){
 		
 		if($result->rowCount() == 0){
 			//heeft iemand interesse in het device? m.a.w. is er al een discovery uitgevoerd?
-			$result = db_select('coap_resource_users', 'coap_user')
+			$result = db_select('coap_resource_interested_user', 'coap_user')
 				->fields('coap_user', array('uri','device'))
 				->condition('uri', $device_uri, '=')
 				->condition('device', 1, '=')
@@ -729,24 +727,21 @@ function coap_resource_node_insert($node){
 			if($result->rowCount() == 0){
 				//voer discovery uit, zet flag zodat de resources gecreëerd en gereferenced worden in de discovery callback -> vlag wordt onderaan gezet
 				$new = 1;
-				$version_time = time();
 				background_process_start('_start_discovery', $device_uri, $nid);
 			}
 			else{
 				//zet de vlag zodat de resources gecreëerd en gereferenced worden in de discovery callback -> vlag wordt onderaan gezet
 				$new = 2;
-				$version_time = time();
 			}
 			
 			//toevoegen dat de user geïnteresseerd is moet sowieso
-			$id = db_insert('coap_resource_users')
+			$id = db_insert('coap_resource_interested_user')
 			->fields(array(
 				'uid' => $user->uid,
 				'uri' => $device_uri,				
 				'nid' => $nid,
 				'device' => 1,
 				'new' => $new,
-				'version_time' => $version_time,
 			))
 			->execute();
 			
@@ -763,14 +758,14 @@ function coap_resource_node_delete($node){
 	$nid = $node->nid;
 	//eigenlijk mag volgende query voor beide content types gebruikt worden en de device conditie weggelaten
 	if($node->type == 'coap_resource'){
-		db_delete('coap_resource_users')
+		db_delete('coap_resource_interested_user')
 			//->condition('uid', $user->uid, '=')
 			->condition('nid', $nid, '=')
 			->condition('device',0,'=')
 			->execute();
 	}
 	else if($node->type == 'coap_device'){
-		db_delete('coap_resource_users')
+		db_delete('coap_resource_interested_user')
 			//->condition('uid', $user->uid, '=')
 			->condition('nid', $nid, '=')
 			->condition('device',1,'=')
@@ -791,7 +786,7 @@ function coap_resource_poll($uri){
 	$output = "<poll><uri>" . $uri . "</uri>";
 	
 	//	Retrieve last error from database
-	$resources_query = db_select('coap_resource_resources', 'resources');
+	$resources_query = db_select('coap_resource_resource', 'resources');
 	$resources_query
 		->fields('resources', array('uri', 'last_error'))
 		->condition('uri', $uri, '=');
@@ -839,7 +834,7 @@ function coap_resource_change_interval($uri, $interval){
 	$uri = str_replace('|', '/', $uri); //	Put slashes back in the URI
 	
 	$seconds = intval($interval);
-	$id = db_update('coap_resource_users')
+	$id = db_update('coap_resource_interested_user')
 			->fields(array(
 				'polling_interval' => $seconds,
 			))
@@ -859,7 +854,7 @@ function coap_resource_start_observing($uri){
 		$coap_factory = new CoAPMessageFactory('coap_resource', $ip, $resource);
 		
 		//	Get the record from the database for given URI if it's observable, to check if the resource is observable
-		$query = db_select('coap_resource_resources', 'resources');
+		$query = db_select('coap_resource_resource', 'resources');
 		$query
 			->fields('resources', array('uri', 'obs'))
 			->condition('obs', 1, '=')
@@ -874,7 +869,7 @@ function coap_resource_start_observing($uri){
 		else{
 			// resource is not observable
 			$message = $coap_factory->create_basic_get_request($resource);
-			$query = db_select('coap_resource_users', 'users');
+			$query = db_select('coap_resource_interested_user', 'users');
 			$query
 				->fields('users', array('uri', 'observe'))
 				->condition('observe', 1, '=')
@@ -892,7 +887,7 @@ function coap_resource_start_observing($uri){
 
 //	Hook that is being called by CoAP library when observers of a given resource should stop observing
 function coap_resource_stop_observers($ip, $resource){
-	$num_updated = db_update('coap_resource_users')
+	$num_updated = db_update('coap_resource_interested_user')
 			->fields(array(
 				'observe' => 0,
 			))
@@ -902,7 +897,7 @@ function coap_resource_stop_observers($ip, $resource){
 
 //	Returns the number of observers that are observing the given resource
 function coap_resource_get_number_of_observers($ip, $resource){
-	$query = db_select('coap_resource_users', 'users');
+	$query = db_select('coap_resource_interested_user', 'users');
 	$query
 		->fields('users', array('uri', 'observe'))
 		->condition('uri', $ip . "/" . $resource, '=')
@@ -917,7 +912,7 @@ function coap_resource_start_request($method, $nid, $payload=''){
 	global $user;
 	
 	//	Gets the URI for the resource that is selected by the user
-	$result = db_select('coap_resource_users', 'users')
+	$result = db_select('coap_resource_interested_user', 'users')
 		->fields('users', array('uid', 'uri', 'nid', 'device'))
 		->condition('uid', $user->uid, '=')
 		->condition('device', 0, '=')
@@ -976,11 +971,6 @@ function coap_resource_start_request($method, $nid, $payload=''){
 				//	Insert the response into the database to add to the history of responses
 				coap_resource_insert_response_into_database($response_obj, $user->uid);
 			}
-		}
-		
-		if($response_obj != null){
-			//	Insert the response into the database for the current user
-			coap_resource_give_response_to_user($response_obj, $method);
 		}
 	}
 }
@@ -1063,7 +1053,7 @@ function coap_resource_get_temperature($payload){
 
 //	Hook being called by the CoAP library if something went wrong when communicating with the resource with given ip and URI-path
 function coap_resource_receive_error($error_message, $ip, $resource){
-	$num_updated = db_update('coap_resource_resources')
+	$num_updated = db_update('coap_resource_resource')
 			->fields(array(
 				'last_error' => $error_message,
 			))
@@ -1080,7 +1070,7 @@ function coap_resource_receive_notification($response_obj){
 	coap_resource_insert_response_into_database($response_obj, $user->uid);
 	
 	//	Get interested user different from the current user
-	$query = db_select('coap_resource_users', 'users');
+	$query = db_select('coap_resource_interested_user', 'users');
 	$query
 		->fields('users', array('uri', 'uid', 'observe'))
 		->condition('uri', $response_obj->get_ip() . '/' . $response_obj->get_resource(), '=')
@@ -1091,33 +1081,6 @@ function coap_resource_receive_notification($response_obj){
 	//	Add response to the database for every user that is interested, except from the current user
 	foreach($result as $record){
 		coap_resource_insert_response_into_database($response_obj, $record->uid);
-	}
-}
-
-//	Adds the given response to the current user so the user can see the response (via database)
-function coap_resource_give_response_to_user($response_obj, $request_method){
-	global $user;
-	
-	if($response_obj != null){
-		$num_updated = db_update('coap_resource_users')
-		->fields(array(
-			'responded' => 1,
-			'last_method' => $request_method,
-			'last_response' => $response_obj->get_payload_text(),
-			'response_type' => $response_obj->get_message_code(),
-		))
-		->condition('uid', $user->uid, '=')
-		->execute();
-	}
-	else{
-		$num_updated = db_update('coap_resource_users')
-		->fields(array(
-			'responded' => 1,
-			'last_method' => $request_method,
-			'last_response' => 'no response returned',
-		))
-		->condition('uid', $user->uid, '=')
-		->execute();
 	}
 }
 
@@ -1152,7 +1115,7 @@ function coap_resource_handle_observing_for_uri($uri, $state){
 	$uri = str_replace('|', '/', $uri); //	Put slashes back in the URI
 	
 	//	Get number of observers for the current URI
-	$observe_result = db_select('coap_resource_users', 'users')
+	$observe_result = db_select('coap_resource_interested_user', 'users')
 		->fields('users', array('uid', 'uri', 'observe'))
 		->condition('uri', $uri, '=')
 		->condition('device', 0, '=')
@@ -1161,7 +1124,7 @@ function coap_resource_handle_observing_for_uri($uri, $state){
 	$num_observers = $observe_result->rowCount();
 	
 	//	Store in database that this user is observing or not observing the current URI
-	$num_updated = db_update('coap_resource_users')
+	$num_updated = db_update('coap_resource_interested_user')
 		->fields(array(
 			'observe' => ($state == "start" ? 1 : 0),
 		))
@@ -1176,7 +1139,7 @@ function coap_resource_handle_observing_for_uri($uri, $state){
 	}
 	
 	//	Get number of users that is still observing the current URI
-	$observe_result = db_select('coap_resource_users', 'users')
+	$observe_result = db_select('coap_resource_interested_user', 'users')
 		->fields('users', array('uid', 'uri', 'observe'))
 		->condition('uri', $uri, '=')
 		->condition('device', 0, '=')

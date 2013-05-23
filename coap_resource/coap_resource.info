@@ -8,3 +8,4 @@ dependencies[] = coap_library
 dependencies[] = node_reference
 dependencies[] = entity
 dependencies[] = views
+dependencies[] = views_ui

@@ -113,7 +113,7 @@ function _coap_resource_installed_instances(){
  * Defines the tables that have to be installed.
  */
 function coap_resource_schema() {
-	$schema['coap_resource_resources'] = array(
+	$schema['coap_resource_resource'] = array(
 		'description' => "Tabel om resources en hun karakteristieken bij te houden",
 		'fields' => array(
 				'uri' => array(
@@ -190,8 +190,8 @@ function coap_resource_schema() {
 					'not null' => TRUE,
 					'default' => 0,
 				),
-				'deleted' => array(
-					'description' => 'Value indicating if this resource is no longer in a core.',
+				'not_in_core' => array(
+					'description' => 'Value indicating if this resource is no longer in the core.',
 					'type' => 'int',
 					'not null' => TRUE,
 					'default' => 0,
@@ -202,7 +202,7 @@ function coap_resource_schema() {
 	);
 	
 	// Tabel om URI's per user bij te houden
-	$schema['coap_resource_users'] = array(
+	$schema['coap_resource_interested_user'] = array(
 		'description' => "Tabel om users bij te houden en de URI's die ze willen gebruiken",
 		'fields' => array(
 				'uid' => array(
@@ -244,31 +244,6 @@ function coap_resource_schema() {
 					'not null' => TRUE,
 					'default' => 3,
 				),
-				'last_method' => array(
-					'description' => 'Methode van laatste request --> {GET, PUT, POST, DELETE}',
-					'type' => 'varchar',
-					'not null' => FALSE,
-					'length' => '64',
-				),
-				'last_response' => array(
-					'description' => 'Laatst verkregen response',
-					'type' => 'varchar',
-					'not null' => FALSE,
-					'length' => '2048',
-				),
-				'responded' => array(
-					'description' => 'value indicating if server just responded',
-					'type' => 'int',
-					'unsigned' => TRUE,
-					'not null' => TRUE,
-					'default' => 0,
-				),
-				'response_type' => array(
-					'description' => 'Response type of last received response',
-					'type' => 'varchar',
-					'not null' => FALSE,
-					'length' => '2048',
-				),
 				'new' => array(
 					'description' => 'value indicating if discovery values are in',
 					'type' => 'int',
@@ -276,17 +251,11 @@ function coap_resource_schema() {
 					'not null' => TRUE,
 					'default' => 0,
 				),
-				'version_time' => array(
-					'description' => 'The Unix timestamp when the link to the corresponding coap_resource_resource was created.',
-					'type' => 'int',
-					'not null' => TRUE,
-					'default' => 0,
-				),
 			),
 			'primary key' => array('uid', 'uri', 'nid'),
 			'foreign keys' => array(
 				'uri' => array(
-					'table' => 'coap_resource_resources',
+					'table' => 'coap_resource_resource',
 					'columns' => array('uri' => 'uri'),
 				),
 			),
@@ -356,17 +325,17 @@ function coap_resource_schema() {
 					'not null' => TRUE,
 					'default' => 1,
 					'unsigned' => TRUE,
-					'description' => 'Value indicating if the value is new',
+					'description' => 'Value indicating if the value is new. 0=no, 1=disicovery in progress, 2=values in db ',
 				),
 			),
 			'primary key' => array('hid'),
 			'foreign keys' => array(
 				'uri' => array(
-					'table' => 'coap_resource_resources',
+					'table' => 'coap_resource_resource',
 					'columns' => array('uri' => 'uri'),
 				),
 				'uid' => array(
-					'table' => 'coap_resource_users',
+					'table' => 'coap_resource_interested_user',
 					'columns' => array('uid' => 'uid'),
 				),
 			),
@@ -380,8 +349,8 @@ function coap_resource_schema() {
  * Drops tables when the module is uninstalled.
  */
 function coap_resource_uninstall(){
-	db_drop_table('coap_resource_resources');
-	db_drop_table('coap_resource_users');
+	db_drop_table('coap_resource_resource');
+	db_drop_table('coap_resource_interested_user');
 	db_drop_table('coap_resource_values');
 }
 
@@ -395,7 +364,7 @@ function coap_resource_enable() {
 		variable_set("comment_$content_type", 0);						//comments default disabled
 		variable_set("node_options_$content_type", array('status'));	//promote to front page default unchecked
 		variable_set("node_preview_$content_type", 0);					//preview default disabled
-		variable_set("node_submitted_$content_type", 0);
+		variable_set("node_submitted_$content_type", 1);				//shows author information
 	}
 	
 	//	Alter the values table so the timestamp will not be updated when updating a value
@@ -425,21 +394,21 @@ function coap_resource_disable(){
 		// Delete all the nodes at once
 		node_delete_multiple($nids);
 		
-		//delete any variables made by module
+		// delete any variables made by module
 		variable_del("comment_$content_type");
 		variable_del("node_preview_$content_type");
 		variable_del("node_submitted_$content_type");
 		variable_del("node_options_$content_type");	
 		
-		//remove comment instances (we currently don't have the possibility enabled for leaving comments).
+		// remove comment instances (we currently don't have the possibility enabled for leaving comments).
 		$instance = array('field_name' => 'comment_body','bundle' => "comment_node_$content_type",'entity_type' => 'comment');
 		field_delete_instance($instance);
 		
-		//remove field instances
+		// remove field instances
 		$instance = array('field_name' => 'body','bundle' => $content_type,'entity_type' => 'node');
 		field_delete_instance($instance);
 		
-		//deleting content type
+		// deleting content type
 		node_type_delete($content_type);
 		node_types_rebuild();
 		

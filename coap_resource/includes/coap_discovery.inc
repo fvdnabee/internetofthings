@@ -1,6 +1,26 @@
 <?php
 
 /**
+ * Class which contains constants.
+ */
+class Constants {
+	//Contains all the supported attributes of the CoRE Link Format used for discovery.
+    private static $attributes = array(
+		'obs' => 1,
+		'rt' => 1,
+		'ct' => 1,
+		'if' => 1,
+		'sz' => 1,
+		'title' => 1,
+		'anchor' => 1,
+		'rel' => 1
+	);
+    public static function getAttributes() {
+        return self::$attributes;
+    }
+}
+
+/**
  * Returns discovery form.
  */
 function coap_discovery_form($form, &$form_state, $node) {
@@ -9,25 +29,14 @@ function coap_discovery_form($form, &$form_state, $node) {
 	
 	global $user;
 	
+	$result = db_select('coap_resource_interested_user','device')
+		->fields('device', array('uid'))
+		->condition('nid', $node->nid, '=')
+		->execute();
 	
-	$regex = '/^(((?=(?>.*?(::))(?!.+\3)))\3?|([\dA-F]{1,4}(\3|:(?!$)|$)|\2))(?4){5}((?4){2}|(25[0-5]|(2[0-4]|1\d|[1-9])?\d)(\.(?7)){3})\z/i';
-	$value = '2001:6a8:1d80:200::1';
-	
-	if (empty($value) || !preg_match($regex, $value, $matches)) {
-		dpm('nee');
+	foreach($result as $record){
+		$uid = $record->uid;
 	}
-	else{
-		$result = db_select('coap_resource_users','device')
-			->fields('device', array('uri'))
-			->condition('uri', $matches[0], '=')
-			->condition('uid', $user->uid, '=')
-			->execute();
-		
-		if($result->rowCount() != 0){
-			dpm('You have already submitted this resource. Please enter another.');
-		}
-	}
-	
 	
 	$form['nid'] = array
 	(
@@ -44,15 +53,17 @@ function coap_discovery_form($form, &$form_state, $node) {
 	);	
 	
 	////button to refresh the well-know/core
-	$form['refresh_device'] = array
-	(
-		'#type' => 'submit',
-		'#value' => 'Refresh device',
-		'#submit' => array('coap_discovery_refresh_device_core_submit'),
-	);
+	if($uid == $user->uid){
+		$form['refresh_device'] = array
+		(
+			'#type' => 'submit',
+			'#value' => 'Refresh device',
+			'#submit' => array('coap_discovery_refresh_device_core_submit'),
+		);
+	}
 	
 	$new = 0;
-	$result = db_select('coap_resource_users','user_device')
+	$result = db_select('coap_resource_interested_user','user_device')
 			->fields('user_device', array('uid','uri','device','new'))
 			->condition('uid', $user->uid, '=')
 			->condition('device',1,'=')
@@ -62,8 +73,8 @@ function coap_discovery_form($form, &$form_state, $node) {
 		$new = $record->new;
 	}
 	
-	if($new == 1){
-		$form['refresh_device']['#suffix'] = '<label>Please wait, some resources are being loaded...</label>';
+	if($new == 1 || $new == 2){
+		$form['refresh_device']['#suffix'] = '<label>Please wait, some changes are being loaded...</label>';
 	}
 	
 	return $form;
@@ -75,7 +86,7 @@ function coap_discovery_form($form, &$form_state, $node) {
 function coap_discovery_refresh_device_core_submit($form, &$form_state) {
 	global $user;
 	
-	db_update('coap_resource_users')
+	db_update('coap_resource_interested_user')
 		->fields(array(
 			'new' => 1,
 		))
@@ -91,6 +102,9 @@ function coap_discovery_refresh_device_core_submit($form, &$form_state) {
 	$form_state['rebuild'] = TRUE;
 }
 
+/**
+ * Private function which starts a resource discovery procedure, parses the entire well-known/core and processes the information.
+ */
 function _start_discovery($device_uri,$nid){
 	global $user;
 	$coap_factory = new CoAPMessageFactory('coap_resource', $device_uri, '', false);
@@ -102,7 +116,7 @@ function _start_discovery($device_uri,$nid){
 	$current_time = time();
 	foreach($resources as $resource){
 		$uri = $resource['uri'];
-		$result = db_select('coap_resource_resources','resources')
+		$result = db_select('coap_resource_resource','resources')
 			->fields('resources', array('uri'))
 			->condition('uri', $uri, '=')
 			->execute();
@@ -110,21 +124,22 @@ function _start_discovery($device_uri,$nid){
 		if($result->rowCount() == 0){
 			$resource['created']= $current_time;
 			$resource['changed']= $current_time;
-			db_insert('coap_resource_resources')			
+			db_insert('coap_resource_resource')			
 				->fields($resource)
 				->execute();
 		}
 		else{
-			db_update('coap_resource_resources')
+			db_update('coap_resource_resource')
 				->fields(array(
 					'changed' => $current_time,
+					'not_in_core' => 0,
 				))
 				->condition('uri', $uri, '=')
 				->execute();
 		}
 	}
 	
-	$result = db_select('coap_resource_users','user_device')
+	$result = db_select('coap_resource_interested_user','user_device')
 		->fields('user_device', array('uid','uri','device'))
 		->condition('uid', $user->uid, '=')
 		->condition('device',1,'=')
@@ -133,7 +148,7 @@ function _start_discovery($device_uri,$nid){
 	$counter = 0;
 	while($result->rowCount() == 0 && $counter < 100){
 		sleep(3); //leave this so the db doesn't get flooded
-		$result = db_select('coap_resource_users','user_device')
+		$result = db_select('coap_resource_interested_user','user_device')
 			->fields('user_device', array('uid','uri','device'))
 			->condition('uid', $user->uid, '=')
 			->condition('device',1,'=')
@@ -142,17 +157,20 @@ function _start_discovery($device_uri,$nid){
 		$counter++;
 	}
 	
-	db_update('coap_resource_users')
+	db_update('coap_resource_interested_user')
 		->fields(array(
 			'new' => 2,
 		))
-		->condition('uid',$user->uid ,'=')
+		// ->condition('uid',$user->uid ,'=')
 		->condition('uri',$device_uri ,'=')
-		->condition('nid',$nid ,'=')
+		// ->condition('nid',$nid ,'=')
 		->condition('device',1 ,'=')
 		->execute();
 }
 
+/**
+ * Private function which starts a partial resource discovery procedure, parses the requested information and processes it.
+ */
 function _start_filtered_discovery($uri,$nid){
 	global $user;
 	$parts = explode('/',$uri);
@@ -166,14 +184,14 @@ function _start_filtered_discovery($uri,$nid){
 	$payloads = $response->get_payload();
 	$resources = coap_discovery_parse_discovery_payloads($device_uri, $nid, $payloads);
 	
-	// $result = db_select('coap_resource_resources','resources')
+	// $result = db_select('coap_resource_resource','resources')
 		// ->fields('resources', array('uri'))
 		// ->condition('uri', $uri, '=')
 		// ->execute();
 	// if($result->rowCount() == 0){
 		// $resources[0]['created']= time();
 		// $resources[0]['changed']= time();
-		// db_insert('coap_resource_resources')		
+		// db_insert('coap_resource_resource')		
 			// ->fields($resources[0])
 			// ->execute();
 	// }
@@ -181,7 +199,7 @@ function _start_filtered_discovery($uri,$nid){
 		// $resources[0]['created']= time();
 		// $resources[0]['changed']= time();
 		// unset($resources[0]['uri']);
-		// db_update('coap_resource_resources')
+		// db_update('coap_resource_resource')
 				// ->fields($resources[0])
 				// ->condition('uri', $uri, '=')
 				// ->execute();
@@ -189,7 +207,7 @@ function _start_filtered_discovery($uri,$nid){
 	
 	$resources[0]['created']= time();
 	$resources[0]['changed']= time();
-	db_insert('coap_resource_resources')		
+	db_insert('coap_resource_resource')		
 		->fields($resources[0])
 		->execute();
 }
@@ -201,8 +219,8 @@ function coap_discovery_page_callback($nid){
 	global $user;
 	
 	$output = '';
-	$result = db_select('coap_resource_users','user_device')
-		->fields('user_device', array('uid','uri','device','new','version_time'))
+	$result = db_select('coap_resource_interested_user','user_device')
+		->fields('user_device', array('uid','uri','device','new'))
 		->condition('uid', $user->uid, '=')
 		->condition('device',1,'=')
 		->condition('nid',$nid,'=')
@@ -210,75 +228,71 @@ function coap_discovery_page_callback($nid){
 	foreach($result as $record){
 		$new = $record->new;
 		$device_uri = $record->uri;
-		$version_time = $record->version_time;
 	}
 	
 	if($new == 2){
 		$wrapper = entity_metadata_wrapper('node', node_load($nid));
-		db_update('coap_resource_users')
+		db_update('coap_resource_interested_user')
 			->fields(array(
 				'new' => 0,
-				'version_time' => time(),
 			))
 			->condition('uid', $user->uid, '=')
 			->condition('device',1,'=')
 			->condition('nid', $nid, '=')
 			->execute();
-		$output .= '::new=1';
+		$output .= 'reload';
 		//haal resources op die in core zitten
 		//voeg nieuwe entities toe en voeg een reference toe per entity
-		$result = db_select('coap_resource_resources','resources')
-			->fields('resources', array('uri','created','changed','deleted'))
+		$result = db_select('coap_resource_resource','resources')
+			->fields('resources', array('uri','created','changed','not_in_core'))
 			->condition('uri', "$device_uri%", 'LIKE')
+			->orderBy('changed', 'DESC')
+			->orderBy('uri', 'ASC')
 			->execute();
 		$i=0;
+		$newest = 0;
 		foreach($result as $record){
 			$uri = $record->uri;
-			$db_resource = db_select('coap_resource_users','user_device')
-				->fields('user_device', array('uid','nid','uri','device'))
-				->condition('uri', $uri, '=')
-				->condition('uid', $user->uid, '=')
-				->condition('device',0,'=')
-				->execute();
-			$rowCount = $db_resource->rowCount();
-			if($rowCount != 0){
-				foreach($db_resource as $record){
-					$resource_nid = $record->nid;
+			$changed = $record->changed;
+			$not_in_core = $record->not_in_core;
+			if($changed >= $newest){ //is deze waarde mee geupdate met de andere waarden?
+				$db_resource = db_select('coap_resource_interested_user','user_device')
+					->fields('user_device', array('uid','nid','uri','device'))
+					->condition('uri', $uri, '=')
+					->condition('uid', $user->uid, '=')
+					->condition('device',0,'=')
+					->execute();
+				$rowCount = $db_resource->rowCount();
+				if($rowCount != 0){
+					foreach($db_resource as $record){
+						$resource_nid = $record->nid;
+					}
+				}
+				if($rowCount == 0){
+					$newest = $changed;
+					$new_node = entity_create('node', array('type' => 'coap_resource'));
+					$new_node->uid = $user->uid;
+					$entity = entity_metadata_wrapper('node',$new_node);
+					$entity->title = 'CoAP Resource: ' . $uri;
+					$entity->field_resource_uri->set($uri);
+					$entity->save();
+					//reference toevoegen
+					$wrapper->field_resource_references[$i]->set(entity_id('node', $entity)->value());
+				}
+				else if($rowCount != 0){
+					$newest = $changed;
+					//zet references
+					$wrapper->field_resource_references[$i]->set($resource_nid);
 				}
 			}
-			if($version_time < $record->created || $rowCount == 0){
-				$new_node = entity_create('node', array('type' => 'coap_resource'));
-				$new_node->uid = $user->uid;
-				$entity = entity_metadata_wrapper('node',$new_node);
-				$entity->title = 'CoAP Resource: ' . $uri;
-				$entity->field_resource_uri->set($uri);
-				$entity->save();
-				//reference toevoegen
-				$wrapper->field_resource_references[$i]->set(entity_id('node', $entity)->value());
-			}
-			else if($version_time < $record->changed || $rowCount != 0){
-				//zet references
-				$wrapper->field_resource_references[$i]->set($resource_nid);
-			}
-			//volgend stuk is nog NIET GETEST!!!!!!!!!!!
-			//de waarde zit niet meer in de core, anders zou ze geupdate zijn
-			else{
-				//zet deleted op 0
-				if($record->deleted == 0){
-					db_update('coap_resource_resources')
-						->fields(array(
-							'deleted' => 1,
-							//'changed' => time(),
-						))
-						->condition('uri', $uri, '=')
-						->execute();
-				}
-				//deze resource zit er al even niet in, doe niks
-				else{ 
-				
-				}
+			else if($not_in_core != 1){ //zet not_in_core op 1 als het er al niet opstaat
+				db_update('coap_resource_resource')
+					->fields(array(
+						'not_in_core' => 1,
+					))
+					->condition('uri', $uri, '=')
+					->execute();
 				unset($wrapper->field_resource_references[$i]);
-				
 			}
 			$i++;
 		} 	
@@ -315,11 +329,14 @@ function coap_discovery_parse_discovery_payloads($device_uri, $nid, $payloads){
 				$resource['uri'] = $device_uri . $uri;
 				for($e=0 ; $e<count($tokens[0]) ; $e++){
 					preg_match('/;\s*([^<"\s;,=]+)\s*(=\s*(([^<"\s;,]+)|"([^"]*(\\.[^"]*)*)"))?/',$tokens[0][$e],$keyvalues);
-					if($keyvalues[1] != 'if') $attribute = $keyvalues[1];
-					else $attribute = $keyvalues[1] . 'd';
-					$attributes[$attribute] = (count($keyvalues)>2 ? ($keyvalues[4] ? $keyvalues[4] : $keyvalues[5]) : 1);
-					
-					$resource[$attribute] = $attributes[$attribute];
+					$attributes_const = Constants::getAttributes();
+					if(isset($attributes_const[$keyvalues[1]])){
+						if($keyvalues[1] != 'if') $attribute = $keyvalues[1];
+						else $attribute = $keyvalues[1] . 'd';
+						$attributes[$attribute] = (count($keyvalues)>2 ? ($keyvalues[4] ? $keyvalues[4] : $keyvalues[5]) : 1);
+						
+						$resource[$attribute] = $attributes[$attribute];
+					}
 				}
 				array_push($resources,$resource);
 			}
