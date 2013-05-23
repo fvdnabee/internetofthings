@@ -227,8 +227,27 @@ De lijst met alle attributen vind je in de CoRE Link Format draft \cite{coapDisc
 \subsubsection{Core ophalen}
 Om een well-known/core op te halen, moet je twee maal de Uri-Path Option (optie 11) toevoegen aan een GET-request die gericht is naar het IP-adres van het device waar de core zich op bevindt. De eerste keer met als value 'well-known' en de tweede keer gebruik je als value 'core'.\\
 
-We bespreken een voorbeeld om de lezer 
+\noindent
+We bespreken de eerste berichtenparen bij een resource discovery door de hexadecimale waarde te bekijken. Verschillende onderdelen scheiden we met een streep.\\
+
+\noindent
+De client stuurt een eerste discovery-request:\\
+40 01 78 a5 \textbar~bb 2e 77 65 6c 6c 2d 6b 6e 6f 77 6e \textbar~04 63 6f 72 65\\
+Het eerste deel bevat dezelfde elementen als elke GET-request. Het tweede deel bevat de eerste optie. De eerste twee bytes bevatten bb. Dit komt overeen met optie 11 met lengte 11. De 11 volgende byte-paren zijn de hexadecimale waarden van de karakters 'well-known'. Het laatste deel bevat ook een optie. Deze keer zijn de twee eerste bytes 04. De Option Delta is 0, dus hebben we opnieuw optie 11. De lengte is deze keer 4. De volgende byte-paren komen overeen met 'core'.\\
+
+\noindent
+Het antwoord van de server:\\
+60 45 78 a5 \textbar~c1 28 \textbar~b1 0c \textbar~52 06 92 \textbar~ff ...\\
+Het eerste deel is analoog aan andere responseberichten. We merken wel op dat de Message ID dezelfde is als de Message ID in de request van de client. De eerste twee bytes van het tweede deel zijn c1. Wat optie 12 (Content-Format) met lengte 1 impliceert. De waarde van deze optie is 28. Omgezet naar decimaal is dit 40, wat application/link-format aangeeft. Het volgende deel begint met b1. Dit komt overeen met optie 23 (Block2) met lengte 1. De hexadecimale waarde is 0c wat overeenkomt met 12 of binair 00001100. Als we dit herschikken zien we de elementen die in \ref{fig:blockOption} te zien zijn: 0000 1 110. We zien dat dit het nulde block is van een reeks van blocks met grootte 6 bytes. De 4-de laatste byte geeft aan dat er nog pakketten komen. Het voorlaatste deel begint met 52 wat optie 28 aanduidt met lengte 2. Het laatste deel begint met de payload marker waarop de payload volgt.\\
+
+\noindent
+De client stuurt een nieuwe request om het volgende pakket aan te vragen:\\
+40 01 78 a6 \textbar~bb 2e 77 65 6c 6c 2d 6b 6e 6f 77 6e \textbar~04 63 6f 72 65 \textbar~c1 16\\
+De eerste drie delen zijn analoog aan de eerste request. Het laatste deel dat erbij is gekomen geeft het volgende block aan dat verstuurd moet worden door de server. De eerste twee bytes zijn c1. Option Delta is 12 dus de optie is 11 + 12 = 23 (Block2). De lengte is 1 byte-paar. 16 binair is 0001 0 110. Het eerste block in de reeks van blocks met lengte 6 bytes wordt opgevraagd.\\
+
+\noindent
+De server zal met het aangevraagde block antwoorden. Dit proces blijft zich herhalen tot de server een response stuurt waar de M-bit op 0 staat.
 
 \subsubsection{Query Filtering}
-Het is mogelijk een specifieke discovery uit te voeren indien er enkel informatie over één resource moet gekend zijn of enkel de resources waarbij een bepaald attribuut een specifieke waarde heeft. Dit heeft als voordeel dat het netwerk niet overbodig belast moet worden als dat niet nodig is. De query-filter wordt voorgesteld door een name-value pair. Deze wordt toegevoegd door de Uri-Query Option (optie 15) te gebruiken.
+Het is mogelijk een specifieke discovery uit te voeren indien er enkel informatie over één resource moet gekend zijn of enkel de resources waarbij een bepaald attribuut een specifieke waarde heeft. Dit heeft als voordeel dat het netwerk niet overbodig belast moet worden als dat niet nodig is. De query-filter wordt voorgesteld door een name-value paar. Deze wordt toegevoegd door de Uri-Query Option (optie 15) te gebruiken.
 
