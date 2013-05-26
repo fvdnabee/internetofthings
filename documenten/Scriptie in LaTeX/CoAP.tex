@@ -222,16 +222,16 @@ Als voorbeeld geven we het antwoord op een GET-request van een well-known/core:\
 \textless/light\textgreater;rt="light-lux";if="sensor"\\
 We zien dat het device met deze core twee resources aanbiedt. De eerste resource wordt ge\"{i}dentificeerd met de URI /temp, de andere met /light. Beide resources hebben twee attributen maar er zijn meer attributen mogelijk. We sommen enkele algemene attributen op:
 \begin{itemize}
-\item obs (Observable): Geef aan of de resource observable is, indien deze optie ontbreekt wordt aangenomen dat de resource niet observable is.
-\item rt (Resource Type): Geeft het type van de resource. De waarden zijn afhankelijk van de gebruikte applicatie. Ze hebben als nut dat binnen een applicatie, resources van hetzelfde type herkent kunnen worden. Dan is het mogelijk via query filtering, alle resources van een type opgehaald worden.
-\item ct (Content Type): Bevat een opsomming van de content formats die ondersteund worden door deze resource. 
-\item if (Interface Description): Bevat een beschrijving van welke methoden deze resource ondersteunt.
-\item sz (Maximum Size Estimate): Geeft aan hoe groot het maximum aantal gegevens ongeveer is als antwoord op een GET-request.
+\item obs (Observable): Geef aan of de resource observable is. Indien de optie ontbreekt wordt aangenomen dat de resource niet observable is.
+\item rt (Resource Type): Geeft het type van de resource. De waarden zijn afhankelijk van de gebruikte applicatie. Ze hebben als nut dat binnen een applicatie, resources van hetzelfde type herkent kunnen worden. Dan is het mogelijk via query filtering, alle resources van een type opgehaald worden. Meerdere values zijn mogelijk.
+\item ct (Content Type): Bevat een opsomming van de content formats die ondersteund worden door deze resource. Meerdere values zijn mogelijk.
+\item if (Interface Description): Bevat een beschrijving van welke methoden deze resource ondersteunt. Meerdere values zijn mogelijk.
+\item sz (Maximum Size Estimate): Geeft aan hoe groot het maximum aantal gegevens ongeveer is als antwoord op een GET-request. Voor grote resources zou dit ge\"{i}mplementeerd moeten worden maar het is geen verplichting.
 \item title: Bevat een omschrijving van deze resource.
-\item anchor: 
-\item rel: 
+\item anchor: Wordt gebruikt om de link te laten verwijzen naar een willekeurige resource. Dit kan een resource binnen de eigen core zijn of erbuiten. Het rel-attribuut wordt vaak samen met deze optie gebruikt om de relatie aan te duiden tussen de link en de resource. Implementaties die het vermogen niet hebben deze optie te verwerken moeten de hele link te negeren.
+\item rel: Geeft de relatie tussen de link en de resource.
 \end{itemize}
-De lijst met alle attributen vind je in de CoRE Link Format draft \cite{coapDiscovery}.
+Al deze attributen mogen maar \'{e}\'{e}n keer voorkomen. In het geval er meerdere waarden mogelijk zijn worden deze gescheiden door een spatie en ingevuld als \'{e}\'{e}n value. De lijst met alle attributen vind je in de CoRE Link Format draft \cite{coapDiscovery}. Niet alle attributen staan beschreven in de CoRE Link Format draft. De ontbrekende beschrijvingen vind je in de Web Linking draft \cite{webLinking}.
 
 \subsubsection{Core ophalen}
 Om een well-known/core op te halen, moet je twee maal de Uri-Path Option (optie 11) toevoegen aan een GET-request die gericht is naar het IP-adres van het device waar de core zich op bevindt. De eerste keer met als value 'well-known' en de tweede keer gebruik je 'core' als value.\\

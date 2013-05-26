@@ -119,13 +119,13 @@
 \contentsline {section}{\numberline {6.2}Opvragen devices in subnetwerk met resource directory}{71}
 \contentsline {section}{\numberline {6.3}Conditional observe}{72}
 \contentsline {subsection}{\numberline {6.3.1}Keep-alive}{73}
-\contentsline {section}{\numberline {6.4}Entity API}{74}
-\contentsline {section}{\numberline {6.5}Configuratie op maat}{74}
-\contentsline {section}{\numberline {6.6}DNS}{74}
-\contentsline {section}{\numberline {6.7}Block Options}{74}
-\contentsline {section}{\numberline {6.8}Exceptions}{74}
-\contentsline {section}{\numberline {6.9}Anonieme users}{74}
-\contentsline {section}{\numberline {6.10}View Modes}{74}
+\contentsline {section}{\numberline {6.4}Custom Entity}{74}
+\contentsline {section}{\numberline {6.5}View Modes}{74}
+\contentsline {section}{\numberline {6.6}Configuratie op maat}{75}
+\contentsline {section}{\numberline {6.7}Help}{75}
+\contentsline {section}{\numberline {6.8}DNS}{75}
+\contentsline {section}{\numberline {6.9}Block Options}{76}
+\contentsline {section}{\numberline {6.10}Anonieme users}{76}
 \select@language {english}
 \select@language {dutch}
 \select@language {dutch}
