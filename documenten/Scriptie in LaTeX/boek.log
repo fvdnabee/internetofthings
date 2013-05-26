@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.4.6)  26 MAY 2013 16:06
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.4.6)  26 MAY 2013 17:34
 entering extended mode
 **boek.tex
 
@@ -294,7 +294,13 @@ rd.tex" [1
 
 ]) [2]
 ("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\overzic
-ht.tex" [3
+ht.tex"
+Overfull \hbox (19.46939pt too wide) in paragraph at lines 46--47
+\OT1/cmr/m/n/10.95 Deze stand-alone mo-dule kan ook ge-bruikt wor-den in an-der
+e pro-jec-ten waar een CoAP-implementatie
+ []
+
+[3
 
 
 ] [4])
@@ -1215,7 +1221,7 @@ msfonts/cm/cmr8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm
 .pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:
 /Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Program
  Files/MiKTeX 2.9/fonts/type1/public/eurosym/feymr10.pfb>
-Output written on boek.pdf (92 pages, 1828143 bytes).
+Output written on boek.pdf (92 pages, 1828168 bytes).
 PDF statistics:
  385 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
