@@ -61,11 +61,15 @@ Wanneer een client een Keep-alive optie meestuurt, vraagt die aan de server te b
 
 \section{Custom Entity} \label{customEntity}
 We gebruiken de Entity API al voor manipulatie van content. Wat we er nog mee mogelijk is, is het ontwerpen van een eigen entity. Dit is toepasbaar op de waarden van resources. Momenteel worden waarden opgeslaan in de tabel coap\_resource\_values. Deze tabel wordt bij installatie aangemaakt en het manipuleren ervan wordt door onze eigen code afgehandeld. Als we een entity coap\_resource\_value maken, worden de waarden nog steeds in dezelfde tabel opgeslaan maar kunnen we de manipulatie ervan laten gebeuren door de functies die de Entity API aanbiedt. Een bijkomend voordeel is dat we custom views kunnen maken van entities. Gebruikers kunnen dan zelf custom views van waarden aanmaken. Een gebruiker kan dus bijvoorbeeld alle waarden van 5 mei tot 5 juni opvragen.\\
+Een nuttig voorbeeld van het aanmaken van een eigen entity in code vind je in de module Model Entities \cite{modelEntities}.\\
 
-Een bijkomende uitbreiding is het gebruik van de module Entity Reference \cite{entityReference}. Omdat we zelf een tabel cre\"{e}eren zonder aan Drupal te zeggen dat deze een speciale betekenis heeft, staan we zelf in voor de visualitatie van de waarden. Maar door een eigen entity te maken kunnen we de waarden weergeven door gebruik te maken van een nieuw veld dat ge\"{i}troduceerd wordt door de Entity Reference module.
+Een bijkomende uitbreiding is het gebruik van de module Entity Reference \cite{entityReference}. Omdat we zelf een tabel cre\"{e}eren zonder aan Drupal te zeggen dat deze een speciale betekenis heeft, staan we zelf in voor de visualitatie van de waarden. Maar door een eigen entity te maken kunnen we de waarden weergeven door gebruik te maken van een nieuw veld dat ge\"{i}troduceerd wordt door de Entity Reference-module.
+
+\section{Interface Description}
+Het attribuut if (interface description) van het CoRE Link Format kan info bevatten over welke methodes deze resource ondersteund. Momenteel wordt deze info opgeslaan maar nog niet gebruikt. Deze informatie kan gebruikt worden om de methodes (GET, PUT, POST en DELETE) niet voor alle resources beschikbaar te laten zijn. De verschillende waarden en hun betekenis die het attribuut kan aannemen vind je in de CoRE Interfaces draft \cite{coreInterfaces}.
 
 \section{View Modes}
-De content die we aanbieden worden op elke pagina op dezelfde manier getoond. Door gebruik te maken van view modes
+De content die we aanbieden wordt op elke pagina op dezelfde manier getoond. Door gebruik te maken van view modes kunnen we hier verandering in brengen. Wanneer content van het type coap\_resource getoond wordt, kan je er verschillende functies op uitvoeren en zie je een historytabel. Maar soms zou het handig zijn als je enkel de historytabel ziet. Een complete tutorial met uitleg vind je online \cite{viewMode}.
 
 \section{Configuratie op maat} \label{configuratie}
 Bij installatie wordt een pagina voor configuratie voorzien. Deze kan je bereiken door eerst op 'Configuration' te klikken en dan op 'CoAP resource settings'. Enige configuratieinstellingen komen hier te staan. Om de pagina die getoond wordt aan passen moet je de functie coap\_resource\_admin\_settings() in coap\_resource.module aanpassen.
@@ -73,18 +77,35 @@ Bij installatie wordt een pagina voor configuratie voorzien. Deze kan je bereike
 \vspace{10pt}
 \includegraphics[width=1\textwidth]{fig/Configuratie}
 \vspace{-30pt}
-\caption{Navigatie naar configuratie}
+\caption{Navigatie naar de configuratiepagina}
 \vspace{-10pt}
 \end{figure}
 
 \section{Help}
 Een standaard hulppagina is voorzien, deze kan opgevuld worden met de handleiding.
+\begin{figure}[h!]
+\vspace{10pt}
+\includegraphics[width=1\textwidth]{fig/Help}
+\vspace{-30pt}
+\caption{Navigatie naar de hulppagina}
+\vspace{-10pt}
+\end{figure}
+
+Er kan ook gebruik gemaakt worden van de Advanced Helpmodule \cite{advancedHelp}. Wanneer deze module ge\"{e}nabled is, kan je helppagina's opslaan in HTML-formaat en deze in je moduledirectory zetten. Deze module maakt ook het gebruik van popups mogelijk en laat de administrator van de website beslissen voor wie de hulp beschikbaar moet zijn. We laten het aan de lezer over om alle mogelijkheden van deze module te bekijken.
 
 \section{DNS}
 Het programma werkt enkel met IP-adressen. Door gebruik te maken van de PHP-functies gethostbyaddr(string \$ip\_addr)\cite{hostByAddr} en gethostbyname(string \$hostname)\cite{{hostByName}} kunnen hostnamen gebruikt worden i.p.v. hun respectievelijk IP-adres.
 
 \section{Block Options} \label{unsupportedBlockOptions}
-Voor optie 28 (Size) en 27 (Block1) bieden we nog geen ondersteuning, momenteel worden ze genegeerd.
+Voor optie 28 (Size) en 27 (Block1) bieden we nog geen ondersteuning, momenteel worden ze genegeerd. Block1 hebben we reeds besproken in \ref{blocks}. De Size-optie wordt voor meerdere dingen gebruikt, maar ze hebben allemaal een verband met een schatting van de grootte van de resource representatie:
+\begin{itemize}
+\item In een request: om aan de server te vragen of hij een schatting meestuurt met zijn response. Hier moet als waarde 0 gebruikt worden.
+\item In een response met een Block2-optie: om de schatting van de server aan te geven.
+\item In een response met een Block1-optie: om de schatting van de client aan te geven.
+\end{itemize}
+De client of server kan aan de hand van de schatting beslissen om grotere of kleinere blocks door te sturen. Deze optie is niet verplicht te ondersteunen dus moet er rekening gehouden worden met dat de server of client deze optie negeert.
 
-\section{Anonieme users}
-Momenteel worden anonieme users niet meer ondersteund. Dit kan gebeuren door gebruik te maken van de sessievariabele \cite{sessionVariable}.
+\section{Anonieme gebruikers}
+Momenteel worden anonieme gebruikers niet meer ondersteund. Er is wel een analyse uitgevoerd hoe ze best ge\"{i}mplementeerd worden. Voor anonieme gebruikers is het beter om zelf geen gegevens naar de databank te schrijven. Dit om ervoor te zorgen dat de databank niet geflood wordt.
+
+Anonieme gebruikers hebben als User ID (uid)\nomenclature{uid}{User ID} het getal 0. Anders dan gewone gebruikers die een uniek uid hebben kan je anonieme gebruikers hier niet op onderscheiden. Gebruikers hebben ook een Session ID (sid)\nomenclature{sid}{Session ID} dat wel uniek is voor alle gebruikers. Nu moeten we de gegevens van de anonieme gebruiker bijhouden op een plaats die overal toegankelijk is maar dit mag niet de databank zijn. Daarom wordt er gebruik gemaakt van de sessievariabele \cite{sessionVariable} \$\_SESSION. Deze variabele is een PHP-tabel en het ligt voor de hand deze te indexeren op de sid. Alle gegevens worden nu best opgeslaan en aangesproken op volgende manier: \$\_SESSION[\$sid] met \$sid een variabele die de sid van de gebruiker bevat. 

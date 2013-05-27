@@ -1,6 +1,6 @@
 \chapter{CoAP resource module} \label{resourcemodule}
 
-Nu we genoeg kennis hebben over Drupal en CoAP en een CoAP library ter beschikking hebben, kunnen we overgaan tot de uiteindelijk te ontwikkelen module. Het is deze module die een eindgebruiker zal installeren. Ze biedt dan de mogelijkheid om op een gebruiksvriendelijke en dynamische manier sensoren te bekijken en beheren van op de Drupal website, en dit zonder technische kennis nodig te hebben van het CoAP protocol of programmatie in Drupal. We bekijken eerst globaal wat de module concreet moet aanbieden. Daarna bekijken we hoe de module zal opgebouwd worden. Eens we dit weten, kunnen we overgaan tot de verschillende versies van de ontwikkelde module en de implementatie ervan.
+Nu we genoeg kennis hebben over Drupal en CoAP en een CoAP library ter beschikking hebben, kunnen we overgaan tot de uiteindelijk te ontwikkelen module. Het is deze module die een eindgebruiker zal installeren. Ze biedt dan de mogelijkheid om op een gebruiksvriendelijke en dynamische manier sensoren te bekijken en beheren van op de Drupal-website, en dit zonder technische kennis nodig te hebben van CoAP of programmatie in Drupal. We bekijken eerst globaal wat de module concreet moet aanbieden. Daarna bekijken we hoe de module zal opgebouwd worden. Eens we dit weten, kunnen we overgaan tot de verschillende versies van de ontwikkelde module en de implementatie ervan.
 
 \section{Architectuur}
 In deze paragraaf bespreken we de architectuur van de module en hoe die inpast in het Drupal systeem. We behandelen tevens ook enkele belangrijke aspecten die in rekening werden gebracht. Vervolgens lichten we enkele belangrijke onderdelen van de module toe.\\
@@ -16,8 +16,8 @@ We overlopen de opeenvolgende stappen bij een request aan de hand van figuur \re
 \item Indien er geen geldige waarde aanwezig is in de databank, wordt een beroep gedaan op de CoAP library module om een nieuwe waarde op te vragen aan de resource. 
 \end{itemize}
 Dit mechanisme zorgt ervoor dat de resource niet onnodig belast wordt (Zie paragraaf \ref{caching}).
-\item De CoAP library module stuurt een CoAP GET request naar de resource.
-\item De resource stuurt zijn waarde terug op in een response bericht als antwoord op de GET request.
+\item De CoAP library module stuurt een CoAP GET-request naar de resource.
+\item De resource stuurt zijn waarde terug in een response bericht als antwoord op de GET-request.
 \item De CoAP library roept een hook op die de CoAP Resource module ge\"{i}mplementeerd heeft, om die ervan op de hoogte te brengen dat er een waarde is binnengekomen.
 \item De hook zal ervoor zorgen dat de nieuwe, ontvangen waarde opgeslagen wordt in de databank.
 \item Uiteindelijk wordt de waarde ook teruggestuurd naar de client die de request heeft gestart.
@@ -30,11 +30,11 @@ Dit mechanisme zorgt ervoor dat de resource niet onnodig belast wordt (Zie parag
 
 \subsection{Functionaliteit}
 
-De bedoeling van deze module is de eindgebruiker in staat te stellen om gemakkelijk sensoren te beheren op zijn/haar website. Belangrijk hierbij is dat elke Drupal gebruiker die een website maakt, deze kan gebruiken zonder extra kennis nodig te hebben over het CoAP protocol. Ook is het niet de bedoeling dat de eindgebruiker zelf nog moet programmeren in Drupal om de module te kunnen gebruiken. Kortom, de module moet out-of-the box werken en zoveel mogelijk omvatten wat mogelijk is met CoAP sensoren.\\
+De bedoeling van deze module is de eindgebruiker in staat te stellen om gemakkelijk sensoren te beheren op zijn/haar website. Belangrijk hierbij is dat elke Drupal gebruiker die een website maakt, deze kan gebruiken zonder extra kennis nodig te hebben over CoAP. Ook is het niet de bedoeling dat de eindgebruiker zelf nog moet programmeren in Drupal om de module te kunnen gebruiken. Kortom, de module moet out-of-the-box werken en zoveel mogelijk omvatten wat mogelijk is met CoAP-sensoren.\\
 Concreet houdt dit onder andere in dat bij installatie van de module enkele content types mee worden ge\"{i}nstalleerd. Het betreft hier een content type voor een enkele CoAP resource en een content type voor een CoAP device waarop meerdere resources zitten. Ook hier werd weer modulair gewerkt, de resources worden bij een CoAP device aangegeven onder vorm van het content type CoAP resource. Deze content types zorgen ervoor dat de gebruiker slechts met enkele muisklikken resources en devices kan toevoegen en onmiddellijk kan beginnen met het beheren en bevragen van de resources. Verder worden bij installatie ook alle benodigde databanktabellen gecre\"{e}erd.\\
 
 De configuratie die de gebruiker moet doen zoals bijvoorbeeld het toevoegen van een resource, moet gebruiksvriendelijk verlopen. Hiervoor wordt gebruik gemaakt van resource discovery. In het geval van een CoAP device hoeft de gebruiker enkel het IPv6-adres ervan op te geven. Aan de hand van resource discovery wordt dan een lijst gegenereerd van resources. Wanneer de gebruiker op een resource klikt, krijgt die een visuele representatie van het content type CoAP resource.\\
-Wanneer de gebruiker een enkele resource wil toevoegen, hoeft die enkel de URI van de resource op te geven. Deze bestaat uit een IPv6-adres en een URI-path, gescheiden door een '/'. De module zal aan de hand van een specifieke resource discovery voor deze resource, de overige informatie en parameters van de resource ophalen en opslaan in de databank (Zie paragraaf \ref{resourceDiscovery}). De resource wordt bij de discovery gespecifieerd door een Uri-Query optie toe te voegen aan het CoAP pakket met een waarde onder de vorm van 'href=/resource'. De parameters bestaan onder andere uit het content format dat de resource teruggeeft (plain text, JSON, XML, ...), of de resource al dan niet observable is, enzovoort...\\
+Wanneer de gebruiker een enkele resource wil toevoegen, hoeft die enkel de URI van de resource op te geven. Deze bestaat uit een IPv6-adres en een URI-path, gescheiden door een '/'. De module zal aan de hand van een specifieke resource discovery voor deze resource, de overige informatie en parameters van de resource ophalen en opslaan in de databank (Zie paragraaf \ref{resourceDiscovery}). De resource wordt bij de discovery gespecifieerd door een Uri-Query optie toe te voegen aan het CoAP pakket met een waarde onder de vorm van 'href=resourcenaam'. De parameters bestaan onder andere uit het content format dat de resource teruggeeft (plain text, JSON, XML, ...), of de resource al dan niet observable is, enzovoort...\\
 
 Eens de gebruiker de gewenste resources heeft toegevoegd aan zijn/haar website, is het de bedoeling dat de 4 REST-methodes GET, PUT, POST, DELETE kunnen uitgevoerd worden, de gebruiker zal ervan op de hoogte gebracht worden wanneer een methode niet ondersteund wordt. Naast deze methodes kan een sensor ook nog observable zijn (zie hoofdstuk \ref{CoAP}), de gebruiker moet dus ook in staat gesteld worden om notificaties te ontvangen van een resource. Ook wanneer een gebruiker de website verlaat moet het mogelijk zijn de observe te laten doorlopen.
 
@@ -45,25 +45,30 @@ Deze module werd ontworpen met het oog op bepaalde aspecten waarmee rekening moe
 \subsubsection{Modulariteit}
 Een van de grote troeven van Drupal is de modulariteit die aangeboden wordt. Het is dan ook van uiterst belang dat onze module dit principe niet verbreekt, maar juist doorzet. In hoofdstuk \ref{coaplibrary} zagen we al hoe een aparte CoAP library ontwikkeld werd. Dit heeft als gevolg dat elke Drupal gebruiker de kans heeft gebruik te maken van de library en dus zelf een module zou kunnen bouwen gelijkaardig aan de onze.\\
 Dit geldt ook voor deze module die we nu bespreken, deze is ook bruikbaar voor elke gebruiker die dat wil. Naast het installeren van de CoAP library en deze module, hoeft de gebruiker niets extra te doen om deze module te gebruiken. Databanktabellen worden gecre\"{e}erd en content types worden ge\"{i}nstalleerd, zonder dat de gebruiker daar iets hoeft voor te configureren.\\
-Onze module heeft zo ook enkele modules nodig die de gebruiker eerst moet installeren. Drupal zal hierbij automatisch de gebruiker aangeven welke modules eerst moeten worden geïnstalleerd. Het betreft de volgende modules:
+Onze module heeft zo ook enkele modules nodig die de gebruiker eerst moet installeren. Drupal zal hierbij automatisch aangeven welke modules eerst moeten worden geïnstalleerd. Het betreft de volgende modules:
 \begin{itemize}
 \item Background process \cite{backgroundProcessModule}: Deze module maakt het gebruik van achtergrondprocessen mogelijk. (bvb voor observe)
 \item Progress \cite{progressModule}: Deze module moet worden toegevoegd omdat de Background Process module hiervan afhankelijk is.
 \item CoAP library (Zie hoofdstuk \ref{coaplibrary}): Onze eigen geschreven module die instaat voor alle CoAP communicatie.
 \item Entity API \cite{entityApiModule}: Een veelgebruikte module (wordt namelijk opgenomen in de core van Drupal 8). Breidt de functionaliteit uit die met entities kan verwezenlijkt worden. Deze module wordt besproken in \ref{gebruikEntityAPI}.
 \item Node reference \cite{nodeReferenceModule}: Een module die gebruikt wordt om in een bepaalde node te verwijzen naar andere nodes.
-\item Views: Maakt het gebruik van views mogelijk.
-\item Views UI: Stelt een user interface ter beschikking om eigen views te maken en te beheren.
+\end{itemize}
+
+\noindent
+Er zijn ook modules die niet strikt noodzakelijk zijn maar wel extra functionaliteit bieden:
+\begin{itemize}
+\item Views\cite{viewsModule}: Maakt het gebruik van views mogelijk.
+\item Views UI: Stelt een user interface ter beschikking om eigen views te maken en te beheren. Deze module is onderdeel van de views module.
 \end{itemize}
 
 \subsubsection{Minimalisatie van netwerkbelasting}
-Mogelijks zijn meerdere gebruikers van een Drupal website ge\"{i}nteresseerd in een observable resource. Het is niet aanvaardbaar dat de netwerkbelasting zou stijgen met het aantal ge\"{i}nteresseerden. Daarom gedraagt Drupal zich eigenlijk als intermediaire server voor de eindgebruikers. Er wordt namelijk maar \'{e}\'{e}n observe uitgevoerd door Drupal, ongeacht het aantal gebruikers dat ge\"{i}nteresseerd is. De notificaties worden op de server in de databank gestopt en het zijn deze waarden waarop de gebruikers uiteindelijk pollen.\\
-Bovendien zorgt dit voor een vorm van controle over verkeer naar de resources, de gebruikers van de website kunnen namelijk niet zelfstandig CoAP praten met de resources. Een voorbeeld hiervan is de demo van de module op onze website (http://www.thesisinternetofthings.tk). Enkel ingelogde gebruikers zijn in staat een observe uit te voeren. Dit om te vermijden dat gelijk wie een observe kan starten, men kan namelijk vergeten de observe af te sluiten, waardoor de databank meer en meer opgevuld wordt.
+Mogelijks zijn meerdere gebruikers van een Drupal website ge\"{i}nteresseerd in een observable resource. Het is niet aanvaardbaar dat de netwerkbelasting zou stijgen met het aantal ge\"{i}nteresseerden voor die resource. Daarom gedraagt Drupal zich eigenlijk als intermediaire server voor de eindgebruikers. Er wordt namelijk maar \'{e}\'{e}n observe uitgevoerd door Drupal, ongeacht het aantal gebruikers dat ge\"{i}nteresseerd is in die resource. De notificaties worden op de server in de databank gestopt en het zijn deze waarden waarop de gebruikers uiteindelijk pollen.\\
+Bovendien zorgt dit voor een vorm van controle over verkeer naar de resources, de gebruikers van de website kunnen namelijk niet zelfstandig CoAP praten met de resources. % Een voorbeeld hiervan is de demo van de module op onze website (http://www.thesisinternetofthings.tk). Enkel ingelogde gebruikers zijn in staat een observe uit te voeren. Dit om te vermijden dat gelijk wie een observe kan starten, men kan namelijk vergeten de observe af te sluiten, waardoor de databank meer en meer opgevuld wordt.
 
 \subsubsection{Asynchroniteit}
-In een eerste fase van deze module werd er gebruik gemaakt van een formulier. Bij het indienen van dit formulier, werd eerst de request om de waarde op te halen uitgevoerd en dan gewacht op de response om de nieuwe pagina op te bouwen. Het spreekt voor zich dat dit geen goede oplossing is, daar de gebruiker zal moeten wachten op de pagina wanneer de communicatie traag is of misloopt, de gebruiker kan snel het idee krijgen dat er geen verbinding meer is met de website.\\
+In een eerste fase van deze module werd er gebruik gemaakt van een formulier. Bij het indienen van dit formulier, werd eerst de request om de waarde op te halen uitgevoerd en dan gewacht op de response om de nieuwe pagina op te bouwen. Het spreekt voor zich dat dit geen goede oplossing is, daar de gebruiker zal moeten wachten op de pagina wanneer de communicatie traag is of misloopt. De gebruiker kan snel het idee krijgen dat er geen verbinding meer is met de website.\\
 
-In hoofdstuk \ref{Drupal} zagen we dat een mogelijke oplossing het gebruik van jQuery is. In deze situatie is jQuery echter geen goede optie, daar jQuery de databank van Drupal niet zomaar kan manipuleren. Hiervoor zouden een connectiestring, wachtwoord en dergelijke gegevens nodig zijn, en jQuery van die informatie voorzien is een grote bedreiging voor de veiligheid, bovendien zou dit een oplossing zijn met een zeer sterke koppeling, wat nooit een goed idee is.\\
+In hoofdstuk \ref{Drupal} zagen we dat een mogelijke oplossing het gebruik van jQuery is. In deze situatie is jQuery echter geen goede optie omdat jQuery de databank van Drupal niet zomaar kan manipuleren. Hiervoor zouden een connectiestring, wachtwoord en dergelijke gegevens nodig zijn, en jQuery van die informatie voorzien is een grote bedreiging voor de veiligheid, bovendien zou dit een oplossing zijn met een zeer sterke koppeling, wat nooit een goed idee is.\\
 De gebruikte oplossing illustreert alweer de voordelen van een open source platform met een uitgebreide community. Er is namelijk al een Background Process module gemaakt in het verleden, het zou dus zonde zijn om hier niet dankbaar gebruik van te maken. Zoals de naam suggereert, biedt de Background Process module de mogelijkheid om achtergrondprocessen op te starten. Deze draaien op de achtergrond op de server en storen dus geen andere processen zoals het opbouwen van een pagina voor de gebruiker, waardoor de gebruiker dus niet geconfronteerd wordt met lange wachttijden.\\
 Sterker nog, er is ook een functie voorzien om een HTTP GET-request uit te voeren, waarbij je een callback-functie opgeeft. Wanneer er een response is, zal dus automatisch de opgegeven functie als achtergrondproces opgeroepen worden met de response als argument. Deze functie zal dus goed van pas komen in de eerste versie van de module, die gebruik maakt van een HTTP/CoAP-proxy. Deze wordt beschreven later in dit hoofdstuk (Zie paragraaf \ref{proxy}).
 
@@ -75,7 +80,7 @@ Om een push-strategie te verwezenlijken werd een uitgebreide literatuurstudie va
 Concreet zou het in de context van deze masterproef mogelijk zijn om met node.js een JavaScript-functie op te roepen bij de client op initiatief van de server.\\
 
 Er is meermaals gepoogd dit te realiseren, maar de summiere documentatie van node.js laat op sommige vlakken te wensen over. Zo zijn we er niet in geslaagd documentatie te vinden over het opzetten van een eigen kanaal of een bestaand kanaal te gebruiken.\\
-Bovendien is het nodig voor node.js om een extra server te draaien waarlangs het verkeer moet passeren. Aangezien het vaak niet mogelijk is om de shell van de webserver te gebruiken in een free-hosting omgeving, is dit een erg groot nadeel. Er bestaan wel servers die je kan gebruiken, maar dit tegen betaling. Wij, als ontwikkelaar van de module, kunnen niet verwachten dat een eindgebruiker een extra server ter beschikking heeft of dat zelfs wilt. Het is de bedoeling dat onze module zo veel mogelijk out-of-the-box bruikbaar is.\\
+Bovendien is het nodig voor node.js om een extra server te draaien waarlangs het verkeer moet passeren. Aangezien het vaak niet mogelijk is om de shell van de webserver te gebruiken in een free-hosting omgeving, is dit een erg groot nadeel. Er bestaan wel servers die je kan gebruiken, maar dit tegen betaling. Wij, als ontwikkelaar van de module, kunnen niet verwachten dat een eindgebruiker een extra server ter beschikking heeft of dat zelfs wil. Het is de bedoeling dat onze module zo veel mogelijk out-of-the-box bruikbaar is.\\
 
 De conclusie is dat wij geopteerd hebben geen gebruik te maken van node.js en dus ook niet van een push-strategie.
 
@@ -86,19 +91,19 @@ Aangezien een push-strategie niet of moeilijk kan gebruikt worden, hebben wij ge
 Uiteraard was de eerste reactie gebruik te maken van de Drupal-community en dus te zoeken in de vele modules die beschikbaar zijn. Er is tot op heden geen module geschreven door iemand anders in de Drupal-community dat ons probleem behandelt. De inspiratie voor de uiteindelijke oplossing werd wel gehaald uit een bestaande module, namelijk de Block Refresh-module \cite{blockRefreshModule}.\\
 Deze laatste maakt gebruik van jQuery en AJAX calls om periodiek de inhoud van een block te refreshen, waarbij je zelf de lengte van de periode kan bepalen. In jQuery loopt een timer die periodiek een JavaScript-functie oproept. In deze functie wordt dan een AJAX call uitgevoerd naar de Drupal server, die op zijn beurt een antwoord terug stuurt.\\
 
-Wij hebben geopteerd het mechanisme licht te wijzigen in plaats van de module zelf te gebruiken. Aan de oorzaak van deze beslissing liggen drie redenen:
+Wij hebben geopteerd het mechanisme licht te wijzigen in plaats van de module zelf te gebruiken. Aan de basis van deze beslissing liggen drie redenen:
 \begin{itemize}
 \item Wij wensen de content slechts aan te passen wanneer nodig. Dit wil zeggen, wanneer een nieuwe waarde is binnengekomen. Bovendien hoeft niet alle content vernieuwd te worden, dit doet de Block Refresh module wel.
 \item De configuratie van de periode voor het vernieuwingsinterval is in onze ogen relatief omslachtig. De gebruiker moet al een configuratievenster openen om het interval te wijzigen, wat wachttijden met zich meebrengt. Het zal blijken dat in onze uiteindelijke module het interval snel en gemakkelijk te wijzigen is. 
 \item De uiteindelijke module zal geen blocks meer gebruiken, maar content types. Dit maakt het gebruik van de Block Refresh module zelfs onmogelijk.
 \end{itemize}
 
-De aangepaste methode gaat als volgt: Wanneer de pagina geladen wordt bij de client, start een timer die periodiek een AJAX call uitvoert naar de Drupal server. De gebruiker kan hierbij bepalen hoe lang die periode moet zijn. Op de Drupal server is dan een AJAX callback functie gedefinieerd aan de hand van de hook hook\_menu(). Deze hook wordt gebruikt om menu items toe te voegen aan de site en om AJAX callbacks te definieren. Alle output die gegenereerd wordt in deze callback wordt als antwoord teruggestuurd op de AJAX callback.\\
+De aangepaste methode werkt als volgt: Wanneer de pagina geladen wordt bij de client, start een timer die periodiek een AJAX call uitvoert naar de Drupal server. De gebruiker kan hierbij bepalen hoe lang die periode moet zijn. Op de Drupal server is dan een AJAX callback functie gedefinieerd aan de hand van de hook hook\_menu(). Deze hook wordt gebruikt om menu items toe te voegen aan de site en om AJAX callbacks te definieren. Alle output die gegenereerd wordt in deze callback wordt als antwoord teruggestuurd op de AJAX callback.\\
 
 Wat de callback terugstuurt en hoe die inhoud wordt verwerkt, verschilt per versie van onze module. Dit zal dan ook besproken worden in de gepaste paragrafen (Zie paragraaf \ref{evolutie}).
 
 \subsubsection{Caching}\label{caching}
-Een bericht kan een maximum levensduur hebben, dit wordt aangegeven met een max-age optie (Option number 14) in het bericht. Deze bevat dan een numerieke waarde die aangeeft in seconden hoelang de waarde als geldig mag worden beschouwd. Wanneer deze maximum levensduur overschreden wordt, mag deze waarde niet meer worden gebruikt. Dan moet bij een volgende aanvraag door een gebruiker een nieuwe waarde worden opgehaald van de resource. Bijgevolg wordt een opgehaalde waarde in de databank gestopt. Wanneer de maximum levensduur nog niet overschreden is bij een aanvraag, wordt de waarde uit de databank gehaald. De resource wordt dan dus niet onnodig belast. Dit zorgt er ook voor dat de belasting op een resource niet evenredig stijgt met het aantal gebruikers die er een waarde van willen opvragen.\\
+Een bericht kan een maximum levensduur hebben, dit wordt aangegeven met een max-age optie (optie 14) in het bericht. Deze bevat dan een numerieke waarde die aangeeft in seconden hoelang de waarde als geldig mag worden beschouwd. Wanneer deze maximum levensduur overschreden wordt, mag deze waarde niet meer worden gebruikt. Dan moet bij een volgende aanvraag door een gebruiker een nieuwe waarde worden opgehaald van de resource. Bijgevolg wordt een opgehaalde waarde in de databank gestopt. Wanneer de maximum levensduur nog niet overschreden is bij een aanvraag, wordt de waarde uit de databank gehaald. De resource en het netwerk worden dan dus niet onnodig belast. Dit zorgt er ook voor dat de belasting op een resource niet evenredig stijgt met het aantal gebruikers die er een waarde van willen opvragen.\\
 Dit aspect is zeker een van de meer belangrijke omdat verbindingen naar een resource vaak een beperkte bandbreedte kennen. Bovendien bestaat de energievoorziening van sensoren vaak uit een batterij. Het werk dat zo'n sensor moet verrichten, moet dus worden geminimaliseerd.
 
 \subsection{Content-type in de databank}
@@ -112,46 +117,47 @@ Onder content-type van de databank verstaan we de definitie van nodige databankt
 \end{figure}
 
 We onderscheiden drie tabellen (Zie figuur \ref{fig:databankModel}):
-\subsubsection{coap\_resource\_resources}
+\subsubsection{coap\_resource\_resource}
 Deze tabel bevat een entry voor elke CoAP resource die nodig kan zijn en bovendien een entry voor elk embedded device waarop de resources aangesloten zijn. Deze tabel bevat de volgende kolommen (Zie figuur \ref{fig:databankModel}):
 \begin{itemize}
-\item uri: Dit is de volledige URI van de resource, dus IPv6-adres en URI-path. Tenzij het hier een embedded device betreft, dan bestaat de URI enkel uit een IPv6-adres. Dit is tevens de primaire sleutel van deze kolom, elke waarde moet dus uniek zijn.
+\item uri: Dit is de volledige URI van de resource, dus IPv6-adres en URI-path. Dit is tevens de primaire sleutel van deze kolom, elke waarde moet dus uniek zijn.
 \item obs, rt, ct, ifd, sz, title, anchor en rel: Deze kolommen bevatten waarden die bekomen worden bij resource disovery. Deze werden eerder uitgelegd in paragraaf \ref{resourceDiscovery}.
 \item last\_error: Deze kolom bevat voor elke resource de laatst opgetreden fout. Zo kan een browser te weten komen bij polling dat er iets foutliep bij communicatie met de betreffende resource.
-\item created: ?
-\item changed: ?
-\item deleted: ?
+\item created: De UNIX timestamp van de tijd waarop deze resource aangemaakt werd.
+\item changed: De UNIX timestamp van de tijd waarop deze resource het laatst gewijzigd werd.
+\item not\_in\_core: Een waarde om aan te geven of deze resource nog in de well-known/core zit van een device.
 \end{itemize}
-\subsubsection{coap\_resource\_users}
-Deze tabel bevat een entry voor elk koppel user/resource. Op die manier kan per user worden bijgehouden wat een user met een bepaalde resource wil doen. Ze bestaat uit de volgende kolommen:
+\subsubsection{coap\_resource\_interested\_user}
+In deze tabel wordt bijgehouden welke users ge\"{i}nteresseerd zijn in specifieke resources en devices. Ze bevat een entry voor elk koppel user/resource en user/device en wordt impliciet geassoc\"{i}eerd met een instantie van respectievelijk coap\_resource of coap\_device. Op die manier kan per user worden bijgehouden wat hij/zij met een bepaalde resource wil doen. Ze bestaat uit de volgende kolommen:
 \begin{itemize}
-\item uid: een unieke identificatie voor een gebruiker. Dit ID is overgenomen uit Drupal, daar hebben alle gebruikers ook een uniek ID. Deze kolom is tevens deel van de primaire sleutel en is dus uniek.
-\item uri: De URI van de resource waarin de gebruiker ge\{i\}nteresseerd is. Dit is dezelfde URI als in de vorige tabel (coap\_resource\_resources), deze kolom vormt dus een foreign key. Deze kolom maakt tevens uit van de primaire sleutel en dus moeten de waarden ervan uniek zijn.
-\item nid: een unieke identificatie van de node waaraan de resource van deze user gekoppeld is in Drupal. Deze kolom is ook deel van de primaire sleutel en dus moeten de waarden ervan ook uniek zijn in deze tabel.
-\item device: deze waarde geeft aan of het hier een resource of een volledig embedded device betreft (0 = resource, 1 = device).
-\item observe: deze waarde geeft aan of de gebruiker momenteel de resource wil observeren of niet (0 = niet observeren, 1 = wel observeren).
-\item polling\_interval: dit is de periode in seconden tussen twee polls van de browser naar de Drupal server, deze is default drie seconden.
-\item new: ?
-\item version\_time: ?
+\item uid: Een unieke identificatie voor een gebruiker. Dit ID is overgenomen uit Drupal, daar hebben alle gebruikers ook een uniek User ID. Deze kolom is tevens deel van de primaire sleutel.
+\item uri: De URI van de resource waarin de gebruiker ge\"{i}nteresseerd is. Dit is dezelfde URI als in de vorige tabel (coap\_resource\_resources). Deze kolom vormt dus een foreign key en maakt tevens deel uit van de primaire sleutel.
+\item nid: Een unieke identificatie van de node (Node ID)\nomenclature{nid}{Node ID} waaraan de resource gekoppeld is in Drupal. Deze kolom is ook deel van de primaire sleutel.
+\item device: Deze waarde geeft aan of het een resource of een volledig embedded device betreft (0 = resource, 1 = device).
+\item observe: Deze waarde geeft aan of de gebruiker momenteel de resource wil observeren of niet (0 = niet observeren, 1 = wel observeren).
+\item polling\_interval: Dit is de periode in seconden tussen twee polls van de browser naar de Drupal server, deze is default drie seconden.
+\item new: Deze waarde duidt aan of er inmiddels een nieuwe discovery is uitgevoerd of bezig is voor een device. Deze waarde heeft momenteel enkel voor devices. (0 = up-to-date, 1 = discovery bezig, 2 = discovery klaar)
 \end{itemize}
-\subsubsection{coap\_resource\_values}
+De primaire sleutel bestaat uit de combinatie van de kolommen uid, uri en nid. Elke combinatie van waarden uit deze drie kolommen moet per entry uniek zijn.
+
+\subsubsection{coap\_resource\_value}
 Deze tabel bevat een entry voor elke waarde die is binnengekomen. Bovendien wordt een nieuwe waarde even veel keren toegevoegd als er ge\"{i}nteresseerden zijn voor die waarde op dat moment. Dit lijkt op het eerste zicht redundante informatie, maar het heeft wel degelijk nut. Zo kan men bijvoorbeeld later te weten komen voor een bepaalde user, welke waarden hij/zij in welke periode heeft opgevraagd. De tabel bevat de volgende kolommen:
 \begin{itemize}
-\item hid: dit is een uniek ID voor de entry automatisch gegenereerd bij toevoegen aan de databank. Dit is de primaire sleutel, dus deze waarden moeten uniek zijn.
-\item uid: dit is het ID van de user waarvoor deze waarde opgeslagen is. Dit is hetzelfde ID als in de coap\_resource\_users-tabel en vormt dus een foreign key.
-\item uri: dit is de URI van de resource waarvan deze waarde komt. Dit is dezelfde URI als in de coap\_resource\_resources-tabel en vormt dus een foreign key.
-\item content\_format: deze kolom bevat voor elke entry het formaat van het bericht, aangeduidt met een leesbare naam (bijvoorbeeld plain text, JSON, ...). 
-\item payload: dit is de payload van het bericht in leesbare vorm.
-\item parsed\_value: dit is, indien mogelijk, een waarde die geparset is uit de payload, bijvoorbeeld een numerieke waarde. Indien er geen waarde kon geparset worden bevat deze kolom gewoon de payload.
-\item max\_age: geeft aan wat de geldigheidsduur is voor deze waarde, deze is default nul.
-\item timestamp: het tijdstip waarop de waarde in de databank werd opgeslagen, deze wordt automatisch gegenereerd. Samen met de max-age kan men dus bepalen of de waarde nog geldig is.
-\item original\_response: de originele response op het CoAP request-bericht in hexadecimale vorm.
-\item new: geeft aan of de waarde reeds opgehaald werd om te tonen aan de gebruiker (0 = reeds afgehaald, 1 = nog niet afgehaald, default waarde = 0).
+\item hid: Een uniek ID voor de entry automatisch gegenereerd bij toevoegen aan de databank. Dit is de primaire sleutel, dus deze waarden moeten uniek zijn.
+\item uid: Het ID van de user waarvoor deze waarde opgeslagen is. Dit is hetzelfde ID als in de coap\_resource\_users-tabel en vormt dus een foreign key.
+\item uri: De URI van de resource waarvan deze waarde komt. Dit is dezelfde URI als in de coap\_resource\_resources-tabel en vormt dus een foreign key.
+\item content\_format: Bevat voor elke entry het formaat van het bericht, aangeduidt met een leesbare naam (bijvoorbeeld plain text, JSON, ...). 
+\item payload: De payload van het bericht in leesbare vorm.
+\item parsed\_value: Indien mogelijk bevat dit een waarde die geparset is uit de payload, bijvoorbeeld een numerieke waarde. Indien er geen waarde kon geparset worden bevat deze kolom gewoon de payload.
+\item max\_age: Geeft aan wat de geldigheidsduur is voor deze waarde, deze is default nul.
+\item timestamp: Het tijdstip waarop de waarde in de databank werd opgeslagen in mysql timestamp-formaat. Deze wordt automatisch gegenereerd. Samen met de max-age kan men dus bepalen of de waarde nog geldig is.
+\item original\_response: De originele response op het CoAP request-bericht in hexadecimale vorm.
+\item new: Geeft aan of de waarde reeds opgehaald werd om te tonen aan de gebruiker (0 = reeds afgehaald, 1 = nog niet afgehaald, default waarde = 0).
 \end{itemize}
 
 \subsection{Content-types in Drupal}
 
-Bij installatie van de module worden twee content types mee ge\"{i}nstalleerd. We bespreken wat de mogelijkheden ervan zijn en hoe ze eruitzien. Het laten installeren van content types zorgt ervoor dat een Drupal gebruiker op een eenvoudige manier content kan toevoegen, in dit geval onderdelen van een CoAP sensornetwerk. Concreet moet de gebruiker enkel op 'Add content' klikken op zijn/haar Drupal website en het gewenste content type aanklikken. Na invullen van enkele vereiste velden wordt een node gecre\"{e}erd die de content voorstelt.
+Bij installatie van de module worden twee content types mee ge\"{i}nstalleerd. We bespreken wat de mogelijkheden ervan zijn en hoe ze eruitzien. Het laten installeren van content types zorgt ervoor dat een Drupal gebruiker op een eenvoudige manier content kan toevoegen, in dit geval onderdelen van een CoAP-sensornetwerk. Concreet moet de gebruiker enkel op 'Add content' klikken op zijn/haar Drupal website en het gewenste content type aanklikken. Na invullen van enkele vereiste velden wordt een node gecre\"{e}erd die de content voorstelt.
 \newpage
 \begin{figure}[h!]
 \centering
@@ -279,7 +285,7 @@ Alle code die te maken had met CoAP communicatie was hardgecodeerde code wat onv
 \subsubsection{Nieuwe block}
 De module onderging in deze stap ook een visuele verbetering, maar ook een verbetering qua functionaliteit (Zie figuur \ref{fig:meerdereResources}). Zo kan de gebruiker nu met \'{e}\'{e}n block meerdere resources bevragen.\\
 
-De gebruiker kan \'{e}\'{e}n resource selecteren met radiobuttons, wanneer de gebruiker dan op de knop 'Bekijken' klikt, wordt de pagina herladen en is de geselecteerde resource te bevragen. Door op de knop 'GET' te klikken, wordt een GET request uitgevoerd op de geselecteerde resource.\\
+De gebruiker kan \'{e}\'{e}n resource selecteren met radiobuttons, wanneer de gebruiker dan op de knop 'Bekijken' klikt, wordt de pagina herladen en is de geselecteerde resource te bevragen. Door op de knop 'GET' te klikken, wordt een GET-request uitgevoerd op de geselecteerde resource.\\
 Er wordt ook een lijst met checkboxes ter beschikking gesteld. De gebruiker kan hierbij de resources aanvinken waarop een observe moet worden uitgevoerd. Wanneer de gebruiker een aangevinkte checkbox uitvinkt, zal de observe stoppen. De instellingen worden opgeslagen en de benodigde acties worden uitgevoerd wanneer de gebruiker op de knop 'Observe' klikt. Belangrijk hierbij is dat wanneer de pagina herladen wordt, de juiste checkboxes al worden aangevinkt zodat de gebruiker ten allen tijde weet welke resources al geobserveerd worden.\\
 Een laatste verbetering bestaat uit een grafiek die automatisch wordt gegenereerd op basis van de geschiedenis van opvragingen. De grafiek wordt aan de hand van een AJAX call en de Google Charts API \cite{googleCharts} gerealiseerd. Het betreft hier de waarden van de resource die momenteel bekeken wordt en dus aangeduid is met een radiobutton.
 
@@ -298,7 +304,7 @@ In de vorige versies werd de module weergegeven aan de hand van een HTML-formuli
 Een beter en vaak gebruikt alternatief is het maken van een eigen content type. Wanneer men nu deze module installeert worden de eigen content types mee ge\"{i}nstalleerd. Dit heeft als gevolg dat de gebruiker slechts op 'Add content' hoeft te klikken (Zie figuur \ref{fig:addContent}), enkele benodigde velden in moet vullen en de content wordt automatisch gegenereerd en opgeslagen. Bij deze methode wordt al deze configuratie afgehandeld door Drupal mechanismen, zo worden bijvoorbeeld de velden opgeslagen in tabellen die behoren tot de Drupal core. Dit betekent dat onze content effectief wordt ingepast en geen losstaand geheel is. Het beheer van de content, manipulatie en dergelijke zal dus gebeuren met Drupal zoals dat gebeurt voor andere content types.\\
 
 \subsection{CoAP resource met volledige REST functionaliteit} \label{rest}
-Tot hiertoe was enkel een GET request mogelijk naar een resource, maar vaak ondersteunt een resource ook nog andere REST methodes (GET, PUT, POST, DELETE). Het is dus van groot belang dat onze module ook de mogelijkheid biedt om alle REST methodes uit te voeren.\\
+Tot hiertoe was enkel een GET-request mogelijk naar een resource, maar vaak ondersteunt een resource ook nog andere REST methodes (GET, PUT, POST, DELETE). Het is dus van groot belang dat onze module ook de mogelijkheid biedt om alle REST methodes uit te voeren.\\
 
 Dit brengt ook mee dat de visuele representatie zal wijzigen (Zie figuur \ref{fig:rest}). De vier methodes worden met knoppen weergegeven in een tabel, eventueel vergezeld van een textbox indien invoer vereist is (PUT en POST). Onderaan de tabel wordt de response en response method getoond (205 Content, 405 Bad method,...).\\
 Wij hebben ervoor gekozen dat de gebruiker voor elke resource, op elk moment elke REST methode kan uitvoeren. Er wordt namelijk al een gepaste response getoond wanneer een methode niet ondersteund is. Bovendien is een server niet verplicht in een resource discovery (Zie paragraaf \ref{resourceDiscovery}) aan te geven welke methodes ondersteund zijn. Wil men voor elke server toch methodes uitschakelen die niet ondersteund zijn, dan zou men al een keer moeten proberen en testen of een 405 Bad Request teruggestuurd wordt.
