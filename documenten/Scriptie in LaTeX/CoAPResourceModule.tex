@@ -62,7 +62,7 @@ Er zijn ook modules die niet strikt noodzakelijk zijn maar wel extra functionali
 \end{itemize}
 
 \subsubsection{Minimalisatie van netwerkbelasting}
-Mogelijks zijn meerdere gebruikers van een Drupal website ge\"{i}nteresseerd in een observable resource. Het is niet aanvaardbaar dat de netwerkbelasting zou stijgen met het aantal ge\"{i}nteresseerden voor die resource. Daarom gedraagt Drupal zich eigenlijk als intermediaire server voor de eindgebruikers. Er wordt namelijk maar \'{e}\'{e}n observe uitgevoerd door Drupal, ongeacht het aantal gebruikers dat ge\"{i}nteresseerd is in die resource. De notificaties worden op de server in de databank gestopt en het zijn deze waarden waarop de gebruikers uiteindelijk pollen.\\
+Mogelijks zijn meerdere gebruikers van een Drupal-website ge\"{i}nteresseerd in een observable resource. Het is niet aanvaardbaar dat de netwerkbelasting zou stijgen met het aantal ge\"{i}nteresseerden voor die resource. Daarom gedraagt Drupal zich eigenlijk als intermediaire server voor de eindgebruikers. Er wordt namelijk maar \'{e}\'{e}n observe uitgevoerd door Drupal, ongeacht het aantal gebruikers dat ge\"{i}nteresseerd is in die resource. De notificaties worden op de server in de databank gestopt en het zijn deze waarden waarop de gebruikers uiteindelijk pollen.\\
 Bovendien zorgt dit voor een vorm van controle over verkeer naar de resources, de gebruikers van de website kunnen namelijk niet zelfstandig CoAP praten met de resources. % Een voorbeeld hiervan is de demo van de module op onze website (http://www.thesisinternetofthings.tk). Enkel ingelogde gebruikers zijn in staat een observe uit te voeren. Dit om te vermijden dat gelijk wie een observe kan starten, men kan namelijk vergeten de observe af te sluiten, waardoor de databank meer en meer opgevuld wordt.
 
 \subsubsection{Asynchroniteit}
@@ -157,7 +157,7 @@ Deze tabel bevat een entry voor elke waarde die is binnengekomen. Bovendien word
 
 \subsection{Content-types in Drupal}
 
-Bij installatie van de module worden twee content types mee ge\"{i}nstalleerd. We bespreken wat de mogelijkheden ervan zijn en hoe ze eruitzien. Het laten installeren van content types zorgt ervoor dat een Drupal gebruiker op een eenvoudige manier content kan toevoegen, in dit geval onderdelen van een CoAP-sensornetwerk. Concreet moet de gebruiker enkel op 'Add content' klikken op zijn/haar Drupal website en het gewenste content type aanklikken. Na invullen van enkele vereiste velden wordt een node gecre\"{e}erd die de content voorstelt.
+Bij installatie van de module worden twee content types mee ge\"{i}nstalleerd. We bespreken wat de mogelijkheden ervan zijn en hoe ze eruitzien. Het laten installeren van content types zorgt ervoor dat een Drupal gebruiker op een eenvoudige manier content kan toevoegen, in dit geval onderdelen van een CoAP-sensornetwerk. Concreet moet de gebruiker enkel op 'Add content' klikken op zijn/haar Drupal-website en het gewenste content type aanklikken. Na invullen van enkele vereiste velden wordt een node gecre\"{e}erd die de content voorstelt.
 \newpage
 \begin{figure}[h!]
 \centering
@@ -181,7 +181,7 @@ Bij installatie van de module worden twee content types mee ge\"{i}nstalleerd. W
 \vspace{-20pt}
 \end{wrapfigure}
 Dit content type stelt \'{e}\'{e}n resource voor. Bij het toevoegen wordt de URI opgegeven, deze bestaat uit het IPv6-adres van het embedded device waarop de resource is aangesloten en een URI-path. IPv6-adres en URI-path worden gescheiden door een slash ('/'). Een voorbeeld van een door ons vaak gebruikte URI is: 2001:6a8:1d80:200::2/test.\\
-Er wordt gevalideerd op de structuur van de URI, wanneer de gebruiker een foute URI opgeeft wordt er een foutmelding getoond en krijgt de gebruiker opnieuw de kans om een geldige URI op te geven. Wanneer de URI gevalideerd is, krijgt de gebruiker de visuele representatie te zien. De gebruiker krijgt nu de kans om de REST-methodes  GET, PUT, POST en DELETE uit te voeren en een observe. Bovendien krijgt de gebruiker een geschiedenis van opvragingen voor deze resource te zien en krijgt ook de kans een grafiek te laten genereren. Voor het type grafiek heeft de gebruiker de keuze uit een lijn-, staaf-, of taartgrafiek.
+Er wordt gevalideerd op de structuur van de URI, wanneer de gebruiker een foute URI opgeeft wordt er een foutmelding getoond en krijgt de gebruiker opnieuw de kans om een geldige URI op te geven. Wanneer de URI gevalideerd is, krijgt de gebruiker de visuele representatie te zien. De gebruiker krijgt nu de kans om de REST-methodes  GET, PUT, POST en DELETE uit te voeren en een observe. Bovendien krijgt de gebruiker een geschiedenis van opvragingen voor deze resource te zien en krijgt hij ook de kans een grafiek te laten genereren. Voor het type grafiek heeft de gebruiker de keuze uit een lijn-, staaf-, of taartgrafiek. De gebruiker moet zelf weten welke soort grafiek nuttige informatie kan bevatten.
 \begin{figure}[h!]
 \centering
 \includegraphics[width=0.8\textwidth]{fig/coap_resource}

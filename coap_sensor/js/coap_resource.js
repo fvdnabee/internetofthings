@@ -1,27 +1,12 @@
 (function ($) {
 
 var polling;
-var refreshId;
 
 var get_pending = false;
 var put_pending = false;
 var post_pending = false;
 var delete_pending = false;
 var observe_pending = false;
-
-Drupal.behaviors.coap_resource = {
-  attach: 	function(context) {
-				refreshId = setInterval(function(){
-					$.ajax({
-						type: "GET",
-						url: "/coap_resource/discovery/" + $('input[name|="nid"]').attr("value"),
-						dataType: "text",
-						success: discoverReady
-					});
-				}, 2000);
-			}
-			
-};
 
 $(document).ready(function() {
 	setTimeout(function(){google.load('visualization', '1', {'callback':'', 'packages':['corechart']})}, 20);
