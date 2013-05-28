@@ -1,0 +1,373 @@
+<?php
+
+//Some files contain functions that are called in this file, we have to include them.
+require_once(drupal_get_path('module', 'coap_library') . '/coap_library_classes.inc');
+require_once(drupal_get_path('module', 'coap_sensor') . '/includes/coap_device.inc');
+require_once(drupal_get_path('module', 'coap_sensor') . '/includes/coap_resource.inc');
+
+
+/**
+ * Implements hook_menu().
+ */
+function coap_sensor_menu() {
+	$items = array();
+	$items['admin/config/content/coap_sensor'] = array(
+		'title' => 'CoAP sensor settings',
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('_coap_sensor_admin_settings'),
+		'access callback' => TRUE,
+		'description' => 'Global configuration of the CoAP sensor module functionality.',
+		'type' => MENU_NORMAL_ITEM,
+	);
+	$items["coap_resource/poll/%"] = array(
+		"title" => "Are there new values for the resource?",
+		"page callback" => "coap_resource_poll",
+		"page arguments" => array(2),
+		"access callback" => true,
+		"type" => MENU_CALLBACK
+	);
+	$items["coap_device/poll/%"] = array(
+		"title" => "Are there new discoveries?",
+		"page callback" => "coap_device_page_callback",
+		"page arguments" => array(2),
+		"access callback" => true,
+		"type" => MENU_CALLBACK
+	);
+	$items["coap_resource/interval/%"] = array(
+		"title" => "Change polling interval",
+		"page callback" => "coap_resource_change_interval",
+		"page arguments" => array(2, 3),
+		"access callback" => true,
+		"type" => MENU_CALLBACK
+	);
+	$items["coap_resource/request/%"] = array(
+		"title" => "Start GET request for given URI",
+		"page callback" => "coap_resource_start_request_for_uri",
+		"page arguments" => array(2, 3, 4),
+		"access callback" => true,
+		"type" => MENU_CALLBACK
+	);
+	$items["coap_resource/observe/%"] = array(
+		"title" => "Starts observing the given URI",
+		"page callback" => "coap_resource_handle_observing_for_uri",
+		"page arguments" => array(2, 3),
+		"access callback" => true,
+		"type" => MENU_CALLBACK
+	);
+
+  return $items;
+}
+
+function _coap_sensor_admin_settings() {
+	$form['message_container'] = array
+	(
+		'#type' => 'container',
+		'#prefix' => "De configuratiepagina van de module coap_sensor.",
+	);
+	$form = system_settings_form($form);
+	return $form;
+}
+
+/**
+ * Implementation of hook_help().
+ */
+function coap_sensor_help($path, $arg) {
+  switch ($path) {
+    case 'admin/modules#description':
+      return t('De coap_sensor module stelt de gebruiker in staat een sensornetwerk gebruiksvriendelijk en dynamisch te beheren.');
+    case 'admin/help#coap_sensor':
+      return t('<h3>Description:</h3><p>De coap_sensor module stelt de gebruiker in staat een sensornetwerk gebruiksvriendelijk en dynamisch te beheren.</p>');
+  }
+}
+
+/**
+ * Implements hook_node_view().
+ * Act on a node that is being assembled before rendering.
+ * Makes sure the coap_device_form is rendered when device content is shown.
+ * Also adds the jQuery files for resource content.
+ */
+function coap_sensor_node_view($node, $view_mode, $langcode) {
+	if($node->type == 'coap_resource'){
+		_coap_resource_add_js();
+	}
+	else if($node->type == 'coap_device'){
+		$node->content['coap_device_form'] = drupal_get_form('coap_device_form', $node);
+	}
+	return $node;
+}
+
+///////////////////////////
+// TEMPLATE REGISTRATION //
+///////////////////////////
+
+/**
+ * Implements hook_theme_registry_alter().
+ **/
+function coap_sensor_theme_registry_alter(&$theme_registry) {
+  $mod_path = drupal_get_path('module', 'coap_sensor') . '/templates';
+  $theme_registry_copy = $theme_registry;       // munge on a copy
+  _theme_process_registry($theme_registry_copy, 'phptemplate', 'theme_engine', 'pow', $mod_path);
+  $theme_registry += array_diff_key($theme_registry_copy, $theme_registry);
+  $hooks = array('node');
+  foreach ($hooks as $h) {
+    _coap_sensor_insert_after_first_element($theme_registry[$h]['theme paths'], $mod_path);
+  }
+}
+
+/**
+ * Helper function for re-ordering arrays (needed by coap_sensor_theme_registry_alter).
+ */
+function _coap_sensor_insert_after_first_element(&$a, $element) {
+  if(is_array($a)) {
+    $first_element = array_shift($a);
+    array_unshift($a, $first_element, $element);
+  }
+}
+
+///////////////////////
+// CUSTOM VALIDATION //
+///////////////////////
+
+/**
+ * Implements hook_form_alter().
+ * Custom validation of the uri fields is added here.
+ */
+function coap_sensor_form_alter(&$form,$form_state,$form_id){
+	if($form_id == 'coap_resource_node_form') {
+		$form['#validate'][] = '_coap_resource_node_form_validate';		
+    }
+	if($form_id == 'coap_device_node_form') {
+		$form['#validate'][] = '_coap_device_node_form_validate';
+		//prevent users to alter the reference field through the GUI
+		$form['field_resource_references']['#access'] = FALSE;
+    }
+	
+}
+
+/**
+ * Custom validator for field_resource_uri.
+ */
+function _coap_resource_node_form_validate(&$form,&$form_state) {
+	global $user;
+	$regex = '/^(((?=(?>.*?(::))(?!.+\3)))\3?|([\dA-F]{1,4}(\3|:(?!$)|$)|\2))(?4){5}((?4){2}|(25[0-5]|(2[0-4]|1\d|[1-9])?\d)(\.(?7)){3}).+\z/i';
+	$value = $form_state['values']['field_resource_uri'][LANGUAGE_NONE][0]['value'];
+	
+	if (empty($value) || !preg_match($regex, $value, $matches)) { //the regular expression failed, meaning the entered value isn't a correct resource URI
+		form_set_error('field_resource_uri', 'Please enter a valid IPv6-adress for a resource.');
+	}
+	else if(!isset($form_state['values']['nid'])){ //nid has to be not set to know we are in the stage of adding a resource, otherwise we can't edit the content
+		$result = db_select('coap_sensor_interested_user','resource')
+			->fields('resource', array('uri'))
+			->condition('uri', $matches[0], '=')
+			->condition('uid', $user->uid, '=')
+			->execute();
+		
+		if($result->rowCount() != 0){
+			form_set_error('field_resource_uri', 'You have already submitted this resource. Please enter another.');
+		}
+	}
+}
+
+/**
+ * Custom validator for field_device_uri.
+ */
+function _coap_device_node_form_validate(&$from,&$form_state) {
+	global $user;
+	$regex = '/^(((?=(?>.*?(::))(?!.+\3)))\3?|([\dA-F]{1,4}(\3|:(?!$)|$)|\2))(?4){5}((?4){2}|(25[0-5]|(2[0-4]|1\d|[1-9])?\d)(\.(?7)){3})\z/i';
+	$value = $form_state['values']['field_device_uri'][LANGUAGE_NONE][0]['value'];
+	
+	if (empty($value) || !preg_match($regex, $value, $matches)) { //the regular expression failed, meaning the entered value isn't a correct device URI
+		form_set_error('field_device_uri', 'Please enter a valid IPv6-adress for a device.');
+	}
+	else if(!isset($form_state['values']['nid'])){ //nid has to be not set to know we are in the stage of adding a device, otherwise we can't edit the content
+		$result = db_select('coap_sensor_interested_user','device')
+			->fields('device', array('uri'))
+			->condition('uri', $matches[0], '=')
+			->condition('uid', $user->uid, '=')
+			->execute();
+		
+		if($result->rowCount() != 0){
+			form_set_error('field_device_uri', 'You have already submitted this device. Please enter another.');
+		}
+	}
+}
+
+///////////////////////
+// NODE MANIPULATION //
+///////////////////////
+
+/**
+ * Implements hook_node_insert().
+ */
+function coap_sensor_node_insert($node){
+	global $user;
+	$nid = $node->nid;
+	
+	if($node->type == 'coap_resource'){
+		//fetch resource_uri from $node
+		$resource_uri = $node->field_resource_uri['und'][0]['value'];
+		
+		//has the user added this resource before?
+		//this is a redundant check, the custom validation for field_resource_uri should prevent adding a resource twice
+		$result = db_select('coap_sensor_interested_user', 'resource')
+			->fields('resource', array('uri','uid','device'))
+			->condition('uri', $resource_uri, '=')
+			->condition('uid', $user->uid, '=')
+			->condition('device', 0, '=')
+			->execute();
+			
+		if($result->rowCount() == 0){		
+			//the user is interested in this resource on this node
+			$id = db_insert('coap_sensor_interested_user')
+				->fields(array(
+					'uid' => $user->uid,
+					'uri' => $resource_uri,
+					'device' => 0,
+					'nid' => $nid,
+					'observe' => 0,
+				))
+				->execute();
+			
+			//fetch any available information for this resource -> is there any information available?
+			$result = db_select('coap_sensor_resource', 'resources')
+				->fields('resources', array('uri'))
+				->condition('uri', $resource_uri, '=')
+				->execute();
+			
+			//if there isn't any information avaiable, do a partial resource discovery, else do nothing
+			if($result->rowCount() == 0){			
+				background_process_start('_start_partial_discovery', $resource_uri, $nid);
+			}
+		}
+		else{
+			throw Exception('The user has already added this resource.');
+		}
+	}
+	else if($node->type == 'coap_device'){
+		//fetch device_uri from $node
+		$device_uri = $node->field_device_uri['und'][0]['value'];
+		
+		//has the user added this device before?
+		//this is a redundant check, the custom validation for field_device_uri should prevent adding a device twice
+		$result = db_select('coap_sensor_interested_user', 'coap_user')
+			->fields('coap_user', array('uri','uid','device'))
+			->condition('uri', $device_uri, '=')
+			->condition('uid', $user->uid, '=')
+			->condition('device', 1, '=')
+			->execute();
+		
+		if($result->rowCount() == 0){			
+			//is anyone interested in this device? -> did anyone do a discovery?
+			$result = db_select('coap_sensor_interested_user', 'coap_user')
+				->fields('coap_user', array('uri','device'))
+				->condition('uri', $device_uri, '=')
+				->condition('device', 1, '=')
+				->execute();
+			
+			//if no one has
+			if($result->rowCount() == 0){
+				//do a discovery, set flag to indicate a discovery is in progress
+				$new = 1;
+				background_process_start('_start_discovery', $device_uri, $nid);
+			}
+			//someone has -> information about the device is in the db
+			else{
+				////set flag to indicate that resources have to be added (will be done in the device callback)
+				$new = 2;
+			}
+			
+			//the user is interested in this device on this node
+			$id = db_insert('coap_sensor_interested_user')
+			->fields(array(
+				'uid' => $user->uid,
+				'uri' => $device_uri,				
+				'nid' => $nid,
+				'device' => 1,
+				'new' => $new,
+			))
+			->execute();
+			
+		}
+		else{
+			throw Exception('The user has already added this device.');
+		}
+	}
+	
+}
+
+/**
+ * Implements hook_node_delete().
+ */
+function coap_sensor_node_delete($node){
+	global $user;
+	$nid = $node->nid;
+	
+	if($node->type == 'coap_resource'){
+		db_delete('coap_sensor_interested_user')
+			->condition('nid', $nid, '=')
+			->condition('device',0,'=')
+			->execute();
+	}
+	else if($node->type == 'coap_device'){
+		db_delete('coap_sensor_interested_user')
+			->condition('nid', $nid, '=')
+			->condition('device',1,'=')
+			->execute();
+	}
+}
+
+///////////////////////
+// IMPLEMENTED HOOKS //
+///////////////////////
+
+/**
+ * Implements hook_recieve_error() from CoAP library.
+ * This function is called when something went wrong when communicating with the resource with given IP and URI-path.
+ */
+function coap_sensor_receive_error($error_message, $ip, $resource){
+	$num_updated = db_update('coap_sensor_resource')
+			->fields(array(
+				'last_error' => $error_message,
+			))
+			->condition('uri', $ip . "/" . $resource, '=')
+			->execute();
+}
+
+/**
+ * Implements hook_recieve_notification() from CoAP library.
+ * This function is called when a notification arrives from a resource that is being observed.
+ * Adds the given response to the database for every interested user.
+ */
+function coap_sensor_receive_notification($response_obj){
+	global $user;
+	
+	//	Add the notification to the database for the current user
+	coap_resource_insert_response_into_database($response_obj, $user->uid);
+	
+	//	Get interested user different from the current user
+	$query = db_select('coap_sensor_interested_user', 'users');
+	$query
+		->fields('users', array('uri', 'uid', 'observe'))
+		->condition('uri', $response_obj->get_ip() . '/' . $response_obj->get_resource(), '=')
+		->condition('observe', 1, '=')
+		->condition('uid', $user->uid, '!=');
+	$result = $query->execute();
+	
+	//	Add response to the database for every user that is interested, except from the current user
+	foreach($result as $record){
+		coap_resource_insert_response_into_database($response_obj, $record->uid);
+	}
+}
+
+/**
+ * Implements hook_stop_observers() from CoAP library.
+ * This function is called when observers of a given resource should stop observing.
+ */
+function coap_sensor_stop_observers($ip, $resource){
+	$num_updated = db_update('coap_sensor_interested_user')
+			->fields(array(
+				'observe' => 0,
+			))
+			->condition('uri', $ip . "/" . $resource, '=')
+			->execute();
+}

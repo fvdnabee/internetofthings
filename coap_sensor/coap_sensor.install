@@ -4,7 +4,7 @@
  * Implements hook_menu().
  * We use it to to describe the content types installed by the module.
  */
-function coap_resource_node_info() {
+function coap_sensor_node_info() {
   return array(
     'coap_resource' => array(
       'name' => t('CoAP resource'),
@@ -27,23 +27,23 @@ function coap_resource_node_info() {
  * Implements hook_install().
  * We use it to install the fields used by the content types and define the instances of the fields used by our content types.
  */
-function coap_resource_install(){
+function coap_sensor_install(){
 	// create a simple content type
 	node_types_rebuild();
 	$types = node_type_get_types();
 	
 	// create all the fields we are adding to our content type
-	foreach (_coap_resource_installed_fields() as $field) {
+	foreach (_coap_sensor_installed_fields() as $field) {
 		field_create_field($field);
 	}
 	
 	// create all the instance for our fields
-	foreach (_coap_resource_installed_instances() as $instance) {
+	foreach (_coap_sensor_installed_instances() as $instance) {
 		field_create_instance($instance);
 	}
 }
 
-function _coap_resource_installed_fields(){
+function _coap_sensor_installed_fields(){
 	$fields['field_device_uri'] = array(
 		'field_name' => 'field_device_uri',
 		'label' => t('Device URI'),
@@ -73,7 +73,7 @@ function _coap_resource_installed_fields(){
 	return $fields;
 }
 
-function _coap_resource_installed_instances(){
+function _coap_sensor_installed_instances(){
 	$instances['field_device_uri'] = array(
 		'field_name' => 'field_device_uri',
 		'entity_type' => 'node',
@@ -112,8 +112,8 @@ function _coap_resource_installed_instances(){
  * Implements hook_schema().
  * Defines the tables that have to be installed.
  */
-function coap_resource_schema() {
-	$schema['coap_resource_resource'] = array(
+function coap_sensor_schema() {
+	$schema['coap_sensor_resource'] = array(
 		'description' => "Tabel om resources en hun karakteristieken bij te houden",
 		'fields' => array(
 				'uri' => array(
@@ -179,13 +179,13 @@ function coap_resource_schema() {
 					'length' => '128',
 				),
 				'created' => array(
-					'description' => 'The Unix timestamp when the coap_resource_resource was created.',
+					'description' => 'The Unix timestamp when the coap_sensor_resource was created.',
 					'type' => 'int',
 					'not null' => TRUE,
 					'default' => 0,
 				),
 				'changed' => array(
-					'description' => 'The Unix timestamp when the coap_resource_resource was most recently saved.',
+					'description' => 'The Unix timestamp when the coap_sensor_resource was most recently saved.',
 					'type' => 'int',
 					'not null' => TRUE,
 					'default' => 0,
@@ -202,8 +202,8 @@ function coap_resource_schema() {
 	);
 	
 	// Tabel om URI's per user bij te houden
-	$schema['coap_resource_interested_user'] = array(
-		'description' => "Tabel om users bij te houden en de URI's die ze willen gebruiken",
+	$schema['coap_sensor_interested_user'] = array(
+		'description' => "Holds which users are interested in which URI's.",
 		'fields' => array(
 				'uid' => array(
 					'type' => 'int',
@@ -215,10 +215,10 @@ function coap_resource_schema() {
 					'type' => 'varchar',
 					'not null' => TRUE,
 					'length' => '128',
-					'description' => 'Een URI van een embedded device',
+					'description' => 'URI from a resource or device',
 				),
 				'nid' => array(
-					'description' => 'nid of the node where the resource should be displayed',
+					'description' => 'nid of the node where the resource or device should be displayed',
 					'type' => 'int',
 					'unsigned' => TRUE,
 					'not null' => TRUE,
@@ -255,14 +255,14 @@ function coap_resource_schema() {
 			'primary key' => array('uid', 'uri', 'nid'),
 			'foreign keys' => array(
 				'uri' => array(
-					'table' => 'coap_resource_resource',
+					'table' => 'coap_sensor_resource',
 					'columns' => array('uri' => 'uri'),
 				),
 			),
 	);
 
 	// Table to store the fetched values
-	$schema['coap_resource_values'] = array(
+	$schema['coap_sensor_value'] = array(
 		'description' => 'Tabel om geschiedenis van opgevraagde waarden op te slaan',
 		'fields' => array(
 				'hid' => array(
@@ -331,11 +331,11 @@ function coap_resource_schema() {
 			'primary key' => array('hid'),
 			'foreign keys' => array(
 				'uri' => array(
-					'table' => 'coap_resource_resource',
+					'table' => 'coap_sensor_resource',
 					'columns' => array('uri' => 'uri'),
 				),
 				'uid' => array(
-					'table' => 'coap_resource_interested_user',
+					'table' => 'coap_sensor_interested_user',
 					'columns' => array('uid' => 'uid'),
 				),
 			),
@@ -348,17 +348,17 @@ function coap_resource_schema() {
  * Implements hook_uninstall().
  * Drops tables when the module is uninstalled.
  */
-function coap_resource_uninstall(){
-	db_drop_table('coap_resource_resource');
-	db_drop_table('coap_resource_interested_user');
-	db_drop_table('coap_resource_values');
+function coap_sensor_uninstall(){
+	db_drop_table('coap_sensor_resource');
+	db_drop_table('coap_sensor_interested_user');
+	db_drop_table('coap_sensor_value');
 }
 
 /**
  * Implements hook_enable().
  * Sets values in the variable table that have an effect on the content types.
  */
-function coap_resource_enable() {
+function coap_sensor_enable() {
 	$content_types = array('coap_resource', 'coap_device');
 	foreach($content_types as $content_type){
 		variable_set("comment_$content_type", 0);						//comments default disabled
@@ -369,7 +369,7 @@ function coap_resource_enable() {
 	
 	//	Alter the values table so the timestamp will not be updated when updating a value
 	db_query('
-		ALTER TABLE {coap_resource_values} 
+		ALTER TABLE {coap_sensor_value} 
 		MODIFY timestamp TIMESTAMP NOT NULL 
 		DEFAULT CURRENT_TIMESTAMP'
 	);
@@ -379,7 +379,7 @@ function coap_resource_enable() {
  * Implements hook_disable().
  * Removes any trace of the module except for the tables in the database.
  */
-function coap_resource_disable(){
+function coap_sensor_disable(){
 	$content_types = array('coap_resource', 'coap_device');
 	foreach($content_types as $content_type){
 		$result = db_select('node','nodes')

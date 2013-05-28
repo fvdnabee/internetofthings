@@ -1,8 +1,8 @@
-name = CoAP resource
-description = Een module die meerdere gebruikers in staat stelt verschillende CoAP resources te bevragen en te observeren.
+name = CoAP Sensor
+description = A module that allows multiple users to manage their CoAP resources and CoAP devices.
 core = 7.x
 package = CoAP
-configure = admin/config/content/coap_resource
+configure = admin/config/content/coap_sensor
 dependencies[] = background_process
 dependencies[] = coap_library
 dependencies[] = node_reference
