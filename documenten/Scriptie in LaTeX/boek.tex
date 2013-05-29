@@ -22,10 +22,15 @@
 \usepackage{color}
 \usepackage{xcolor}
 \usepackage{caption}
+\usepackage{pdfpages}
 
 \DeclareCaptionFont{white}{\color{white}}
 \DeclareCaptionFormat{listing}{\colorbox{gray}{\parbox{\textwidth}{#1#2#3}}}
 \captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white}
+%\captionsetup{labelformat=empty,labelsep=none}
+\renewcommand\lstlistingname{Codevoobeeld}
+\renewcommand\lstlistlistingname{Codevoorbeelden}
+%\def\lstlistingautorefname{Codevoorbeeld}
 
 % marges aanpassen
 % (opmerking: moet *voor* inclusie van fancyhdr package komen)
@@ -78,7 +83,8 @@
 \begin{document}
 
 % titelblad (voor kaft)
-\include{titel}
+%\include{titel}
+\includepdf[pages=-,offset=2.5cm -2cm]{titelblad.pdf}
 
 % lege pagina (!!)
 \newpage
@@ -86,7 +92,8 @@
 \mbox{}
 
 % titelblad (!!)
-\include{titel}
+%\include{titel}
+\includepdf[pages=-,offset=2.5cm -2cm]{titelblad.pdf}
 
 % geen paginanummering tot we aan de inhoudsopgave komen
 \pagestyle{empty}
@@ -123,7 +130,7 @@
 \include{Drupal}
 \include{CoAP}
 \include{CoAPLibraryModule}
-\include{CoAPResourceModule}
+\include{CoAPSensorModule}
 \include{uitbreidingen}
 
 % appendices
@@ -139,8 +146,11 @@
 % eventueel: lijst van uren en tabellen
 \listoffigures
 %\listoftables
-
+%\lstlistoflistings
 % lege pagina (!!)
+\newpage
+\thispagestyle{empty}
+\mbox{}
 
 % kaft
 

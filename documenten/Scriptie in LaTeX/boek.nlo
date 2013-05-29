@@ -21,7 +21,7 @@
 \nomenclatureentry{aCR@[{CR}]\begingroup Carriage Return\nomeqref {3.0}|nompageref}{24}
 \nomenclatureentry{aLF@[{LF}]\begingroup Line Feed\nomeqref {3.0}|nompageref}{24}
 \nomenclatureentry{aASCII@[{ASCII}]\begingroup American Standard Code for Information Interchange\nomeqref {4.0}|nompageref}{37}
-\nomenclatureentry{anid@[{nid}]\begingroup Node ID\nomeqref {5.0}|nompageref}{51}
-\nomenclatureentry{aHTML@[{HTML}]\begingroup HyperText Markup Language\nomeqref {5.0}|nompageref}{68}
-\nomenclatureentry{auid@[{uid}]\begingroup User ID\nomeqref {6.0}|nompageref}{77}
-\nomenclatureentry{asid@[{sid}]\begingroup Session ID\nomeqref {6.0}|nompageref}{77}
+\nomenclatureentry{anid@[{nid}]\begingroup Node ID\nomeqref {5.0}|nompageref}{59}
+\nomenclatureentry{aHTML@[{HTML}]\begingroup HyperText Markup Language\nomeqref {5.0}|nompageref}{65}
+\nomenclatureentry{auid@[{uid}]\begingroup User ID\nomeqref {6.0}|nompageref}{81}
+\nomenclatureentry{asid@[{sid}]\begingroup Session ID\nomeqref {6.0}|nompageref}{81}

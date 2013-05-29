@@ -7,7 +7,7 @@
   \item [{AJAX}]\begingroup Asynchronous JavaScript and XML\nomeqref {2.0}
 		\nompageref{19}
   \item [{ASCII}]\begingroup American Standard Code for Information Interchange\nomeqref {4.0}
-		\nompageref{36}
+		\nompageref{37}
   \item [{CMS}]\begingroup Content Management System\nomeqref {2.0}
 		\nompageref{6}
   \item [{CoAP}]\begingroup Constrained Application Protocol\nomeqref {1.0}
@@ -16,7 +16,7 @@
 		\nompageref{22}
   \item [{CR}]\begingroup Carriage Return\nomeqref {3.0}\nompageref{24}
   \item [{HTML}]\begingroup HyperText Markup Language\nomeqref {5.0}
-		\nompageref{64}
+		\nompageref{69}
   \item [{HTTP}]\begingroup HyperText Transfer Protocol\nomeqref {1.0}
 		\nompageref{2}
   \item [{IoT}]\begingroup Internet of Things\nomeqref {1.0}
@@ -28,6 +28,7 @@
   \item [{LF}]\begingroup Line Feed\nomeqref {3.0}\nompageref{24}
   \item [{M2M}]\begingroup Machine-to-machine\nomeqref {3.0}
 		\nompageref{20}
+  \item [{nid}]\begingroup Node ID\nomeqref {5.0}\nompageref{59}
   \item [{NON}]\begingroup Non-Confirmable CoAP message\nomeqref {3.0}
 		\nompageref{22}
   \item [{OSI}]\begingroup Open Systems Interconnection\nomeqref {3.0}
@@ -36,11 +37,13 @@
 		\nompageref{3}
   \item [{RST}]\begingroup Reset CoAP message\nomeqref {3.0}
 		\nompageref{22}
+  \item [{sid}]\begingroup Session ID\nomeqref {6.0}\nompageref{79}
   \item [{TKL}]\begingroup ToKen Length\nomeqref {3.0}\nompageref{22}
   \item [{TLV}]\begingroup Type Length Value\nomeqref {3.0}
 		\nompageref{23}
   \item [{UDP}]\begingroup User Datagram Protocol\nomeqref {1.0}
 		\nompageref{2}
+  \item [{uid}]\begingroup User ID\nomeqref {6.0}\nompageref{79}
   \item [{URI}]\begingroup Uniform Resource Identifier\nomeqref {3.0}
 		\nompageref{20}
   \item [{URL}]\begingroup Uniform Resource Locator\nomeqref {2.0}

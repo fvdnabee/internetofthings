@@ -21,24 +21,24 @@
 \contentsline {figure}{\numberline {3.8}{\ignorespaces Blokoptiewaarde - bytes en bits worden aangegeven bovenaan de figuur\relax }}{28}
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {5.1}{\ignorespaces Architectuur van de CoAP resource module in Drupal\relax }}{43}
-\contentsline {figure}{\numberline {5.2}{\ignorespaces EER-diagram van de door ons toegevoegde tabellen.\relax }}{50}
-\contentsline {figure}{\numberline {5.3}{\ignorespaces Content toevoegen door op 'Add content' te klikken.\relax }}{53}
-\contentsline {figure}{\numberline {5.4}{\ignorespaces Adding content of content type CoAP resource\relax }}{53}
-\contentsline {figure}{\numberline {5.5}{\ignorespaces Visuele representatie van het content type CoAP resource.\relax }}{54}
-\contentsline {figure}{\numberline {5.6}{\ignorespaces Adding content of content type CoAP device\relax }}{55}
-\contentsline {figure}{\numberline {5.7}{\ignorespaces Visuele representatie van het content type CoAP device.\relax }}{55}
-\contentsline {figure}{\numberline {5.8}{\ignorespaces Temperatuurmodule met HTTP/COAP-proxy\relax }}{58}
-\contentsline {figure}{\numberline {5.9}{\ignorespaces Block met HTML-formulieren die de gebruiker toelaat meerdere resources met \'{e}\'{e}n block te bevragen.\relax }}{61}
-\contentsline {figure}{\numberline {5.10}{\ignorespaces Alle vier de REST methodes zijn nu ondersteund.\relax }}{63}
-\contentsline {figure}{\numberline {5.11}{\ignorespaces Opsomming van resources aan de hand van resource discovery.\relax }}{64}
-\contentsline {figure}{\numberline {5.12}{\ignorespaces Mechanisme om fouten te tonen aan de gebruiker.\relax }}{70}
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Resourcewaarde opvragen met de CoAP sensor module in Drupal\relax }}{44}
+\contentsline {figure}{\numberline {5.2}{\ignorespaces Temperatuurmodule met HTTP/COAP-proxy\relax }}{50}
+\contentsline {figure}{\numberline {5.3}{\ignorespaces Block met HTML-formulieren die de gebruiker toelaat meerdere resources met \'{e}\'{e}n block te bevragen.\relax }}{53}
+\contentsline {figure}{\numberline {5.4}{\ignorespaces CoAP resource met volledige REST functionaliteit.\relax }}{55}
+\contentsline {figure}{\numberline {5.5}{\ignorespaces Opsomming van resources aan de hand van resource discovery.\relax }}{56}
+\contentsline {figure}{\numberline {5.6}{\ignorespaces EER-diagram van de door ons toegevoegde tabellen.\relax }}{58}
+\contentsline {figure}{\numberline {5.7}{\ignorespaces Content toevoegen door op 'Add content' te klikken.\relax }}{63}
+\contentsline {figure}{\numberline {5.8}{\ignorespaces Adding content of content type CoAP resource\relax }}{63}
+\contentsline {figure}{\numberline {5.9}{\ignorespaces Visuele representatie van het content type CoAP resource.\relax }}{65}
+\contentsline {figure}{\numberline {5.10}{\ignorespaces Mechanisme om fouten te tonen aan de gebruiker.\relax }}{69}
+\contentsline {figure}{\numberline {5.11}{\ignorespaces Adding content of content type CoAP device\relax }}{69}
+\contentsline {figure}{\numberline {5.12}{\ignorespaces Visuele representatie van het content type CoAP device.\relax }}{70}
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {6.1}{\ignorespaces Conditional observe optie (Option Delta 18)\relax }}{72}
-\contentsline {figure}{\numberline {6.2}{\ignorespaces Conditional observe optie formaat\relax }}{73}
-\contentsline {figure}{\numberline {6.3}{\ignorespaces De Keep-alive optie met Option Delta 30\relax }}{74}
-\contentsline {figure}{\numberline {6.4}{\ignorespaces Navigatie naar de configuratiepagina\relax }}{76}
-\contentsline {figure}{\numberline {6.5}{\ignorespaces Navigatie naar de hulppagina\relax }}{77}
+\contentsline {figure}{\numberline {6.1}{\ignorespaces Conditional observe optie (Option Delta 18)\relax }}{76}
+\contentsline {figure}{\numberline {6.2}{\ignorespaces Conditional observe optie formaat\relax }}{77}
+\contentsline {figure}{\numberline {6.3}{\ignorespaces De Keep-alive optie met Option Delta 30\relax }}{78}
+\contentsline {figure}{\numberline {6.4}{\ignorespaces Navigatie naar de configuratiepagina\relax }}{80}
+\contentsline {figure}{\numberline {6.5}{\ignorespaces Navigatie naar de hulppagina\relax }}{81}
 \select@language {english}
 \select@language {dutch}
 \select@language {dutch}

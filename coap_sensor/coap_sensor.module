@@ -5,6 +5,28 @@ require_once(drupal_get_path('module', 'coap_library') . '/coap_library_classes.
 require_once(drupal_get_path('module', 'coap_sensor') . '/includes/coap_device.inc');
 require_once(drupal_get_path('module', 'coap_sensor') . '/includes/coap_resource.inc');
 
+/**
+ * Implements hook_node_info().
+ * We use it to to describe the content types installed by the module.
+ */
+function coap_sensor_node_info() {
+  return array(
+    'coap_resource' => array(
+      'name' => t('CoAP resource'),
+      'base' => 'node_content',
+	  'has_body' => FALSE,
+	  'locked' => TRUE,
+      'description' => t('CoAP resource. Instances of this content-type repressent one resource.'),
+    ),
+	'coap_device' => array(
+      'name' => t('CoAP device'),
+      'base' => 'node_content',
+	  'has_body' => FALSE,
+	  'locked' => TRUE,
+      'description' => t('CoAP device. Instances of this content-type repressent a device with a well-known/core. You can send discovery requests to this device. '),
+    ),
+  );
+}
 
 /**
  * Implements hook_menu().

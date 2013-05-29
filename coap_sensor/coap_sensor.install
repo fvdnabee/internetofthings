@@ -1,36 +1,13 @@
 <?php
 
 /**
- * Implements hook_menu().
- * We use it to to describe the content types installed by the module.
- */
-function coap_sensor_node_info() {
-  return array(
-    'coap_resource' => array(
-      'name' => t('CoAP resource'),
-      'base' => 'node_content',
-	  'has_body' => FALSE,
-	  'locked' => TRUE,
-      'description' => t('CoAP resource. Instances of this content-type repressent one resource.'),
-    ),
-	'coap_device' => array(
-      'name' => t('CoAP device'),
-      'base' => 'node_content',
-	  'has_body' => FALSE,
-	  'locked' => TRUE,
-      'description' => t('CoAP device. Instances of this content-type repressent a device with a well-known/core. You can send discovery requests to this device. '),
-    ),
-  );
-}
-
-/**
  * Implements hook_install().
  * We use it to install the fields used by the content types and define the instances of the fields used by our content types.
  */
 function coap_sensor_install(){
 	// create a simple content type
-	node_types_rebuild();
-	$types = node_type_get_types();
+	// node_types_rebuild();
+	// $types = node_type_get_types();
 	
 	// create all the fields we are adding to our content type
 	foreach (_coap_sensor_installed_fields() as $field) {
@@ -61,13 +38,13 @@ function _coap_sensor_installed_fields(){
 	$fields['field_resource_references'] = array(
 		'field_name' => 'field_resource_references',
 		'label' => 'Resource References',
+		'cardinality' => '-1',
 		'type' => 'node_reference',
 		'settings' => array(
 			'referenceable_types' => array(
 				'coap_resource' => 'coap_resource'
 			),
 		),
-		'cardinality' => '-1',
 	);  
 	
 	return $fields;
@@ -96,13 +73,13 @@ function _coap_sensor_installed_instances(){
 	
 	$instances['field_resource_references'] = array(
 		'field_name' => 'field_resource_references',
-		'label' => 'Resources',
+		'entity_type' => 'node',		
+		'bundle' => 'coap_device',
 		'type' => 'node_reference',
+		'label' => 'Resources',
 		'widget' => array(
 			'type' => 'node_reference_autocomplete'
 		),
-		'entity_type' => 'node',
-		'bundle' => 'coap_device',
 	); 
 	
 	return $instances;
@@ -114,20 +91,20 @@ function _coap_sensor_installed_instances(){
  */
 function coap_sensor_schema() {
 	$schema['coap_sensor_resource'] = array(
-		'description' => "Tabel om resources en hun karakteristieken bij te houden",
+		'description' => "Holds resources and their characteristics",
 		'fields' => array(
 				'uri' => array(
 					'type' => 'varchar',
 					'not null' => TRUE,
 					'length' => '128',
-					'description' => 'Een URI van een resource',
+					'description' => 'URI from a resource',
 				),
 				'obs' => array(					
 					'type' => 'int',
 					'unsigned' => TRUE,
 					'not null' => TRUE,
 					'default' => 0,
-					'description' => 'Waarde om te bepalen of het device observeerbaar is of niet --> 0 = niet observeerbaar, 1 = wel observeerbaar',
+					'description' => 'Value that indicates if a resource is observable. => 0 = not observable, 1 = observable',
 				),
 				'rt' => array(
 					'type' => 'varchar',
@@ -352,6 +329,48 @@ function coap_sensor_uninstall(){
 	db_drop_table('coap_sensor_resource');
 	db_drop_table('coap_sensor_interested_user');
 	db_drop_table('coap_sensor_value');
+	
+	$content_types = array('coap_resource', 'coap_device');
+	foreach($content_types as $content_type){
+		$result = db_select('node','nodes')
+					->fields('nodes', array('nid','type'))
+					->condition('type', $content_type, '=')
+					->execute();
+					
+		$nids = array();
+		foreach ($result as $row) {
+			$nids[] = $row->nid;
+		}
+		// Delete all the nodes at once
+		node_delete_multiple($nids);
+		
+		// delete any variables made by module
+		variable_del("comment_$content_type");
+		variable_del("node_preview_$content_type");
+		variable_del("node_submitted_$content_type");
+		variable_del("node_options_$content_type");	
+		
+		// remove comment instances
+		$instance = array(	'field_name'	=> 'comment_body',
+							'bundle' 		=> "comment_node_$content_type",
+							'entity_type' 	=> 'comment'
+		);
+		field_delete_instance($instance);
+		
+		// remove field instances (This is only necessary when you content type has a body)
+		// $instance = array(	'field_name'	=> 'body',
+							// 'bundle' 		=> $content_type,
+							// 'entity_type' 	=> 'node'
+		// );
+		// field_delete_instance($instance);
+		
+		// deleting content type
+		node_type_delete($content_type);
+		node_types_rebuild();
+		
+		// Purge all field information
+		field_purge_batch(1000);
+	}
 }
 
 /**
@@ -380,39 +399,5 @@ function coap_sensor_enable() {
  * Removes any trace of the module except for the tables in the database.
  */
 function coap_sensor_disable(){
-	$content_types = array('coap_resource', 'coap_device');
-	foreach($content_types as $content_type){
-		$result = db_select('node','nodes')
-					->fields('nodes', array('nid','type'))
-					->condition('type', $content_type, '=')
-					->execute();
-					
-		$nids = array();
-		foreach ($result as $row) {
-			$nids[] = $row->nid;
-		}
-		// Delete all the nodes at once
-		node_delete_multiple($nids);
-		
-		// delete any variables made by module
-		variable_del("comment_$content_type");
-		variable_del("node_preview_$content_type");
-		variable_del("node_submitted_$content_type");
-		variable_del("node_options_$content_type");	
-		
-		// remove comment instances (we currently don't have the possibility enabled for leaving comments).
-		$instance = array('field_name' => 'comment_body','bundle' => "comment_node_$content_type",'entity_type' => 'comment');
-		field_delete_instance($instance);
-		
-		// remove field instances
-		$instance = array('field_name' => 'body','bundle' => $content_type,'entity_type' => 'node');
-		field_delete_instance($instance);
-		
-		// deleting content type
-		node_type_delete($content_type);
-		node_types_rebuild();
-		
-		// Purge all field information
-		field_purge_batch(1000);
-	}
+	
 }
