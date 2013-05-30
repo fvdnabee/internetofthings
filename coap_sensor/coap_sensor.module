@@ -33,14 +33,15 @@ function coap_sensor_node_info() {
  */
 function coap_sensor_menu() {
 	$items = array();
-	$items['admin/config/content/coap_sensor'] = array(
-		'title' => 'CoAP sensor settings',
-		'page callback' => 'drupal_get_form',
-		'page arguments' => array('_coap_sensor_admin_settings'),
-		'access callback' => TRUE,
-		'description' => 'Global configuration of the CoAP sensor module functionality.',
-		'type' => MENU_NORMAL_ITEM,
-	);
+	// when you uncomment the next menu item, you also have to uncomment the function _coap_sensor_admin_settings
+	// $items['admin/config/content/coap_sensor'] = array(
+		// 'title' => 'CoAP sensor settings',
+		// 'page callback' => 'drupal_get_form',
+		// 'page arguments' => array('_coap_sensor_admin_settings'),
+		// 'access callback' => TRUE,
+		// 'description' => 'Global configuration of the CoAP sensor module functionality.',
+		// 'type' => MENU_NORMAL_ITEM,
+	// );
 	$items["coap_resource/poll/%"] = array(
 		"title" => "Are there new values for the resource?",
 		"page callback" => "coap_resource_poll",
@@ -80,27 +81,31 @@ function coap_sensor_menu() {
   return $items;
 }
 
-function _coap_sensor_admin_settings() {
-	$form['message_container'] = array
-	(
-		'#type' => 'container',
-		'#prefix' => "De configuratiepagina van de module coap_sensor.",
-	);
-	$form = system_settings_form($form);
-	return $form;
-}
+/**
+ * Uncommenting this only has an effect when you uncomment the menu link that uses this function.
+ */
+// function _coap_sensor_admin_settings() {
+	// $form['message_container'] = array
+	// (
+		// '#type' => 'container',
+		// '#prefix' => "De configuratiepagina van de module coap_sensor.",
+	// );
+	// $form = system_settings_form($form);
+	// return $form;
+// }
 
 /**
  * Implementation of hook_help().
+ * Uncomment this to provide help.
  */
-function coap_sensor_help($path, $arg) {
-  switch ($path) {
-    case 'admin/modules#description':
-      return t('De coap_sensor module stelt de gebruiker in staat een sensornetwerk gebruiksvriendelijk en dynamisch te beheren.');
-    case 'admin/help#coap_sensor':
-      return t('<h3>Description:</h3><p>De coap_sensor module stelt de gebruiker in staat een sensornetwerk gebruiksvriendelijk en dynamisch te beheren.</p>');
-  }
-}
+// function coap_sensor_help($path, $arg) {
+  // switch ($path) {
+    // case 'admin/modules#description':
+      // return t('De coap_sensor module stelt de gebruiker in staat een sensornetwerk gebruiksvriendelijk en dynamisch te beheren.');
+    // case 'admin/help#coap_sensor':
+      // return t('<h3>Description:</h3><p>De coap_sensor module stelt de gebruiker in staat een sensornetwerk gebruiksvriendelijk en dynamisch te beheren.</p>');
+  // }
+// }
 
 /**
  * Implements hook_node_view().

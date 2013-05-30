@@ -9,36 +9,37 @@
 \contentsline {figure}{\numberline {2.5}{\ignorespaces Organisatie van Drupalmodules\relax }}{13}
 \contentsline {figure}{\numberline {2.6}{\ignorespaces Implementatie van hook\_node\_view door de module coap\_resource\relax }}{14}
 \contentsline {figure}{\numberline {2.7}{\ignorespaces Pagina renderen in Drupal\relax }}{15}
-\contentsline {figure}{\numberline {2.8}{\ignorespaces Weermodule\relax }}{18}
+\contentsline {figure}{\numberline {2.8}{\ignorespaces Weermodule\relax }}{17}
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {3.1}{\ignorespaces CoAP-lagen (CoAP 16 draft)\relax }}{21}
 \contentsline {figure}{\numberline {3.2}{\ignorespaces Berichtformaat (CoAP 16 draft)\relax }}{21}
-\contentsline {figure}{\numberline {3.3}{\ignorespaces CoAP-optie (CoAP draft 16)\relax }}{24}
-\contentsline {figure}{\numberline {3.4}{\ignorespaces HTTP Message Format\relax }}{25}
+\contentsline {figure}{\numberline {3.3}{\ignorespaces CoAP-optie (CoAP draft 16)\relax }}{23}
+\contentsline {figure}{\numberline {3.4}{\ignorespaces HTTP Message Format\relax }}{24}
 \contentsline {figure}{\numberline {3.5}{\ignorespaces Berichtuitwisseling (CoAP 16 draft)\relax }}{26}
-\contentsline {figure}{\numberline {3.6}{\ignorespaces Twee GET-requests met piggy-backed responses (CoAP 16 draft)\relax }}{27}
+\contentsline {figure}{\numberline {3.6}{\ignorespaces Twee GET-requests met piggy-backed responses (CoAP 16 draft)\relax }}{26}
 \contentsline {figure}{\numberline {3.7}{\ignorespaces GET-request met seperate response (CoAP 16 draft)\relax }}{27}
 \contentsline {figure}{\numberline {3.8}{\ignorespaces Blokoptiewaarde - bytes en bits worden aangegeven bovenaan de figuur\relax }}{28}
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {5.1}{\ignorespaces Resourcewaarde opvragen met de CoAP sensor module in Drupal\relax }}{44}
 \contentsline {figure}{\numberline {5.2}{\ignorespaces Temperatuurmodule met HTTP/COAP-proxy\relax }}{50}
-\contentsline {figure}{\numberline {5.3}{\ignorespaces Block met HTML-formulieren die de gebruiker toelaat meerdere resources met \'{e}\'{e}n block te bevragen.\relax }}{53}
-\contentsline {figure}{\numberline {5.4}{\ignorespaces CoAP resource met volledige REST functionaliteit.\relax }}{55}
-\contentsline {figure}{\numberline {5.5}{\ignorespaces Opsomming van resources aan de hand van resource discovery.\relax }}{56}
-\contentsline {figure}{\numberline {5.6}{\ignorespaces EER-diagram van de door ons toegevoegde tabellen.\relax }}{58}
-\contentsline {figure}{\numberline {5.7}{\ignorespaces Content toevoegen door op 'Add content' te klikken.\relax }}{63}
-\contentsline {figure}{\numberline {5.8}{\ignorespaces Adding content of content type CoAP resource\relax }}{63}
-\contentsline {figure}{\numberline {5.9}{\ignorespaces Visuele representatie van het content type CoAP resource.\relax }}{65}
-\contentsline {figure}{\numberline {5.10}{\ignorespaces Mechanisme om fouten te tonen aan de gebruiker.\relax }}{69}
-\contentsline {figure}{\numberline {5.11}{\ignorespaces Adding content of content type CoAP device\relax }}{69}
-\contentsline {figure}{\numberline {5.12}{\ignorespaces Visuele representatie van het content type CoAP device.\relax }}{70}
+\contentsline {figure}{\numberline {5.3}{\ignorespaces Block met HTML-formulieren die de gebruiker toelaat meerdere resources met \'{e}\'{e}n block te bevragen\relax }}{53}
+\contentsline {figure}{\numberline {5.4}{\ignorespaces CoAP resource met volledige REST functionaliteit\relax }}{55}
+\contentsline {figure}{\numberline {5.5}{\ignorespaces Opsomming van resources aan de hand van resource discovery\relax }}{56}
+\contentsline {figure}{\numberline {5.6}{\ignorespaces EER-diagram van de door ons toegevoegde tabellen\relax }}{58}
+\contentsline {figure}{\numberline {5.7}{\ignorespaces Content toevoegen door op 'Add content' te klikken\relax }}{63}
+\contentsline {figure}{\numberline {5.8}{\ignorespaces Adding content of content type CoAP resource\relax }}{64}
+\contentsline {figure}{\numberline {5.9}{\ignorespaces Visuele representatie van het content type CoAP resource\relax }}{65}
+\contentsline {figure}{\numberline {5.10}{\ignorespaces Mechanisme om fouten te tonen aan de gebruiker\relax }}{69}
+\contentsline {figure}{\numberline {5.11}{\ignorespaces Adding content of content type CoAP device\relax }}{70}
+\contentsline {figure}{\numberline {5.12}{\ignorespaces Variabele boodschap bij content van type CoAP device\relax }}{71}
+\contentsline {figure}{\numberline {5.13}{\ignorespaces Visuele representatie van het content type CoAP device\relax }}{72}
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {6.1}{\ignorespaces Conditional observe optie (Option Delta 18)\relax }}{76}
-\contentsline {figure}{\numberline {6.2}{\ignorespaces Conditional observe optie formaat\relax }}{77}
-\contentsline {figure}{\numberline {6.3}{\ignorespaces De Keep-alive optie met Option Delta 30\relax }}{78}
-\contentsline {figure}{\numberline {6.4}{\ignorespaces Navigatie naar de configuratiepagina\relax }}{80}
-\contentsline {figure}{\numberline {6.5}{\ignorespaces Navigatie naar de hulppagina\relax }}{81}
+\contentsline {figure}{\numberline {6.1}{\ignorespaces Conditional observe optie (Option Delta 18)\relax }}{78}
+\contentsline {figure}{\numberline {6.2}{\ignorespaces Conditional observe optie formaat\relax }}{79}
+\contentsline {figure}{\numberline {6.3}{\ignorespaces De Keep-alive optie met Option Delta 30\relax }}{80}
+\contentsline {figure}{\numberline {6.4}{\ignorespaces Navigatie naar de configuratiepagina als deze voorzien wordt\relax }}{82}
+\contentsline {figure}{\numberline {6.5}{\ignorespaces Navigatie naar de hulppagina als deze voorzien wordt\relax }}{83}
 \select@language {english}
 \select@language {dutch}
 \select@language {dutch}

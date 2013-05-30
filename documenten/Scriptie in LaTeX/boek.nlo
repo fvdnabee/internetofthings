@@ -8,7 +8,7 @@
 \nomenclatureentry{aWOEID@[{WOEID}]\begingroup Where On Earth ID\nomeqref {1.0}|nompageref}{3}
 \nomenclatureentry{aCMS@[{CMS}]\begingroup Content Management System\nomeqref {2.0}|nompageref}{6}
 \nomenclatureentry{aURL@[{URL}]\begingroup Uniform Resource Locator\nomeqref {2.0}|nompageref}{11}
-\nomenclatureentry{aAJAX@[{AJAX}]\begingroup Asynchronous JavaScript and XML\nomeqref {2.0}|nompageref}{19}
+\nomenclatureentry{aAJAX@[{AJAX}]\begingroup Asynchronous JavaScript and XML\nomeqref {2.0}|nompageref}{18}
 \nomenclatureentry{aM2M@[{M2M}]\begingroup Machine-to-machine\nomeqref {3.0}|nompageref}{20}
 \nomenclatureentry{aURI@[{URI}]\begingroup Uniform Resource Identifier\nomeqref {3.0}|nompageref}{20}
 \nomenclatureentry{aOSI@[{OSI}]\begingroup Open Systems Interconnection\nomeqref {3.0}|nompageref}{21}
@@ -17,11 +17,11 @@
 \nomenclatureentry{aACK@[{ACK}]\begingroup Acknowledgement CoAP message\nomeqref {3.0}|nompageref}{22}
 \nomenclatureentry{aRST@[{RST}]\begingroup Reset CoAP message\nomeqref {3.0}|nompageref}{22}
 \nomenclatureentry{aTKL@[{TKL}]\begingroup ToKen Length\nomeqref {3.0}|nompageref}{22}
-\nomenclatureentry{aTLV@[{TLV}]\begingroup Type Length Value\nomeqref {3.0}|nompageref}{23}
+\nomenclatureentry{aTLV@[{TLV}]\begingroup Type Length Value\nomeqref {3.0}|nompageref}{22}
 \nomenclatureentry{aCR@[{CR}]\begingroup Carriage Return\nomeqref {3.0}|nompageref}{24}
 \nomenclatureentry{aLF@[{LF}]\begingroup Line Feed\nomeqref {3.0}|nompageref}{24}
 \nomenclatureentry{aASCII@[{ASCII}]\begingroup American Standard Code for Information Interchange\nomeqref {4.0}|nompageref}{37}
 \nomenclatureentry{anid@[{nid}]\begingroup Node ID\nomeqref {5.0}|nompageref}{59}
-\nomenclatureentry{aHTML@[{HTML}]\begingroup HyperText Markup Language\nomeqref {5.0}|nompageref}{65}
-\nomenclatureentry{auid@[{uid}]\begingroup User ID\nomeqref {6.0}|nompageref}{81}
-\nomenclatureentry{asid@[{sid}]\begingroup Session ID\nomeqref {6.0}|nompageref}{81}
+\nomenclatureentry{aHTML@[{HTML}]\begingroup HyperText Markup Language\nomeqref {5.0}|nompageref}{66}
+\nomenclatureentry{auid@[{uid}]\begingroup User ID\nomeqref {6.0}|nompageref}{83}
+\nomenclatureentry{asid@[{sid}]\begingroup Session ID\nomeqref {6.0}|nompageref}{83}

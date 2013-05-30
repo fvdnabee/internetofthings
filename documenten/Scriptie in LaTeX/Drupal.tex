@@ -132,13 +132,19 @@ Alle nodes hebben enkele eigenschappen gemeenschappelijk:
 Via Fields kan je gegevens voor een content type invullen. Standaard biedt Drupal een aantal velden aan om gegevens toe te voegen, maar soms schieten deze velden tekort. Daarom heeft een gebruiker de mogelijkheid custom velden te maken.
 
 \subsubsection{View}
-Views worden gebruikt om content visueel voor te stellen op welke manier dan ook. Een view is dan ook niet meer dan een visuele representatie van een verzameling content die in de databank zit.
+Views worden gebruikt om content visueel voor te stellen op welke manier dan ook. Een view is dan ook niet meer dan een visuele representatie van een verzameling content uit de datbank.
 
 \subsubsection{Block}
 Blocks zijn, zoals de naam al impliceert, blokken die een verzameling van herbruikbare content bevatten. Ze geven het beeld van die content. Blocks kunnen op gemakkelijke wijze toegevoegd worden aan je website waar jij dat wilt en hoe vaak je dat wilt. Het is bijvoorbeeld gemakkelijk om aan te geven dat je een bepaald block enkel op een bepaalde pagina wil laten verschijnen, en bovendien waar op de pagina je dat wilt. Merk echter wel op dat het hier niet echt content betreft, de inhoud van het block wordt aangemaakt bij opvraging en is dus geen blok beheerbare content. We zien een voorbeeld van een block in paragraaf \ref{jQuery}.
 
 \subsubsection{Theme}
 Themes zijn templates die bepalen hoe jouw website eruit ziet en aanvoelt voor de gebruiker. Net zoals modules zijn themes modulair en zijn ze dus gemakkelijk te wisselen, ook themes kunnen zelf ontwikkeld worden en zijn ter beschikking op de Drupal community.
+
+\subsubsection{Taxonomy}
+Taxonomy geeft je de mogelijkheid om eigenschappen en categorie\"{e}n toe te voegen aan je content, zodat bijvoorbeeld een gebruiker content kan filteren uit een grote verzameling. Het biedt dus een manier om je content te organiseren. Een praktijkvoorbeeld is een receptensite, een gebruiker kan dan recepten filteren aan de hand van de eigenschappen van het gerecht (ingredi\"{e}nten, moeilijkheid, ...).
+
+\subsubsection{Users, Roles en Permissions}
+Users zijn de gebruikers van jouw website die zich aangemeld hebben. Alle user functionaliteit zoals registreren, inloggen, enz... zit reeds in de Drupal core. Roles geven weer tot welk type een gebruiker hoort. Meerdere gebruikers kunnen dezelfde role hebben, en een gebruiker kan meerdere roles hebben. Met permissions kan je aangeven welke privileges een user met een bepaalde role heeft en dus wat die gebruiker mag en kan doen. Deze permissions worden gekoppeld aan een role zodat alle gebruikers die deze role hebben automatisch de privileges hebben van deze role. Drupal biedt standaard de Administrator role aan die alle privileges heeft.
 
 \subsubsection{Module}
 Modules bieden je de mogelijkheid om extra functionaliteit in te pluggen op je website. Modules zijn gratis te downloaden van de Drupal community en omdat deze community groot is, is de kans zeer groot dat er al een module gemaakt is voor jouw probleem. Indien dit niet het geval is, heb je nog altijd de mogelijkheid om zelf een module te ontwikkelen. Het gebruik van modules voorkomt ook dat functionaliteit die je niet nodig hebt, ook niet op jouw website komt. Je website is dus zeer configureerbaar naar eigen wensen (Zie figuur~\ref{fig:drupalOrganizeModules}).
@@ -148,11 +154,12 @@ Modules bieden je de mogelijkheid om extra functionaliteit in te pluggen op je w
 \label{fig:drupalOrganizeModules}
 \end{figure}
 
-\subsubsection{Taxonomy}
-Taxonomy geeft je de mogelijkheid om eigenschappen en categorie\"{e}n toe te voegen aan je content, zodat bijvoorbeeld een gebruiker content kan filteren uit een grote verzameling. Het biedt dus een manier om je content te organiseren. Een praktijkvoorbeeld is een receptensite, een gebruiker kan dan recepten filteren aan de hand van de eigenschappen van het gerecht (ingredi\"{e}nten, moeilijkheid, ...).
+\subsubsection{Drupal Core}
+De Drupal core is wat je downloadt van de Drupal website. Het vormt de basis en een uitgebreide out-of-the-box functionaliteit, het fungeert eigenlijk als de motor achter een Drupal website. De Drupal Core is zeer uitgebreid en complex, het vormt op zich al voldoende materiaal voor een scriptie, er verder op ingaan zou ons dus te ver leiden.
 
-\subsubsection{Users, Roles en Permissions}
-Users zijn de gebruikers van jouw website die zich aangemeld hebben. Alle user functionaliteit zoals registreren, inloggen, enz... zit reeds in de Drupal core. Roles geven weer tot welk type een gebruiker hoort. Meerdere gebruikers kunnen dezelfde role hebben, en een gebruiker kan meerdere roles hebben. Met permissions kan je aangeven welke privileges een user met een bepaalde role heeft en dus wat die gebruiker mag en kan doen. Deze permissions worden gekoppeld aan een role zodat alle gebruikers die deze role hebben automatisch de privileges hebben van deze role. Drupal biedt standaard de Administrator role aan die alle privileges heeft.
+\subsubsection{Entities}
+Een nieuw belangrijk concept in Drupal 7 is entities \cite{entities}. Dit nieuwe concept in combinatie met de Entity API heeft twee positieve effecten. Het eerste effect is dat gebruikers en commentaren dezelfde mogelijkheden krijgen als nodes. In vorige versies van Drupal was het niet mogelijk versies te cre\"{e}eren of velden toe te voegen aan gebruikers of commentaren. Andere voordelen zoals het gebruiken van views in combinatie met gebruikers of commentaren was ook niet mogelijk. Het andere effect is het invoeren van object-ge\"{o}rienteerd programmeren van entities. Vroeger was het nodig specifieke functies van de core te gebruiken om content te bewerken. Een voorbeeld hier van is node\_save() dat nodes opslaat. Deze functie was enkel toepasbaar op een node. Het alternatief bij de Entity API is entity\_save(). Deze functie is niet gelimiteerd tot enkel content of enkel tot gebruikers.
+Het is ook mogelijk nieuwe entities te maken, we gaan hier dieper op in in hoofdstuk~\ref{uitbreidingen}.
 
 \subsubsection{Hooks}
 Hooks zijn functies die gedefinieerd zijn door de Drupal core. Ze kunnen worden ge\"{i}mplementeerd door elke module. In de Drupal bootstrap zal de Drupal core dan op bepaalde tijdstippen de bijhorende hooks oproepen van elke module die de hook ge\"{i}mplementeerd heeft. Hiervoor wordt een zeer eenvoudig mechanisme gehanteerd. Een module kan zo'n hook defini\"{e}ren door de naam van de hook te laten voorafgaan door de naam van de module die de hook implementeert (zie figuur~\ref{fig:drupalHookExample}).
@@ -161,13 +168,6 @@ Hooks zijn functies die gedefinieerd zijn door de Drupal core. Ze kunnen worden 
 \caption{Implementatie van hook\_node\_view door de module coap\_resource}
 \label{fig:drupalHookExample}
 \end{figure}
-
-\subsubsection{Drupal Core}
-De Drupal core is wat je downloadt van de Drupal website. Het vormt de basis en een uitgebreide out-of-the-box functionaliteit, het fungeert eigenlijk als de motor achter een Drupal website. De Drupal Core is zeer uitgebreid en complex, het vormt op zich al voldoende materiaal voor een scriptie, er verder op ingaan zou ons dus te ver leiden.
-
-\subsubsection{Entities}
-Een nieuw belangrijk concept in Drupal 7 is entities \cite{entities}. Dit nieuwe concept in combinatie met de Entity API heeft twee positieve effecten. Het eerste effect is dat gebruikers en commentaren dezelfde mogelijkheden krijgen als nodes. In vorige versies van Drupal was het niet mogelijk versies te cre\"{e}eren of velden toe te voegen aan gebruikers of commentaren. Andere voordelen zoals het gebruiken van views in combinatie met gebruikers of commentaren was ook niet mogelijk. Het andere effect is het invoeren van object-ge\"{o}rienteerd programmeren van entities. Vroeger was het nodig specifieke functies van de core te gebruiken om content te bewerken. Een voorbeeld hier van is node\_save() dat nodes opslaat. Deze functie was enkel toepasbaar op een node. Het alternatief bij de Entity API is entity\_save(). Deze functie is niet gelimiteerd tot enkel content of enkel tot gebruikers.
-Het is ook mogelijk nieuwe entities te maken, we gaan hier dieper op in in hoofdstuk~\ref{uitbreidingen}.
 
 \subsection{Pagina aanroepen}
 Elke keer een webbrowser een Drupal pagina opvraagt, gebeurt er een reeks complexe stappen die als eindresultaat de gerenderde pagina hebben. Indien de pagina niet aanwezig is in de cache, worden deze complexe stappen gegroepeerd in twee delen: de bootstrap en de uitvoering van de page callback. De bootstrap bestaat steeds uit dezelfde reeks van acht verschillende fasen die we verder nader toelichten. Na de bootstrap wordt de page callback uitgevoerd. Indien de pagina wel in de cache aanwezig is, wordt er een subset van de stappen van de bootstrap uitgevoerd. Het hele proces wordt weergegeven in Figuur~\ref{fig:drupalPageRendering}.
@@ -204,8 +204,6 @@ Alle ingeschakelde modules worden ingeladen en het theme wordt ge\"{i}nitialisee
 
 \subsubsection{Uitvoeren van page callback}
 Drupal bouwt en rendert de pagina.
-
-\newpage
 
 \section{jQuery in Drupal} \label{jQuery}
 

@@ -242,7 +242,7 @@ function coap_device_page_callback($nid){
 			$uri = $record->uri;
 			$changed = $record->changed;
 			$not_in_core = $record->not_in_core;
-			if($changed >= $newest){ //is deze waarde mee geupdate met de andere waarden?
+			if($changed >= $newest){ //is deze waarde mee geupdated met de andere waarden?
 				$db_resource = db_select('coap_sensor_interested_user','user_device')
 					->fields('user_device', array('uid','nid','uri','device'))
 					->condition('uri', $uri, '=')

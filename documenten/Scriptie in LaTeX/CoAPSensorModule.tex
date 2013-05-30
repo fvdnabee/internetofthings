@@ -1,6 +1,6 @@
 \chapter{CoAP sensor module} \label{sensormodule}
 
-Nu we genoeg kennis hebben over Drupal en CoAP en een CoAP library ter beschikking hebben, kunnen we overgaan tot de uiteindelijk te ontwikkelen module. Het is deze module die een eindgebruiker zal installeren. Ze biedt dan de mogelijkheid om op een gebruiksvriendelijke en dynamische manier sensoren te bekijken en beheren van op de Drupal-website, en dit zonder technische kennis nodig te hebben van CoAP of programmatie in PHP voor Drupal. We bekijken eerst globaal wat de module concreet moet aanbieden. Daarna bekijken we hoe de module zal opgebouwd worden en welke de principes zijn waar we veel belang aan moeten hechten bij het opbouwen. Eens we dit weten, kunnen we overgaan tot de verschillende versies van de ontwikkelde module en de implementatie ervan. Verder bespreken we de ingevoerde tabellen in de databank en de manipulatie ervan. Ook worden de ingevoerde content types bekeken.
+Nu we genoeg kennis hebben over Drupal en CoAP en een CoAP library ter beschikking hebben, kunnen we overgaan tot de uiteindelijk te ontwikkelen module. Het is deze module die een eindgebruiker zal installeren. Ze biedt dan de mogelijkheid om op een gebruiksvriendelijke en dynamische manier sensoren te bekijken en beheren van op de Drupal-website, en dit zonder technische kennis nodig te hebben van CoAP of programmatie in PHP voor Drupal. We bekijken eerst globaal wat de module concreet moet aanbieden. Daarna bekijken we hoe de module zal opgebouwd worden en welke de principes zijn waar we veel belang aan moeten hechten bij het opbouwen. Eens we dit weten, kunnen we overgaan tot de verschillende versies van de ontwikkelde module en de implementatie ervan. Verder bespreken we de ingevoerde tabellen de manipulatie van de databank door middel van de Database abstraction layer. Ook worden de nieuwe content types uitgebreid besproken. Als laatse onderdeel bespreken we de implementatie van de CoAP library-hooks.
 
 \section{Functionaliteit}
 
@@ -56,7 +56,7 @@ De Sensor module maakt nog gebruik van enkele andere modules welke eerst moeten 
 \item Background Process \cite{backgroundProcessModule}: Deze module maakt het gebruik van achtergrondprocessen mogelijk. (bvb voor observe)
 \item Progress \cite{progressModule}: Deze module moet worden toegevoegd omdat de Background Process module hiervan afhankelijk is.
 \item CoAP library (Zie hoofdstuk \ref{coaplibrary}): Onze eigen geschreven module die instaat voor alle CoAP communicatie.
-\item Entity API \cite{entityApiModule}: Een veelgebruikte module (die opgenomen wordt in de core van Drupal 8). Breidt de functionaliteit uit die met entities kan verwezenlijkt worden. Deze module wordt besproken in \ref{gebruikEntityAPI}.
+\item Entity API \cite{entityApiModule}: Een veelgebruikte module (die opgenomen wordt in de core van Drupal 8). Breidt de functionaliteit uit die met entities kan verwezenlijkt worden.
 \item Node reference \cite{nodeReferenceModule}: Een module die gebruikt wordt om in een bepaalde node door middel van een veld te verwijzen naar andere nodes.
 \end{itemize}
 
@@ -166,7 +166,7 @@ Een laatste verbetering bestaat uit een grafiek die automatisch wordt gegenereer
 \begin{figure}[h!]
 \centering
 \includegraphics[width=1\textwidth]{fig/meerdere_resources}
-\caption{Block met HTML-formulieren die de gebruiker toelaat meerdere resources met \'{e}\'{e}n block te bevragen.}
+\caption{Block met HTML-formulieren die de gebruiker toelaat meerdere resources met \'{e}\'{e}n block te bevragen}
 \label{fig:meerdereResources}
 \end{figure}
 
@@ -184,7 +184,7 @@ Wij hebben ervoor gekozen dat de gebruiker voor elke resource, op elk moment elk
 \begin{figure}[h!]
 \centering
 \includegraphics[width=1\textwidth]{fig/rest}
-\caption{CoAP resource met volledige REST functionaliteit.}
+\caption{CoAP resource met volledige REST functionaliteit}
 \label{fig:rest}
 \end{figure}
 
@@ -197,7 +197,7 @@ Op de website wordt een resource weergegeven door de URI en door de human readab
 \begin{figure}[h!]
 \centering
 \includegraphics[width=1\textwidth]{fig/tabbladen}
-\caption{Opsomming van resources aan de hand van resource discovery.}
+\caption{Opsomming van resources aan de hand van resource discovery}
 \label{fig:tabbladen}
 \end{figure}
 
@@ -227,7 +227,7 @@ Er worden drie tabellen ge\"{i}mplementeerd (Zie figuur \ref{fig:databankModel})
 \begin{figure}[h!]
 \centering
 \includegraphics[width=1\textwidth]{fig/databankModel}
-\caption{EER-diagram van de door ons toegevoegde tabellen.}
+\caption{EER-diagram van de door ons toegevoegde tabellen}
 \label{fig:databankModel}
 \end{figure}
 
@@ -250,7 +250,7 @@ In deze tabel wordt bijgehouden welke users ge\"{i}nteresseerd zijn in specifiek
 \item device: Deze waarde geeft aan of het een resource of een volledig embedded device betreft (0 = resource, 1 = device).
 \item observe: Deze waarde geeft aan of de gebruiker momenteel de resource wil observeren of niet (0 = niet observeren, 1 = wel observeren).
 \item polling\_interval: Dit is de periode in seconden tussen twee polls van de browser naar de Drupal-server, deze is default drie seconden.
-\item new: Deze waarde duidt aan of er inmiddels een nieuwe discovery is uitgevoerd of bezig is voor een device. Deze waarde heeft momenteel enkel voor devices. (0 = up-to-date, 1 = discovery bezig, 2 = discovery klaar)
+\item new: Deze waarde duidt aan of er inmiddels een nieuwe discovery is uitgevoerd of bezig is voor een device. Deze waarde heeft momenteel enkel voor devices. (0 = up-to-date, 1 = discovery bezig, 2 = discovery klaar/referentiegegevens moeten geupdated worden)
 \end{itemize}
 De primaire sleutel bestaat uit de combinatie van de kolommen uid, uri en nid. Elke combinatie van waarden uit deze drie kolommen moet per entry uniek zijn.
 
@@ -266,7 +266,7 @@ Deze tabel bevat een entry voor elke waarde die is binnengekomen. Bovendien word
 \item max\_age: Geeft aan wat de geldigheidsduur is voor deze waarde, deze is default nul.
 \item timestamp: Het tijdstip waarop de waarde in de databank werd opgeslagen in mysql timestamp-formaat. Deze wordt automatisch gegenereerd. Samen met de max-age kan men dus bepalen of de waarde nog geldig is.
 \item original\_response: De originele response op het CoAP request-bericht in hexadecimale vorm.
-\item new: Geeft aan of de waarde reeds opgehaald werd om te tonen aan de gebruiker (0 = reeds afgehaald, 1 = nog niet afgehaald, default waarde = 0).
+\item new: Geeft aan of de waarde reeds opgehaald werd om te tonen aan de gebruiker (0 = reeds opgehaald, 1 = nog niet opgehaald, default waarde = 0).
 \end{itemize}
 
 \subsection{Database Abstraction Layer}
@@ -292,7 +292,7 @@ Wanneer er meerdere rijen teruggegeven kunnen worden gebruik je beter
 \begin{lstlisting}
 $nids = array();
 foreach($result as $record){
-	array_push($nids,$record->nid);
+	$nids[] = $record->nid;
 }
 \end{lstlisting} 
 om een array met al je gewenste resultaten in te bekomen. In dit voorbeeld zal er echter maar \'{e}\'{e}n rij teruggegeven worden en is de eerste optie beter.
@@ -335,9 +335,10 @@ In voorbeeld \ref{db_delete} worden alle rijen met als nid de waarde in \$nid ve
 
 Bij installatie van de module worden twee content types mee ge\"{i}nstalleerd. We bespreken wat de mogelijkheden ervan zijn en hoe ze eruitzien. Het laten installeren van content types zorgt ervoor dat een Drupal-gebruiker op een eenvoudige manier content kan toevoegen, in dit geval onderdelen van een CoAP-sensornetwerk. Concreet moet de gebruiker enkel op 'Add content' klikken op zijn/haar Drupal-website en het gewenste content type aanklikken. Na invullen van enkele vereiste velden wordt een node gecre\"{e}erd die de content voorstelt.
 \begin{figure}[h!]
+\vspace{10pt}
 \centering
 \includegraphics[width=1\textwidth]{fig/add_content}
-\caption{Content toevoegen door op 'Add content' te klikken.}
+\caption{Content toevoegen door op 'Add content' te klikken}
 \label{fig:addContent}
 \end{figure}
 
@@ -353,29 +354,27 @@ Bij installatie van de module worden twee content types mee ge\"{i}nstalleerd. W
 \centering
 \caption{Adding content of content type CoAP resource}
 \centering
-\vspace{-20pt}
+\vspace{-10pt}
 \end{wrapfigure}
-Dit content type stelt \'{e}\'{e}n resource voor. Bij het toevoegen wordt de URI opgegeven, deze bestaat uit het IPv6-adres van het embedded device waarop de resource is aangesloten en een URI-path. IPv6-adres en URI-path worden gescheiden door een slash ('/'). Een voorbeeld van een door ons vaak gebruikte URI is: 2001:6a8:1d80:200::2/test.\\
-Vooraf een resource effectief toegevoegd wordt, wordt hij gevalideerd. We voegen custom validatie toe via hook\_form\_alter. Indien de structuur van de URI niet geldig is of de resource al eerder door de gebruiker is toegevoegd, wordt er een foutmelding getoond en krijgt de gebruiker opnieuw de kans om een geldige/andere URI op te geven. Na een succesvolle validatie, wordt er content van het type coap\_resource toegevoegd. Door middel van hook\_node\_insert worden er enkele dingen in de databank toegevoegd. Er wordt een entry in de tabel coap\_sensor\_interested\_user toegevoegd waarmee wordt aangegeven dat de gebruiker die de resource toevoegde ge\"{i}nteresseerd is in de resource. Er wordt ook gekeken of er voor deze resource informatie beschikbaar is in de tabel coap\_sensor\_resource. Indien dit niet het geval is wordt een parti\"{e}le resource discovery uitgevoerd door middel van query filtering. Indien er wel informatie beschikbaar is moet er niets meer gebeuren en krijgt de gebruiker de visuele representatie van de content te zien.\\
+Dit content type stelt \'{e}\'{e}n resource voor. Bij het toevoegen wordt de URI opgegeven, deze bestaat uit het IPv6-adres van het embedded device waarop de resource is aangesloten en een URI-path. IPv6-adres en URI-path worden gescheiden door een slash ('/'). Een voorbeeld van een door ons vaak gebruikte URI is: 2001:6a8:1d80:200::2/test. Vooraf een resource effectief toegevoegd wordt, wordt hij gevalideerd. We voegen custom validatie toe via hook\_form\_alter. Indien de structuur van de URI niet geldig is of de resource al eerder door de gebruiker is toegevoegd, wordt er een foutmelding getoond en krijgt de gebruiker opnieuw de kans om een geldige/andere URI op te geven. Een andere manier om validatie van een veld te verwezenlijken is het maken van een custom veld met de Field API \cite{fieldAPI}. Op deze manier is de validatie onderdeel van het veld en hoeft ze niet achteraf toegevoegd te worden, wat gebeurt in hook\_form\_alter(). Deze methode gaf echter problemen indien content van dit type gewijzigd werd door middel van de Entity API. Na een succesvolle validatie, wordt er content van het type coap\_resource toegevoegd. Door middel van hook\_node\_insert worden er enkele dingen in de databank toegevoegd. Er wordt een entry in de tabel coap\_sensor\_interested\_user toegevoegd waarmee wordt aangegeven dat de gebruiker die de resource toevoegde ge\"{i}nteresseerd is in de resource. Er wordt ook gekeken of er voor deze resource informatie beschikbaar is in de tabel coap\_sensor\_resource. Indien dit niet het geval is wordt een parti\"{e}le resource discovery uitgevoerd door middel van query filtering. Indien er wel informatie beschikbaar is moet er niets meer gebeuren en krijgt de gebruiker de visuele representatie van de content te zien.\\
 
-De gebruiker krijgt nu de kans om de REST-methodes  GET, PUT, POST en DELETE uit te voeren en een observe. Bovendien krijgt de gebruiker een geschiedenis van opvragingen voor deze resource te zien en krijgt hij ook de kans een grafiek te laten genereren. Voor het type grafiek heeft de gebruiker de keuze uit een lijn-, staaf-, of taartgrafiek. De gebruiker moet zelf weten welke soort grafiek nuttige informatie kan bevatten.
+De gebruiker krijgt nu de kans om de REST-methodes  GET, PUT, POST en DELETE uit te voeren en een observe. Bovendien krijgt de gebruiker een geschiedenis van opvragingen voor deze resource te zien en krijgt hij ook de kans een grafiek te laten genereren. Voor het type grafiek heeft de gebruiker de keuze uit een lijn-, staaf-, of taartgrafiek. De gebruiker moet zelf weten welke soort grafiek nuttige informatie kan bevatten. In tegenstelling tot vorige versies wordt de visualisatie van content van het type Coap resource verzorgd door een template.
 \begin{figure}[h!]
 \centering
-\includegraphics[width=0.8\textwidth]{fig/coap_resource}
-\caption{Visuele representatie van het content type CoAP resource.}
+\includegraphics[width=0.7\textwidth]{fig/coap_resource}
+\caption{Visuele representatie van het content type CoAP resource}
 \label{fig:coapResource}
 \end{figure}
-De visualisatie wordt verzorgd door middel van een template wat besproken wordt in \ref{templating}. Het pollingmechanisme is aangepast op een manier dat besproken wordt in \ref{polling}.
 
 \subsubsection{Templating}\label{templating}
-Nu de functionaliteit min of meer op punt staat, wordt het tijd voor visuele opmaak. En dit op een manier die aangeraden wordt door de Drupal community, waarbij de view netjes gescheiden wordt. Concreet maken we een template voor het content-type CoAP resource. Drupal voorziet hier een handig mechanisme voor, men kan namelijk een template maken voor een specifiek content-type. Het enige wat men moet doen om ervoor te zorgen dat die template automatisch wordt opgeroepen voor het content-type, is het template-bestand de juiste naam geven. Drupal voorziet namelijk in alle themes een standaard template voor een node, namelijk node.tpl.php. Om nu onze template te defini\"{e}ren, moet deze de naam node--coap\_resource.tpl.php dragen, daar de naam van ons content-type coap\_resource is.\\
+%Concreet maken we een template voor het content-type CoAP resource.
+Drupal voorziet een handig mechanisme, wanneer je een template voor een specifiek content-type wil maken. Het enige wat men moet doen om ervoor te zorgen dat die template automatisch wordt opgeroepen voor het content-type, is het template-bestand de juiste naam geven. Drupal voorziet namelijk in alle themes een standaard template voor een node, namelijk node.tpl.php. Om nu onze template te defini\"{e}ren, moet deze de naam node--coap\_resource.tpl.php dragen, daar de naam van ons content-type coap\_resource is.\\
 
-Het voordeel van deze benadering is dat men in dit bestand HyperText Markup Language (HTML) \nomenclature{HTML}{HyperText Markup Language} kan schrijven. Wanneer men bepaalde attributen of content nodig heeft voor de visuele representatie, kan men die variabelen voorzien door gebruik te maken van de hook hook\_preprocess\_node(). Deze hook wordt op voorhand opgeroepen en variabelen worden klaargezet. In het template-bestand kan men deze variabelen bereiken aan de hand van PHP-scriptlets (Zie listing \ref{template}). Men kan in deze templates dus ook PHP-code laten uitvoeren, al beperkt men dit best tot een minimum om de view gescheiden te houden. Concreet worden bij ons de URI van de resource en enkele waarden gebruikt in het template-bestand.\\
+Het voordeel van deze benadering is dat de view gescheiden wordt van de rest van de code. Wanneer men bepaalde attributen of content nodig heeft voor de visuele representatie, kan men die variabelen voorzien door gebruik te maken van hook\_preprocess\_node(). Deze hook wordt op voorhand opgeroepen en variabelen worden klaargezet. In het template-bestand kan men deze variabelen bereiken aan de hand van PHP-scriptlets (Zie listing \ref{template}). Men kan in deze templates dus ook PHP-code laten uitvoeren, al beperkt men dit best tot een minimum om de view gescheiden te houden. Zo wordt bij ons de URI van de resource en enkele waarden gebruikt in het template-bestand. Voor de rest bevat het template-bestand vooral HyperText Markup Language (HTML) \nomenclature{HTML}{HyperText Markup Language} om de gegevens te visualiseren.\\
 
-Er stelt zich nu wel nog een probleem, het template-bestand moet namelijk op de juiste plaats staan, en dit in de directory van het gebruikte theme. Men voegt echter beter geen bestanden toe aan de Drupal core en bovendien kunnen wij dat ook niet verwachten van de eindgebruiker. Het template-bestand zou automatisch moeten worden opgenomen in het gebruikte theme, waarbij het template-bestand gewoon in onze module kan blijven staan. Na grondig onderzoek bleek dit mogelijk aan de hand van een hook, namelijk de hook hook\_theme\_registry\_alter(). Die geeft ons de kans een pad toe te voegen aan het theme-registry, waardoor het template zal gevonden worden bij het bouwen van de view \cite{addTemplate}.
+Er stelt zich nu wel nog een probleem, het template-bestand moet namelijk op de juiste plaats staan, en dit in de directory van het gebruikte theme. Men voegt echter beter geen bestanden toe aan de Drupal core en bovendien kunnen wij dat ook niet verwachten van de eindgebruiker. Het template-bestand zou automatisch moeten worden opgenomen in het gebruikte theme, waarbij het template-bestand gewoon in onze module kan blijven staan. Na grondig onderzoek bleek dit mogelijk aan de hand van hook\_theme\_registry\_alter(). Deze hook geeft ons de kans een pad toe te voegen aan het theme-registry, waardoor het template zal gevonden worden bij het bouwen van de view \cite{addTemplate}.
 
 \lstset{language=HTML}
-
 \begin{lstlisting}[label=template,caption=Voorbeeld van een template met PHP-scriptlets (node.tpl.php)]
 <div id='node-<?php print $node->nid; ?>' >
 	<?php print render($title_prefix); ?>
@@ -389,6 +388,8 @@ Er stelt zich nu wel nog een probleem, het template-bestand moet namelijk op de 
 	<?php print render($title_suffix); ?>
 </div>
 \end{lstlisting}
+
+\noindent
 
 \subsubsection{Polling}\label{polling}
 In vorige versies van de module had de gebruiker niet de kans om meerdere resources op \'{e}\'{e}n pagina te zetten met de Views module. Dit was in principe wel mogelijk, maar er zouden fouten optreden daar de polling gebeurde op basis van welke resource geselecteerd was. Dit selecteren van resources is in deze versie weggewerkt, elke resource is een op zichzelf staand geheel (Zie figuur \ref{fig:coapResource}). In deze versie is dit wel mogelijk omdat het polling mechanisme grondig werd aangepast zoals nu zal blijken.\\
@@ -450,10 +451,11 @@ Nu hebben we in de vorige hoofdstukken al gezien dat fouten al geregistreerd wor
 \begin{figure}[h!]
 \centering
 \includegraphics[width=1\textwidth]{fig/foutmechanisme}
-\caption{Mechanisme om fouten te tonen aan de gebruiker.}
+\caption{Mechanisme om fouten te tonen aan de gebruiker}
 \label{fig:foutmechanisme}
 \end{figure}
 
+\newpage
 \subsection{CoAP Device}
 \begin{wrapfigure}{r}{0.6\textwidth}
 \vspace{-10pt}
@@ -468,11 +470,26 @@ Nu hebben we in de vorige hoofdstukken al gezien dat fouten al geregistreerd wor
 \centering
 \vspace{-20pt}
 \end{wrapfigure}
-Dit content type stelt een volledig embedded device voor waarop \'{e}\'{e}n of meerdere resources zich bevinden. Bij toevoegen van dit content type hoeft de gebruiker enkel het IPv6-adres op te geven. Aan de hand van resource discovery wordt dan een lijst van aangesloten resources opgebouwd en getoond aan de gebruiker. Nu kan de gebruiker doorklikken naar een resource die voorgesteld wordt aan de hand van het content type CoAP resource beschreven in de vorige subparagraaf.
+Dit content type stelt een volledig embedded device voor waarop zich \'{e}\'{e}n of meerdere resources bevinden. Bij toevoegen van dit content type hoeft de gebruiker enkel het IPv6-adres op te geven in het veld field\_device\_uri. Er is nog een veld aanwezig in dit content type, namelijk het veld field\_resource\_references. Dit veld is onzichtbaar bij het aanmaken of wijzigen van content zodat een gebruiker dit veld niet kan aanpassen. Het mag enkel vanuit code aangepast worden en bevat referenties naar content van het type CoAP resource die overeen komt met de resources uit de well-known/core van het device.\\
+
+Net zoals bij Coap resource voegen we custom validatie voor het URI-veld toe via hook\_form\_alter. De structuur van de URI moet bestaan uit een IPv6-adres en de gebruiker mag het device niet eerder toegevoegd hebben. Ook hier stoppen we extra gegevens in de databank via hook\_node\_insert. Er wordt een entry in de tabel coap\_sensor\_interested\_user toegevoegd waarmee wordt aangegeven dat de gebruiker ge\"{i}nteresseerd is in het device. Deze tabel heeft een kolom om aan te geven dat de entry verwerkt moet worden. Deze kolomwaarde is afhankelijk van het feit of er andere gebruikers ge\"{i}nteresseerd zijn in het device op het moment dat dit device toegevoegd wordt. Als dit het geval is hoeven we geen resource discovery voor dit device uit te voeren en wordt als kolomwaarde het getal 2 gebruikt. We zijn immers zeker dat alle resourcegegevens al in de databank zitten. Indien niemand ge\"{i}nteresseerd is in het device wordt als kolomwaarde het getal 1 gebruikt en wordt een resource discovery uitgevoerd. Na het toevoegen van het device krijgt de gebruiker de visuele representatie van de content te zien.\\
+
+De visuele representatie gebeurt hier niet met een template maar door gebruik te maken van een form \cite{formAPI}. Wanneer de pagina galaden is, start een periodieke poll vanuit jQuery naar de callbackfunctie coap\_device\_page\_callback(). In deze functie wordt de rij die overeenkomt met het toegevoegde device uit de tabel coap\_sensor\_interested\_user gehaald. Afhankelijk van de kolomwaarde new gebeuren er enkele zaken. Indien new de waarde 0 heeft, is de output van deze callbackfunctie een lege string en gebeurt er verder niks. Bij de waarde 1 heeft de functie als output 'show\_counter'. Bij elke poll vanuit jQuery waar de functie 'show\_counter' als output heeft, wordt een teller verhoogd. Afhankelijk van deze teller wordt er een boodschap getoond op de pagina. Op deze manier heeft de gebruiker feedback indien de resource discovery langer duurt dan normaal. Een voorbeeld zie je op figuur~\ref{fig:coapDeviceMessage}.
+\begin{figure}[h!]
+\centering
+\includegraphics[width=1\textwidth]{fig/CoAPDeviceMessage}
+\caption{Variabele boodschap bij content van type CoAP device}
+\label{fig:coapDeviceMessage}
+\end{figure}
+
+\noindent
+In het geval new de waarde 2 bevat, moet field\_resource\_references geupdated worden. Alle referenties in het veld worden verwijderd en de nieuwe lijst van referenties wordt op volgende manier opgebouwd. De gegevens van de resources in de well-known/core worden opgehaald uit de coap\_sensor\_resourcetabel en voor elke resource wordt gekeken of de gebruiker al ge\"{i}nteresseerd is in deze resource. Als dit zo is hoeft er enkel een referentie aangemaakt worden naar deze resource want een gebruiker mag een resource maar \'{e}\'{e}n keer toevoegen. Als dit niet het geval is moet er content van het type CoAP resource aangemaakt worden. Zoniet kan er geen referentie naar deze content toegevoegd worden. Er zijn twee aanvaardbare manieren om content toe te voegen, namelijk door gebruik te maken van node\_save() en dergelijke specifieke functies voor nodes of door gebruik te maken van de Entity API. Deze laatste manier heeft de voorkeur omdat de aangeboden functies van de Entity API generiek zijn en op alle soorten entities werken. De node-specifieke functies werken enkel op nodes.\\
+
+Als het veld geupdated is heeft de callbackfunctie 'reload' als output. Wanneer deze string herkent wordt in jQuery wordt de pagina herladen. Na het herladen zie je dat het veld field\_resource\_reference een lijst van referenties bevat. Nu kan de gebruiker doorklikken naar een resource naar keuze. Wanneer de gebruiker die het device toevoegde deze content bekijkt, heeft hij de mogelijkheid de discoverydata te refreshen door een nieuwe resource discovery uit te voeren. Alle contents die overeenstemmen met dit device worden geupdated bij de volgende jQuery-poll wanneer ze weergegeven worden. De mogelijkheid om een nieuwe resource discovery uit te voeren voor een device is enkel beschikbaar voor de gebruiker die het device toevoegde. Dit om anonieme gebruikers geen kans te geven het device te overspoelen met resource discoveries.
 \begin{figure}[h!]
 \centering
 \includegraphics[width=0.6\textwidth]{fig/coap_device}
-\caption{Visuele representatie van het content type CoAP device.}
+\caption{Visuele representatie van het content type CoAP device}
 \label{fig:coapDevice}
 \end{figure}
 
@@ -494,6 +511,7 @@ Voor we uitleggen hoe de content types ge\"{i}nstalleerd en gede\"{i}nstalleerd 
 \end{itemize}
 \end{itemize}
 
+\noindent
 Er zijn meerdere manieren om content types te installeren en configureren.
 \begin{itemize}
 \item De functie node\_type\_save() gebruiken om een nieuw type zelf op te slaan.
@@ -517,7 +535,7 @@ In hook\_enable() worden enkele variabelen gezet. Deze variabelen moeten voor el
 Welke opties beschikbaar zijn vind je hier \cite{contentTypeVariables}.\\
 
 \noindent
-De laatste stap bestaat uit het cre\"{e}eren van de velden die toegevoegd gaan worden aan de content types, vervolgens worden er instanties van de velden aangemaakt om ze te linken aan de content types. Dit gebeurt in hook\_install(). De velden worden aangemaakt field\_create\_field(\$field) en de instanties worden aangemaakt met field\_create\_instance(\$instance). Er worden velden aangemaakt voor: de URI van devices, de URI van resources, meerdere referenties naar content van het type coap\_resource.
+De laatste stap bestaat uit het cre\"{e}eren van de velden die toegevoegd gaan worden aan de content types, vervolgens worden er instanties van de velden aangemaakt om ze te linken aan de content types. Dit gebeurt in hook\_install(). De velden worden aangemaakt field\_create\_field(\$field) en de instanties worden aangemaakt met field\_create\_instance(\$instance). Er worden velden aangemaakt voor: de URI van devices, de URI van resources, meerdere referenties naar content van het type coap\_resource. %misschien moet dit wat uitgebreider
 
 \subsection{De\"{i}nstallatie content types}
 De content types worden verwijderd in hook\_uninstall(). Voor een content type kan verwijderd worden moet nog een aantal andere zaken verwijderd worden. We overlopen de verschillende stappen die voor elk te verwijderen content type moeten overlopen worden:
