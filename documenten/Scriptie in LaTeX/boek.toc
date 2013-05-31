@@ -122,11 +122,11 @@
 \contentsline {chapter}{\numberline {6}Uitbreidingen}{77}
 \contentsline {section}{\numberline {6.1}Keuze van interval bij automatisch ophalen}{77}
 \contentsline {section}{\numberline {6.2}Opvragen devices in subnetwerk met resource directory}{77}
-\contentsline {section}{\numberline {6.3}Conditional observe}{78}
-\contentsline {subsection}{\numberline {6.3.1}Keep-alive}{79}
-\contentsline {section}{\numberline {6.4}Custom Entity}{80}
-\contentsline {section}{\numberline {6.5}Interface Description}{80}
-\contentsline {section}{\numberline {6.6}View Modes}{81}
+\contentsline {section}{\numberline {6.3}\textit {Conditional observe}}{78}
+\contentsline {subsection}{\numberline {6.3.1}\textit {Keep-alive}}{79}
+\contentsline {section}{\numberline {6.4}\textit {Custom Entity}}{80}
+\contentsline {section}{\numberline {6.5}\textit {Interface Description}}{80}
+\contentsline {section}{\numberline {6.6}\textit {View Modes}}{81}
 \contentsline {section}{\numberline {6.7}Configuratie op maat}{81}
 \contentsline {section}{\numberline {6.8}Help}{81}
 \contentsline {section}{\numberline {6.9}DNS}{81}
