@@ -44,6 +44,7 @@ Dit mechanisme zorgt ervoor dat de sensor niet onnodig belast wordt (Zie paragra
 \label{fig:architectuur}
 \end{figure}
 
+\newpage
 \subsection{Belangrijke aspecten}
 
 Deze module werd ontworpen met het oog op bepaalde aspecten waarmee rekening moet worden gehouden. We sommen enkele van de belangrijkste op.
@@ -175,7 +176,7 @@ In de vorige versies werd de module weergegeven aan de hand van een HTML-formuli
 
 Een beter en vaak gebruikt alternatief is het maken van een eigen contenttype. Wanneer men nu deze module installeert worden de contenttypes gedefin\"{i}eerd in de module, mee ge\"{i}nstalleerd. Dit heeft als gevolg dat de gebruiker slechts op 'Add content' hoeft te klikken (Zie figuur \ref{fig:addContent}), enkele benodigde velden in moet vullen en de content wordt automatisch gegenereerd en opgeslagen. Bij deze methode wordt al deze configuratie afgehandeld door Drupal-mechanismen, zo worden bijvoorbeeld de velden opgeslagen in tabellen die behoren tot de Drupalcore. Dit betekent dat onze content effectief wordt ingepast en geen losstaand geheel is. Het beheer van de content, manipulatie en dergelijke zal dus gebeuren met Drupal zoals dat gebeurt voor andere contenttypes. We merken ook op dat wanneer een resource verwijderd wordt, dit niet het geval is voor de waarden die ervan opgehaald zijn. Deze blijven aanwezig in de databank en zullen ook weer te zien zijn wanneer de resource later opnieuw wordt toegevoegd.\\
 
-\subsection{CoAP-sensormodule met volledige REST functionaliteit} \label{rest}
+\subsection{CoAP-sensormodule met volledige REST-functionaliteit} \label{rest}
 Tot nog toe was enkel een GET-\textit{request} mogelijk naar een resource, maar vaak ondersteunt een resource ook nog andere REST methodes (GET, PUT, POST, DELETE). Het is dus van groot belang dat onze module ook de mogelijkheid biedt om alle REST methodes uit te voeren.\\
 
 Dit brengt ook mee dat de visuele representatie zal wijzigen (Zie figuur \ref{fig:rest}). De vier methodes worden met knoppen weergegeven in een tabel, eventueel vergezeld van een tekstveld indien invoer vereist is (PUT en POST). Onderaan de tabel wordt de response en response method (205 Content, 405 Bad method,...) getoond .\\
@@ -215,9 +216,8 @@ De tweede mogelijkheid bestaat uit een pagina met tabbladen. Op deze manier kan 
 \subsection{CoAP-sensormodule met meerdere contenttypes}
 Dit is de, voor ons laatse, versie van de module die uitgebreid in het restant van dit hoofdstuk besproken wordt. Hier wordt nog een groot nadeel dat de kop opsteekt weggewerkt. De gebruiker was niet in staat een aparte resource toe te voegen zonder dat de functionaliteit van resource \textit{discovery} erbij kwam. We lossen dit op door meerdere contenttypes in te voeren.
 
-\section{Databankmanipulatie}
-
-\subsection{Contenttype in de databank}\label{databankSchema}
+\newpage
+\section{Contenttype in de databank}\label{databankSchema}
 Onder contenttype van de databank verstaan we de definitie van nodige databanktabellen en -kolommen. Er moet namelijk heel wat data opgeslagen worden waaronder de verschillende resources, de relatie tussen resources/\textit{devices} en de opgehaalde waarden per gebruiker.\\
 
 Zoals eerder vermeld worden de tabellen aangemaakt bij installatie van de module. Dit wordt mogelijk gemaakt door gebruik te maken van hook\_schema(). In deze \textit{hook} wordt het databankschema opgesteld en teruggegeven als array door de functie. Bij de\"{i}nstallatie worden de tabellen verwijderd uit de databank. Dit gebeurt door gebruik te maken van hook\_uninstall() die de functie db\_drop\_table() gebruikt.\\
@@ -269,6 +269,7 @@ Deze tabel bevat een entry voor elke waarde die is binnengekomen. Bovendien word
 \item new: Geeft aan of de waarde reeds opgehaald werd om te tonen aan de gebruiker (0 = reeds opgehaald, 1 = nog niet opgehaald, default waarde = 0).
 \end{itemize}
 
+\newpage
 \section{Contenttypes in Drupal}
 
 Bij installatie van de module worden twee contenttypes mee ge\"{i}nstalleerd. We bespreken wat de mogelijkheden ervan zijn en hoe ze eruitzien. Het laten installeren van contenttypes zorgt ervoor dat een Drupal-gebruiker op een eenvoudige manier content kan toevoegen, in dit geval onderdelen van een CoAP-sensornetwerk. Concreet moet de gebruiker enkel op 'Add content' klikken op zijn/haar Drupal-website en het gewenste contenttype aanklikken. Na invullen van enkele vereiste velden wordt een node gecre\"{e}erd die de content voorstelt.
@@ -280,6 +281,7 @@ Bij installatie van de module worden twee contenttypes mee ge\"{i}nstalleerd. We
 \label{fig:addContent}
 \end{figure}
 
+\newpage
 \subsection{CoAP-resource}
 \begin{wrapfigure}{r}{0.6\textwidth}
 \vspace{-10pt}

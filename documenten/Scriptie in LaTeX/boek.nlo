@@ -19,6 +19,6 @@
 \nomenclatureentry{aLF@[{LF}]\begingroup Line Feed\nomeqref {3.0}|nompageref}{28}
 \nomenclatureentry{aASCII@[{ASCII}]\begingroup American Standard Code for Information Interchange\nomeqref {4.0}|nompageref}{41}
 \nomenclatureentry{anid@[{nid}]\begingroup Node ID\nomeqref {5.0}|nompageref}{63}
-\nomenclatureentry{aHTML@[{HTML}]\begingroup HyperText Markup Language\nomeqref {5.0}|nompageref}{68}
-\nomenclatureentry{auid@[{uid}]\begingroup User ID\nomeqref {6.0}|nompageref}{83}
-\nomenclatureentry{asid@[{sid}]\begingroup Session ID\nomeqref {6.0}|nompageref}{83}
+\nomenclatureentry{aHTML@[{HTML}]\begingroup HyperText Markup Language\nomeqref {5.0}|nompageref}{69}
+\nomenclatureentry{auid@[{uid}]\begingroup user-ID\nomeqref {6.0}|nompageref}{84}
+\nomenclatureentry{asid@[{sid}]\begingroup session-ID\nomeqref {6.0}|nompageref}{84}
