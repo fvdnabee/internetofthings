@@ -9,7 +9,7 @@ Wanneer we trachtten CoAP berichten op te stellen, te versturen en ontvangen in 
 \newpage
 Met het nut bewezen bekijken we even wat een gebruiker van deze library moet kunnen verwachten. Ze moet de gebruiker in staat stellen dynamisch berichten op te stellen, volledig naar eigen wens. Dit wil zeggen dat de verzameling operaties om een bericht op te stellen, alle mogelijke berichten moet kunnen genereren. Dit heeft als gevolg dat elke elementaire operatie moet kunnen worden uitgevoerd op een bericht. Opstellen van bijvoorbeeld een bepaald bericht aan de hand van slechts \'{e}\'{e}n functie is niet prioritair en dus bijkomstig. Het is uiterst belangrijk bij het ontwerp van deze library dat de gebruiker zich niet meer moet bekommeren technische details zoals hexadecimale code die nodig is in een bericht. Alle technische details zitten verborgen in de CoAP library module. We besluiten dat de library een gebruiker in staat moet stellen dynamisch en gebruiksvriendelijk berichten op te stellen, en dit met een minimum aan code.
 
-\subsection{Essenti\"{e}le, te ondersteunen functies} \label{essentielefuncties}
+\subsection{Essenti\"{e}le functies} \label{essentielefuncties}
 
 We sommen enkele van de eerder vermelde elementaire functies op, deze opsomming is allesbehalve limitatief:
 
@@ -30,7 +30,7 @@ Merk op dat bij het genereren van CoAP berichten ook een message ID nodig is. Oo
 Een soortgelijk principe wordt toegepast wanneer een token moet worden gegenereerd. De gebruiker moet dan wel een lengte aangeven.\\
 Ook wanneer een ACK of RST moet worden gegenereerd wordt, door aan te geven op welk bericht het antwoord moet worden gestuurd, automatisch het message ID uit het oorspronkelijk bericht geparsed en in het antwoord geplaatst. Hetzelfde principe geldt wanneer een token moet worden overgenomen.
 
-\subsection{Optionele, handige functies} \label{optionelefuncties}
+\subsection{Optionele functies} \label{optionelefuncties}
 
 Sommige berichten zijn vaker nodig dan andere. Om de gebruiksvriendelijkheid van de library te verhogen en de drempel om ze te gebruiken te verlagen, is het een goed idee enkele functies te voorzien om bepaalde volledige berichten op te stellen. Belangrijk hierbij is dat deze opgestelde berichten nog steeds aanpasbaar moeten zijn. Dit zorgt ervoor een gebruiker bijvoorbeeld al een basisbericht kan opstellen en het daarna nog naar eigen wens kan aanpassen, wat de gebruiker veel tijd en code bespaart. We geven enkele voorbeelden die ook ge\"{i}mplementeerd zijn in de library, deze opsomming is alweer niet limitatief:
 \begin{itemize}

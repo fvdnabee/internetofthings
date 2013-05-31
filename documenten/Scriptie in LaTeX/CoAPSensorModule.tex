@@ -269,68 +269,6 @@ Deze tabel bevat een entry voor elke waarde die is binnengekomen. Bovendien word
 \item new: Geeft aan of de waarde reeds opgehaald werd om te tonen aan de gebruiker (0 = reeds opgehaald, 1 = nog niet opgehaald, default waarde = 0).
 \end{itemize}
 
-\subsection{Database Abstraction Layer}
-Manipulatie van gegevens in de databank gebeurt via de Database Abstraction Layer \cite{databaseAbstractionLayer}. Dit zorgt ervoor dat de implemenatie van een module onafhankelijk is van de gebruikte soort databank. Concreet biedt deze laag een aantal functies aan voor het manipuleren van de databank. Wanneer een nieuwe soort databank in gebruik genomen wordt, worden deze functies ge\"{i}mplementeerd voor deze nieuwe soort. We geven enkele voorbeelden van de meest gebruikte functies:
-\lstset{language=PHP}
-\begin{lstlisting}[label=db_select,caption=Voorbeeld gebruik van db\_select]
-$result = db_select('coap_sensor_interested_user','resource')
-	->fields('resource', array('nid'))
-	->condition('uri', $uri, '=')
-	->condition('uid', $user->uid, '=')
-	->execute();
-\end{lstlisting}
-In voorbeeld \ref{db_select} wordt opgevraagd wat het nid is voor een specifieke uri en uid. Er wordt gebruik gemaakt van de Drupal-variabele \$user. Zoals je ziet moet er een naam opgegeven worden na de tabelnaam. Deze naam moet herhaalt worden als eerste element van de fields array. Merk op dat dit alleen nodig is bij het gebruik van db\_select. Als tweede element van de fields array geef je een array op met alle velden die je wil opvragen. Meerdere condities kunnen opgegeven worden, de volgorde is niet belangrijk. De opgevraagde gegevens kunnen gesorteerd worden door gebruik te maken van -\textgreater orderBy('nid', 'ASC').\\
-
-De variabele \$result zal een SelectQuery-object bevatten. Er zijn twee manieren om de opgehaalde gegevens uit objecten van deze klasse te halen. Wanneer je weet dat er maar een enkele rij opgehaald wordt, doe je best het volgende
-\lstset{language=PHP}
-\begin{lstlisting}
-$record  = $result->fetchAssoc();
-$nid = $record['nid'];
-\end{lstlisting} 
-Wanneer er meerdere rijen teruggegeven kunnen worden gebruik je beter
-\lstset{language=PHP}
-\begin{lstlisting}
-$nids = array();
-foreach($result as $record){
-	$nids[] = $record->nid;
-}
-\end{lstlisting} 
-om een array met al je gewenste resultaten in te bekomen. In dit voorbeeld zal er echter maar \'{e}\'{e}n rij teruggegeven worden en is de eerste optie beter.
-\lstset{language=PHP}
-\begin{lstlisting}[label=db_insert,caption=Voorbeeld gebruik van db\_insert]
-$id = db_insert('coap_sensor_interested_user')
-	->fields(array(
-		'uid' => $user->uid,
-		'uri' => $resource_uri,
-		'device' => 0,
-		'nid' => $nid,
-		'observe' => 0,
-	))
-	->execute();
-\end{lstlisting}
-In voorbeeld \ref{db_insert} wordt een entry toegevoegd aan de tabel coap\_sensor\_interested\_user. Kolommen die niet null mogen zijn en geen default waarde hebben moeten opgegeven worden in de fields array. Zoniet wordt er een exceptie opgegooid bij het oproepen van de execute-functie.
-
-\lstset{language=PHP}
-\begin{lstlisting}[label=db_update,caption=Voorbeeld gebruik van db\_update]
-$num_updated = db_update('coap_sensor_interested_user')
-	->fields(array(
-		'new' => 0,
-	))
-	->condition('uid', $user->uid, '=')
-	->condition('device',1,'=')
-	->condition('nid', $nid, '=')
-	->execute();
-\end{lstlisting}
-In voorbeeld \ref{db_update} wordt van alle rijen die overeenstemmen met de opgegeven condities de new-waarde op 0 gezet. Bij dit voorbeeld zal er maar \'{e}\'{e}n rij geupdated worden.
-
-\lstset{language=PHP}
-\begin{lstlisting}[label=db_delete,caption=Voorbeeld gebruik van db\_delete]
-db_delete('coap_sensor_interested_user')
-	->condition('nid', $nid, '=')
-	->execute();
-\end{lstlisting}
-In voorbeeld \ref{db_delete} worden alle rijen met als nid de waarde in \$nid verwijderd. Opnieuw zal in dit voorbeeld maar \'{e}\'{e}n rij verwijderd worden.
-
 \section{Content types in Drupal}
 
 Bij installatie van de module worden twee content types mee ge\"{i}nstalleerd. We bespreken wat de mogelijkheden ervan zijn en hoe ze eruitzien. Het laten installeren van content types zorgt ervoor dat een Drupal-gebruiker op een eenvoudige manier content kan toevoegen, in dit geval onderdelen van een CoAP-sensornetwerk. Concreet moet de gebruiker enkel op 'Add content' klikken op zijn/haar Drupal-website en het gewenste content type aanklikken. Na invullen van enkele vereiste velden wordt een node gecre\"{e}erd die de content voorstelt.
@@ -497,56 +435,6 @@ Als het veld geupdated is heeft de callbackfunctie 'reload' als output. Wanneer 
 %it wordt gerealiseerd met de al eerder behandelde content types. Er worden nu twee content types gecre\"{e}erd bij installatie van de module, \'{e}\'{e}n voor een CoAP resource (Zie figuur \ref{fig:coapResource}) en \'{e}\'{e}n voor een CoAP device (Zie figuur \ref{fig:coapDevice}).\\
 
 %Wanneer een CoAP device wordt toegevoegd door de gebruiker, wordt er automatisch een resource discovery op uitgevoerd. De gebruiker krijgt dan een lijst van links te zien, \'{e}\'{e}n link per aangesloten CoAP resource (Zie figuur \ref{fig:coapDevice}). Bovendien wordt voor elk van die resources content aangemaakt van het content type CoAP resource. De gebruiker zal geen 2 gelijke resources kunnen toevoegen om duplicatie van content te vermijden. Wanneer de gebruiker toch dezelfde resource op verschillende plaatsen van de website wil krijgen, raden wij aan de Views module te gebruiken \cite{viewsModule}. Met Views kan men meerdere visuele representaties maken van dezelfde content, dus zonder content te dupliceren.
-
-\subsection{Installatie content types}
-Voor we uitleggen hoe de content types ge\"{i}nstalleerd en gede\"{i}nstalleerd worden, merken we op dat er naast de\"{i}nstalleren van een module ook disablen mogelijk is. Dit kan als gevolg hebben dat een beginnende Drupal-ontwikkelaar enkele dingen over het hoofd ziet. We maken een opsomming van handige feiten in verband met enablen, disablen en de\"{i}nstalleren voor beginnende Drupal-ontwikkelaars:
-\begin{itemize}
-\item Bij disablen wordt hook\_disable() opgeroepen. Dit is analoog voor enablen, installeren en de\"{i}nstalleren.
-\item Een gebruiker moet een module altijd eerst disablen voor te de\"{i}nstalleren.
-\item Een gebruiker kan een module enkel enablen, disablen of de\"{i}nstalleren. Een module wordt ge\"{i}nstalleerd als ze voor de eerste keer enabled wordt of eerst gede\"{i}nstalleerd werd voor te re-enablen.
-\item Sommige hooks worden maar opgeroepen bij installatie van de module, wat betekent dat wanneer je een wijziging van deze hooks wil doorvoeren, je de module moet disablen, de\"{i}nstalleren en re-enablen. De\"{i}nstallatie mag niet worden overgeslagen omdat de module dan niet geherinstalleerd wordt. Dit is van toepassing bij volgende hooks:
-\begin{itemize}
-\item hook\_node\_info()
-\item hook\_schema()
-\end{itemize}
-\end{itemize}
-
-\noindent
-Er zijn meerdere manieren om content types te installeren en configureren.
-\begin{itemize}
-\item De functie node\_type\_save() gebruiken om een nieuw type zelf op te slaan.
-\item Hook\_node\_info() gebruiken waarin je de nieuwe content types beschrijft. Deze optie wordt algemeen als de betere optie gezien omdat het gebruik van hooks de Drupal way is.
-\end{itemize}
-Bij zowel de eerste als de tweede optie zijn nog een zaken nodig om een content type te configureren. Een aantal rijen moeten toegevoegd worden in de variabletabel die standaard ge\"{i}nstalleerd wordt door Drupal. Deze speciale tabel heeft maar twee kolommen, name en value. Deze tabel wordt gemanipuleerd met speciale functies:
-\begin{itemize}
-\item variable\_get(\$naam): De variabele wordt opgehaald. Een tweede parameter kan opgegeven worden, als de variabele niet in de databank zit wordt deze waarde teruggegeven en wordt de variabele toegevoegd in de databank.
-\item variable\_set(\$naam, \$value): De variabele wordt gezet.
-\item variable\_del(\$naam): De variabele wordt verwijderd.
-\end{itemize}
-
-\noindent
-In hook\_enable() worden enkele variabelen gezet. Deze variabelen moeten voor elk content type gezet worden. We degenen op die we gebruiken:
-\begin{itemize}
-\item comment\_content\_type: Krijgt de waarde 0 om default commentaren uit te schakelen.
-\item node\_options\_content\_type: Krijgt de waarde array('status') om default 'Promote to Front page' uit te vinken.
-\item node\_preview\_content\_type: Krijgt de waarde 0 om de mogelijkheid tot een preview te disablen.
-\item node\_submitted\_content\_type: Krijgt de waarde 1 om default de auteur en de tijd waarop de content is toegevoegd te tonen bij de content zelf.
-\end{itemize}
-Welke opties beschikbaar zijn vind je hier \cite{contentTypeVariables}.\\
-
-\noindent
-De laatste stap bestaat uit het cre\"{e}eren van de velden die toegevoegd gaan worden aan de content types, vervolgens worden er instanties van de velden aangemaakt om ze te linken aan de content types. Dit gebeurt in hook\_install(). De velden worden aangemaakt field\_create\_field(\$field) en de instanties worden aangemaakt met field\_create\_instance(\$instance). Er worden velden aangemaakt voor: de URI van devices, de URI van resources, meerdere referenties naar content van het type coap\_resource. %misschien moet dit wat uitgebreider
-
-\subsection{De\"{i}nstallatie content types}
-De content types worden verwijderd in hook\_uninstall(). Voor een content type kan verwijderd worden moet nog een aantal andere zaken verwijderd worden. We overlopen de verschillende stappen die voor elk te verwijderen content type moeten overlopen worden:
-\begin{itemize}
-\item Alle content van het content type wordt verwijderd door middel van de functie node\_delete\_multiple(\$nids). De variabele \$nid bevat een array met alle nids van de content die verwijderd wordt.
-\item Alle variabelen die toegevoegd werden in de variabletabel worden verwijderd door gebruik te maken van variable\_del(\$naam);
-\item De commententiteit die geassocieerd is met dit content type wordt gemarkeerd om te verwijderen. Hiervoor wordt de functie field\_delete\_instance() gebruikt.
-\item Het content type wordt verwijderd met node\_type\_delete(\$type\_name).
-\item De databankcache van node types wordt geupdated met node\_types\_rebuild(). Dit is nodig omdat Drupal vaak in caches kijkt en verouderde informatie kan gebruiken.
-\item Drupal zal bij het verwijderen van velden de kolomwaarde deleted op 1 zetten. Om de velden effectief uit de databank te verwijderen wordt de functie field\_purge\_batch() gebruikt.
-\end{itemize}
 
 \section{Implementatie van de CoAP library-hooks}
 In deze paragraaf bekijken we hoe deze module de hooks implementeert die de CoAP library voorziet (Zie paragraaf \ref{observe_hooks}).
