@@ -74,9 +74,9 @@
 \contentsline {section}{\numberline {4.2}Implementatie}{41}
 \contentsline {subsection}{\numberline {4.2.1}Proceduregericht}{41}
 \contentsline {subsection}{\numberline {4.2.2}Objectgericht}{41}
-\contentsline {subsubsection}{CoAPFactory klasse}{41}
-\contentsline {subsubsection}{CoAPMessage klasse}{42}
-\contentsline {subsection}{\numberline {4.2.3}Hooks voor notificaties}{42}
+\contentsline {subsubsection}{CoAPFactory}{41}
+\contentsline {subsubsection}{CoAPMessage}{42}
+\contentsline {subsection}{\numberline {4.2.3}\textit {Hooks} voor notificaties}{42}
 \contentsline {subsection}{\numberline {4.2.4}Opvangen van verloren berichten}{44}
 \contentsline {chapter}{\numberline {5}CoAP sensor module}{45}
 \contentsline {section}{\numberline {5.1}Functionaliteit}{45}

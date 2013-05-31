@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2013.4.11)  31 MAY 2013 16:56
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2013.4.11)  31 MAY 2013 17:46
 entering extended mode
 **boek.tex
 
@@ -850,7 +850,26 @@ less on input line 9.
 
 
 
-] [38] [39] [40] [41] [42] [43]) [44]
+] [38] [39] [40] [41]
+Overfull \hbox (0.62442pt too wide) in paragraph at lines 71--72
+\OT1/cmr/m/n/10.95 Eerder werd al aan-ge-haald dat er een spe-ci-ale voor-zie-n
+ing no-dig is voor de \OT1/cmr/m/it/10.95 ob-serve\OT1/cmr/m/n/10.95 -functiona
+liteit.
+ []
+
+[42]
+Overfull \hbox (3.00215pt too wide) in paragraph at lines 75--76
+\OT1/cmr/m/n/10.95 Dru-pal zelf. Het ge-bruikte me-cha-nisme is na-me-lijk ana-
+loog, de \OT1/cmr/m/it/10.95 hook \OT1/cmr/m/n/10.95 wordt ge[]mplementeerd
+ []
+
+
+Overfull \hbox (16.65926pt too wide) in paragraph at lines 75--76
+\OT1/cmr/m/n/10.95 door het woord \OT1/cmr/m/it/10.95 hook \OT1/cmr/m/n/10.95 t
+e ver-van-gen door de naam van de mo-dule. Deze moe-ten ge[]mplementeerd
+ []
+
+[43]) [44]
 ("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
 iptie in LaTeX\CoAPSensorModule.tex"
 Hoofdstuk 5.
@@ -871,7 +890,7 @@ less on input line 15.
 
 
 
-] [46] <fig/architectuur.jpg, id=231, 823.57687pt x 1269.24188pt>
+] [46] <fig/architectuur.jpg, id=232, 823.57687pt x 1269.24188pt>
 File: fig/architectuur.jpg Graphic file (type jpg)
 
 <use fig/architectuur.jpg>
@@ -928,7 +947,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 120--122
 
  []
 
-<fig/TemperatuurModuleHTTPCOAPProxy.png, id=251, 455.45157pt x 259.7203pt>
+<fig/TemperatuurModuleHTTPCOAPProxy.png, id=252, 455.45157pt x 259.7203pt>
 File: fig/TemperatuurModuleHTTPCOAPProxy.png Graphic file (type png)
 
 <use fig/TemperatuurModuleHTTPCOAPProxy.png>
@@ -965,7 +984,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 160--161
 
  []
 
-<fig/meerdere_resources.jpg, id=262, 526.21594pt x 560.8453pt>
+<fig/meerdere_resources.jpg, id=263, 526.21594pt x 560.8453pt>
 File: fig/meerdere_resources.jpg Graphic file (type jpg)
 
 <use fig/meerdere_resources.jpg>
@@ -991,7 +1010,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 179--180
 
  []
 
-<fig/rest.png, id=269, 529.22719pt x 432.11438pt>
+<fig/rest.png, id=270, 529.22719pt x 432.11438pt>
 File: fig/rest.png Graphic file (type png)
  <use fig/rest.png>
 Package pdftex.def Info: fig/rest.png used on input line 186.
@@ -1007,7 +1026,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 192--193
 
 [58] [59 <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/docume
 nten/Scriptie in LaTeX/fig/rest.png>]
-<fig/tabbladen.jpg, id=277, 532.23843pt x 289.08pt>
+<fig/tabbladen.jpg, id=278, 532.23843pt x 289.08pt>
 File: fig/tabbladen.jpg Graphic file (type jpg)
  <use fig/tabbladen.jpg>
 Package pdftex.def Info: fig/tabbladen.jpg used on input line 199.
@@ -1024,7 +1043,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 223--224
 
  []
 
-<fig/databankModel.png, id=281, 805.0075pt x 588.1975pt>
+<fig/databankModel.png, id=282, 805.0075pt x 588.1975pt>
 File: fig/databankModel.png Graphic file (type png)
 
 <use fig/databankModel.png>
@@ -1036,13 +1055,13 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 [61] [62 <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/docume
 nten/Scriptie in LaTeX/fig/databankModel.png>] [63]
-<fig/add_content.jpg, id=292, 963.6pt x 770.88pt>
+<fig/add_content.jpg, id=293, 963.6pt x 770.88pt>
 File: fig/add_content.jpg Graphic file (type jpg)
  <use fig/add_content.jpg>
 Package pdftex.def Info: fig/add_content.jpg used on input line 278.
 (pdftex.def)             Requested size: 455.24408pt x 364.19568pt.
 
-[64] <fig/add_coap_resource.jpg, id=296, 353.82187pt x 173.14688pt>
+[64] <fig/add_coap_resource.jpg, id=297, 353.82187pt x 173.14688pt>
 File: fig/add_coap_resource.jpg Graphic file (type jpg)
 
 <use fig/add_coap_resource.jpg>
@@ -1054,7 +1073,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 297--298
 
  []
 
-<fig/coap_resource.jpg, id=300, 540.51938pt x 666.99188pt>
+<fig/coap_resource.jpg, id=301, 540.51938pt x 666.99188pt>
 File: fig/coap_resource.jpg Graphic file (type jpg)
 
 <use fig/coap_resource.jpg>
@@ -1099,7 +1118,7 @@ Overfull \hbox (6.0pt too wide) in paragraph at lines 364--364
 [][][][][][][] 
  []
 
-[70] <fig/foutmechanisme.jpg, id=317, 539.01375pt x 271.0125pt>
+[70] <fig/foutmechanisme.jpg, id=318, 539.01375pt x 271.0125pt>
 File: fig/foutmechanisme.jpg Graphic file (type jpg)
 
 <use fig/foutmechanisme.jpg>
@@ -1107,7 +1126,7 @@ Package pdftex.def Info: fig/foutmechanisme.jpg used on input line 391.
 (pdftex.def)             Requested size: 455.24408pt x 228.8978pt.
  [71 <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/documenten
 /Scriptie in LaTeX/fig/foutmechanisme.jpg>]
-<fig/add_coap_device.jpg, id=321, 350.81062pt x 173.89969pt>
+<fig/add_coap_device.jpg, id=322, 350.81062pt x 173.89969pt>
 File: fig/add_coap_device.jpg Graphic file (type jpg)
 
 <use fig/add_coap_device.jpg>
@@ -1160,7 +1179,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 413--414
 
  []
 
-<fig/CoAPDeviceMessage.png, id=322, 535.2497pt x 209.28188pt>
+<fig/CoAPDeviceMessage.png, id=323, 535.2497pt x 209.28188pt>
 File: fig/CoAPDeviceMessage.png Graphic file (type png)
 
 <use fig/CoAPDeviceMessage.png>
@@ -1172,7 +1191,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 423--425
 
  []
 
-<fig/coap_device.png, id=326, 289.08pt x 490.08093pt>
+<fig/coap_device.png, id=327, 289.08pt x 490.08093pt>
 File: fig/coap_device.png Graphic file (type png)
 
 <use fig/coap_device.png>
@@ -1207,7 +1226,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 23--25
 
  []
 
-<fig/conditional.jpg, id=344, 402.75468pt x 70.76437pt>
+<fig/conditional.jpg, id=345, 402.75468pt x 70.76437pt>
 File: fig/conditional.jpg Graphic file (type jpg)
 
 <use fig/conditional.jpg>
@@ -1215,7 +1234,7 @@ Package pdftex.def Info: fig/conditional.jpg used on input line 32.
 (pdftex.def)             Requested size: 364.19664pt x 63.98967pt.
  [78 <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/documenten
 /Scriptie in LaTeX/fig/conditional.jpg>]
-<fig/conditional_format.jpg, id=348, 369.63094pt x 359.84438pt>
+<fig/conditional_format.jpg, id=349, 369.63094pt x 359.84438pt>
 File: fig/conditional_format.jpg Graphic file (type jpg)
 
 <use fig/conditional_format.jpg>
@@ -1226,7 +1245,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 52--53
 
  []
 
-<fig/keep_alive.jpg, id=349, 390.70969pt x 65.49469pt>
+<fig/keep_alive.jpg, id=350, 390.70969pt x 65.49469pt>
 File: fig/keep_alive.jpg Graphic file (type jpg)
 
 <use fig/keep_alive.jpg>
@@ -1244,7 +1263,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 63--65
 
 [80 <C:/Program Files/wamp/www/drupal-7.19/sites/all/modules/custom/documenten/
 Scriptie in LaTeX/fig/keep_alive.jpg>]
-<fig/Configuratie.png, id=357, 584.1825pt x 415.5525pt>
+<fig/Configuratie.png, id=358, 584.1825pt x 415.5525pt>
 File: fig/Configuratie.png Graphic file (type png)
 
 <use fig/Configuratie.png>
@@ -1254,7 +1273,7 @@ Package pdftex.def Info: fig/Configuratie.png used on input line 78.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-<fig/Help.png, id=358, 693.34032pt x 463.7325pt>
+<fig/Help.png, id=359, 693.34032pt x 463.7325pt>
 File: fig/Help.png Graphic file (type png)
  <use fig/Help.png>
 Package pdftex.def Info: fig/Help.png used on input line 88.
@@ -1363,29 +1382,30 @@ iptie in LaTeX\uitbreidingen.aux")
 ("C:\Program Files\wamp\www\drupal-7.19\sites\all\modules\custom\documenten\Scr
 iptie in LaTeX\referenties.aux")) ) 
 Here is how much of TeX's memory you used:
- 8023 strings out of 494045
- 130824 string characters out of 3148390
+ 8025 strings out of 494045
+ 130848 string characters out of 3148390
  440842 words of memory out of 3000000
- 11121 multiletter control sequences out of 15000+200000
- 11717 words of font info for 41 fonts, out of 3000000 for 9000
+ 11122 multiletter control sequences out of 15000+200000
+ 12076 words of font info for 42 fonts, out of 3000000 for 9000
  717 hyphenation exceptions out of 8191
  38i,18n,51p,1832b,2959s stack positions out of 5000i,500n,10000p,200000b,50000s
 <C:/Program Files/MiKTeX 2.9/fonts/type1/pub
 lic/amsfonts/cm/cmbx10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsf
 onts/cm/cmbx12.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/
-cmbx8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi10.pf
-b><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Pro
-gram Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Program File
-s/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Program Files/MiKTeX 2
-.9/fonts/type1/public/amsfonts/cm/cmss10.pfb><C:/Program Files/MiKTeX 2.9/fonts
-/type1/public/amsfonts/cm/cmssi10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/
-public/amsfonts/cm/cmsy10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/a
-msfonts/cm/cmsy8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/c
-m/cmti10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmtt10
-.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/eurosym/feymr10.pfb>
-Output written on boek.pdf (101 pages, 2033726 bytes).
+cmbx8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbxti10.
+pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/
+Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Program F
+iles/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Program Files/MiKT
+eX 2.9/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Program Files/MiKTeX 2.9/fon
+ts/type1/public/amsfonts/cm/cmss10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1
+/public/amsfonts/cm/cmssi10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public
+/amsfonts/cm/cmsy10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfont
+s/cm/cmsy8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti
+10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmtt10.pfb><
+C:/Program Files/MiKTeX 2.9/fonts/type1/public/eurosym/feymr10.pfb>
+Output written on boek.pdf (101 pages, 2044099 bytes).
 PDF statistics:
- 434 PDF objects out of 1000 (max. 8388607)
+ 438 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  206 words of extra memory for PDF output out of 10000 (max. 10000000)
 
