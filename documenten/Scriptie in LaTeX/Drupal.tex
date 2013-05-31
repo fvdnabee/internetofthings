@@ -28,7 +28,7 @@ Drupal is zeer flexibel en krachtig waardoor er enorm veel verschillende soorten
 
 \subsubsection{Social publishing platform}
 
-Dat Drupal een social publishing platform is, houdt in dat content gemakkelijk te delen is via Drupal. Drupal biedt de mogelijkheid complexe data in een structuur te gieten die gemakkelijk uit te wisselen is. Op deze manier is het eenvoudig hetzelfde stuk content voor te stellen op verschillende websites.
+Dat Drupal een \textit{social publishing platform} is, houdt in dat content gemakkelijk te delen is via Drupal. Drupal biedt de mogelijkheid complexe data in een structuur te gieten die gemakkelijk uit te wisselen is. Op deze manier is het eenvoudig hetzelfde stuk content voor te stellen op verschillende websites.
 
 \begin{figure}[h]
 \centering
@@ -89,13 +89,13 @@ We bespreken nu enkele nadelen van Drupal:
 Dit maakt Drupal relatief traag.
 \item Drupal is zeer gebruiksvriendelijk en ideaal voor de eindgebruikers, die gemakkelijk en interactief inhoud willen toevoegen en beheren. 
 Beginnende Drupalontwikkelaars zullen evenwel merken dat Drupal een erg steile leercurve heeft.
-\item Ook ben je afhankelijk van de Drupalcommunity en dus de goodwill van de andere leden. Dit is in veel gevallen een voordeel, maar wanneer je een probleem hebt, ben je niet zeker of er wel een oplossing voor bestaat.
+\item Ook ben je afhankelijk van de Drupalgemeenschap en dus de goodwill van de andere leden. Dit is in veel gevallen een voordeel, maar wanneer je een probleem hebt, ben je niet zeker of er wel een oplossing voor bestaat.
 \item Tenslotte kan iedereen een module maken. Dit heeft natuurlijk zijn voordelen maar wanneer je een module van iemand anders gebruikt, ben je nooit zeker of de module zal onderhouden worden naar de toekomst toe en of er al dan niet bugs in zitten.
 \end{itemize}
 
 \section{Werking van Drupal}
 
-Aan de hand van een voorbeeld \cite{drupalDefGuide} proberen we de lezer een idee te geven van de werking van Drupal. Bekijk Drupal als een digitale postzegelsorteerder. De nodes zijn de postzegels en de contenttypes zijn de verschillende soorten postzegels (postzegels van \euro~0,67, \euro~1,34, ... ). Naast contenttypes, kan je taxonomy gebruiken om een verdere onderverdeling te maken in de postzegels. De mate waarin en de criteria waarop je je onderverdeling maakt, kan je zelf kiezen (land, kleur, ...). Views is het mechanisme dat je postzegels sorteert en weergeeft in de vorm van pagina's en blocks. Van deze pagina's en blocks kan je zelf grootte, vorm, kleur en andere criteria opstellen zodat je deze helemaal kan personaliseren. Zie Figuur~\ref{fig:drupalGrafischeWeergave}.
+Aan de hand van een voorbeeld \cite{drupalDefGuide} proberen we de lezer een idee te geven van de werking van Drupal. Bekijk Drupal als een digitale postzegelsorteerder. De nodes zijn de postzegels en de contenttypes zijn de verschillende soorten postzegels (postzegels van \euro~0,67, \euro~1,34, ... ). Naast contenttypes, kan je taxonomy gebruiken om een verdere onderverdeling te maken in de postzegels. De mate waarin en de criteria waarop je je onderverdeling maakt, kan je zelf kiezen (land, kleur, ...). Views is het mechanisme dat je postzegels sorteert en weergeeft in de vorm van pagina's en \textit{Blocks}. Van deze pagina's en \textit{Blocks} kan je zelf grootte, vorm, kleur en andere criteria opstellen zodat je deze helemaal kan personaliseren. Zie Figuur~\ref{fig:drupalGrafischeWeergave}.
 
 \begin{figure}[h]
 \centering
@@ -111,7 +111,7 @@ Aan de hand van een voorbeeld \cite{drupalDefGuide} proberen we de lezer een ide
 
 We gaan dieper in op de begrippen die gebruikt worden in het voorbeeld en lichten enkele extra termen toe die ook gebruikt worden in Drupal.
 
-\subsubsection{Content type}
+\subsubsection{Contenttype}
 Een contenttype bepaalt het soort content. Het bundelt soorten gegevens tot een logisch geheel. Wanneer content van een bepaald type wordt aangemaakt, worden de gegevens ingevuld door middel van \textit{Fields}. De toegevoegde content wordt een node genoemd. Ook biedt een contenttype de mogelijkheid om verschillende soorten content te onderscheiden van elkaar op basis van het type.
 Drupal biedt gebruikers de mogelijkheid aan om hun eigen \textit{custom} contenttypes te maken.
 %figuur van add contenttype
@@ -133,13 +133,13 @@ Alle nodes hebben enkele eigenschappen gemeenschappelijk:
 Via \textit{Fields} kan je gegevens voor een contenttype invullen. Standaard biedt Drupal een aantal velden aan om gegevens toe te voegen, maar soms schieten deze velden tekort. Daarom heeft een gebruiker de mogelijkheid \textit{custom} velden te maken.
 
 \subsubsection{View}
-Views worden gebruikt om content visueel voor te stellen op welke manier dan ook. Een view is dan ook niet meer dan een visuele representatie van een verzameling content uit de datbank.
+\textit{Views} worden gebruikt om content visueel voor te stellen op welke manier dan ook. Een \textit{view} is dan ook niet meer dan een visuele representatie van een verzameling content uit de datbank.
 
 \subsubsection{Block}
-Blocks zijn, zoals de naam al impliceert, blokken die een verzameling van herbruikbare content bevatten. Ze geven het beeld van die content. Blocks kunnen op gemakkelijke wijze toegevoegd worden aan je website waar jij dat wilt en hoe vaak je dat wilt. Het is bijvoorbeeld gemakkelijk om aan te geven dat je een bepaald block enkel op een bepaalde pagina wil laten verschijnen, en bovendien waar op de pagina je dat wilt. Merk echter wel op dat het hier niet echt content betreft, de inhoud van het block wordt aangemaakt bij opvraging en is dus geen blok beheerbare content. We zien een voorbeeld van een block in paragraaf \ref{jQuery}.
+\textit{Blocks} zijn, zoals de naam al impliceert, blokken die een verzameling van herbruikbare content bevatten. Ze geven het beeld van die content. \textit{Blocks} kunnen op gemakkelijke wijze toegevoegd worden aan je website waar jij dat wilt en hoe vaak je dat wilt. Het is bijvoorbeeld gemakkelijk om aan te geven dat je een bepaald \textit{Block} enkel op een bepaalde pagina wil laten verschijnen, en bovendien waar op de pagina je dat wilt. Merk echter wel op dat het hier niet echt content betreft, de inhoud van het \textit{Block} wordt aangemaakt bij opvraging en is dus geen blok beheerbare content. We zien een voorbeeld van een \textit{Block} in paragraaf \ref{jQuery}.
 
 \subsubsection{Theme}
-Themes zijn templates die bepalen hoe jouw website eruit ziet en aanvoelt voor de gebruiker. Net zoals modules zijn themes modulair en zijn ze dus gemakkelijk te wisselen, ook themes kunnen zelf ontwikkeld worden en zijn ter beschikking op de Drupal community.
+\textit{Themes} zijn templates die bepalen hoe jouw website eruit ziet en aanvoelt voor de gebruiker. Net zoals modules zijn \textit{themes} modulair en zijn ze dus gemakkelijk te wisselen, ook \textit{themes} kunnen zelf ontwikkeld worden en zijn ter beschikking op de Drupalgemeenschap.
 
 \subsubsection{Taxonomy}
 Taxonomy geeft je de mogelijkheid om eigenschappen en categorie\"{e}n toe te voegen aan je content, zodat bijvoorbeeld een gebruiker content kan filteren uit een grote verzameling. Het biedt dus een manier om je content te organiseren. Een praktijkvoorbeeld is een receptensite, een gebruiker kan dan recepten filteren aan de hand van de eigenschappen van het gerecht (ingredi\"{e}nten, moeilijkheid, ...).
@@ -149,7 +149,7 @@ Taxonomy geeft je de mogelijkheid om eigenschappen en categorie\"{e}n toe te voe
 Alle gebruikerfunctionaliteit zoals registreren, inloggen, enz... zit reeds in de Drupal\textit{core}. Rollen geven weer tot welk type een gebruiker hoort. Meerdere gebruikers kunnen dezelfde rol hebben, en een gebruiker kan meerdere rollen hebben. Met permissies kan je aangeven welke privileges een gebruiker met een bepaalde rol heeft en dus wat die gebruiker mag en kan doen. Deze permissies worden gekoppeld aan een rol zodat alle gebruikers die deze rol hebben automatisch de privileges hebben van deze rol. Drupal biedt standaard drie rollen aan: de Administratorrol, die alle privileges bevat; de geauthenticeerde gebruikerrol, die een subset van de privileges van de Administratorrol bevat en de anonieme gebruikerrol, die een subset van de privileges van de geauthenticeerde gebruikerrol bevat. Anonieme gebruikers zijn gebruikers die zich niet aangemeld hebben op de website.
 
 \subsubsection{Module}
-Modules bieden de mogelijkheid om extra functionaliteit in te pluggen op een website. Modules zijn gratis te downloaden van de Drupal community en omdat deze community groot is, is de kans zeer groot dat er al een module gemaakt is voor jouw probleem. Indien dit niet het geval is, heb je nog altijd de mogelijkheid om zelf een module te ontwikkelen. Het gebruik van modules voorkomt ook dat functionaliteit die je niet nodig hebt, ook niet op jouw website komt. Je website is dus zeer configureerbaar naar eigen wensen (Zie figuur~\ref{fig:drupalOrganizeModules}).
+Modules bieden de mogelijkheid om extra functionaliteit in te pluggen op een website. Modules zijn gratis te downloaden van de Drupalgemeenschap en omdat deze gemeenschap groot is, is de kans zeer groot dat er al een module gemaakt is voor jouw probleem. Indien dit niet het geval is, heb je nog altijd de mogelijkheid om zelf een module te ontwikkelen. Het gebruik van modules voorkomt ook dat functionaliteit die je niet nodig hebt, ook niet op jouw website komt. Je website is dus zeer configureerbaar naar eigen wensen (Zie figuur~\ref{fig:drupalOrganizeModules}).
 \begin{figure}[h]
 \includegraphics[width=1\textwidth]{fig/drupalOrganizeModules}
 \caption{Organisatie van Drupalmodules}
@@ -160,11 +160,11 @@ Modules bieden de mogelijkheid om extra functionaliteit in te pluggen op een web
 De Drupal\textit{core} is wat je downloadt van de Drupalwebsite. Het vormt de basis en een uitgebreide \textit{out-of-the-box}functionaliteit, het fungeert eigenlijk als de motor achter een Drupalwebsite. De Drupal\textit{core} is zeer uitgebreid en complex, het vormt op zich al voldoende materiaal voor een scriptie, er verder op ingaan zou ons dus te ver leiden.
 
 \subsubsection{Entities}
-Een nieuw belangrijk concept in Drupal 7 is entities \cite{entities}. Dit nieuwe concept in combinatie met de Entity API heeft twee positieve effecten. Het eerste effect is dat gebruikers en commentaren dezelfde mogelijkheden krijgen als nodes. In vorige versies van Drupal was het niet mogelijk versies te cre\"{e}eren of velden toe te voegen aan gebruikers of commentaren. Andere voordelen zoals het gebruiken van views in combinatie met gebruikers of commentaren was ook niet mogelijk. Het andere effect is het invoeren van object-ge\"{o}rienteerd programmeren van entities. Vroeger was het nodig specifieke functies van de \textit{core} te gebruiken om content te bewerken. Een voorbeeld hier van is node\_save() dat nodes opslaat. Deze functie was enkel toepasbaar op een node. Het alternatief bij de Entity API is entity\_save(). Deze functie is niet gelimiteerd tot enkel content of enkel tot gebruikers.
-Het is ook mogelijk nieuwe entities te maken. %, we gaan hier dieper op in in hoofdstuk~\ref{uitbreidingen}.
+Een nieuw belangrijk concept in Drupal 7 is \textit{entities} \cite{entities}. Dit nieuwe concept in combinatie met de \textit{Entity API} heeft twee positieve effecten. Het eerste effect is dat gebruikers en commentaren dezelfde mogelijkheden krijgen als nodes. In vorige versies van Drupal was het niet mogelijk versies te cre\"{e}ren of velden toe te voegen aan gebruikers of commentaren. Andere voordelen zoals het gebruiken van \textit{views} in combinatie met gebruikers of commentaren was ook niet mogelijk. Het andere effect is het invoeren van object-ge\"{o}rienteerd programmeren van \textit{entities}. Vroeger was het nodig specifieke functies van de \textit{core} te gebruiken om content te bewerken. Een voorbeeld hier van is node\_save() dat nodes opslaat. Deze functie was enkel toepasbaar op een node. Het alternatief bij de \textit{Entity API} is entity\_save(). Deze functie is niet gelimiteerd tot enkel content of enkel tot gebruikers.
+Het is ook mogelijk nieuwe \textit{entities} te maken. %, we gaan hier dieper op in in hoofdstuk~\ref{uitbreidingen}.
 
 \subsubsection{Hooks}
-Hooks zijn functies die gedefinieerd zijn door de Drupal\textit{core}. Ze kunnen worden ge\"{i}mplementeerd door elke module. In de Drupal\textit{bootstrap} zal de Drupal\textit{core} dan op bepaalde tijdstippen de bijhorende \textit{hooks} oproepen van elke module die de hook ge\"{i}mplementeerd heeft. Hiervoor wordt een zeer eenvoudig mechanisme gehanteerd. Een module kan zo'n hook defini\"{e}ren door de naam van de hook te laten voorafgaan door de naam van de module die de hook implementeert (zie codevoorbeeld~\ref{lst:drupalHookExample}).
+Hooks zijn functies die gedefinieerd zijn door de Drupal\textit{core}. Ze kunnen worden ge\"{i}mplementeerd door elke module. In de Drupal\textit{bootstrap} zal de Drupal\textit{core} dan op bepaalde tijdstippen de bijhorende \textit{hooks} oproepen van elke module die de \textit{hook} ge\"{i}mplementeerd heeft. Hiervoor wordt een zeer eenvoudig mechanisme gehanteerd. Een module kan zo'n \textit{hook} defini\"{e}ren door de naam van de \textit{hook} te laten voorafgaan door de naam van de module die de \textit{hook} implementeert (zie codevoorbeeld~\ref{lst:drupalHookExample}).
 
 \scriptsize
 \lstset{language=PHP}
@@ -212,7 +212,7 @@ De eerste HTTP-\textit{headers} worden opgebouwd. Deze worden echter nog niet ve
 Als de website meerdere talen ondersteunt wordt in deze fase de gekozen taal van de gebruiker bepaald.
 
 \subsubsection{Laden van modules en initialisatie van het theme}
-Alle ingeschakelde modules worden ingeladen en het theme wordt ge\"{i}nitialiseerd. Deze fase biedt ook nog de mogelijkheid om variabelen in te stellen die pas later in de \textit{request} beschikbaar zijn.
+Alle ingeschakelde modules worden ingeladen en het \textit{theme} wordt ge\"{i}nitialiseerd. Deze fase biedt ook nog de mogelijkheid om variabelen in te stellen die pas later in de \textit{request} beschikbaar zijn.
 
 \subsubsection{Uitvoeren van page callback}
 Drupal bouwt en rendert de pagina.
@@ -256,7 +256,7 @@ $id = db_insert('coap_sensor_interested_user')
 	))
 	->execute();
 \end{lstlisting}
-In voorbeeld \ref{db_insert} wordt een entry toegevoegd aan de tabel coap\_sensor\_interested\_user. Kolommen die niet null mogen zijn en geen default waarde hebben moeten opgegeven worden in de fieldstabel. Zoniet wordt er een exceptie opgegooid bij het oproepen van de execute-functie.
+In voorbeeld \ref{db_insert} wordt een entry toegevoegd aan de tabel coap\_sensor\_interested\_user. Kolommen die niet null mogen zijn en geen \textit{default}waardede hebben moeten opgegeven worden in de fieldstabel. Zoniet wordt er een exceptie opgegooid bij het oproepen van de execute-functie.
 
 \lstset{language=PHP}
 \begin{lstlisting}[label=db_update,caption=Voorbeeld gebruik van db\_update]
@@ -308,15 +308,15 @@ Bij zowel de eerste als de tweede optie zijn nog een zaken nodig om een contentt
 \noindent
 In hook\_enable() worden enkele variabelen gezet. Deze variabelen moeten voor elk contenttype gezet worden. We degenen op die we gebruiken:
 \begin{itemize}
-\item comment\_content\_type: Krijgt de waarde 0 om default commentaren uit te schakelen.
-\item node\_options\_content\_type: Krijgt de waarde array('status') om default '\textit{Promote to Front page}' uit te vinken.
+\item comment\_content\_type: Krijgt de waarde 0 om \textit{default} commentaren uit te schakelen.
+\item node\_options\_content\_type: Krijgt de waarde array('status') om \textit{default} '\textit{Promote to Front page}' uit te vinken.
 \item node\_preview\_content\_type: Krijgt de waarde 0 om de mogelijkheid tot een preview te \textit{disablen}.
-\item node\_submitted\_content\_type: Krijgt de waarde 1 om default de auteur en de tijd waarop de content is toegevoegd te tonen bij de content zelf.
+\item node\_submitted\_content\_type: Krijgt de waarde 1 om \textit{default} de auteur en de tijd waarop de content is toegevoegd te tonen bij de content zelf.
 \end{itemize}
 Welke opties beschikbaar zijn vind je hier \cite{contentTypeVariables}.\\
 
 \noindent
-De laatste stap bestaat uit het cre\"{e}eren van de velden die toegevoegd gaan worden aan de contenttypes, vervolgens worden er instanties van de velden aangemaakt om ze te linken aan de contenttypes. Dit gebeurt in hook\_install(). De velden worden aangemaakt field\_create\_field(\$field) en de instanties worden aangemaakt met field\_create\_instance(\$instance). Er worden velden aangemaakt voor: de URI van devices, de URI van resources, meerdere referenties naar content van het type coap\_resource. %misschien moet dit wat uitgebreider
+De laatste stap bestaat uit het cre\"{e}ren van de velden die toegevoegd gaan worden aan de contenttypes, vervolgens worden er instanties van de velden aangemaakt om ze te linken aan de contenttypes. Dit gebeurt in hook\_install(). De velden worden aangemaakt field\_create\_field(\$field) en de instanties worden aangemaakt met field\_create\_instance(\$instance). Er worden velden aangemaakt voor: de URI van devices, de URI van resources, meerdere referenties naar content van het type coap\_resource. %misschien moet dit wat uitgebreider
 
 \subsection{De\"{i}nstallatie contenttypes}
 De contenttypes worden verwijderd in hook\_uninstall(). Voor een contenttype kan verwijderd worden moet nog een aantal andere zaken verwijderd worden. We overlopen de verschillende stappen die voor elk te verwijderen contenttype moeten overlopen worden:
@@ -364,9 +364,9 @@ Wanneer de gebruiker op de knop klikt, gebeuren volgende stappen:
 		\item het ingegeven WOEID wordt opgehaald met behulp van de Drupalfunctie variable\_get()
 		\item er wordt een HTTP-\textit{request} uitgevoerd naar de \textit{Yahoo Weather API} met de PHP-functie file\_get\_contents(), dat een URL als parameter verwacht
 		\item het ontvangen xml-bestand wordt in een object gestopt met de PHP-functie SimplexmlElement(), waarna het weerbericht gemakkelijk uit het XML-bestand kan gehaald worden
-		\item Het weerbericht wordt toegevoegd aan de inhoud van het block
+		\item Het weerbericht wordt toegevoegd aan de inhoud van het \textit{Block}
 	\end{itemize}
-	\item De pagina wordt in de browser weergegeven met het weerbericht in het block
+	\item De pagina wordt in de browser weergegeven met het weerbericht in het \textit{Block}
 \end{itemize}
 
 \subsection{Met AJAX in jQuery}
