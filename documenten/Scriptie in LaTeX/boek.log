@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.4.6)  31 MAY 2013 16:52
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.4.6)  31 MAY 2013 17:49
 entering extended mode
 **boek.tex
 
@@ -625,13 +625,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 316--317
 
  []
 
-[20]
-Overfull \hbox (70.51477pt too wide) in paragraph at lines 324--325
-[]\OT1/cmr/m/n/10.95 Alle con-tent van het con-tent-type wordt ver-wij-derd doo
-r mid-del van de func-tie node[]delete[]multiple($nids).
- []
-
-<fig/weermodule.png, id=135, 138.5175pt x 306.39468pt>
+[20] <fig/weermodule.png, id=135, 138.5175pt x 306.39468pt>
 File: fig/weermodule.png Graphic file (type png)
 
 <use fig/weermodule.png>
@@ -876,6 +870,12 @@ Package pdftex.def Info: fig/architectuur.jpg used on input line 42.
 
 LaTeX Warning: Float too large for page by 66.64134pt on input line 45.
 
+
+Overfull \hbox (12.26067pt too wide) in paragraph at lines 52--55
+\OT1/cmr/m/n/10.95 ge[]nstalleerd wor-den door de ge-brui-ker voor-al-eer hij 
+ge-bruik kan ma-ken van de CoAP-sensormodule.
+ []
+
 [47] [48 <C:/xampp/htdocs/sites/all/modules/custom/documenten/Scriptie in LaTeX
 /fig/architectuur.jpg>]
 Overfull \hbox (13.9234pt too wide) in paragraph at lines 71--73
@@ -1108,28 +1108,28 @@ File: fig/add_coap_device.jpg Graphic file (type jpg)
 Package pdftex.def Info: fig/add_coap_device.jpg used on input line 403.
 (pdftex.def)             Requested size: 273.14922pt x 135.413pt.
 
-Underfull \hbox (badness 1019) in paragraph at lines 411--412
-[]\OT1/cmr/m/n/10.95 Dit con-tent type stelt een vol-le-
+Underfull \hbox (badness 1137) in paragraph at lines 411--412
+\OT1/cmr/m/n/10.95 een of meer-dere re-sour-ces be-vin-
  []
 
 
-Underfull \hbox (badness 2435) in paragraph at lines 411--412
-\OT1/cmr/m/n/10.95 kel het IPv6-adres op te ge-ven
+Underfull \hbox (badness 3118) in paragraph at lines 411--412
+\OT1/cmr/m/n/10.95 tent-type hoeft de ge-brui-ker en-
  []
 
 
-Underfull \hbox (badness 1466) in paragraph at lines 411--412
-\OT1/cmr/m/n/10.95 in het veld field[]device[]uri. Er
+Underfull \hbox (badness 7944) in paragraph at lines 411--412
+\OT1/cmr/m/n/10.95 kel het IPv6-adres op te ge-
  []
 
 
-Underfull \hbox (badness 1248) in paragraph at lines 411--412
-\OT1/cmr/m/n/10.95 is nog een veld aan-we-zig in dit
+Underfull \hbox (badness 3271) in paragraph at lines 411--412
+\OT1/cmr/m/n/10.95 ven in het veld field[]device[]uri.
  []
 
 
-Underfull \hbox (badness 2521) in paragraph at lines 411--412
-\OT1/cmr/m/n/10.95 con-tent type, na-me-lijk het veld
+Underfull \hbox (badness 1509) in paragraph at lines 411--412
+\OT1/cmr/m/n/10.95 Er is nog een veld aan-we-zig in
  []
 
 
@@ -1297,13 +1297,13 @@ less on input line 59.
 
 
 ]
-Underfull \hbox (badness 10000) in paragraph at lines 83--84
+Underfull \hbox (badness 10000) in paragraph at lines 85--86
 []\OT1/cmr/m/n/10.95 http://stackoverflow.com/questions/12683530/origin-http-lo
 calhost-is-not-allowed-by-
  []
 
 
-Underfull \hbox (badness 5446) in paragraph at lines 95--96
+Underfull \hbox (badness 5446) in paragraph at lines 97--98
 []\OT1/cmr/m/n/10.95 http://www.metachunk.com/blog/adding-module-path-drupal-7-
 theme-registry, 14 mei
  []
@@ -1355,13 +1355,13 @@ dingen.aux")
 ("C:\xampp\htdocs\sites\all\modules\custom\documenten\Scriptie in LaTeX\referen
 ties.aux")) ) 
 Here is how much of TeX's memory you used:
- 8023 strings out of 494045
- 129218 string characters out of 3148391
- 440842 words of memory out of 3000000
- 11121 multiletter control sequences out of 15000+200000
+ 8024 strings out of 494045
+ 129226 string characters out of 3148391
+ 440847 words of memory out of 3000000
+ 11122 multiletter control sequences out of 15000+200000
  11717 words of font info for 41 fonts, out of 3000000 for 9000
  717 hyphenation exceptions out of 8191
- 38i,18n,51p,1832b,2959s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 38i,18n,51p,1840b,2959s stack positions out of 5000i,500n,10000p,200000b,50000s
 <C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx10
 .pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:
 /Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx8.pfb><C:/Program 
@@ -1375,7 +1375,7 @@ y10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy8.pfb><
 C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Progr
 am Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmtt10.pfb><C:/Program Files
 /MiKTeX 2.9/fonts/type1/public/eurosym/feymr10.pfb>
-Output written on boek.pdf (101 pages, 2033704 bytes).
+Output written on boek.pdf (101 pages, 2034843 bytes).
 PDF statistics:
  434 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)

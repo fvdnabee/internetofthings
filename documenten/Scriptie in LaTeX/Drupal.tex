@@ -321,9 +321,9 @@ De laatste stap bestaat uit het cre\"{e}eren van de velden die toegevoegd gaan w
 \subsection{De\"{i}nstallatie contenttypes}
 De contenttypes worden verwijderd in hook\_uninstall(). Voor een contenttype kan verwijderd worden moet nog een aantal andere zaken verwijderd worden. We overlopen de verschillende stappen die voor elk te verwijderen contenttype moeten overlopen worden:
 \begin{itemize}
-\item Alle content van het contenttype wordt verwijderd door middel van de functie node\_delete\_multiple(\$nids). De variabele \$nid bevat een array met alle nids van de content die verwijderd wordt.
+\item Alle content van het contenttype wordt verwijderd door middel van de functie\\ node\_delete\_multiple(\$nids). De variabele \$nid bevat een array met alle nids van de content die verwijderd wordt.
 \item Alle variabelen die toegevoegd werden in de \textit{variable}tabel worden verwijderd door gebruik te maken van variable\_del(\$naam);
-\item De commententiteit die geassocieerd is met dit contenttype wordt gemarkeerd om te verwijderen. Hiervoor wordt de functie field\_delete\_instance() gebruikt.
+\item De comment-entiteit die geassocieerd is met dit contenttype wordt gemarkeerd om te verwijderen. Hiervoor wordt de functie field\_delete\_instance() gebruikt.
 \item Het contenttype wordt verwijderd met node\_type\_delete(\$type\_name).
 \item De databankcache van node types wordt geupdated met node\_types\_rebuild(). Dit is nodig omdat Drupal vaak in caches kijkt en verouderde informatie kan gebruiken.
 \item Drupal zal bij het verwijderen van velden de kolomwaarde deleted op 1 zetten. Om de velden effectief uit de databank te verwijderen wordt de functie field\_purge\_batch() gebruikt.

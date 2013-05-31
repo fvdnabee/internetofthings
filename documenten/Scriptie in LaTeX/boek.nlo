@@ -13,7 +13,7 @@
 \nomenclatureentry{aNON@[{NON}]\begingroup Non-confirmable CoAP-message\nomeqref {3.0}|nompageref}{26}
 \nomenclatureentry{aACK@[{ACK}]\begingroup Acknowledgement CoAP-message\nomeqref {3.0}|nompageref}{26}
 \nomenclatureentry{aRST@[{RST}]\begingroup Reset CoAP-message\nomeqref {3.0}|nompageref}{26}
-\nomenclatureentry{aTKL@[{TKL}]\begingroup ToKen Length\nomeqref {3.0}|nompageref}{26}
+\nomenclatureentry{aTKL@[{TKL}]\begingroup \textit{ToKen Length}\nomeqref {3.0}|nompageref}{26}
 \nomenclatureentry{aTLV@[{TLV}]\begingroup Type Length Value\nomeqref {3.0}|nompageref}{26}
 \nomenclatureentry{aCR@[{CR}]\begingroup Carriage Return\nomeqref {3.0}|nompageref}{28}
 \nomenclatureentry{aLF@[{LF}]\begingroup Line Feed\nomeqref {3.0}|nompageref}{28}

@@ -31,10 +31,10 @@ We kunnen CoAP ook in het \textit{Open Systems Interconnection} (OSI)-model \nom
 \vspace{-10pt}
 \label{fig:CoAPMessageFormat}
 \end{wrapfigure}
-Om een minimale \textit{overhead} te realiseren worden de berichten zeer compact gehouden. We geven een kort overzicht van de onderdelen van het berichtformaat (zie Figuur~\ref{fig:CoAPMessageFormat}) en bespreken dan de belangrijke delen apart in subparagrafen. De eerste vier bytes stellen de \textit{header} voor. Bemerk dus dat de \textit{header} gerealiseerd wordt met slechts 4 bytes. Het veld na de \textit{header} is optioneel en bevat een token waarvan de lengte aangegeven is in de \textit{header}. Vervolgens zitten er nul of meer opties in het bericht.
+Om een minimale \textit{overhead} te realiseren worden de berichten zeer compact gehouden. We geven een kort overzicht van de onderdelen van het berichtformaat (zie Figuur~\ref{fig:CoAPMessageFormat}) en bespreken dan de belangrijke delen apart in subparagrafen. De eerste vier bytes stellen de \textit{header} voor. Bemerk dus dat de \textit{header} gerealiseerd wordt met slechts 4 bytes. Het veld na de \textit{header} is optioneel en bevat een \textit{\textit{token}} waarvan de lengte aangegeven is in de \textit{header}. Vervolgens zitten er nul of meer opties in het bericht.
 Het laatste onderdeel van een bericht is de \textit{payload}. Indien er een \textit{payload} aanwezig is in het bericht, wordt die altijd voorafgegaan door een vaste byte, de \textit{payload}marker (0xFF). Deze geeft het einde van de opties en het begin van de \textit{payload} aan. Indien er geen \textit{payload} is mag deze marker niet aanwezig zijn.
 
-We merken hier op dat een token, opties en een \textit{payload} optioneel zijn. Dit zorgt ervoor dat sommige berichten beperkt blijven tot de \textit{header} van 4 bytes, wat relatief weinig is.
+We merken hier op dat een \textit{token}, opties en een \textit{payload} optioneel zijn. Dit zorgt ervoor dat sommige berichten beperkt blijven tot de \textit{header} van 4 bytes, wat relatief weinig is.
 
 \subsubsection{Header}
 
@@ -42,14 +42,14 @@ Deze vier bytes worden opgedeeld in drie delen:
 \begin{itemize}
 \item Versiegetal (Ver): een 2-bit \textit{unsigned integer} die de CoAP-versie aangeeft. 
 \item Type-aanduiding (T): een 2-bit \textit{unsigned integer} die het berichttype aangeeft. De mogelijkheden zijn: \textit{confirmable} (CON) \nomenclature{CON}{Confirmable CoAP-message} (0), \textit{non-confirmable} (NON)) \nomenclature{NON}{Non-confirmable CoAP-message} (1), \textit{Acknowledgement} (ACK) \nomenclature{ACK}{Acknowledgement CoAP-message} (2) of \textit{Reset} (RST) \nomenclature{RST}{Reset CoAP-message} (3).
-\item Tokenlengte (TKL)\nomenclature{TKL}{ToKen Length}: een 4-bit \textit{unsigned integer} die de variabele tokenlengte aangeeft.
+\item \textit{token}lengte (TKL)\nomenclature{TKL}{\textit{ToKen Length}}: een 4-bit \textit{unsigned integer} die de variabele \textit{token}lengte aangeeft.
 \item Code: 8-bit \textit{unsigned integer} die aangeeft of het bericht een \textit{request} of een response overbrengt, of leeg is.
 \item \textit{message-ID}: een 16-bit \textit{unsigned integer} die gebruikt wordt om duplicatie van berichten op te merken. Het wordt ook gebruikt om berichten van het type ACK/RST te linken aan berichten van het type CON/NON.
 \end{itemize}
 
 \subsubsection{Token}
 
-Een token wordt gebruikt om een response te linken aan een \textit{request}. De lengte wordt bepaald door de TKL en is nul tot acht bytes lang. Elk bericht heeft een token, dit kan lengte nul hebben. Wanneer een token nodig is, moet dat worden gegenereerd door de client. Indien de server wil dat zijn response geaccepteerd wordt, moet hij dit token zonder meer overnemen in zijn response.
+Een \textit{token} wordt gebruikt om een response te linken aan een \textit{request}. De lengte wordt bepaald door de TKL en is nul tot acht bytes lang. Elk bericht heeft een \textit{token}, dit kan lengte nul hebben. Wanneer een \textit{token} nodig is, moet dat worden gegenereerd door de client. Indien de server wil dat zijn response geaccepteerd wordt, moet hij dit \textit{token} zonder meer overnemen in zijn response.
 
 \subsubsection{Opties}
 

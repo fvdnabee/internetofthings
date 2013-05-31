@@ -78,7 +78,7 @@
 \contentsline {subsubsection}{CoAPMessage klasse}{42}
 \contentsline {subsection}{\numberline {4.2.3}Hooks voor notificaties}{42}
 \contentsline {subsection}{\numberline {4.2.4}Opvangen van verloren berichten}{44}
-\contentsline {chapter}{\numberline {5}CoAP sensor module}{45}
+\contentsline {chapter}{\numberline {5}CoAP-sensormodule}{45}
 \contentsline {section}{\numberline {5.1}Functionaliteit}{45}
 \contentsline {section}{\numberline {5.2}Architectuur}{46}
 \contentsline {subsection}{\numberline {5.2.1}Requestproces}{46}
@@ -96,26 +96,26 @@
 \contentsline {subsubsection}{Polling}{54}
 \contentsline {subsection}{\numberline {5.3.2}Temperatuurmodule met native CoAP}{55}
 \contentsline {subsubsection}{Observe}{55}
-\contentsline {subsection}{\numberline {5.3.3}CoAP Sensor module met externe CoAP library}{56}
+\contentsline {subsection}{\numberline {5.3.3}CoAP-sensormodule met externe CoAP-library}{56}
 \contentsline {subsubsection}{Nieuwe block}{56}
-\contentsline {subsection}{\numberline {5.3.4}CoAP Sensor module met content type CoAP Resource}{56}
-\contentsline {subsection}{\numberline {5.3.5}CoAP resource met volledige REST functionaliteit}{58}
-\contentsline {subsection}{\numberline {5.3.6}CoAP Sensor module met resource discovery}{58}
+\contentsline {subsection}{\numberline {5.3.4}CoAP-sensormodule met contenttype CoAP-resource}{56}
+\contentsline {subsection}{\numberline {5.3.5}CoAP-resource met volledige REST functionaliteit}{58}
+\contentsline {subsection}{\numberline {5.3.6}CoAP-sensormodule met resource discovery}{58}
 \contentsline {subsubsection}{Multi-form}{60}
 \contentsline {subsubsection}{Tabbladen}{60}
-\contentsline {subsection}{\numberline {5.3.7}CoAP Sensor module met meerdere content types}{61}
+\contentsline {subsection}{\numberline {5.3.7}CoAP-sensormodule met meerdere contenttypes}{61}
 \contentsline {section}{\numberline {5.4}Databankmanipulatie}{61}
 \contentsline {subsection}{\numberline {5.4.1}Content type in de databank}{61}
 \contentsline {subsubsection}{coap\_sensor\_resource}{62}
 \contentsline {subsubsection}{coap\_sensor\_interested\_user}{63}
 \contentsline {subsubsection}{coap\_sensor\_value}{64}
 \contentsline {section}{\numberline {5.5}Content types in Drupal}{65}
-\contentsline {subsection}{\numberline {5.5.1}CoAP Resource}{65}
+\contentsline {subsection}{\numberline {5.5.1}CoAP-resource}{65}
 \contentsline {subsubsection}{Templating}{67}
 \contentsline {subsubsection}{Polling}{68}
 \contentsline {subsubsection}{Foutmechanisme}{71}
-\contentsline {subsection}{\numberline {5.5.2}CoAP Device}{72}
-\contentsline {section}{\numberline {5.6}Implementatie van de CoAP library-hooks}{75}
+\contentsline {subsection}{\numberline {5.5.2}CoAP-Device}{72}
+\contentsline {section}{\numberline {5.6}Implementatie van de CoAP-libraryhooks}{75}
 \contentsline {subsection}{\numberline {5.6.1}hook\_receive\_notification()}{75}
 \contentsline {subsection}{\numberline {5.6.2}hook\_receive\_error()}{75}
 \contentsline {subsection}{\numberline {5.6.3}hook\_stop\_observers()}{76}
