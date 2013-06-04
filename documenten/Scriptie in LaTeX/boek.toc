@@ -88,19 +88,19 @@
 \contentsline {subsubsection}{Asynchroniteit}{50}
 \contentsline {subsubsection}{Strategie bij ontvangst van waarden}{51}
 \contentsline {paragraph}{Push-strategie:}{51}
-\contentsline {paragraph}{Pull-strategie: }{51}
-\contentsline {subsubsection}{Caching}{52}
+\contentsline {paragraph}{Pull-strategie: }{52}
+\contentsline {subsubsection}{Caching}{53}
 \contentsline {section}{\numberline {5.3}Evolutie van de module}{53}
 \contentsline {subsection}{\numberline {5.3.1}Temperatuurmodule met HTTP/CoAP-proxy}{53}
 \contentsline {subsubsection}{Proxy}{54}
-\contentsline {subsubsection}{Polling}{54}
+\contentsline {subsubsection}{Polling}{55}
 \contentsline {subsection}{\numberline {5.3.2}Temperatuurmodule met native CoAP}{55}
-\contentsline {subsubsection}{Observe}{55}
+\contentsline {subsubsection}{Observe}{56}
 \contentsline {subsection}{\numberline {5.3.3}CoAP-sensormodule met externe CoAP-library}{56}
 \contentsline {subsubsection}{Nieuwe block}{56}
-\contentsline {subsection}{\numberline {5.3.4}CoAP-sensormodule met contenttype CoAP-resource}{58}
+\contentsline {subsection}{\numberline {5.3.4}CoAP-sensormodule met contenttype CoAP-resource}{57}
 \contentsline {subsection}{\numberline {5.3.5}CoAP-sensormodule met volledige REST-functionaliteit}{58}
-\contentsline {subsection}{\numberline {5.3.6}CoAP-sensormodule met resource discovery}{59}
+\contentsline {subsection}{\numberline {5.3.6}CoAP-sensormodule met resource discovery}{60}
 \contentsline {subsubsection}{Multi-form}{60}
 \contentsline {subsubsection}{Tabbladen}{61}
 \contentsline {subsection}{\numberline {5.3.7}CoAP-sensormodule met meerdere contenttypes}{61}
