@@ -1,7 +1,5 @@
 \chapter{Drupal} \label{Drupal}
-
 \section{Wat is Drupal?}
-
 \begin{wrapfigure}{r}{0.3\textwidth}
 \vspace{-40pt}
 %\hspace{-10pt}
@@ -19,15 +17,12 @@ We kunnen Drupal het best beschrijven aan de hand van Figuur~\ref{fig:watIsDrupa
 Drupal is een \textit{Content Management System} (CMS)\nomenclature{CMS}{Content Management System}, een \textit{framework} voor webapplicaties en een \textit{social publishing platform}. Maar Drupal is meer dan software alleen. Drupal staat voor een gemeenschap van ontwikkelaars en gebruikers met uiteenlopende doeleinden die elk hun eigen visie willen realiseren.~\cite{drupalDefGuide}
 
 \subsubsection{Content Management System}
-
 Drupal levert alle functies en mogelijkheden van een krachtig CMS. We denken meteen aan het kunnen inloggen en registreren van gebruikers, verschillende soorten gebruikers kunnen defini\"{e}ren, verschillende niveaus van permissies,... Ook denken we aan het cre\"{e}ren, aanpassen, beheren, weergeven, categoriseren en aggregeren van content. Drupal biedt bovendien de mogelijkheid om modulair extra functionaliteit toe te voegen naar eigen noden en wensen.
 
 \subsubsection{Framework voor webapplicaties}
-
 Drupal is zeer flexibel en krachtig waardoor er enorm veel verschillende soorten webapplicaties mee kunnen gebouwd worden. Dit is deels te danken aan de API's die Drupal aanbiedt. Deze worden bij elke versie van Drupal uitgebreid maar ze worden niet complexer om te gebruiken. % Drupal's veelzijdigheid wordt nogmaals bewezen met het feit dat het zowel als \textit{frontend} voor Java-gebaseerde applicaties kan optreden als voor \textit{backend} voor AJAX of Flash-driven \textit{frontend}s.
 
 \subsubsection{Social publishing platform}
-
 Dat Drupal een \textit{social publishing platform} is, houdt in dat content gemakkelijk te delen is via Drupal. Drupal biedt de mogelijkheid complexe data in een structuur te gieten die gemakkelijk uit te wisselen is. Op deze manier is het eenvoudig hetzelfde stuk content voor te stellen op verschillende websites.
 
 \begin{figure}[h]
@@ -55,7 +50,6 @@ Drupal in zijn huidige versie (7) kan op elk platform draaien onder volgende twe
 Bij deze masterproef wordt er gebruik gemaakt van Apache en MySQL.
 
 \subsection{Basiswebsite}
-
 Wanneer je Drupal installeert beschik je meteen over een basiswebsite. Omdat je meteen al een bruikbare website hebt, is de drempel om Drupal te beginnen gebruiken dus laag. Deze website biedt meteen al een heleboel functionaliteit aan die geleverd wordt door de zogenaamde Drupal\textit{core}. %en een aantal out-of-the-boxfuncties.
 \begin{figure}[h]
 \begin{center}
@@ -67,7 +61,6 @@ Wanneer je Drupal installeert beschik je meteen over een basiswebsite. Omdat je 
 \end{figure}
 
 \section{Waarom Drupal?}
-
 We bekijken de principes waarop Drupal gebouwd is \cite{drupalMission}:
 \begin{itemize}
 \item Modulair en uitbreidbaar: Drupal kan uitgebreid worden met modules, waarbij je zelf ook modules kan ontwerpen indien er nog geen bestaat die aan jouw noden voldoet.
@@ -258,7 +251,7 @@ db_delete('coap_sensor_interested_user')
 In voorbeeld \ref{db_delete} worden alle rijen met als nid de waarde in \$nid verwijderd. % Opnieuw zal in dit voorbeeld maar \'{e}\'{e}n rij verwijderd worden.
 
 \subsection{Laadcyclus van de pagina}
-Wanneer een webbrowser een Drupal pagina opvraagt, wordt de Drupal URL van de pagina gebruikt. Deze heeft vaak volgende vorm: http://drupalvoorbeeld.org/node/15. De webserver vormt deze URL om naar de vorm: index.php?q=node/15 en geeft dan het pad node/15 door aan Drupal's index.php waarvan de code uitgevoerd wordt. Het uitvoeren van deze code resulteert in een reeks complexe stappen die als eindresultaat de gerenderde pagina hebben. Afhankelijk van het feit of de pagina al dan niet in de cache aanwezig is, verlopen deze stappen anders. Indien de pagina niet aanwezig is in de cache, wordt de volledige \textit{bootstrap} en de \textit{page callback} uitgevoerd. De \textit{bootstrap} bestaat steeds uit dezelfde reeks van acht verschillende fasen die we verder nader toelichten. Na de \textit{bootstrap} wordt de \textit{page callback} uitgevoerd die geassocieerd wordt met het pad meegegeven met index.php. Indien de pagina wel in de cache aanwezig is, wordt er enkel een aantal van de stappen van de \textit{bootstrap} uitgevoerd. De \textit{page callback} wordt in dit geval niet uitgevoerd. We bespreken elke stap van het proces appart, het hele proces wordt weergegeven in Figuur~\ref{fig:drupalPageRendering}.
+Wanneer een webbrowser een Drupal pagina opvraagt, wordt de Drupal URL van de pagina gebruikt. Deze heeft vaak volgende vorm: http://drupalvoorbeeld.org/node/15. De webserver vormt deze URL om naar de vorm: index.php?q=node/15 en geeft dan het pad node/15 door aan Drupal's index.php waarvan de code uitgevoerd wordt. Het uitvoeren van deze code resulteert in een reeks complexe stappen die als eindresultaat de gerenderde pagina hebben. Afhankelijk van het feit of de pagina al dan niet in de cache aanwezig is, verlopen deze stappen anders. Indien de pagina niet aanwezig is in de cache, wordt de volledige \textit{bootstrap} en de \textit{page callback} uitgevoerd. De \textit{bootstrap} bestaat steeds uit dezelfde reeks van acht verschillende fasen die we verder nader toelichten. Na de \textit{bootstrap} wordt de \textit{page callback} uitgevoerd die geassocieerd wordt met het pad meegegeven met index.php. Indien de pagina wel in de cache aanwezig is, wordt er enkel een aantal van de stappen van de \textit{bootstrap} uitgevoerd. De \textit{page callback} wordt in dit geval niet uitgevoerd. We bespreken elke stap van het proces apart, het hele proces wordt weergegeven in Figuur~\ref{fig:drupalPageRendering}.
 
 \begin{figure}
 \centering
@@ -317,12 +310,12 @@ We geven een voorbeeld voor de specifieke URL http://drupalvoorbeeld.org/node/15
 
 \subsection{Fields}\label{Fields}
 \subsubsection{Fields in de databank}
-De informatie bijhorende bij een Field wordt verspreid over verschillende tabellen:
+De informatie bijhorende bij een Field wordt verspreid over verschillende tabellen die weergegeven worden in Figuur~. We geven een korte beschrijving van deze tabellen:
 \begin{itemize}
-\item field\_config: Bevat algemene informatie over een veld. Een veld staat hier maar één keer in beschreven omdat deze informatie onafhankelijk is van de module waarin het gebruikt wordt.
+\item field\_config: Bevat algemene informatie over een veld. Een veld staat hier maar een keer in beschreven omdat deze informatie onafhankelijk is van de module waarin het gebruikt wordt.
 \item field\_config\_instance: Bevat rijen per instantie van een veld. Een veld komt hier evenveel in voor als het aantal modules waarin het gebruikt wordt, rekening houdend met het aantal keer het voorkomt in een module. De informatie beschrijft dus de relatie tussen het veld en de modules waarin het voorkomt.
-\item field\_data\_\textit{field\_name}: Bevat de data bijhorende bij het veld. Data afkomstig van instanties die tot verschillende modules behoren worden in deze tabel opgeslaan. Er worden dus geen apparte datatabellen voorzien per instantie.
-\item field\_revision\_\textit{field\_name}: Bevat archiveringswaarden bijhorende bij verschillende revisions van het veld zodat teruggekeerd kan worden naar een vorige revision.
+\item field\_data\_\textit{naam\_field}: Bevat de data bijhorende bij het veld. Data afkomstig van instanties die tot verschillende modules behoren worden in deze tabel opgeslaan. Er worden dus geen aparte datatabellen voorzien per instantie.
+\item field\_revision\_\textit{naam\_field}: Bevat archiveringswaarden bijhorende bij verschillende revisions van het veld zodat teruggekeerd kan worden naar een vorige revision.
 \end{itemize}
 
 \subsubsection{Aanmaken van Fields}
@@ -357,10 +350,10 @@ De laatste twee opties zijn echter niet voldoende om een contenttype volledig te
 
 De variabelen worden gezet in de implemenatie van hook\_enable() door de module die het contenttype definieert. Deze variabelen moeten voor elk contenttype gezet worden en bevatten de naam van het contenttype waar ze een invloed op hebben. Een volledige lijst van mogelijke variabelen die een invloed hebben op het contenttype vind je online \cite{contentTypeVariables}. We sommen degene op die we gebruiken:
 \begin{itemize}
-\item comment\_\textit{naam\_content\_type}: Krijgt de waarde 0 om \textit{default} commentaren uit te schakelen.
-\item node\_options\_\textit{naam\_content\_type}: Krijgt de waarde array('status') om \textit{default} '\textit{Promote to Front page}' uit te vinken.
-\item node\_preview\_\textit{naam\_content\_type}: Krijgt de waarde 0 om de mogelijkheid tot een preview te \textit{disablen}.
-\item node\_submitted\_\textit{naam\_content\_type}: Krijgt de waarde 1 om \textit{default} de auteur en de tijd waarop de content is toegevoegd te tonen bij de content zelf.
+\item comment\_\textit{naam\_contenttype}: Krijgt de waarde 0 om \textit{default} commentaren uit te schakelen.
+\item node\_options\_\textit{naam\_contenttype}: Krijgt de waarde array('status') om \textit{default} '\textit{Promote to Front page}' uit te vinken.
+\item node\_preview\_\textit{naam\_contenttype}: Krijgt de waarde 0 om de mogelijkheid tot een preview te \textit{disablen}.
+\item node\_submitted\_\textit{naam\_contenttype}: Krijgt de waarde 1 om \textit{default} de auteur en de tijd waarop de content is toegevoegd te tonen bij de content zelf.
 \end{itemize}
 
 \noindent
