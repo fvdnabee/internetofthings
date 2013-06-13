@@ -55,7 +55,7 @@
 \contentsline {subsection}{\numberline {3.1.1}Berichtformaat}{30}
 \contentsline {subsubsection}{Header}{31}
 \contentsline {subsubsection}{Token}{31}
-\contentsline {subsubsection}{Opties}{31}
+\contentsline {subsubsection}{Opties}{32}
 \contentsline {subsubsection}{Verschil met HTTP}{33}
 \contentsline {section}{\numberline {3.2}Communicatiemogelijkheden}{34}
 \contentsline {subsection}{\numberline {3.2.1}Betrouwbaarheid}{34}
@@ -67,11 +67,11 @@
 \contentsline {subsection}{\numberline {3.2.3}Blokken}{36}
 \contentsline {subsubsection}{Block Options}{37}
 \contentsline {subsubsection}{Structuur}{37}
+\contentsline {subsection}{\numberline {3.2.4}Observe}{38}
 \contentsline {section}{\numberline {3.3}Extra Features}{38}
-\contentsline {subsection}{\numberline {3.3.1}Observe}{38}
-\contentsline {subsection}{\numberline {3.3.2}Resource discovery}{38}
+\contentsline {subsection}{\numberline {3.3.1}Resource discovery}{38}
 \contentsline {subsubsection}{Principe}{38}
-\contentsline {subsubsection}{CoRE Link Format}{38}
+\contentsline {subsubsection}{CoRE Link Format}{39}
 \contentsline {subsubsection}{Core ophalen}{40}
 \contentsline {subsubsection}{Query Filtering}{41}
 \contentsline {chapter}{\numberline {4}CoAP library module}{42}
@@ -83,61 +83,61 @@
 \contentsline {subsection}{\numberline {4.2.2}Objectgericht}{46}
 \contentsline {subsubsection}{CoAPFactory}{46}
 \contentsline {subsubsection}{CoAPMessage}{47}
-\contentsline {subsection}{\numberline {4.2.3}Hooks voor notificaties}{47}
+\contentsline {subsection}{\numberline {4.2.3}Hooks voor notificaties}{48}
 \contentsline {subsection}{\numberline {4.2.4}Opvangen van verloren berichten}{49}
-\contentsline {chapter}{\numberline {5}CoAP-sensormodule}{50}
-\contentsline {section}{\numberline {5.1}Functionaliteit}{50}
-\contentsline {section}{\numberline {5.2}Architectuur}{51}
-\contentsline {subsection}{\numberline {5.2.1}Requestproces}{51}
-\contentsline {subsection}{\numberline {5.2.2}Belangrijke aspecten}{54}
-\contentsline {subsubsection}{Modulariteit}{54}
-\contentsline {subsubsection}{Minimalisatie van netwerkbelasting}{55}
-\contentsline {subsubsection}{Asynchroniteit}{55}
-\contentsline {subsubsection}{Strategie bij ontvangst van waarden}{56}
-\contentsline {paragraph}{Push-strategie:}{56}
-\contentsline {paragraph}{Pull-strategie: }{57}
-\contentsline {subsubsection}{Caching}{58}
-\contentsline {section}{\numberline {5.3}Evolutie van de module}{58}
-\contentsline {subsection}{\numberline {5.3.1}Temperatuurmodule met HTTP/CoAP-proxy}{58}
-\contentsline {subsubsection}{Proxy}{59}
-\contentsline {subsubsection}{Polling}{60}
-\contentsline {subsection}{\numberline {5.3.2}Temperatuurmodule met native CoAP}{60}
-\contentsline {subsubsection}{Observe}{61}
-\contentsline {subsection}{\numberline {5.3.3}CoAP-sensormodule met externe CoAP-library}{61}
-\contentsline {subsubsection}{Nieuwe block}{61}
-\contentsline {subsection}{\numberline {5.3.4}CoAP-sensormodule met contenttype CoAP-resource}{62}
-\contentsline {subsection}{\numberline {5.3.5}CoAP-sensormodule met volledige REST-functionaliteit}{63}
-\contentsline {subsection}{\numberline {5.3.6}CoAP-sensormodule met resource discovery}{65}
-\contentsline {subsubsection}{Multi-form}{65}
-\contentsline {subsubsection}{Tabbladen}{66}
-\contentsline {subsection}{\numberline {5.3.7}CoAP-sensormodule met meerdere contenttypes}{66}
-\contentsline {section}{\numberline {5.4}Contenttype in de databank}{67}
-\contentsline {subsubsection}{coap\_sensor\_resource}{68}
-\contentsline {subsubsection}{coap\_sensor\_interested\_user}{68}
-\contentsline {subsubsection}{coap\_sensor\_value}{69}
-\contentsline {section}{\numberline {5.5}Contenttypes in Drupal}{71}
-\contentsline {subsection}{\numberline {5.5.1}CoAP-resource}{72}
-\contentsline {subsubsection}{Templating}{73}
-\contentsline {subsubsection}{Polling}{75}
-\contentsline {subsubsection}{Foutmechanisme}{77}
-\contentsline {subsection}{\numberline {5.5.2}CoAP-device}{78}
-\contentsline {section}{\numberline {5.6}Implementatie van de CoAP-libraryhooks}{81}
-\contentsline {subsection}{\numberline {5.6.1}hook\_receive\_notification()}{81}
-\contentsline {subsection}{\numberline {5.6.2}hook\_receive\_error()}{81}
-\contentsline {subsection}{\numberline {5.6.3}hook\_stop\_observers()}{82}
-\contentsline {chapter}{\numberline {6}Uitbreidingen}{83}
-\contentsline {section}{\numberline {6.1}Keuze van interval bij automatisch ophalen}{83}
-\contentsline {section}{\numberline {6.2}Opvragen devices in subnetwerk met resource directory}{83}
-\contentsline {section}{\numberline {6.3}Conditional observe}{84}
-\contentsline {subsection}{\numberline {6.3.1}Keep-alive}{85}
-\contentsline {section}{\numberline {6.4}Custom Entity}{86}
-\contentsline {section}{\numberline {6.5}Interface Description}{86}
-\contentsline {section}{\numberline {6.6}Configuratie op maat}{87}
-\contentsline {section}{\numberline {6.7}View Modes}{87}
-\contentsline {section}{\numberline {6.8}DNS}{88}
-\contentsline {section}{\numberline {6.9}Help}{88}
+\contentsline {chapter}{\numberline {5}CoAP-sensormodule}{51}
+\contentsline {section}{\numberline {5.1}Functionaliteit}{51}
+\contentsline {section}{\numberline {5.2}Architectuur}{52}
+\contentsline {subsection}{\numberline {5.2.1}Requestproces}{52}
+\contentsline {subsection}{\numberline {5.2.2}Belangrijke aspecten}{55}
+\contentsline {subsubsection}{Modulariteit}{55}
+\contentsline {subsubsection}{Minimalisatie van netwerkbelasting}{56}
+\contentsline {subsubsection}{Asynchroniteit}{56}
+\contentsline {subsubsection}{Strategie bij ontvangst van waarden}{57}
+\contentsline {paragraph}{Push-strategie:}{57}
+\contentsline {paragraph}{Pull-strategie: }{58}
+\contentsline {subsubsection}{Caching}{59}
+\contentsline {section}{\numberline {5.3}Evolutie van de module}{59}
+\contentsline {subsection}{\numberline {5.3.1}Temperatuurmodule met HTTP/CoAP-proxy}{59}
+\contentsline {subsubsection}{Proxy}{60}
+\contentsline {subsubsection}{Polling}{61}
+\contentsline {subsection}{\numberline {5.3.2}Temperatuurmodule met native CoAP}{61}
+\contentsline {subsubsection}{Observe}{62}
+\contentsline {subsection}{\numberline {5.3.3}CoAP-sensormodule met externe CoAP-library}{62}
+\contentsline {subsubsection}{Nieuwe block}{62}
+\contentsline {subsection}{\numberline {5.3.4}CoAP-sensormodule met contenttype CoAP-resource}{63}
+\contentsline {subsection}{\numberline {5.3.5}CoAP-sensormodule met volledige REST-functionaliteit}{64}
+\contentsline {subsection}{\numberline {5.3.6}CoAP-sensormodule met resource discovery}{66}
+\contentsline {subsubsection}{Multi-form}{66}
+\contentsline {subsubsection}{Tabbladen}{67}
+\contentsline {subsection}{\numberline {5.3.7}CoAP-sensormodule met meerdere contenttypes}{67}
+\contentsline {section}{\numberline {5.4}Contenttype in de databank}{68}
+\contentsline {subsubsection}{coap\_sensor\_resource}{69}
+\contentsline {subsubsection}{coap\_sensor\_interested\_user}{69}
+\contentsline {subsubsection}{coap\_sensor\_value}{70}
+\contentsline {section}{\numberline {5.5}Contenttypes in Drupal}{72}
+\contentsline {subsection}{\numberline {5.5.1}CoAP-resource}{73}
+\contentsline {subsubsection}{Templating}{74}
+\contentsline {subsubsection}{Polling}{76}
+\contentsline {subsubsection}{Foutmechanisme}{78}
+\contentsline {subsection}{\numberline {5.5.2}CoAP-device}{79}
+\contentsline {section}{\numberline {5.6}Implementatie van de CoAP-libraryhooks}{82}
+\contentsline {subsection}{\numberline {5.6.1}hook\_receive\_notification()}{82}
+\contentsline {subsection}{\numberline {5.6.2}hook\_receive\_error()}{82}
+\contentsline {subsection}{\numberline {5.6.3}hook\_stop\_observers()}{83}
+\contentsline {chapter}{\numberline {6}Uitbreidingen}{84}
+\contentsline {section}{\numberline {6.1}Keuze van interval bij automatisch ophalen}{84}
+\contentsline {section}{\numberline {6.2}Opvragen devices in subnetwerk met resource directory}{84}
+\contentsline {section}{\numberline {6.3}Conditional observe}{85}
+\contentsline {subsection}{\numberline {6.3.1}Keep-alive}{86}
+\contentsline {section}{\numberline {6.4}Custom Entity}{87}
+\contentsline {section}{\numberline {6.5}Interface Description}{88}
+\contentsline {section}{\numberline {6.6}Configuratie op maat}{88}
+\contentsline {section}{\numberline {6.7}View Modes}{89}
+\contentsline {section}{\numberline {6.8}DNS}{89}
+\contentsline {section}{\numberline {6.9}Help}{89}
 \contentsline {section}{\numberline {6.10}Block Options}{89}
-\contentsline {section}{\numberline {6.11}Anonieme gebruikers}{89}
+\contentsline {section}{\numberline {6.11}Anonieme gebruikers}{90}
 \select@language {english}
 \select@language {dutch}
 \select@language {dutch}
