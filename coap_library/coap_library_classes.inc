@@ -9,6 +9,9 @@
 // CoAP Message Factory Class //
 ////////////////////////////////
 
+/**
+ *	Represents a CoAP message
+ */
 class CoAPMessage {
 	
     //	CONFIG
@@ -73,7 +76,9 @@ class CoAPMessage {
 	//	EXPONENTIAL BACKOFF
 	private $retransmit_counter = 0;
 	
-	// Constructor
+	/**
+	 *	Constructor for making an object of class CoAPMessage with given parameters
+	 */
 	public function __construct($module, $ip, $resource, $type, $code, $token_length, $message_id = null, $token = null){
 		
 		//STORE ATTRIBUTES
@@ -100,7 +105,9 @@ class CoAPMessage {
 		
     }
 	
-	// Getter for the hexadecimal message
+	/**
+	 *	Getter for the hexadecimal message (characters limited to the 16 hexadecimal characters)
+	 */
 	public function get_hex_message(){
 		$hex = null;
 		
@@ -152,25 +159,33 @@ class CoAPMessage {
 		
 		return $hex;
 	}
-		
-	// Getter for the ip of the device
+	
+	/**
+	 *	Getter for the IP-address of the device
+	 */
 	public function get_ip(){
 		return $this->ip;
 	}
 	
-	// Getter for the uri path of the resource
+	/**
+	 *	Getter for the URI-path of the resource
+	 */
 	public function get_resource(){
 		return $this->resource;
 	}
 	
-	//	Adds an option to the message object with given number and value
+	/**
+	 *	Adds an option to the message object with given number and value
+	 */
 	public function add_option($nr, $value){
 		$this->options[$nr] = $value;
 	}
 	
-	//	Getter for option with given number
-	//	Retrieves option value
-	//	Return null if option is not present in this message
+	/**
+	 *	Getter for the option contained in this message with given number
+	 *	Retrieves the option value
+	 *	Returns null if the option is not present in this message
+	 */
 	public function get_option_value($nr){
 		if(isset($this->options[$nr])){
 			return $this->options[$nr];
@@ -180,14 +195,18 @@ class CoAPMessage {
 		}
 	}
 	
-	//	Setter for the payload attribute
-	//	The given payload is expected to be hexadecimal
+	/**
+	 *	Setter for the payload attribute
+	 *	The given payload is expected to be hexadecimal (characters limited to the 16 hexadecimal characters)
+	 */
 	public function set_payload($payload){
 		$this->payload = $payload;
 	}
 	
-	// Retrieves the max-age value, if present, from this message
-	// Returns 0 if no max age option is included
+	/**
+	 *	Retrieves the max-age value, if present, from this message
+	 * 	Returns 0 if no max age option is included
+	 */
 	public function get_max_age(){
 		$max_age_hex = $this->get_option_value(14);
 		if(!isset($max_age_hex) || $max_age_hex == null || !$max_age_hex){
@@ -195,19 +214,23 @@ class CoAPMessage {
 		}
 		return hexdec($max_age_hex);
 	}
-		
-	//	Retrieves the payload, if present, from this message
-	//	Returns null if no payload is present
-	//	Returns payload in hexadecimal form
+	
+	/**
+	 *	Retrieves the payload, if present, from this message
+	 *	Returns null if no payload is present
+	 *	Returns payload in hexadecimal form (characters limited to the 16 hexadecimal characters)
+	 */
 	public function get_payload(){
 		return $this->payload;
 	}
 	
-	// 	Returns a response object with the response if the request doesn't have an observe option
-	//	Returns null if the request holds an observe option
-	//	Returns null if something went wrong
-	//	Calls hook_receive_notification for notifications that have arrived from an observable resource
-	//	Calls hook_receive_notification if something went wrong
+	/**
+	 *	Returns a response object with the response if the request doesn't have an observe option
+	 *	Returns null if the request holds an observe option
+	 *	Returns null if something went wrong
+	 *	Calls hook_receive_notification for notifications that have arrived from an observable resource
+	 *	Calls hook_receive_error if something went wrong
+	 */
 	public function send_message(){
 		//	Create CoAP factory
 		$coap_factory = new CoAPMessageFactory($this->module, $this->ip, $this->resource);
@@ -440,7 +463,9 @@ class CoAPMessage {
 		return null;
 	}
 	
-	// checks if there are still users observing the resource
+	/**
+	 *	Checks if there still are users observing the resource
+	 */
 	private function observe_is_necessary(){
 		$query = db_select('coap_library_observe_resources', 'resources');
 		$query
@@ -451,9 +476,11 @@ class CoAPMessage {
 		return $result->rowCount();
 	}
 	
-	// 	hook_stop_observing, must be implemented by modules using this library
-	// 	Called when the observe stops, for whatever reason
-	//	Calls hook_stop_observers to give the user of this module the chance to handle this event
+	/**
+	 *	hook_stop_observing, must be implemented by modules using this library
+	 * 	Called when the observe stops, for whatever reason
+	 *	Calls hook_stop_observers to give the user of this module the chance to handle this event
+	 */
 	public function stop_observing(){
 		$num_deleted = db_delete('coap_library_observe_resources')
 			->condition('uri', $this->ip . '/' . $this->resource, '=')
@@ -463,8 +490,10 @@ class CoAPMessage {
 		background_process_start($this->module . '_stop_observers', $this->ip, $this->resource);
 	}
 	
-	// Retrieves the content-format from the message
-	// Returns null if content-format option is not present
+	/**
+	 *	Retrieves the content-format from the message
+	 *	Returns null if content-format option is not present
+	 */
 	public function get_content_format(){
 		$format_nr = 0;
 		$format_nr += intval($this->get_option_value(12));
@@ -474,39 +503,53 @@ class CoAPMessage {
 		return $this->format_mapping[$format_nr];
 	}
 	
-	//	Retrieves the textual representation of the code of this message
+	/**
+	 *	Retrieves the textual representation of the code of this message
+	 */
 	public function get_message_code(){
 		return $this->response_code_mapping[$this->code];
 	}
 	
-	//	Retrieves the numeric code of this message
+	/**
+	 *	Retrieves the numeric code of this message
+	 */
 	public function get_numeric_message_code(){
 		return $this->code;
 	}
 	
-	//	Checks if this message is confirmable or not
-	//	Returns boolean
+	/**
+	 *	Checks if this message is confirmable or not
+	 *	Returns a boolean
+	 */
 	public function is_confirmable(){
 		return ($this->type == "CON");
 	}
 	
-	//	Returns the token from this message
-	//	Can be an empty string
+	/**
+	 *	Returns the token from this message
+	 *	Can be an empty string
+	 */
 	public function get_token(){
 		return $this->token;
 	}
 	
-	//	Returns the message id from this message
+	/**
+	 *	Returns the message-ID from this message
+	 */
 	public function get_message_id(){
 		return $this->message_id;
 	}
 	
-	//	Returns the payload in textual form
+	/**
+	 *	Returns the payload in textual form
+	 */
 	public function get_payload_text(){
 		return coap_library_hex_to_string($this->payload);
 	}
 	
-	//	Gets the next blocks following to the given response and appends the resulting payloads
+	/**
+	 *	Gets the next blocks following to the given response and appends the resulting payloads
+	 */
 	private function get_next_responses_in_blocks(&$response_obj){
 		$current_response = $response_obj;
 		
@@ -584,10 +627,12 @@ class CoAPMessage {
 		}
 	}
 	
-	//	Add an URI path option to this message
-	//	Expects a normal ASCII string as option value
-	//  Multiple uri_paths can be combined by placing double slashes (//) between them.
-	//  This allows the use of a single slash in the uri_path.
+	/**
+	 *	Add a URI-path option to this message
+	 *	Expects a normal ASCII string as option value
+	 *  Multiple URI-paths can be combined by placing double slashes (//) between them.
+	 *  This allows the use of a single slash in the URI-path.
+	 */
 	public function add_uri_path($uri_path){
 		$paths = explode("//", $uri_path);
 		$hex_paths = array();
@@ -598,16 +643,20 @@ class CoAPMessage {
 		$this->add_option(11, $option_value_hex);
 	}
 	
-	//	Generates an acknowledgement to this message
-	//	Returns a CoAPMessage-object
+	/**
+	 *	Generates an acknowledgement to this message
+	 *	Returns a CoAPMessage-object
+	 */
 	public function generate_acknowledgement(){
 		$factory = new CoAPMessageFactory($this->module, $this->ip, $this->resource);
 		$ack = $factory->create_message_with_header_and_token("ACK", "EMPTY", 0, $this->message_id);
 		return $ack;
 	}
 	
-	//	Generates a reset to this message
-	//	Returns a CoAPMessage-object
+	/**
+	 *	Generates a reset to this message
+	 *	Returns a CoAPMessage-object
+	 */
 	public function generate_reset(){
 		$factory = new CoAPMessageFactory($this->module, $this->ip, $this->resource);
 		$reset = $factory->create_message_with_header_and_token("RST", "EMPTY", 0, $this->message_id);
@@ -621,6 +670,9 @@ class CoAPMessage {
 //	CoAP Message Factory Class //
 /////////////////////////////////
 
+/**
+ *	Represents a factory to create CoAP messages
+ */
 class CoAPMessageFactory{
 
 	private $module = null;
@@ -628,14 +680,21 @@ class CoAPMessageFactory{
 	private $resource;
 	
 	// Constructor with given module name
+	/**
+	 *	Constructor creating a CoAPMessageFactory to build objects of class CoAPMessage. 
+	 *	The created factory is specifically for the resource given by the URI '$ip/$resource'.
+	 *	The variable $module indicates of which module hooks should be called.
+	 */
 	public function __construct($module, $ip, $resource){
         $this->module = $module;  
 		$this->ip = $ip;
 		$this->resource = $resource;
     }
 	
-	// 	Generates a basic CoAP message consisting of only the header and optional token, $type = {CON, NON, ACK, RST}, $method = {GET, PUT, POST, DELETE}
-	//	Returns null if the token length is invalid
+	/**
+	 *	Generates a basic CoAP message consisting of only the header and optional token, $type = {CON, NON, ACK, RST}, $method = {GET, PUT, POST, DELETE}. 
+	 *	Returns null if the token length is invalid (lower than 0 or higher than 8).
+	 */
 	public function create_message_with_header_and_token($type, $method, $token_length, $message_id = null, $token = null){
 		//	Check if token length is valid
 		if(!is_int($token_length) || $token_length < 0 || $token_length > 8){
@@ -668,7 +727,9 @@ class CoAPMessageFactory{
 		return new CoAPMessage($this->module, $this->ip, $this->resource, $type, $code, $token_length, $message_id, $token);
 	}
 	
-	// Generates a basic CoAP GET request with optional given URI path
+	/**
+	 *	Generates a basic CoAP GET request with optional given URI path
+	 */
 	public function create_basic_get_request($uri_path){
 		$coap_message = $this->create_message_with_header_and_token("CON", "GET", 0);
 		if(isset($uri_path) && $uri_path != ''){
@@ -678,6 +739,9 @@ class CoAPMessageFactory{
 		return $coap_message;
 	}
 	
+	/**
+	 *	Generates a basic CoAP POST request with optional given URI path
+	 */
 	public function create_basic_post_request($uri_path){
 		$coap_message = $this->create_message_with_header_and_token("CON", "POST", 0);
 		if(isset($uri_path) && $uri_path != ''){
@@ -687,6 +751,9 @@ class CoAPMessageFactory{
 		return $coap_message;
 	}
 	
+	/**
+	 *	Generates a basic CoAP PUT request with optional given URI path
+	 */
 	public function create_basic_put_request($uri_path){
 		$coap_message = $this->create_message_with_header_and_token("CON", "PUT", 0);
 		if(isset($uri_path) && $uri_path != ''){
@@ -696,6 +763,9 @@ class CoAPMessageFactory{
 		return $coap_message;
 	}
 	
+	/**
+	 *	Generates a basic CoAP DELETE request with optional given URI path
+	 */
 	public function create_basic_delete_request($uri_path){
 		$coap_message = $this->create_message_with_header_and_token("CON", "DELETE", 0);
 		if(isset($uri_path) && $uri_path != ''){
@@ -705,7 +775,9 @@ class CoAPMessageFactory{
 		return $coap_message;
 	}	
 	
-	// Generates a CoAP observe GET request with given URI-path
+	/**
+	 *	Generates a CoAP observe GET request with given URI-path
+	 */
 	public function create_observe_get_request($uri_path){
 		$coap_message = $this->create_message_with_header_and_token("CON", "GET", 2);
 		if(isset($uri_path) && $uri_path != ''){
@@ -715,7 +787,9 @@ class CoAPMessageFactory{
 		return $coap_message;
 	}
 	
-	// Creates a message with the given hexadecimal message
+	/**
+	 *	Creates a message with the given hexadecimal message (characters limited to the 16 hexadecimal characters)
+	 */
 	public function create_message_with_given_hex_message($hex_message){
 		//	Determine type (textual representation)
 		$type = coap_library_get_numeric_type_from_hex_message($hex_message);
