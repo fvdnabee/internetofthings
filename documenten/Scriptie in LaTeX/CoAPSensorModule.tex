@@ -314,6 +314,7 @@ Het voordeel van deze benadering is dat de view gescheiden wordt van de rest van
 
 Er stelt zich nu wel nog een probleem, het template-bestand moet namelijk op de juiste plaats staan, en dit in de directory van het gebruikte theme. Men voegt echter beter geen bestanden toe aan de Drupalcore en bovendien kunnen wij dat ook niet verwachten van de eindgebruiker. Het template-bestand zou automatisch moeten worden opgenomen in het gebruikte theme, waarbij het template-bestand gewoon in onze module kan blijven staan. Na grondig onderzoek bleek dit mogelijk aan de hand van hook\_theme\_registry\_alter(). Deze \textit{hook} geeft ons de kans een pad toe te voegen aan het theme-registry, waardoor het template zal gevonden worden bij het bouwen van de view \cite{addTemplate}.
 
+\scriptsize
 \lstset{language=HTML}
 \begin{lstlisting}[label=template,caption=Voorbeeld van een template met PHP-scriptlets (node.tpl.php)]
 <div id='node-<?php print $node->nid; ?>' >
@@ -328,7 +329,7 @@ Er stelt zich nu wel nog een probleem, het template-bestand moet namelijk op de 
 	<?php print render($title_suffix); ?>
 </div>
 \end{lstlisting}
-
+\normalsize
 \noindent
 
 \subsubsection{Polling}\label{polling}
@@ -361,6 +362,7 @@ De XML-structuur die eerder werd aangehaald bestaat uit een allesomvattend hoofd
 
 Een voorbeeld van een antwoord op een \textit{AJAX call} bij \textit{polling}:
 
+\scriptsize
 \lstset{language=XML}
 
 \begin{lstlisting}[label=xmlPolling,caption=Voorbeeld antwoord op \textit{AJAX call} bij polling]
@@ -383,6 +385,7 @@ Een voorbeeld van een antwoord op een \textit{AJAX call} bij \textit{polling}:
 	</entrys>
 </poll>
 \end{lstlisting}
+\normalsize
 
 \subsubsection{Foutmechanisme} \label{foutmechanisme}
 Tot nog toe bleef de gebruiker in het ongewisse wanneer er iets foutliep in de communicatie met een CoAP-resource. Dit is niet gebruiksvriendelijk en kan voor ergernissen zorgen.\\
