@@ -5,6 +5,7 @@
 \nomenclatureentry{aWOEID@[{WOEID}]\begingroup Where On Earth ID\nomeqref {1.0}|nompageref}{3}
 \nomenclatureentry{aCMS@[{CMS}]\begingroup Content Management System\nomeqref {2.0}|nompageref}{6}
 \nomenclatureentry{aURL@[{URL}]\begingroup Uniform Resource Locator\nomeqref {2.0}|nompageref}{11}
+\nomenclatureentry{aHTML@[{HTML}]\begingroup HyperText Markup Language\nomeqref {2.0}|nompageref}{28}
 \nomenclatureentry{aAJAX@[{AJAX}]\begingroup Asynchronous JavaScript and XML\nomeqref {2.0}|nompageref}{29}
 \nomenclatureentry{aM2M@[{M2M}]\begingroup Machine-to-machine\nomeqref {3.0}|nompageref}{30}
 \nomenclatureentry{aREST@[{REST}]\begingroup Representational Stateless Transfer\nomeqref {3.0}|nompageref}{30}
@@ -21,6 +22,5 @@
 \nomenclatureentry{aLF@[{LF}]\begingroup Line Feed\nomeqref {3.0}|nompageref}{34}
 \nomenclatureentry{aASCII@[{ASCII}]\begingroup American Standard Code for Information Interchange\nomeqref {4.0}|nompageref}{47}
 \nomenclatureentry{anid@[{nid}]\begingroup Node ID\nomeqref {5.0}|nompageref}{70}
-\nomenclatureentry{aHTML@[{HTML}]\begingroup HyperText Markup Language\nomeqref {5.0}|nompageref}{76}
 \nomenclatureentry{auid@[{uid}]\begingroup user-ID\nomeqref {6.0}|nompageref}{91}
 \nomenclatureentry{asid@[{sid}]\begingroup session-ID\nomeqref {6.0}|nompageref}{91}

@@ -398,7 +398,7 @@ De contenttypes worden verwijderd in hook\_uninstall(). Voor een contenttype kan
 
 In deze paragraaf bekijken we hoe een module (weather\_info) gemaakt werd die het weerbericht ophaalt voor een regio naar keuze, aangegeven door een WOEID. In eerste instantie werd gewerkt met een formulier, maar in een latere fase werd overgestapt op jQuery, wat de gebruikerservaring bevordert.
 
-\subsection{Met een formulier}
+\subsection{Met een HyperText Markup Language (HTML)-formulier} \nomenclature{HTML}{HyperText Markup Language}
 
 In eerste instantie bevatte de module een formulier bestaande uit een tekstveld als invoer voor de WOEID en een knop om het formulier in te dienen.
 Wanneer de gebruiker op de knop klikt, gebeuren volgende stappen:
@@ -430,6 +430,6 @@ Zoals de naam suggereert, is dit een asynchrone aanroep, wanneer het antwoord aa
 
 \subsection{Problemen}
 
-JQuery laat geen \textit{cross-domain} AJAX \textit{calls} toe wegens veiligheidsoverwegingen. Een oplossing hiervoor is een \textit{proxy}script in PHP gebruiken.
+JQuery laat geen \textit{cross-domain} AJAX \textit{calls} toe wegens veiligheidsoverwegingen. De \textit{Weather Service API} bevindt zich namelijk op een ander domein. Een oplossing hiervoor is een \textit{proxy}script in PHP gebruiken.
 De AJAX-\textit{call} gebeurt dan naar het \textit{proxy}script dat zich op de server en dus hetzelfde domein bevindt. Het \textit{proxy}script vraagt daar effectief de data op en geeft de uitvoer terug.
 De browser wordt dus eigenlijk om de tuin geleid. \cite{crossDomainProblem}

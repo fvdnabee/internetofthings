@@ -47,7 +47,7 @@
 \contentsline {subsubsection}{Aanmaken van contenttypes}{26}
 \contentsline {subsubsection}{Verwijderen van contenttypes}{27}
 \contentsline {section}{\numberline {2.4}JQuery in Drupal}{28}
-\contentsline {subsection}{\numberline {2.4.1}Met een formulier}{28}
+\contentsline {subsection}{\numberline {2.4.1}Met een HyperText Markup Language (HTML)-formulier}{28}
 \contentsline {subsection}{\numberline {2.4.2}Met AJAX in jQuery}{29}
 \contentsline {subsection}{\numberline {2.4.3}Problemen}{29}
 \contentsline {chapter}{\numberline {3}CoAP: embedded HTTP done right}{30}
