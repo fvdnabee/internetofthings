@@ -5,22 +5,22 @@
 \nomenclatureentry{aWOEID@[{WOEID}]\begingroup Where On Earth ID\nomeqref {1.0}|nompageref}{3}
 \nomenclatureentry{aCMS@[{CMS}]\begingroup Content Management System\nomeqref {2.0}|nompageref}{6}
 \nomenclatureentry{aURL@[{URL}]\begingroup Uniform Resource Locator\nomeqref {2.0}|nompageref}{11}
-\nomenclatureentry{aHTML@[{HTML}]\begingroup HyperText Markup Language\nomeqref {2.0}|nompageref}{28}
-\nomenclatureentry{aAJAX@[{AJAX}]\begingroup Asynchronous JavaScript and XML\nomeqref {2.0}|nompageref}{29}
-\nomenclatureentry{aM2M@[{M2M}]\begingroup Machine-to-machine\nomeqref {3.0}|nompageref}{30}
-\nomenclatureentry{aREST@[{REST}]\begingroup Representational Stateless Transfer\nomeqref {3.0}|nompageref}{30}
-\nomenclatureentry{aURI@[{URI}]\begingroup Uniform Resource Identifier\nomeqref {3.0}|nompageref}{30}
-\nomenclatureentry{aHATEOAS@[{HATEOAS}]\begingroup Hypermedia as the Engine of Application State\nomeqref {3.0}|nompageref}{30}
-\nomenclatureentry{aOSI@[{OSI}]\begingroup Open Systems Interconnection\nomeqref {3.0}|nompageref}{31}
-\nomenclatureentry{aCON@[{CON}]\begingroup Confirmable CoAP-message\nomeqref {3.0}|nompageref}{32}
-\nomenclatureentry{aNON@[{NON}]\begingroup Non-confirmable CoAP-message\nomeqref {3.0}|nompageref}{32}
-\nomenclatureentry{aACK@[{ACK}]\begingroup Acknowledgement CoAP-message\nomeqref {3.0}|nompageref}{32}
-\nomenclatureentry{aRST@[{RST}]\begingroup Reset CoAP-message\nomeqref {3.0}|nompageref}{32}
-\nomenclatureentry{aTKL@[{TKL}]\begingroup \textit{ToKen Length}\nomeqref {3.0}|nompageref}{32}
-\nomenclatureentry{aTLV@[{TLV}]\begingroup Type Length Value\nomeqref {3.0}|nompageref}{33}
-\nomenclatureentry{aCR@[{CR}]\begingroup Carriage Return\nomeqref {3.0}|nompageref}{34}
-\nomenclatureentry{aLF@[{LF}]\begingroup Line Feed\nomeqref {3.0}|nompageref}{34}
-\nomenclatureentry{aASCII@[{ASCII}]\begingroup American Standard Code for Information Interchange\nomeqref {4.0}|nompageref}{47}
-\nomenclatureentry{anid@[{nid}]\begingroup Node ID\nomeqref {5.0}|nompageref}{70}
-\nomenclatureentry{auid@[{uid}]\begingroup user-ID\nomeqref {6.0}|nompageref}{91}
-\nomenclatureentry{asid@[{sid}]\begingroup session-ID\nomeqref {6.0}|nompageref}{91}
+\nomenclatureentry{aHTML@[{HTML}]\begingroup HyperText Markup Language\nomeqref {2.0}|nompageref}{29}
+\nomenclatureentry{aAJAX@[{AJAX}]\begingroup Asynchronous JavaScript and XML\nomeqref {2.0}|nompageref}{30}
+\nomenclatureentry{aM2M@[{M2M}]\begingroup Machine-to-machine\nomeqref {3.0}|nompageref}{31}
+\nomenclatureentry{aREST@[{REST}]\begingroup Representational Stateless Transfer\nomeqref {3.0}|nompageref}{31}
+\nomenclatureentry{aURI@[{URI}]\begingroup Uniform Resource Identifier\nomeqref {3.0}|nompageref}{31}
+\nomenclatureentry{aHATEOAS@[{HATEOAS}]\begingroup Hypermedia as the Engine of Application State\nomeqref {3.0}|nompageref}{31}
+\nomenclatureentry{aOSI@[{OSI}]\begingroup Open Systems Interconnection\nomeqref {3.0}|nompageref}{32}
+\nomenclatureentry{aCON@[{CON}]\begingroup Confirmable CoAP-message\nomeqref {3.0}|nompageref}{33}
+\nomenclatureentry{aNON@[{NON}]\begingroup Non-confirmable CoAP-message\nomeqref {3.0}|nompageref}{33}
+\nomenclatureentry{aACK@[{ACK}]\begingroup Acknowledgement CoAP-message\nomeqref {3.0}|nompageref}{33}
+\nomenclatureentry{aRST@[{RST}]\begingroup Reset CoAP-message\nomeqref {3.0}|nompageref}{33}
+\nomenclatureentry{aTKL@[{TKL}]\begingroup \textit{ToKen Length}\nomeqref {3.0}|nompageref}{33}
+\nomenclatureentry{aTLV@[{TLV}]\begingroup Type Length Value\nomeqref {3.0}|nompageref}{34}
+\nomenclatureentry{aCR@[{CR}]\begingroup Carriage Return\nomeqref {3.0}|nompageref}{35}
+\nomenclatureentry{aLF@[{LF}]\begingroup Line Feed\nomeqref {3.0}|nompageref}{35}
+\nomenclatureentry{aASCII@[{ASCII}]\begingroup American Standard Code for Information Interchange\nomeqref {4.0}|nompageref}{48}
+\nomenclatureentry{anid@[{nid}]\begingroup Node ID\nomeqref {5.0}|nompageref}{71}
+\nomenclatureentry{auid@[{uid}]\begingroup user-ID\nomeqref {6.0}|nompageref}{92}
+\nomenclatureentry{asid@[{sid}]\begingroup session-ID\nomeqref {6.0}|nompageref}{92}
