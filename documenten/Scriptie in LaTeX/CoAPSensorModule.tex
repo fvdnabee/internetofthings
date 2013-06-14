@@ -314,6 +314,7 @@ Het voordeel van deze benadering is dat de view gescheiden wordt van de rest van
 
 Er stelt zich nu wel nog een probleem, het template-bestand moet namelijk op de juiste plaats staan, en dit in de directory van het gebruikte theme. Men voegt echter beter geen bestanden toe aan de Drupalcore en bovendien kunnen wij dat ook niet verwachten van de eindgebruiker. Het template-bestand zou automatisch moeten worden opgenomen in het gebruikte theme, waarbij het template-bestand gewoon in onze module kan blijven staan. Na grondig onderzoek bleek dit mogelijk aan de hand van hook\_theme\_registry\_alter(). Deze \textit{hook} geeft ons de kans een pad toe te voegen aan het theme-registry, waardoor het template zal gevonden worden bij het bouwen van de view \cite{addTemplate}.
 
+\scriptsize
 \lstset{language=HTML}
 \begin{lstlisting}[label=template,caption=Voorbeeld van een template met PHP-scriptlets (node.tpl.php)]
 <div id='node-<?php print $node->nid; ?>' >
@@ -328,7 +329,7 @@ Er stelt zich nu wel nog een probleem, het template-bestand moet namelijk op de 
 	<?php print render($title_suffix); ?>
 </div>
 \end{lstlisting}
-
+\normalsize
 \noindent
 
 \subsubsection{Polling}\label{polling}
@@ -361,6 +362,7 @@ De XML-structuur die eerder werd aangehaald bestaat uit een allesomvattend hoofd
 
 Een voorbeeld van een antwoord op een \textit{AJAX call} bij \textit{polling}:
 
+\scriptsize
 \lstset{language=XML}
 
 \begin{lstlisting}[label=xmlPolling,caption=Voorbeeld antwoord op \textit{AJAX call} bij polling]
@@ -383,6 +385,7 @@ Een voorbeeld van een antwoord op een \textit{AJAX call} bij \textit{polling}:
 	</entrys>
 </poll>
 \end{lstlisting}
+\normalsize
 
 \subsubsection{Foutmechanisme} \label{foutmechanisme}
 Tot nog toe bleef de gebruiker in het ongewisse wanneer er iets foutliep in de communicatie met een CoAP-resource. Dit is niet gebruiksvriendelijk en kan voor ergernissen zorgen.\\
@@ -412,7 +415,7 @@ Nu hebben we in de vorige hoofdstukken al gezien dat fouten al geregistreerd wor
 \end{wrapfigure}
 Dit contenttype stelt een volledig \textit{embedded device} voor waarop zich \'{e}\'{e}n of meerdere resources bevinden. Bij toevoegen van dit contenttype hoeft de gebruiker enkel het IPv6-adres op te geven in het veld field\_device\_uri. Er is nog een veld aanwezig in dit contenttype, namelijk het veld field\_resource\_references. Dit veld is onzichtbaar bij het aanmaken of wijzigen van content zodat een gebruiker dit veld niet kan aanpassen. Het mag enkel vanuit code aangepast worden en bevat referenties naar content van het type CoAP-resource die overeen komt met de resources uit de well-known/core van het \textit{device}.\\
 
-Net zoals bij CoAP-resource voegen we custom validatie voor het URI-veld toe via hook\_form\_alter. De structuur van de URI moet bestaan uit een IPv6-adres en de gebruiker mag het \textit{device} niet eerder toegevoegd hebben. Ook hier stoppen we extra gegevens in de databank via hook\_node\_insert. Er wordt een entry in de tabel coap\_sensor\_interested\_user toegevoegd waarmee wordt aangegeven dat de gebruiker ge\"{i}nteresseerd is in het \textit{device}. Deze tabel heeft een kolom om aan te geven dat de entry verwerkt moet worden. Deze kolomwaarde is afhankelijk van het feit of er andere gebruikers ge\"{i}nteresseerd zijn in het \textit{device} op het moment dat dit \textit{device} toegevoegd wordt. Als dit het geval is hoeven we geen resource \textit{discovery} voor dit \textit{device} uit te voeren en wordt als kolomwaarde het getal 2 gebruikt. We zijn immers zeker dat alle resourcegegevens al in de databank zitten. Indien niemand ge\"{i}nteresseerd is in het \textit{device} wordt als kolomwaarde het getal 1 gebruikt en wordt een resource \textit{discovery} uitgevoerd. Na het toevoegen van het \textit{device} krijgt de gebruiker de visuele representatie van de content te zien.\\
+Net zoals bij CoAP-resource voegen we custom validatie voor het URI-veld toe via hook\_form\_alter. De structuur van de inhoud van dit veld moet bestaan uit een IPv6-adres en de gebruiker mag het \textit{device} niet eerder toegevoegd hebben. Ook hier stoppen we extra gegevens in de databank via hook\_node\_insert. Er wordt een entry in de tabel coap\_sensor\_interested\_user toegevoegd waarmee wordt aangegeven dat de gebruiker ge\"{i}nteresseerd is in het \textit{device}. Deze tabel heeft een kolom om aan te geven dat de entry verwerkt moet worden. Deze kolomwaarde is afhankelijk van het feit of er andere gebruikers ge\"{i}nteresseerd zijn in het \textit{device} op het moment dat dit \textit{device} toegevoegd wordt. Als dit het geval is hoeven we geen resource \textit{discovery} voor dit \textit{device} uit te voeren en wordt als kolomwaarde het getal 2 gebruikt. We zijn immers zeker dat alle resourcegegevens al in de databank zitten. Indien niemand ge\"{i}nteresseerd is in het \textit{device} wordt als kolomwaarde het getal 1 gebruikt en wordt een resource \textit{discovery} uitgevoerd. Na het toevoegen van het \textit{device} krijgt de gebruiker de visuele representatie van de content te zien.\\
 
 De visuele representatie gebeurt hier niet met een template maar door gebruik te maken van een form \cite{formAPI}. Wanneer de pagina galaden is, start een periodieke poll vanuit jQuery naar de \textit{callback}functie coap\_device\_page\_callback(). In deze functie wordt de rij die overeenkomt met het toegevoegde \textit{device} uit de tabel coap\_sensor\_interested\_user gehaald. Afhankelijk van de kolomwaarde 'new' gebeuren er enkele zaken. Indien 'new' de waarde 0 heeft, is de output van deze \textit{callback}functie een lege string en gebeurt er verder niks. Bij de waarde 1 heeft de functie als output 'show\_counter'. Bij elke poll vanuit jQuery waar de functie 'show\_counter' als output heeft, wordt een teller verhoogd. Afhankelijk van deze teller wordt er een boodschap getoond op de pagina. Op deze manier heeft de gebruiker feedback indien de resource \textit{discovery} langer duurt dan normaal. Een voorbeeld zie je op figuur~\ref{fig:coapDeviceMessage}.
 \begin{figure}[h!]
