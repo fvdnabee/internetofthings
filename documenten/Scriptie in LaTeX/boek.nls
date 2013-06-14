@@ -3,46 +3,50 @@
  \nomgroup{A}
 
   \item [{ACK}]\begingroup Acknowledgement CoAP-message\nomeqref {3.0}
-		\nompageref{26}
+		\nompageref{31}
   \item [{AJAX}]\begingroup Asynchronous JavaScript and XML\nomeqref {2.0}
-		\nompageref{23}
+		\nompageref{28}
   \item [{ASCII}]\begingroup American Standard Code for Information Interchange\nomeqref {4.0}
-		\nompageref{41}
+		\nompageref{46}
   \item [{CMS}]\begingroup Content Management System\nomeqref {2.0}
 		\nompageref{6}
   \item [{CON}]\begingroup Confirmable CoAP-message\nomeqref {3.0}
-		\nompageref{26}
-  \item [{CR}]\begingroup Carriage Return\nomeqref {3.0}\nompageref{28}
+		\nompageref{31}
+  \item [{CR}]\begingroup Carriage Return\nomeqref {3.0}\nompageref{33}
+  \item [{HATEOAS}]\begingroup Hypermedia as the Engine of Application State\nomeqref {3.0}
+		\nompageref{29}
   \item [{HTML}]\begingroup HyperText Markup Language\nomeqref {5.0}
-		\nompageref{68}
+		\nompageref{75}
   \item [{IoT}]\begingroup Internet of Things\nomeqref {1.0}
 		\nompageref{1}
   \item [{IPv4}]\begingroup Internet Protocol versie 4\nomeqref {1.0}
 		\nompageref{2}
   \item [{IPv6}]\begingroup Internet Protocol versie 6\nomeqref {1.0}
 		\nompageref{2}
-  \item [{LF}]\begingroup Line Feed\nomeqref {3.0}\nompageref{28}
+  \item [{LF}]\begingroup Line Feed\nomeqref {3.0}\nompageref{33}
   \item [{M2M}]\begingroup Machine-to-machine\nomeqref {3.0}
-		\nompageref{24}
-  \item [{nid}]\begingroup Node ID\nomeqref {5.0}\nompageref{63}
+		\nompageref{29}
+  \item [{nid}]\begingroup Node ID\nomeqref {5.0}\nompageref{69}
   \item [{NON}]\begingroup Non-confirmable CoAP-message\nomeqref {3.0}
-		\nompageref{26}
+		\nompageref{31}
   \item [{OSI}]\begingroup Open Systems Interconnection\nomeqref {3.0}
-		\nompageref{25}
+		\nompageref{30}
   \item [{PHP}]\begingroup PHP Hypertext Preprocessor\nomeqref {1.0}
 		\nompageref{3}
+  \item [{REST}]\begingroup Representational Stateless Transfer\nomeqref {3.0}
+		\nompageref{29}
   \item [{RST}]\begingroup Reset CoAP-message\nomeqref {3.0}
-		\nompageref{26}
-  \item [{sid}]\begingroup session-ID\nomeqref {6.0}\nompageref{83}
+		\nompageref{31}
+  \item [{sid}]\begingroup session-ID\nomeqref {6.0}\nompageref{90}
   \item [{TKL}]\begingroup \textit{ToKen Length}\nomeqref {3.0}
-		\nompageref{26}
+		\nompageref{31}
   \item [{TLV}]\begingroup Type Length Value\nomeqref {3.0}
-		\nompageref{26}
-  \item [{uid}]\begingroup user-ID\nomeqref {6.0}\nompageref{83}
+		\nompageref{32}
+  \item [{uid}]\begingroup user-ID\nomeqref {6.0}\nompageref{90}
   \item [{URI}]\begingroup Uniform Resource Identifier\nomeqref {3.0}
-		\nompageref{24}
+		\nompageref{29}
   \item [{URL}]\begingroup Uniform Resource Locator\nomeqref {2.0}
-		\nompageref{11}
+		\nompageref{12}
   \item [{WOEID}]\begingroup Where On Earth ID\nomeqref {1.0}
 		\nompageref{3}
 
