@@ -158,13 +158,6 @@ Modules bieden de mogelijkheid om extra functionaliteit in te pluggen op een web
 %Gebruikers zijn personen die zich aangemeld hebben op jouw website, met uitzondering van de anonieme gebruikers.
 Alle gebruikerfunctionaliteit zoals registreren, inloggen, enz... zit reeds in de Drupal \textit{core}. Rollen geven weer tot welk type een gebruiker hoort. Meerdere gebruikers kunnen dezelfde rol hebben, en een gebruiker kan meerdere rollen hebben. Met permissies kan je aangeven welke privileges een gebruiker met een bepaalde rol heeft en dus wat die gebruiker wel en niet mag doen. Deze permissies worden gekoppeld aan een rol zodat alle gebruikers die deze rol hebben automatisch de privileges hebben van deze rol. Drupal biedt standaard drie rollen aan: de Administratorrol, die alle privileges bevat; de geauthenticeerde gebruikerrol, die een aantal van de privileges van de Administratorrol bevat en de anonieme gebruikerrol, die een subset van de privileges van de geauthenticeerde gebruikerrol bevat. Anonieme gebruikers zijn gebruikers die zich niet aangemeld hebben op de website.
 
-\subsubsection{Entities}
-Een nieuw belangrijk concept in Drupal 7 is \textit{entities} \cite{entities}. Dit nieuwe concept in combinatie met de \textit{Entity API} heeft twee positieve effecten. Het eerste effect is dat gebruikers en commentaren dezelfde mogelijkheden krijgen als nodes. In vorige versies van Drupal was het niet mogelijk versies te cre\"{e}ren of velden toe te voegen aan gebruikers of commentaren. Andere voordelen zoals het gebruiken van \textit{views} in combinatie met gebruikers of commentaren was ook niet mogelijk. Het andere effect is het invoeren van object-ge\"{o}rienteerd programmeren van \textit{entities}. Vroeger was het nodig specifieke functies van de \textit{core} te gebruiken om content te bewerken. Een voorbeeld hiervan is node\_save() dat nodes opslaat. Deze functie was enkel toepasbaar op een node. Het alternatief bij de \textit{Entity API} is entity\_save(). Deze functie is niet gelimiteerd tot enkel content of enkel tot gebruikers.
-Het is ook mogelijk nieuwe \textit{entities} te maken. %, we gaan hier dieper op in in hoofdstuk~\ref{uitbreidingen}.
-
-\subsubsection{Drupal core}
-De Drupal \textit{core} is wat je downloadt van de Drupal website. Het vormt de basis en een uitgebreide \textit{out-of-the-box} functionaliteit, het fungeert eigenlijk als de motor achter een Drupal website. De Drupal \textit{core} is zeer uitgebreid en complex, het vormt op zich al voldoende materiaal voor een scriptie, er verder op ingaan zou ons dus te ver leiden.
-
 \subsubsection{Hooks}
 Hooks zijn functies die gedefinieerd zijn door de Drupal \textit{core}. Ze kunnen worden ge\"{i}mplementeerd door elke module. In de Drupal \textit{bootstrap} zal de Drupal \textit{core} dan op bepaalde tijdstippen de bijhorende \textit{hooks} oproepen van elke module die de \textit{hook} ge\"{i}mplementeerd heeft. Hiervoor wordt een zeer eenvoudig mechanisme gehanteerd. Een module kan zo'n \textit{hook} implementeren door de naam van de \textit{hook} te laten voorafgaan door de naam van de module die de \textit{hook} implementeert (zie codevoorbeeld~\ref{lst:drupalHookExample}).\\
 
@@ -183,68 +176,14 @@ function coap_sensor_node_view($node, $view_mode, $langcode) {
 \end{lstlisting}
 \normalsize
 
-\subsection{Database Abstraction Layer}\label{databaseAbstractionLayer}
-Manipulatie van gegevens in de databank gebeurt via de \textit{Database Abstraction Layer} \cite{databaseAbstractionLayer}. Dit zorgt ervoor dat de implementatie van een module onafhankelijk is van de gebruikte soort databank. Concreet biedt deze laag een aantal functies aan voor het manipuleren van de databank. Wanneer een nieuw soort databank in gebruik genomen wordt, worden deze functies ge\"{i}mplementeerd voor deze nieuwe soort. We geven enkele voorbeelden van de meest gebruikte functies:
-\lstset{language=PHP}
-\begin{lstlisting}[label=db_select,caption=Voorbeeld gebruik van db\_select]
-$result = db_select('coap_sensor_interested_user','resource')
-	->fields('resource', array('nid'))
-	->condition('uri', $uri, '=')
-	->condition('uid', $user->uid, '=')
-	->execute();
-\end{lstlisting}
-In voorbeeld \ref{db_select} wordt opgevraagd wat het nid is voor een specifieke uri en uid. Er wordt gebruik gemaakt van de Drupalvariabele \$user. Zoals je ziet moet er een naam opgegeven worden na de tabelnaam. Deze naam moet herhaalt worden als eerste element van de fieldstabel. Merk op dat dit alleen nodig is bij het gebruik van db\_select. Als tweede element van de fieldstabel geef je een tabel op met alle velden die je wil opvragen. Meerdere condities kunnen opgegeven worden, de volgorde is niet belangrijk. De opgevraagde gegevens kunnen gesorteerd worden door gebruik te maken van -\textgreater orderBy('nid', 'ASC').\\
+\subsubsection{Entities}
+Een nieuw belangrijk concept in Drupal 7 is \textit{entities} \cite{entities}. Dit nieuwe concept in combinatie met de \textit{Entity API} heeft twee positieve effecten. Het eerste effect is dat gebruikers en commentaren dezelfde mogelijkheden krijgen als nodes. In vorige versies van Drupal was het niet mogelijk versies te cre\"{e}ren of velden toe te voegen aan gebruikers of commentaren. Andere voordelen zoals het gebruiken van \textit{views} in combinatie met gebruikers of commentaren was ook niet mogelijk. Het andere effect is het invoeren van object-ge\"{o}rienteerd programmeren van \textit{entities}. Vroeger was het nodig specifieke functies van de \textit{core} te gebruiken om content te bewerken. Een voorbeeld hiervan is node\_save() dat nodes opslaat. Deze functie was enkel toepasbaar op een node. Het alternatief bij de \textit{Entity API} is entity\_save(). Deze functie is niet gelimiteerd tot enkel content of enkel tot gebruikers.
+Het is ook mogelijk nieuwe \textit{entities} te maken. %, we gaan hier dieper op in in hoofdstuk~\ref{uitbreidingen}.
 
-De variabele \$result zal een \textit{SelectQuery}-object bevatten. Er zijn twee manieren om de opgehaalde gegevens uit objecten van deze klasse te halen. Wanneer je weet dat er maar een enkele rij opgehaald wordt, doe je best het volgende
-\lstset{language=PHP}
-\begin{lstlisting}
-$record  = $result->fetchAssoc();
-$nid = $record['nid'];
-\end{lstlisting} 
-Wanneer er meerdere rijen teruggegeven kunnen worden gebruik je beter
-\lstset{language=PHP}
-\begin{lstlisting}
-$nids = array();
-foreach($result as $record){
-	$nids[] = $record->nid;
-}
-\end{lstlisting} 
-om een tabel met al je gewenste resultaten in te bekomen. % In dit voorbeeld zal er echter maar \'{e}\'{e}n rij teruggegeven worden en is de eerste optie beter.
-\lstset{language=PHP}
-\begin{lstlisting}[label=db_insert,caption=Voorbeeld gebruik van db\_insert]
-$id = db_insert('coap_sensor_interested_user')
-	->fields(array(
-		'uid' => $user->uid,
-		'uri' => $resource_uri,
-		'device' => 0,
-		'nid' => $nid,
-		'observe' => 0,
-	))
-	->execute();
-\end{lstlisting}
-In voorbeeld \ref{db_insert} wordt een entry toegevoegd aan de tabel coap\_sensor\_interested\_user. Kolommen die niet null mogen zijn en geen \textit{default}waarde hebben moeten opgegeven worden in de fieldstabel. Zoniet wordt er een exceptie opgegooid bij het oproepen van de execute-functie.
+\subsubsection{Drupal core}
+De Drupal \textit{core} is wat je downloadt van de Drupal website. Het vormt de basis en een uitgebreide \textit{out-of-the-box} functionaliteit, het fungeert eigenlijk als de motor achter een Drupal website. De Drupal \textit{core} is zeer uitgebreid en complex, het vormt op zich al voldoende materiaal voor een scriptie, er verder op ingaan zou ons dus te ver leiden.
 
-\lstset{language=PHP}
-\begin{lstlisting}[label=db_update,caption=Voorbeeld gebruik van db\_update]
-$num_updated = db_update('coap_sensor_interested_user')
-	->fields(array(
-		'new' => 0,
-	))
-	->condition('uid', $user->uid, '=')
-	->condition('device',1,'=')
-	->condition('nid', $nid, '=')
-	->execute();
-\end{lstlisting}
-In voorbeeld \ref{db_update} wordt van alle rijen die overeenstemmen met de opgegeven condities de new-waarde op 0 gezet. % Bij dit voorbeeld zal er maar \'{e}\'{e}n rij geupdated worden.
-
-\lstset{language=PHP}
-\begin{lstlisting}[label=db_delete,caption=Voorbeeld gebruik van db\_delete]
-db_delete('coap_sensor_interested_user')
-	->condition('nid', $nid, '=')
-	->execute();
-\end{lstlisting}
-In voorbeeld \ref{db_delete} worden alle rijen met als nid de waarde in \$nid verwijderd. % Opnieuw zal in dit voorbeeld maar \'{e}\'{e}n rij verwijderd worden.
-
+\newpage
 \subsection{Laadcyclus van de pagina}
 Wanneer een webbrowser een Drupal pagina opvraagt, wordt de Drupal URL van de pagina gebruikt. Deze heeft vaak volgende vorm: http://drupalvoorbeeld.org/node/15. De webserver vormt deze URL om naar de vorm: index.php?q=node/15 en geeft dan het pad node/15 door aan Drupal's index.php waarvan de code uitgevoerd wordt. Het uitvoeren van deze code resulteert in een reeks complexe stappen die als eindresultaat de gerenderde pagina hebben. Afhankelijk van het feit of de pagina al dan niet in de cache aanwezig is, verlopen deze stappen anders. Indien de pagina niet aanwezig is in de cache, wordt de volledige \textit{bootstrap} en de \textit{page callback} uitgevoerd. De \textit{bootstrap} bestaat steeds uit dezelfde reeks van acht verschillende fasen die we verder nader toelichten. Na de \textit{bootstrap} wordt de \textit{page callback} uitgevoerd die geassocieerd wordt met het pad meegegeven met index.php. Indien de pagina wel in de cache aanwezig is, wordt er enkel een aantal van de stappen van de \textit{bootstrap} uitgevoerd. De \textit{page callback} wordt in dit geval niet uitgevoerd. We bespreken elke stap van het proces apart, het hele proces wordt weergegeven in Figuur~\ref{fig:drupalPageRendering}.
 
@@ -259,7 +198,7 @@ Wanneer een webbrowser een Drupal pagina opvraagt, wordt de Drupal URL van de pa
 Deze fase houdt onder andere in dat globale variabelen worden gezet, zoals de basis-URL van de website. Sommige waarden van deze variabelen worden rechtstreeks uit het configuratiebestand settings.php gehaald. Andere worden berekend aan hand van de omgeving waarin de server zich bevindt. In settings.php worden variabelen op opgegeven via de variabele \$conf. Deze variabele is een associatieve array die alle waarden op de variabelenaam mapt.
 
 \subsubsection{Poging tot opvragen van een gecachte pagina}
-Caching van pagina's treedt op indien page caching ge\"{e}nabled is. Bovendien gebeurt dit standaard enkel voor anonieme gebruikers. Er zijn echter modules beschikbaar om dit ook voor geauthenticeerde gebruikers te laten gebeuren. Het doel van caching is vermijden dat de volledige \textit{bootstrap} en \textit{page callback} moeten worden doorlopen om zo tijdswinst te cre\"{e}ren. De pagina  wordt enkel uit de cache gehaald als ze eerder is opgevraagd en nog steeds geldig is. De cache backend is pluggable en standaard gebruikt Drupal een databank cache implementatie. Deze cache backend heeft dus een databankconnectie nodig om de pagina op te halen. Daarom worden de volgende twee fasen (initialisatie van de Database Abstraction Layer en initialisatie van het Variable System) uitgevoerd voor de pagina effectief uit de cache kan gehaald worden. Dit wordt aangegeven door de stippellijnkaders in Figuur~\ref{fig:drupalPageRendering}. De cache backend en of caching al da niet ge\"{e}nabled is, wordt opgegeven in settings.php.
+Caching van pagina's treedt op indien page caching ge\"{e}nabled is. Bovendien gebeurt dit standaard enkel voor anonieme gebruikers. Er zijn echter modules beschikbaar om dit ook voor geauthenticeerde gebruikers te laten gebeuren. Het doel van caching is vermijden dat de volledige \textit{bootstrap} en \textit{page callback} moeten worden doorlopen om zo tijdswinst te cre\"{e}ren. De pagina  wordt enkel uit de cache gehaald als ze eerder is opgevraagd en nog steeds geldig is. De \textit{cache backend} is pluggable en standaard gebruikt Drupal een databank cache implementatie. Deze \textit{cache backend} heeft dus een databankconnectie nodig om de pagina op te halen. Daarom worden de volgende twee fasen (initialisatie van de Database Abstraction Layer en initialisatie van het Variable System) uitgevoerd voor de pagina effectief uit de cache kan gehaald worden. Dit wordt aangegeven door de stippellijnkaders in Figuur~\ref{fig:drupalPageRendering}. De \textit{cache backend} en of caching al da niet ge\"{e}nabled is, wordt opgegeven in settings.php.
 
 \subsubsection{Initialisatie van de Database Abstraction Layer}
 Er zijn nog geen verbindingen met de databank nodig. Daarom worden enkel basisklassen en functies ge\"{i}nitialiseerd. Gebruik van de Database Abstraction Layer werd beproken in paragraaf~\ref{databaseAbstractionLayer}.
@@ -332,7 +271,7 @@ Velden kunnen aangemaakt worden met een GUI aangeboden door het Drupal systeem o
 
 \subsubsection{Verwijderen van Fields}
 Opnieuw kunnen velden verwijderd worden met een GUI aangeboden door het Drupal systeem of het kan vanuit code gebeuren. Via de GUI gebeurt dit impliciet door een contenttype te verwijderen. Achter de schermen wordt de functie node\_type\_delete(\$naam\_contenttype) opgeroepen en in deze functie wordt de functie field\_attach\_delete\_bundle(\$entity\_type, \$bundle) opgeroepen waar op zijn beurt de functie field\_delete\_instance(\$instance) oproept. Deze functies die achter de schermen opgeroepen worden wanneer de GUI gebruikt wordt, kunnen eveneens in code gebruikt worden.
-
+\newpage
 \subsection{Modules}
 Een extra woordje uitleg hoe een module wordt toegevoegd en verwijderd uit een Drupal systeem kan geen kwaad. We merken meteen op dat er naast de\"{i}nstalleren van een module ook \textit{disablen} mogelijk is. Dit kan als gevolg hebben dat een beginnende Drupal ontwikkelaar veronderstellingen maakt die niet volledig kloppen. We maken een opsomming van handige feiten in verband met \textit{enablen}, \textit{disablen} en de\"{i}nstalleren voor beginnende Drupal ontwikkelaars:
 \begin{itemize}
@@ -380,8 +319,88 @@ De contenttypes worden verwijderd in hook\_uninstall(). Voor een contenttype kan
 \item Drupal zal bij het verwijderen van velden de kolomwaarde deleted op 1 zetten. Om de velden effectief uit de databank te verwijderen wordt de functie field\_purge\_batch() gebruikt.
 \end{itemize}
 
-\section{JQuery in Drupal} \label{jQuery}
+\newpage
+\section{Database Abstraction Layer}\label{databaseAbstractionLayer}
+Manipulatie van gegevens in de databank gebeurt via de \textit{Database Abstraction Layer} \cite{databaseAbstractionLayer}. Dit zorgt ervoor dat de implementatie van een module onafhankelijk is van de gebruikte soort databank. Concreet biedt deze laag een aantal functies aan voor het manipuleren van de databank. Wanneer een nieuw soort databank in gebruik genomen wordt, worden deze functies ge\"{i}mplementeerd voor deze nieuwe soort. We geven enkele voorbeelden van de meest gebruikte functies:
 
+\scriptsize
+\lstset{language=PHP}
+\begin{lstlisting}[label=db_select,caption=Voorbeeld gebruik van db\_select]
+$result = db_select('coap_sensor_interested_user','resource')
+	->fields('resource', array('nid'))
+	->condition('uri', $uri, '=')
+	->condition('uid', $user->uid, '=')
+	->execute();
+\end{lstlisting}
+\normalsize
+In voorbeeld \ref{db_select} wordt opgevraagd wat het nid is voor een specifieke uri en uid. Er wordt gebruik gemaakt van de Drupalvariabele \$user. Zoals je ziet moet er een naam opgegeven worden na de tabelnaam. Deze naam moet herhaalt worden als eerste element van de fieldstabel. Merk op dat dit alleen nodig is bij het gebruik van db\_select. Als tweede element van de fieldstabel geef je een tabel op met alle velden die je wil opvragen. Meerdere condities kunnen opgegeven worden, de volgorde is niet belangrijk. De opgevraagde gegevens kunnen gesorteerd worden door gebruik te maken van -\textgreater orderBy('nid', 'ASC').\\
+
+De variabele \$result zal een \textit{SelectQuery}-object bevatten. Er zijn twee manieren om de opgehaalde gegevens uit objecten van deze klasse te halen. Wanneer je weet dat er maar een enkele rij opgehaald wordt, doe je best het volgende
+
+\scriptsize
+\lstset{language=PHP}
+\begin{lstlisting}
+$record  = $result->fetchAssoc();
+$nid = $record['nid'];
+\end{lstlisting} 
+\normalsize
+Wanneer er meerdere rijen teruggegeven kunnen worden gebruik je beter
+
+\scriptsize
+\lstset{language=PHP}
+\begin{lstlisting}
+$nids = array();
+foreach($result as $record){
+	$nids[] = $record->nid;
+}
+\end{lstlisting}
+\normalsize
+om een tabel met al je gewenste resultaten in te bekomen. % In dit voorbeeld zal er echter maar \'{e}\'{e}n rij teruggegeven worden en is de eerste optie beter.
+
+\newpage
+\scriptsize
+\lstset{language=PHP}
+\begin{lstlisting}[label=db_insert,caption=Voorbeeld gebruik van db\_insert]
+$id = db_insert('coap_sensor_interested_user')
+	->fields(array(
+		'uid' => $user->uid,
+		'uri' => $resource_uri,
+		'device' => 0,
+		'nid' => $nid,
+		'observe' => 0,
+	))
+	->execute();
+\end{lstlisting}
+\normalsize
+In voorbeeld \ref{db_insert} wordt een entry toegevoegd aan de tabel coap\_sensor\_interested\_user. Kolommen die niet null mogen zijn en geen \textit{default}waarde hebben moeten opgegeven worden in de fieldstabel. Zoniet wordt er een exceptie opgegooid bij het oproepen van de execute-functie.
+
+\scriptsize
+\lstset{language=PHP}
+\begin{lstlisting}[label=db_update,caption=Voorbeeld gebruik van db\_update]
+$num_updated = db_update('coap_sensor_interested_user')
+	->fields(array(
+		'new' => 0,
+	))
+	->condition('uid', $user->uid, '=')
+	->condition('device',1,'=')
+	->condition('nid', $nid, '=')
+	->execute();
+\end{lstlisting}
+\normalsize
+In voorbeeld \ref{db_update} wordt van alle rijen die overeenstemmen met de opgegeven condities de new-waarde op 0 gezet. % Bij dit voorbeeld zal er maar \'{e}\'{e}n rij geupdated worden.
+
+\scriptsize
+\lstset{language=PHP}
+\begin{lstlisting}[label=db_delete,caption=Voorbeeld gebruik van db\_delete]
+db_delete('coap_sensor_interested_user')
+	->condition('nid', $nid, '=')
+	->execute();
+\end{lstlisting}
+\normalsize
+In voorbeeld \ref{db_delete} worden alle rijen met als nid de waarde in \$nid verwijderd. % Opnieuw zal in dit voorbeeld maar \'{e}\'{e}n rij verwijderd worden.
+
+\newpage
+\section{JQuery in Drupal} \label{jQuery}
 \begin{wrapfigure}{r}{0.25\textwidth}
 \vspace{-40pt}
 \hspace{-10pt}
@@ -398,8 +417,7 @@ De contenttypes worden verwijderd in hook\_uninstall(). Voor een contenttype kan
 
 In deze paragraaf bekijken we hoe een module (weather\_info) gemaakt werd die het weerbericht ophaalt voor een regio naar keuze, aangegeven door een WOEID. In eerste instantie werd gewerkt met een formulier, maar in een latere fase werd overgestapt op jQuery, wat de gebruikerservaring bevordert.
 
-\subsection{Met een formulier}
-
+\subsection{Met een HyperText Markup Language (HTML)-formulier} \nomenclature{HTML}{HyperText Markup Language}
 In eerste instantie bevatte de module een formulier bestaande uit een tekstveld als invoer voor de WOEID en een knop om het formulier in te dienen.
 Wanneer de gebruiker op de knop klikt, gebeuren volgende stappen:
 
@@ -421,15 +439,12 @@ Wanneer de gebruiker op de knop klikt, gebeuren volgende stappen:
 \end{itemize}
 
 \subsection{Met AJAX in jQuery}
-
 Een pagina zal pas getoond worden wanneer de \textit{bootstrap} afgelopen is en aangezien de code in de \textit{hooks} die worden uitgevoerd onderdeel is van de \textit{bootstrap}, zal de pagina pas getoond worden wanneer de \textit{hooks} afgelopen zijn. Dit heeft als gevolg dat de gebruiker van de website langer moet wachten op de pagina omdat eerst nog een HTTP-\textit{request} moet gebeuren om het weerbericht op te halen. Het spreekt voor zich dat dit een zeer nadelig effect is dat moet vermeden worden.\\
 Als alternatief hebben we gekozen om een jQuery-event te koppelen aan de submit-knop die het formulier indient. jQuery is namelijk geschreven in JavaScript en JavaScript is een \textit{client-side \textit{scripting} language}, wat inhoudt dat deze code wordt uitgevoerd op de machine van de gebruiker en dit nadat de pagina geladen is.\\
 Wanneer de gebruiker op de knop klikt, wordt een \textit{Asynchronous JavaScript and XML}(AJAX)-\textit{call}\nomenclature{AJAX}{Asynchronous JavaScript and XML} uitgevoerd.
 Zoals de naam suggereert, is dit een asynchrone aanroep, wanneer het antwoord aankomt, wordt automatisch een opgegeven functie opgeroepen waarin de data kan verwerkt worden. Als gevolg heeft de gebruiker dus geen enkele hinder van het internetverkeer dat noodzakelijk is om het weerbericht op te halen.
 
-
 \subsection{Problemen}
-
-JQuery laat geen \textit{cross-domain} AJAX \textit{calls} toe wegens veiligheidsoverwegingen. Een oplossing hiervoor is een \textit{proxy}script in PHP gebruiken.
+JQuery laat geen \textit{cross-domain} AJAX \textit{calls} toe wegens veiligheidsoverwegingen. De \textit{Weather Service API} bevindt zich namelijk op een ander domein. Een oplossing hiervoor is een \textit{proxy}script in PHP gebruiken.
 De AJAX-\textit{call} gebeurt dan naar het \textit{proxy}script dat zich op de server en dus hetzelfde domein bevindt. Het \textit{proxy}script vraagt daar effectief de data op en geeft de uitvoer terug.
 De browser wordt dus eigenlijk om de tuin geleid. \cite{crossDomainProblem}

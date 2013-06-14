@@ -22,8 +22,8 @@ CoAP definieert vier soorten berichten: \textit{Confirmable}, \textit{Non-confir
 \end{wrapfigure}
 We kunnen CoAP ook in het \textit{Open Systems Interconnection} (OSI)-model \nomenclature{OSI}{Open Systems Interconnection} met 7 lagen plaatsen. Conceptueel gezien hebben we twee deellagen, CoAP-berichtenlaag die het UDP gedeelte van de berichten afhandelt en een \textit{request}/responselaag die gebruik maakt van method en response codes (zie Figuur~\ref{fig:CoAPLaag}). Nochtans bestaat CoAP in werkelijkheid slechts uit \'{e}\'{e}n laag waarbij berichtenuitwisseling en het \textit{request}/responsemechanisme enkel en alleen door manipulatie van de \textit{header} verwezenlijkt wordt.
 
+\newpage
 \subsection{Berichtformaat}
-
 \begin{wrapfigure}{r}{0.7\textwidth}
 \vspace{-20pt}
 \includegraphics[width=0.7\textwidth]{fig/CoAPMessageFormat}
@@ -152,10 +152,9 @@ Wanneer een \textit{request} met een CON-bericht verstuurd wordt, is het mogelij
 %\vspace{-10pt}
 \caption{Twee GET-requests met piggy-backed responses (CoAP 17 draft)}
 \label{fig:CoAPPiggyBacked}
-\vspace{-20pt}
+%\vspace{-20pt}
 \end{figure}
 
-\newpage
 \subsubsection{Separate response} \label{separate}
 
 \begin{wrapfigure}{r}{0.3\textwidth}
