@@ -15,16 +15,16 @@
 \contentsline {section}{\numberline {2.3}Werking van Drupal}{10}
 \contentsline {subsection}{\numberline {2.3.1}Drupal bouwstenen}{11}
 \contentsline {subsubsection}{Contenttype}{11}
+\contentsline {subsubsection}{Fields}{11}
 \contentsline {subsubsection}{Node}{11}
-\contentsline {subsubsection}{Fields}{12}
 \contentsline {subsubsection}{View}{12}
 \contentsline {subsubsection}{Block}{12}
 \contentsline {subsubsection}{Theme}{12}
 \contentsline {subsubsection}{Taxonomy}{12}
-\contentsline {subsubsection}{Gebruikers, rollen en permissies}{13}
 \contentsline {subsubsection}{Module}{13}
-\contentsline {subsubsection}{Drupal core}{13}
+\contentsline {subsubsection}{Gebruikers, rollen en permissies}{13}
 \contentsline {subsubsection}{Entities}{14}
+\contentsline {subsubsection}{Drupal core}{14}
 \contentsline {subsubsection}{Hooks}{14}
 \contentsline {subsection}{\numberline {2.3.2}Database Abstraction Layer}{15}
 \contentsline {subsection}{\numberline {2.3.3}Laadcyclus van de pagina}{17}
@@ -35,7 +35,7 @@
 \contentsline {subsubsection}{Initialisatie Session Handling}{20}
 \contentsline {subsubsection}{Page Header opbouwen}{20}
 \contentsline {subsubsection}{De taal van de pagina bepalen}{20}
-\contentsline {subsubsection}{Laden van modules en initialisatie van het theme}{21}
+\contentsline {subsubsection}{Laden van modules en initialisatie van het theme}{20}
 \contentsline {subsubsection}{Uitvoeren van page callback}{21}
 \contentsline {subsubsection}{Voorbeeld}{21}
 \contentsline {subsection}{\numberline {2.3.4}Fields}{24}

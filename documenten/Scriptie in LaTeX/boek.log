@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.4.6)  14 JUN 2013 09:30
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.4.6)  14 JUN 2013 09:47
 entering extended mode
 **boek.tex
 
@@ -557,13 +557,10 @@ n kan ge-bruikt wor-den in, an-dere \OT1/cmr/m/it/10.95 open source\OT1/cmr/m/n
 File: fig/drupalOrganizeModules.png Graphic file (type png)
 
 <use fig/drupalOrganizeModules.png>
-Package pdftex.def Info: fig/drupalOrganizeModules.png used on input line 156.
+Package pdftex.def Info: fig/drupalOrganizeModules.png used on input line 152.
 (pdftex.def)             Requested size: 455.24408pt x 190.96469pt.
-
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-[13]
+ [13 <C:/xampp/htdocs/sites/all/modules/custom/documenten/Scriptie in LaTeX/fig
+/drupalOrganizeModules.png>]
 Underfull \hbox (badness 10000) in paragraph at lines 169--170
 
  []
@@ -583,19 +580,16 @@ Overfull \hbox (6.0pt too wide) in paragraph at lines 173--173
 [][][][][][][] 
  []
 
-[14 <C:/xampp/htdocs/sites/all/modules/custom/documenten/Scriptie in LaTeX/fig/
-drupalOrganizeModules.png>]
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <8> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 174.
 LaTeX Font Info:    Try loading font information for OML+cmr on input line 175.
-
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\base\omlcmr.fd"
 File: omlcmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OML/cmr/m/n' in size <8> not available
 (Font)              Font shape `OML/cmm/m/it' tried instead on input line 175.
-
+ [14]
 Overfull \hbox (6.0pt too wide) in paragraph at lines 189--189
 [][][][][][][] 
  []
@@ -1431,11 +1425,11 @@ ties.aux")) )
 Here is how much of TeX's memory you used:
  8040 strings out of 494045
  129446 string characters out of 3148391
- 439821 words of memory out of 3000000
+ 439606 words of memory out of 3000000
  11137 multiletter control sequences out of 15000+200000
  11717 words of font info for 41 fonts, out of 3000000 for 9000
  717 hyphenation exceptions out of 8191
- 38i,18n,51p,1946b,2959s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 38i,18n,51p,1946b,3416s stack positions out of 5000i,500n,10000p,200000b,50000s
 <C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx10
 .pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:
 /Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx8.pfb><C:/Program 
@@ -1450,7 +1444,7 @@ i10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
 am Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmti10.pfb><C:/Program Files
 /MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmtt10.pfb><C:/Program Files/MiKTeX 
 2.9/fonts/type1/public/eurosym/feymr10.pfb>
-Output written on boek.pdf (110 pages, 2644856 bytes).
+Output written on boek.pdf (110 pages, 2645190 bytes).
 PDF statistics:
  469 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)

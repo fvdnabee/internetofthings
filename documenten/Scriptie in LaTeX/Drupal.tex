@@ -118,6 +118,9 @@ Een contenttype bepaalt het soort content. Het bundelt soorten gegevens tot een 
 Drupal biedt gebruikers de mogelijkheid aan om hun eigen \textit{custom} contenttypes te maken. Hoe contenttypes aangemaakt en verwijderd worden wordt in paragraaf \ref{contenttypeManipulatie}.
 %figuur van add contenttype
 
+\subsubsection{Fields}
+Via \textit{Fields} kan je gegevens van een contenttype invullen. Standaard biedt Drupal een aantal velden aan om gegevens toe te voegen, zoals een tekstveld of een veld om een afbeelding mee te oploaden. Maar soms schieten deze velden tekort, bijvoorbeeld wanneer je een kalender met drie drop-downlists wil combineren om een datum en tijdstip bij elkaar te laten horen in een veld. Daarom heeft een gebruiker de mogelijkheid \textit{custom} velden te maken. Fields worden verder besproken in paragraaf~\ref{Fields}.
+
 \subsubsection{Node}
 Nodes zijn instanties van een contenttype. Een node kan maar aan \'{e}\'{e}n contenttype toebehoren.
 Alle nodes hebben enkele eigenschappen gemeenschappelijk:
@@ -131,9 +134,6 @@ Alle nodes hebben enkele eigenschappen gemeenschappelijk:
 \item Publicatieinstellingen: soms is het mogelijk dat je deze content nog niet beschikbaar wil stellen op de website, of je wil ze tijdelijk offline halen. Via deze instellingen is dit mogelijk.
 \end{itemize}
 
-\subsubsection{Fields}
-Via \textit{Fields} kan je gegevens van een contenttype invullen. Standaard biedt Drupal een aantal velden aan om gegevens toe te voegen, zoals een tekstveld of een veld om een afbeelding mee te oploaden. Maar soms schieten deze velden tekort, bijvoorbeeld wanneer je een kalender met drie drop-downlists wil combineren om een datum en tijdstip bij elkaar te laten horen in een veld. Daarom heeft een gebruiker de mogelijkheid \textit{custom} velden te maken. Fields worden verder besproken in paragraaf~\ref{Fields}.
-
 \subsubsection{View}
 \textit{Views} worden gebruikt om content visueel voor te stellen op welke manier dan ook. Een \textit{view} is dan ook niet meer dan een visuele representatie van een verzameling content uit de databank.
 
@@ -146,10 +146,6 @@ Via \textit{Fields} kan je gegevens van een contenttype invullen. Standaard bied
 \subsubsection{Taxonomy}
 Taxonomy geeft je de mogelijkheid om eigenschappen en categorie\"{e}n toe te voegen aan je content, zodat bijvoorbeeld een gebruiker content kan filteren uit een grote verzameling. Het biedt dus een manier om je content te organiseren. Een praktijkvoorbeeld is een receptensite, een gebruiker kan dan recepten filteren aan de hand van de eigenschappen van het gerecht (ingredi\"{e}nten, moeilijkheid, ...).
 
-\subsubsection{Gebruikers, rollen en permissies}
-%Gebruikers zijn personen die zich aangemeld hebben op jouw website, met uitzondering van de anonieme gebruikers.
-Alle gebruikerfunctionaliteit zoals registreren, inloggen, enz... zit reeds in de Drupal \textit{core}. Rollen geven weer tot welk type een gebruiker hoort. Meerdere gebruikers kunnen dezelfde rol hebben, en een gebruiker kan meerdere rollen hebben. Met permissies kan je aangeven welke privileges een gebruiker met een bepaalde rol heeft en dus wat die gebruiker wel en niet mag doen. Deze permissies worden gekoppeld aan een rol zodat alle gebruikers die deze rol hebben automatisch de privileges hebben van deze rol. Drupal biedt standaard drie rollen aan: de Administratorrol, die alle privileges bevat; de geauthenticeerde gebruikerrol, die een aantal van de privileges van de Administratorrol bevat en de anonieme gebruikerrol, die een subset van de privileges van de geauthenticeerde gebruikerrol bevat. Anonieme gebruikers zijn gebruikers die zich niet aangemeld hebben op de website.
-
 \subsubsection{Module}
 Modules bieden de mogelijkheid om extra functionaliteit in te pluggen op een website. Modules zijn gratis te downloaden van de Drupal gemeenschap en omdat deze gemeenschap groot is, is de kans zeer groot dat er al een module gemaakt is voor jouw probleem. Indien dit niet het geval is, heb je nog altijd de mogelijkheid om zelf een module te ontwikkelen. Het gebruik van modules voorkomt ook dat functionaliteit die je niet nodig hebt, ook niet op jouw website komt. Je website is dus zeer configureerbaar naar eigen wensen (Zie figuur~\ref{fig:drupalOrganizeModules}).
 \begin{figure}[h]
@@ -158,12 +154,16 @@ Modules bieden de mogelijkheid om extra functionaliteit in te pluggen op een web
 \label{fig:drupalOrganizeModules}
 \end{figure}
 
-\subsubsection{Drupal core}
-De Drupal \textit{core} is wat je downloadt van de Drupal website. Het vormt de basis en een uitgebreide \textit{out-of-the-box} functionaliteit, het fungeert eigenlijk als de motor achter een Drupal website. De Drupal \textit{core} is zeer uitgebreid en complex, het vormt op zich al voldoende materiaal voor een scriptie, er verder op ingaan zou ons dus te ver leiden.
+\subsubsection{Gebruikers, rollen en permissies}
+%Gebruikers zijn personen die zich aangemeld hebben op jouw website, met uitzondering van de anonieme gebruikers.
+Alle gebruikerfunctionaliteit zoals registreren, inloggen, enz... zit reeds in de Drupal \textit{core}. Rollen geven weer tot welk type een gebruiker hoort. Meerdere gebruikers kunnen dezelfde rol hebben, en een gebruiker kan meerdere rollen hebben. Met permissies kan je aangeven welke privileges een gebruiker met een bepaalde rol heeft en dus wat die gebruiker wel en niet mag doen. Deze permissies worden gekoppeld aan een rol zodat alle gebruikers die deze rol hebben automatisch de privileges hebben van deze rol. Drupal biedt standaard drie rollen aan: de Administratorrol, die alle privileges bevat; de geauthenticeerde gebruikerrol, die een aantal van de privileges van de Administratorrol bevat en de anonieme gebruikerrol, die een subset van de privileges van de geauthenticeerde gebruikerrol bevat. Anonieme gebruikers zijn gebruikers die zich niet aangemeld hebben op de website.
 
 \subsubsection{Entities}
 Een nieuw belangrijk concept in Drupal 7 is \textit{entities} \cite{entities}. Dit nieuwe concept in combinatie met de \textit{Entity API} heeft twee positieve effecten. Het eerste effect is dat gebruikers en commentaren dezelfde mogelijkheden krijgen als nodes. In vorige versies van Drupal was het niet mogelijk versies te cre\"{e}ren of velden toe te voegen aan gebruikers of commentaren. Andere voordelen zoals het gebruiken van \textit{views} in combinatie met gebruikers of commentaren was ook niet mogelijk. Het andere effect is het invoeren van object-ge\"{o}rienteerd programmeren van \textit{entities}. Vroeger was het nodig specifieke functies van de \textit{core} te gebruiken om content te bewerken. Een voorbeeld hiervan is node\_save() dat nodes opslaat. Deze functie was enkel toepasbaar op een node. Het alternatief bij de \textit{Entity API} is entity\_save(). Deze functie is niet gelimiteerd tot enkel content of enkel tot gebruikers.
 Het is ook mogelijk nieuwe \textit{entities} te maken. %, we gaan hier dieper op in in hoofdstuk~\ref{uitbreidingen}.
+
+\subsubsection{Drupal core}
+De Drupal \textit{core} is wat je downloadt van de Drupal website. Het vormt de basis en een uitgebreide \textit{out-of-the-box} functionaliteit, het fungeert eigenlijk als de motor achter een Drupal website. De Drupal \textit{core} is zeer uitgebreid en complex, het vormt op zich al voldoende materiaal voor een scriptie, er verder op ingaan zou ons dus te ver leiden.
 
 \subsubsection{Hooks}
 Hooks zijn functies die gedefinieerd zijn door de Drupal \textit{core}. Ze kunnen worden ge\"{i}mplementeerd door elke module. In de Drupal \textit{bootstrap} zal de Drupal \textit{core} dan op bepaalde tijdstippen de bijhorende \textit{hooks} oproepen van elke module die de \textit{hook} ge\"{i}mplementeerd heeft. Hiervoor wordt een zeer eenvoudig mechanisme gehanteerd. Een module kan zo'n \textit{hook} implementeren door de naam van de \textit{hook} te laten voorafgaan door de naam van de module die de \textit{hook} implementeert (zie codevoorbeeld~\ref{lst:drupalHookExample}).\\
