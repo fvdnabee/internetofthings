@@ -273,12 +273,12 @@ Velden kunnen aangemaakt worden met een GUI aangeboden door het Drupal systeem o
 Opnieuw kunnen velden verwijderd worden met een GUI aangeboden door het Drupal systeem of het kan vanuit code gebeuren. Via de GUI gebeurt dit impliciet door een contenttype te verwijderen. Achter de schermen wordt de functie node\_type\_delete(\$naam\_contenttype) opgeroepen en in deze functie wordt de functie field\_attach\_delete\_bundle(\$entity\_type, \$bundle) opgeroepen waar op zijn beurt de functie field\_delete\_instance(\$instance) oproept. Deze functies die achter de schermen opgeroepen worden wanneer de GUI gebruikt wordt, kunnen eveneens in code gebruikt worden.
 \newpage
 \subsection{Modules}
-Een extra woordje uitleg hoe een module wordt toegevoegd en verwijderd uit een Drupal systeem kan geen kwaad. We merken meteen op dat er naast de\"{i}nstalleren van een module ook \textit{disablen} mogelijk is. Dit kan als gevolg hebben dat een beginnende Drupal ontwikkelaar veronderstellingen maakt die niet volledig kloppen. We maken een opsomming van handige feiten in verband met \textit{enablen}, \textit{disablen} en de\"{i}nstalleren voor beginnende Drupal ontwikkelaars:
+We lichten kort toe hoe een module wordt toegevoegd en verwijderd in Drupal. We merken meteen op dat er naast de\"{i}nstalleren van een module ook \textit{disablen} mogelijk is. Dit kan als gevolg hebben dat een beginnende Drupal ontwikkelaar veronderstellingen maakt die niet volledig kloppen. We maken een opsomming van handige feiten in verband met \textit{enablen}, \textit{disablen} en de\"{i}nstalleren voor beginnende Drupal ontwikkelaars:
 \begin{itemize}
 \item Bij \textit{disablen} wordt hook\_disable() opgeroepen. Dit is analoog voor \textit{enablen}, installeren en de\"{i}nstalleren.
 \item Een gebruiker moet een module altijd eerst \textit{disablen} voor te de\"{i}nstalleren.
 \item Een gebruiker kan een module enkel expliciet \textit{enablen}, \textit{disablen} of de\"{i}nstalleren. Een module wordt ge\"{i}nstalleerd als ze voor de eerste keer enabled wordt of eerst gede\"{i}nstalleerd werd voor te \textit{re-enablen}. Installeren kan dus enkel impliciet.
-\item Sommige \textit{hooks} worden maar opgeroepen bij installatie van de module, wat betekent dat wanneer je een wijziging van deze \textit{hooks} wil doorvoeren, je de module moet \textit{disablen}, de\"{i}nstalleren en \textit{re-enablen}. De\"{i}nstallatie mag niet worden overgeslagen omdat de module dan niet geherinstalleerd wordt. Dit is van toepassing bij volgende \textit{hooks}:
+\item Sommige \textit{hooks} worden maar opgeroepen bij installatie van de module, wat betekent dat wanneer je een wijziging van deze \textit{hooks} wil doorvoeren, je de module moet \textit{disablen}, de\"{i}nstalleren en \textit{re-enablen}. De\"{i}nstallatie mag niet worden overgeslagen omdat de module dan niet geherinstalleerd wordt. Dit is van toepassing bij, onder andere, de volgende \textit{hooks}:
 \begin{itemize}
 \item hook\_node\_info()
 \item hook\_schema()
@@ -294,10 +294,10 @@ Er zijn meerdere manieren om contenttypes aan te maken en te configureren.
 \item Hook\_node\_info() implementeren waarin je de nieuwe contenttypes beschrijft. Deze hook wordt enkel opgeroepen bij installatie van een module.
 \end{itemize}
 \noindent
-De eerste optie is enkel interessant voor Drupal gebruikers die zelf geen module wensen aan te maken of voor ontwikkelaars die het effect op de databank van het aanmaken van een contenttype willen bekijken. De twee laatste functies kunnen door ontwikkelaars gebruikt worden om contenttypes aan te maken in code.De laatse optie wordt echter algemeen als de betere optie gezien omdat het gebruik van \textit{hooks} de \textit{Drupal way} is.
+De eerste optie is enkel interessant voor Drupal gebruikers die zelf geen module wensen aan te maken of voor ontwikkelaars die het effect op de databank van het aanmaken van een contenttype willen bekijken. De twee laatste functies kunnen door ontwikkelaars gebruikt worden om contenttypes aan te maken in code. De laatste optie wordt echter algemeen als de betere optie gezien omdat het gebruik van \textit{hooks} de \textit{Drupal way} is.\\
 De laatste twee opties zijn echter niet voldoende om een contenttype volledig te configureren. Een aantal specifieke variabelen moeten toegevoegd worden in de \textit{variable}tabel. De variabelen die wij toevoegen, hebben een invloed op de configuratie van de contenttypes die we toevoegen.
 
-De variabelen worden gezet in de implemenatie van hook\_enable() door de module die het contenttype definieert. Deze variabelen moeten voor elk contenttype gezet worden en bevatten de naam van het contenttype waar ze een invloed op hebben. Een volledige lijst van mogelijke variabelen die een invloed hebben op het contenttype vind je online \cite{contentTypeVariables}. We sommen degene op die we gebruiken:
+De variabelen worden gezet in de implementatie van hook\_enable() door de module die het contenttype definieert. Deze variabelen moeten voor elk contenttype gezet worden en bevatten de naam van het contenttype waar ze een invloed op hebben. Een volledige lijst van mogelijke variabelen die een invloed hebben op het contenttype vind je online \cite{contentTypeVariables}. We sommen degene op die we gebruiken:
 \begin{itemize}
 \item comment\_\textit{naam\_contenttype}: Krijgt de waarde 0 om \textit{default} commentaren uit te schakelen.
 \item node\_options\_\textit{naam\_contenttype}: Krijgt de waarde array('status') om \textit{default} '\textit{Promote to Front page}' uit te vinken.
@@ -306,7 +306,7 @@ De variabelen worden gezet in de implemenatie van hook\_enable() door de module 
 \end{itemize}
 
 \noindent
-Een laatste stap die nog doorgevoerd moet worden is het cre\"{e}ren van de velden die toegevoegd gaan worden aan de contenttypes, vervolgens worden er instanties van de velden aangemaakt om ze te linken aan de contenttypes. Dit gebeurt in hook\_install(). Er worden velden aangemaakt voor: de URI van devices, de URI van resource en een veld voor meerdere referenties naar content van het type coap\_resource. Velden werden besproken in paragraaf~\ref{Fields}.
+Een laatste stap die nog doorgevoerd moet worden is het cre\"{e}ren van de velden die toegevoegd gaan worden aan de contenttypes, vervolgens worden er instanties van de velden aangemaakt om ze te linken aan de contenttypes. Dit gebeurt in hook\_install(). Er worden velden aangemaakt voor: het IP-adres van devices, de URI van resource en een veld voor meerdere referenties naar content van het type coap\_resource. Velden werden besproken in paragraaf~\ref{Fields}.
 
 \subsubsection{Verwijderen van contenttypes}
 De contenttypes worden verwijderd in hook\_uninstall(). Voor een contenttype kan verwijderd worden moeten nog een aantal andere zaken verwijderd worden. We overlopen de verschillende stappen die voor elk te verwijderen contenttype moeten overlopen worden:
