@@ -28,7 +28,7 @@
 \contentsline {subsubsection}{Drupal core}{15}
 \contentsline {subsection}{\numberline {2.3.2}Laadcyclus van de pagina}{16}
 \contentsline {subsubsection}{Initialisatie van de configuratie}{16}
-\contentsline {subsubsection}{Poging tot opvragen van een gecachte pagina}{16}
+\contentsline {subsubsection}{Poging tot opvragen van een gecachete pagina}{16}
 \contentsline {subsubsection}{Initialisatie van de Database Abstraction Layer}{18}
 \contentsline {subsubsection}{Initialisatie van het Variable System}{18}
 \contentsline {subsubsection}{Initialisatie Session Handling}{19}
