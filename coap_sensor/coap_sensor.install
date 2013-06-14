@@ -357,7 +357,7 @@ function coap_sensor_uninstall(){
 		);
 		field_delete_instance($instance);
 		
-		// remove field instances (This is only necessary when you content type has a body)
+		// remove body instances (This is only necessary when you content type has a body)
 		// $instance = array(	'field_name'	=> 'body',
 							// 'bundle' 		=> $content_type,
 							// 'entity_type' 	=> 'node'

@@ -94,26 +94,23 @@ Beginnende Drupal ontwikkelaars zullen evenwel merken dat Drupal een erg steile 
 
 \section{Werking van Drupal}
 
-Aan de hand van een voorbeeld \cite{drupalDefGuide} proberen we de lezer een idee te geven van de werking van Drupal. Bekijk Drupal als een digitale postzegelsorteerder. Nodes in Drupal zijn te vergelijken met de postzegels en het concept van contenttypes in Drupal is vergelijkbaar met de verschillende soorten postzegels (postzegels van \euro~0,67, \euro~1,34, ... ). Naast contenttypes, kan je \textit{taxonomy} gebruiken om een verdere onderverdeling te maken in de postzegels. De mate waarin en de criteria waarop je je onderverdeling maakt, kan je zelf kiezen (land, kleur, ...). Je kan zelf ook extra criteria opgeven, zoals 'grekegen-van-oma'. Je kan \textit{taxonomy} ook gebruiken om metadata toe te voegen aan content. Views is het mechanisme dat je postzegels sorteert en weergeeft in de vorm van pagina's en \textit{Blocks}. Van deze pagina's en \textit{Blocks} kan je zelf grootte, vorm, kleur en andere criteria opstellen zodat je deze helemaal kan personaliseren. In paragraaf \ref{drupalBouwstenen} bespreken we de verschillende Drupal concepten in detail.\\
+Aan de hand van een voorbeeld \cite{drupalDefGuide} proberen we de lezer een idee te geven van de werking van Drupal. Bekijk Drupal als een digitale postzegelsorteerder. Nodes in Drupal zijn te vergelijken met de postzegels en het concept van contenttypes in Drupal is vergelijkbaar met de verschillende soorten postzegels (postzegels van \euro~0,67, \euro~1,34, ... ). Naast contenttypes, kan je \textit{taxonomy} gebruiken om een verdere onderverdeling te maken in de postzegels. De mate waarin en de criteria waarop je je onderverdeling maakt, kan je zelf kiezen (land, kleur, ...). Je kan zelf ook extra criteria opgeven, zoals 'grekegen-van-oma'. Je kan \textit{taxonomy} ook gebruiken om metadata toe te voegen aan content. Views is het mechanisme dat je postzegels sorteert en weergeeft in de vorm van pagina's en \textit{Blocks}. Van deze pagina's en \textit{Blocks} kan je zelf grootte, vorm, kleur en andere criteria opstellen zodat je deze helemaal kan personaliseren. %In paragraaf \ref{drupalBouwstenen} bespreken we de verschillende Drupal concepten in detail.\\
 
-Het achterliggende design pattern dat gebruikt wordt in Drupal is het Presenstation-Abstraction-Control (PAC) pattern.
+%Het achterliggende design pattern dat gebruikt wordt in Drupal is het Presenstation-Abstraction-Control (PAC) pattern. 
 
+%Zie Figuur~\ref{fig:drupalGrafischeWeergave}.
 
-
-Zie Figuur~\ref{fig:drupalGrafischeWeergave}.
-
-\begin{figure}[h]
-\centering
-\includegraphics{fig/drupalGrafischeWeergave}
-\centering
-\vspace{-10pt}
-\caption{Grafische weergave van hoe Drupal content aanbiedt}
-\vspace{-10pt}
-\label{fig:drupalGrafischeWeergave}
-\end{figure}
+%\begin{figure}[h]
+%\centering
+%\includegraphics{fig/drupalGrafischeWeergave}
+%\centering
+%\vspace{-10pt}
+%\caption{Grafische weergave van hoe Drupal content aanbiedt}
+%\vspace{-10pt}
+%\label{fig:drupalGrafischeWeergave}
+%\end{figure}
 
 \subsection{Drupal bouwstenen}\label{drupalBouwstenen}
-
 We gaan dieper in op de begrippen die gebruikt werden in het postzegelsorteerdervoorbeeld en lichten enkele extra concepten toe die eveneens belangrijk zijn in Drupal.
 
 \subsubsection{Contenttype}
@@ -170,8 +167,6 @@ Het is ook mogelijk nieuwe \textit{entities} te maken. %, we gaan hier dieper op
 
 \subsubsection{Hooks}
 Hooks zijn functies die gedefinieerd zijn door de Drupal \textit{core}. Ze kunnen worden ge\"{i}mplementeerd door elke module. In de Drupal \textit{bootstrap} zal de Drupal \textit{core} dan op bepaalde tijdstippen de bijhorende \textit{hooks} oproepen van elke module die de \textit{hook} ge\"{i}mplementeerd heeft. Hiervoor wordt een zeer eenvoudig mechanisme gehanteerd. Een module kan zo'n \textit{hook} implementeren door de naam van de \textit{hook} te laten voorafgaan door de naam van de module die de \textit{hook} implementeert (zie codevoorbeeld~\ref{lst:drupalHookExample}).\\
-
-\textbf{hier moet nog wat uitleg bij, want floris dacht denk ik dat alle implementaties van alle hooks worden opgeroepen}
 
 \scriptsize
 \lstset{language=PHP}
@@ -290,38 +285,53 @@ De eerste HTTP-\textit{headers} worden opgebouwd. Deze worden echter nog niet ve
 Als de website meerdere talen ondersteunt wordt in deze fase de gekozen taal van de gebruiker bepaald. Eens de gekozen taal vastgesteld is kunnen implemenaties van hook\_language\_init() gebruikt worden om taalafhankelijke variabelen in te stellen.
 
 \subsubsection{Laden van modules en initialisatie van het theme}
-Alle ge\"{e}nablede modules worden geladen en het \textit{theme} wordt ge\"{i}nitialiseerd. Modules hebben nog de kans nieuwe stream wrappers toe te voegen en bestaande te wijzigen via de \textit{hooks} hook\_stream\_wrappers() en hook\_stream\_wrappers\_alter(). Met de hook hook\_url\_inbound\_alter() kunnen er wijzigingen uitgevoerd worden aan de URL die gebruikt werd om deze pagina op te roepen. Bij het instellen van het thema wordt gekeken wat het actieve thema is. Dit kan het default thema zijn, ingesteld met de UI, een thema gekozen door de gebruiker ingesteld met hook\_custom\_theme() of een thema specifiek gezet voor dit pad. Aan het einde van deze fase wordt hook\_init() opgeroepen. Dit wordt meestal gebruikt om globale parameters in te stellen die later in de request gebruikt worden.
+Alle ge\"{e}nablede modules worden geladen en het \textit{theme} wordt ge\"{i}nitialiseerd. Modules hebben nog de kans nieuwe \textit{stream wrappers} toe te voegen en bestaande te wijzigen via de \textit{hooks} hook\_stream\_wrappers() en hook\_stream\_wrappers\_alter(). Met de hook hook\_url\_inbound\_alter() kunnen er wijzigingen uitgevoerd worden aan de URL die gebruikt werd om deze pagina op te roepen. Bij het instellen van het thema wordt gekeken wat het actieve thema is. Dit kan het default thema zijn, ingesteld met de UI, een thema gekozen door de gebruiker ingesteld met hook\_custom\_theme() of een thema specifiek gezet voor dit pad. Aan het einde van deze fase wordt hook\_init() opgeroepen. Dit wordt meestal gebruikt om globale parameters in te stellen die later in de request gebruikt worden.
 
 \subsubsection{Uitvoeren van page callback}
-Na het uitvoeren van de \textit{bootstrap} moet de pagina opgebouwd en gerenderd worden. 
-
-\textbf{Hier moet nog wat komen}
+Na het uitvoeren van de \textit{bootstrap} moet de pagina opgebouwd en gerenderd worden. Deze fase leggen we uit aan de hand van een voorbeeld.
 
 \subsubsection{Voorbeeld}
-We geven een voorbeeld voor de specifieke URL http://drupalvoorbeeld.org/node/15 die we in het begin van deze paragraaf gebruikten. De bootstrap werd eerder uitgebreid besproken, met dit voorbeeld leggen we de naduk op de \textit{page callback}. \textbf{Hier moet nog wat komen}
+We gaan uit van de specifieke URL http://drupalvoorbeeld.org/node/15 die we in het begin van deze paragraaf gebruikten. Op Figuur~\ref{fig:drupalPageCallback} zijn de hooks waarmee modules tussen beide kunnen komen worden aangegeven naast de respectievelijke fasen.\\
+
+Drupal herkent het woord node in het pad en laadt de node met Node id = 15 via de functie node\_load(15). Gegevens van het node-object worden uit de databank gehaald en de hooks hook\_load(), hook\_entity\_load() en hook\_node\_load() worden opgeroepen zodat modules de kans krijgen het node-object te veranderen of extra acties te ondernemen. Tijdens het laden van de node worden velden geassocieerd met de node eveneens opgehaald. Dit gebeurt met field\_attach\_load(). Modules krijgen de kans de opgehaalde data van de velden te manipuleren met de hooks hook\_field\_storage\_pre\_load() en hook\_field\_attach\_load().\\
+
+Nadat de node geladen is wordt hij doorgegeven aan de \textit{page callback}. Hier wordt hij omgevormd tot een \textit{renderable array}. Dit gebeurt met de functie node\_page\_view(). Het zet als paginatitel de titel van de node. Het voegt ook een canonical en short link toe aan de HTML head elemeents en de HTTP headers. In deze functie wordt de functie node\_show() gebruikt waarin de functie node\_view\_multiple() opgeroepen wordt die op zijn beurt node\_view() oproept waarin uiteindelijk de \textit{renderable array} gemaakt wordt. Via de hooks hook\_node\_view() en hook\_entity\_view() kunnen modules de \textit{renderable array} nog manipuleren. Met de hooks hook\_node\_view\_alter() en hook\_entity\_view\_alter() krijgen modules nog een kans om de array te manipuleren nadat andere modules al veranderingen doorgevoerd hebben.\\
+
+Wanneer de \textit{renderable array} gemaakt is, en teruggegeven wordt door de \textit{page callback}, wordt hij doorgestuurd naar drupal\_deliver\_page() waarin drupal\_deliver\_html\_page() opgeroepen wordt die op zijn beurt de array rendert met drupal\_render(). Voor drupal\_render() effectief opgeroepen wordt, kunnen modules nog wijzigingen doorvoeren met de hook hook\_page\_build(). Modules kunnen nog een laatste keer tussenbeide komen met de hook hook\_page\_alter().
+
 \begin{figure}
 \centering
 \hspace{55pt}
 \includegraphics[width=0.65\textwidth]{fig/pageCallback}
 \hspace{-50pt}
-\caption{Page callback in detail}
+\caption{Voorbeeld van de laadcyclus van een pagina waar een node weergegeven wordt}
 \label{fig:drupalPageCallback}
 \end{figure}
 
+\newpage
+
 \subsection{Fields}\label{Fields}
+Velden worden op een bepaalde manier behandeld in Drupal. We kunnen velden vergelijken met klassen. Wanneer een veld gebruikt wordt in een contenttype, wordt een instantie van deze klasse gemaakt. De gegevens van velden en hun instanties worden in verschillende tabellen in de databank opgeslaan.
 \subsubsection{Fields in de databank}
-De informatie bijhorende bij een Field wordt verspreid over verschillende tabellen die weergegeven worden in Figuur~. We geven een korte beschrijving van deze tabellen:
+De verschillende tabellen worden weergegeven in Figuur~\ref{fig:fieldtabellen}. We geven een korte beschrijving van deze tabellen:
 \begin{itemize}
 \item field\_config: Bevat algemene informatie over een veld. Een veld staat hier maar een keer in beschreven omdat deze informatie onafhankelijk is van de module waarin het gebruikt wordt.
 \item field\_config\_instance: Bevat rijen per instantie van een veld. Een veld komt hier evenveel in voor als het aantal modules waarin het gebruikt wordt, rekening houdend met het aantal keer het voorkomt in een module. De informatie beschrijft dus de relatie tussen het veld en de modules waarin het voorkomt.
 \item field\_data\_\textit{naam\_field}: Bevat de data bijhorende bij het veld. Data afkomstig van instanties die tot verschillende modules behoren worden in deze tabel opgeslaan. Er worden dus geen aparte datatabellen voorzien per instantie.
-\item field\_revision\_\textit{naam\_field}: Bevat archiveringswaarden bijhorende bij verschillende revisions van het veld zodat teruggekeerd kan worden naar een vorige revision.
+\item field\_revision\_\textit{naam\_field}: Bevat archiveringswaarden bijhorende bij verschillende \textit{revisions} van een instantie van een veld zodat teruggekeerd kan worden naar een vorige \textit{revision}.
 \end{itemize}
+\begin{figure}[h]
+\centering
+\includegraphics[width=1\textwidth]{fig/fieldtabellen}
+\caption{Field tabellen}
+\label{fig:fieldtabellen}
+\end{figure}
 
 \subsubsection{Aanmaken van Fields}
-Velden kunnen aangemaakt worden met een GUI aangeboden door het Drupal systeem of ze kunnen aangemaakt worden vanuit code. Dit gebeurt dan best op het moment dat een module die ze nodig heeft ge\"{i}nstalleerd wordt.
+Velden kunnen aangemaakt worden met een GUI aangeboden door het Drupal systeem of ze kunnen aangemaakt worden vanuit code. Dit gebeurt dan best op het moment dat een module die ze nodig heeft ge\"{i}nstalleerd wordt, m.a.w. in de implementatie van hook\_install(). De velden worden aangemaakt met field\_create\_field(\$field) en de instanties worden aangemaakt met field\_create\_instance(\$instance). Hoe de argumenten voor deze functies opgebouwd zijn is beschikbaar in de Field CRUD API \cite{fieldCRUD}.
+
 \subsubsection{Verwijderen van Fields}
-Opnieuw kunnen velden verwijderd worden met een GUI aangeboden door het Drupal systeem of het kan vanuit code gebeuren.
+Opnieuw kunnen velden verwijderd worden met een GUI aangeboden door het Drupal systeem of het kan vanuit code gebeuren. Via de GUI gebeurt dit impliciet door een contenttype te verwijderen. Achter de schermen wordt de functie node\_type\_delete(\$naam\_contenttype) opgeroepen en in deze functie wordt de functie field\_attach\_delete\_bundle(\$entity\_type, \$bundle) opgeroepen waar op zijn beurt de functie field\_delete\_instance(\$instance) oproept. Deze functies die achter de schermen opgeroepen worden wanneer de GUI gebruikt wordt, kunnen eveneens in code gebruikt worden.
 
 \subsection{Modules}
 Een extra woordje uitleg hoe een module wordt toegevoegd en verwijderd uit een Drupal systeem kan geen kwaad. We merken meteen op dat er naast de\"{i}nstalleren van een module ook \textit{disablen} mogelijk is. Dit kan als gevolg hebben dat een beginnende Drupal ontwikkelaar veronderstellingen maakt die niet volledig kloppen. We maken een opsomming van handige feiten in verband met \textit{enablen}, \textit{disablen} en de\"{i}nstalleren voor beginnende Drupal ontwikkelaars:
@@ -357,15 +367,7 @@ De variabelen worden gezet in de implemenatie van hook\_enable() door de module 
 \end{itemize}
 
 \noindent
-Om deze variabelen te manipuleren vanuit code biedt het Drupal systeem een aantal functies aan:
-\begin{itemize}
-\item variable\_get(\$naam, \$default = NULL): De variabele wordt uit \$conf gehaald. Indien deze niet gedefin\"{i}eerd is wordt de waarde in \$default teruggegeven.
-\item variable\_set(\$naam, \$value): De variabele wordt opgeslaan in \textit{variable}tabel en gezet in \$conf.
-\item variable\_del(\$naam): De variabele wordt verwijderd uit de \textit{variable}tabel en uit \$conf.
-\end{itemize}
-
-\noindent
-Een laatste stap die nog doorgevoerd moet worden is het cre\"{e}ren van de velden die toegevoegd gaan worden aan de contenttypes, vervolgens worden er instanties van de velden aangemaakt om ze te linken aan de contenttypes. Dit gebeurt in hook\_install(). De velden worden aangemaakt field\_create\_field(\$field) en de instanties worden aangemaakt met field\_create\_instance(\$instance). Er worden velden aangemaakt voor: de URI van devices, de URI van resource en een veld voor meerdere referenties naar content van het type coap\_resource. \textbf{Dit moet herwerkt worden}
+Een laatste stap die nog doorgevoerd moet worden is het cre\"{e}ren van de velden die toegevoegd gaan worden aan de contenttypes, vervolgens worden er instanties van de velden aangemaakt om ze te linken aan de contenttypes. Dit gebeurt in hook\_install(). Er worden velden aangemaakt voor: de URI van devices, de URI van resource en een veld voor meerdere referenties naar content van het type coap\_resource. Velden werden besproken in paragraaf~\ref{Fields}.
 
 \subsubsection{Verwijderen van contenttypes}
 De contenttypes worden verwijderd in hook\_uninstall(). Voor een contenttype kan verwijderd worden moeten nog een aantal andere zaken verwijderd worden. We overlopen de verschillende stappen die voor elk te verwijderen contenttype moeten overlopen worden:
@@ -373,7 +375,7 @@ De contenttypes worden verwijderd in hook\_uninstall(). Voor een contenttype kan
 \item Alle content van het contenttype wordt verwijderd door middel van de functie\\ node\_delete\_multiple(\$nids). De variabele \$nid bevat een array met alle nids van de content die verwijderd wordt.
 \item Alle variabelen die toegevoegd werden in de \textit{variable}tabel worden verwijderd door gebruik te maken van variable\_del(\$naam);
 \item De comment-entiteit die geassocieerd is met dit contenttype wordt gemarkeerd om te verwijderen. Hiervoor wordt de functie field\_delete\_instance() gebruikt.
-\item Het contenttype wordt verwijderd met node\_type\_delete(\$type\_name).
+\item Het contenttype wordt verwijderd met node\_type\_delete(\$naam\_contenttype). In deze functie worden de instanties van de velden geassocieerd met dit contenttype ook verwijderd door gebruik te maken van de functie field\_attach\_delete\_bundle(\$entity\_type, \$bundle). We merken op dat de commentaren apart verwijderd werden.
 \item De databankcache van node types wordt geupdated met node\_types\_rebuild(). Dit is nodig omdat Drupal vaak in caches kijkt en verouderde informatie kan gebruiken.
 \item Drupal zal bij het verwijderen van velden de kolomwaarde deleted op 1 zetten. Om de velden effectief uit de databank te verwijderen wordt de functie field\_purge\_batch() gebruikt.
 \end{itemize}

@@ -19,7 +19,6 @@ Een tweede probleem wordt gevormd door het verkeer dat zo'n sensornetwerk veroor
 De conclusie is dat het Internet in het geheel en onder zijn huidige vorm nog niet klaar is voor het IoT, maar dat niets in de weg staat van de ontwikkeling ervan in de zeer nabije toekomst.
 
 \section{Doel}
-
 Omwille van deze evolutie worden er meer en meer embedded devices ontwikkeld voor het IoT. Onder embedded devices verstaan we devices waar resources op aangesloten zijn. Het device biedt deze resources aan, aan de buitenwereld. Deze masterproef behandelt voornamelijk de integratie van die embedded devices in bestaande systemen. De focus ligt dan niet zozeer op de ontwikkeling van de embedded devices zelf, maar op het aanspreken en besturen ervan. Meer specifiek willen we een bijdrage leveren aan de realisatie van webservices voor het IoT. Het vertrekpunt hiervoor zullen de recente CoAP-ontwikkelingen zijn van de iMinds-onderzoeksgroep (C++ CoAP framework, HTTP/CoAP-proxy, CoAP voor sensoren…). Als embedded device gebruiken we sensoren aangeboden door iMinds die bereikbaar zijn onder de vorm van een sensornetwerk.\\
 
 Deze webservice bieden we aan onder de vorm van een Drupalmodule waarbij een gebruiker een device rechtstreeks op locatie kan aanspreken door middel van native CoAP-communicatie zonder dat er een proxy aan te pas komt. Dit is een groot verschil met recente implementaties waarbij er gebruik gemaakt wordt van een HTTP/CoAP-proxy tussen de applicatie en het device. Concreet worden er twee modules ontwikkeld. Een CoAP-\textit{library} die al het CoAP-verkeer stuurt en afhandelt en een CoAP-sensormodule waarin de gegevens afkomstig van de devices, verwerkt en weergegeven worden. De modules moeten zo ontwikkeld worden dat ze op een eenvoudige manier te gebruiken zijn, zodat geen kennis van de technische aspecten vereist is.
@@ -39,7 +38,6 @@ Als laatste stap rest ons nog het samenvoegen van de \textit{frontend} en \texti
 
 
 \section{Structuur scriptie}
-
 Hoofdstuk twee handelt over Drupal. We geven de voor- en nadelen van Drupal en gaan dieper in op enkele van de belangrijkste concepten en termen. We bekijken eveneens beknopt de werking van Drupal. Als laatste onderdeel van dit hoofdstuk bespreken we een voorbeeld van een Drupal module waarin jQuery gebruikt wordt.\\
 
 In hoofdstuk drie gaan we dieper in op de concepten en mogelijkheden van CoAP. We bekijken het berichtformaat van CoAP en geven een vergelijking met HTTP. De voor- en nadelen komen eveneens aan bod. We bespreken de verschillende soorten communicatie en gaan ook dieper in op de concepten die met resource discovery te maken hebben. Deze concepten staan centraal in het automatiseren van ophalen van sensorgegevens.\\
