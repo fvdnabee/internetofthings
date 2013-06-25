@@ -1,5 +1,0 @@
-name = custom_ct3
-description = Development for custom content-types.
-configure = admin/config/content/custom_ct3
-package = zzz
-core = 7.x

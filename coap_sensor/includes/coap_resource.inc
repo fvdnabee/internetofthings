@@ -232,6 +232,48 @@ function coap_resource_poll($uri){
 	print $output;
 }
 
+// 	Start the observing mechanism for the resource with given URI
+//	If the resource is not observable, the values will be retrieved periodically
+function coap_resource_start_observing($uri){
+	$pattern = '/([^\/]+)\/(.*)/i';
+	if(preg_match($pattern, $uri, $matches)){
+		$ip = $matches[1];
+		$resource = $matches[2];
+		
+		$coap_factory = new CoAPMessageFactory('coap_sensor', $ip, $resource);
+		
+		//	Get the record from the database for given URI if it's observable, to check if the resource is observable
+		$query = db_select('coap_sensor_resource', 'resources');
+		$query
+			->fields('resources', array('uri', 'obs'))
+			->condition('obs', 1, '=')
+			->condition('uri', $uri, '=');
+		$result = $query->execute();
+		
+		if($result->rowCount() > 0){
+			// resource is observable
+			$message = $coap_factory->create_observe_get_request($resource);
+			$message->send_message();
+		}
+		else{
+			// resource is not observable
+			$message = $coap_factory->create_basic_get_request($resource);
+			$query = db_select('coap_sensor_interested_user', 'users');
+			$query
+				->fields('users', array('uri', 'observe'))
+				->condition('observe', 1, '=')
+				->condition('uri', $uri, '=');
+			$result = $query->execute();
+			while($result->rowCount() > 0){
+				$response_obj = $message->send_message();
+				coap_resource_receive_notification($response_obj);
+				sleep(5); // WAARDE NOG AANPASSEN NAAR EEN GEKOZEN WAARDE DOOR DE GEBRUIKER OF DE MAX AGE
+				$result = $query->execute();
+			}
+		}
+	}
+}
+
 /**
  * Change the interval that the polling mechanism is using for this user, this is a callback for /temperatuursensor/interval/%.
  */

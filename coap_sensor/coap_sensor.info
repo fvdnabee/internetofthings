@@ -9,3 +9,4 @@ dependencies[] = node_reference
 dependencies[] = entity
 dependencies[] = views
 dependencies[] = views_ui
+dependencies[] = jquery_update

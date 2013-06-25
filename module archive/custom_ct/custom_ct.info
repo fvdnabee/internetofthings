@@ -1,7 +1,0 @@
-name = custom_ct
-description = Development for custom content-types.
-configure = admin/config/content/custom_ct
-package = zzz
-core = 7.x
-dependencies[] = custom_field
-//files[] = tests/file.test

@@ -1,7 +1,0 @@
-name = News Letter
-description = news letter for Drupal 7
-dependencies[] = news_date
-package = zzz
-core = 7.x
-files[] = newsletter.module
-files[] = newsletter.install

@@ -1,5 +1,0 @@
-name = Resource URI Field
-description = Module that defines the resource URI field.
-package = CoAP
-dependencies[] = field_ui
-core = 7.x

@@ -1,5 +1,0 @@
-name = Custom Field
-description = Development for a custom field.
-package = zzz
-dependencies[] = field_ui
-core = 7.x
