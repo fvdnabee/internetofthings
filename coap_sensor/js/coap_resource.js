@@ -272,6 +272,7 @@ function getResponse(input){
 	var regex = /<uri>(.*)<\/uri><method>(.*)<\/method><response>(.*)<\/response><code>(.*)<\/code>/;
 	var matches = regex.exec(input);
 	if(matches){
+		console.log('match');
 		var label = '#lbl_' + matches[2] + "_" + matches[1];
 		label = label.replace(/\:/g, '\\\:');
 		label = label.replace(/\//g, '\\\/');

@@ -5,7 +5,7 @@
 					value = "<?php 	global $user;
 									$result = db_select('coap_sensor_interested_user', 'users')
 									->fields('users', array('uid', 'uri', 'polling_interval'))
-									->condition('uid', $user->uid, '=')
+									//->condition('uid', $user->uid, '=')
 									->condition('nid', $node->nid, '=')
 									->condition('uri', $content['field_resource_uri']['#items'][0]['value'], '=')
 									->execute();
