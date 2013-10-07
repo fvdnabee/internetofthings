@@ -7,7 +7,7 @@ attach:	function(context) {
 			setInterval(function(){ //every 2000 milliseconds, discoverReady is called
 				$.ajax({
 					type: "GET",
-					url: "/coap_device/poll/" + $('input[name|="nid"]').attr("value"),
+					url: Drupal.settings.basePath + "coap_device/poll/" + $('input[name|="nid"]').attr("value"),
 					dataType: "text",
 					success: discoverReady
 				});

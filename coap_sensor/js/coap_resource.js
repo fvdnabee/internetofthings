@@ -20,14 +20,14 @@ $(document).ready(function() {
 				console.log('start poll for ' + uri);
 				$.ajax({
 					type: "GET",
-					url: "/coap_resource/poll/" + uri.replace(/\//g, '|'),
+					url: Drupal.settings.basePath + "coap_resource/poll/" + uri.replace(/\//g, '|'),
 					dataType: "text",
 					success: valueReceived
 				});
 			}, milliseconds);
 			$.ajax({
 				type: "POST",
-				url: "/coap_resource/interval/" + uri.replace(/\//g, '|') + "/" + parseInt($($(this).parent().find('.POLLING_INVOER')[0]).val()),
+				url: Drupal.settings.basePath + "coap_resource/interval/" + uri.replace(/\//g, '|') + "/" + parseInt($($(this).parent().find('.POLLING_INVOER')[0]).val()),
 				dataType: "text"
 			});
 			
@@ -52,7 +52,7 @@ $(document).ready(function() {
 			$(label_id).fadeIn("slow");
 			$.ajax({
 				type: method,
-				url: "/coap_resource/request/" + method + "/" + uri.replace(/\//g, '|') + "/" + input,
+				url: Drupal.settings.basePath + "coap_resource/request/" + method + "/" + uri.replace(/\//g, '|') + "/" + input,
 				dataType: "text",
 				success: getResponse
 			});
@@ -83,7 +83,7 @@ $(document).ready(function() {
 				$(this).val('Starting Observe...');
 				$.ajax({
 					type: "GET",
-					url: "/coap_resource/observe/" + uri.replace(/\//g, '|') + "/start",
+					url: Drupal.settings.basePath + "coap_resource/observe/" + uri.replace(/\//g, '|') + "/start",
 					dataType: "text",
 					success: observeResponse
 				});
@@ -94,7 +94,7 @@ $(document).ready(function() {
 				$(this).val('Start Observing');
 				$.ajax({
 					type: "GET",
-					url: "/coap_resource/observe/" + uri.replace(/\//g, '|') + "/stop"
+					url: Drupal.settings.basePath + "coap_resource/observe/" + uri.replace(/\//g, '|') + "/stop"
 				});
 			}
 		}
