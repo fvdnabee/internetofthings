@@ -203,7 +203,8 @@ function coap_library_get_numeric_message_code_from_hex_message($hex_message){
 //	Retrieves the payload, if present, from a given hexadecimal message
 //	Returns null if no payload is present
 //	Returns payload in hexadecimal form
-function coap_library_get_payload_from_hex_message($hex_message){
+// CoAP v08: this function would require looping over all the options, disabled for now...
+/*function coap_library_get_payload_from_hex_message($hex_message){
 	if(strlen($hex_message) < 8){
 		return null;
 	}
@@ -212,7 +213,7 @@ function coap_library_get_payload_from_hex_message($hex_message){
 		return null;
 	}
 	return substr($hex_message, $pos+2);
-}
+}*/
 
 // Retrieves the max-age value, if present, from a given hexadecimal message
 // Returns 0 if no max age option is included
@@ -226,6 +227,52 @@ function coap_library_get_max_age_from_hex_message($hex_message){
 
 // Extracts the hexadecimal value of the option with given number from a hexadecimal message
 // Returns -1 if the option with given number is not present
+// Coap v08:
+function coap_library_get_option_value_from_hex_message($hex_message, $option_number){
+	$follow_up = $hex_message . "\r\n";
+	if(strlen($hex_message) < 8){
+		return -1;
+	}
+	$pos = 8; // skip to start of options
+	$current_number = 0;
+	if($pos < strlen($hex_message)){
+		$option_delta = hexdec(substr($hex_message, $pos, 1));
+		$option_length = hexdec(substr($hex_message, $pos+1, 1));
+		if($option_length == 15) {
+			$option_length = 15 + hexdec(substr($hex_message, $pos+2, 1));
+		}
+		$option_length *= 2;
+	}
+	while($pos < strlen($hex_message) && $option_number > $current_number + $option_delta){
+		$follow_up .= "nr: " . ($current_number + $option_delta) . ", length: " . $option_length . "; ";
+		$current_number += $option_delta;
+		// increment $pos:
+		if($option_length >= 15*2) {
+			$pos += 3 + $option_length; // skip additional nibble for longer length field
+		} else {
+			$pos += 2 + $option_length;
+		}
+		if($pos < strlen($hex_message)){
+			$option_delta = hexdec(substr($hex_message, $pos, 1));
+			$option_length = hexdec(substr($hex_message, $pos+1, 1));
+			if($option_length == 15) {
+				$option_length = 15 + hexdec(substr($hex_message, $pos+2, 1));
+			}
+			$option_length *= 2;
+		}
+	}
+	$follow_up .= "nr: " . ($current_number + $option_delta) . ", length: " . $option_length;
+	if($pos > strlen($hex_message) || $option_number != $current_number + $option_delta){
+		return -1;
+	}
+	if($option_length >= 15*2) {
+		return substr($hex_message, $pos+3, $option_length); // skip additional nibble for longer length field
+	} else {
+		return substr($hex_message, $pos+2, $option_length);
+	}
+}
+// CoAP v13+:
+/*
 function coap_library_get_option_value_from_hex_message($hex_message, $option_number){
 	$follow_up = $hex_message . "\r\n";
 	if(strlen($hex_message) < 8){
@@ -292,109 +339,65 @@ function coap_library_get_option_value_from_hex_message($hex_message, $option_nu
 	}
 	return substr($hex_message, $pos+2+$extra, $option_length);
 }
+ */
 
 //	Adds an option with given number and value to the given hexadecimal message
 //	Expects the given option value to be hexadecimal
 //	Returns null if message is smaller than 4 bytes
 //	IMPORTANT: options MUST be added in order of growing option deltas
 function coap_library_add_option_to_hex_message(&$hex_message, $option_number, $value){
-	if(strlen($hex_message) < 8){
+	if(strlen($hex_message) < 8){ // hex_messageg must be at least 4 bytes long (i.e. the CoAP header)
 		return null;
 	}
-	$token_length = hexdec(substr($hex_message, 1, 1));
-	if(strlen($hex_message) < 8 + ($token_length*2)){
+	// Unable to get token length from header in coap 08:
+	//$token_length = hexdec(substr($hex_message, 1, 1));
+	/*if(strlen($hex_message) < 8 + ($token_length*2)){
 		return null;
-	}
+	}*/
 	//pointer pos goedzetten om volgende optie toe te voegen
-	$pos = 8 + ($token_length*2);
+	//$pos = 8 + ($token_length*2);
+	$pos = 8;
 	$current_number = 0;
-	$option_delta = hexdec(substr($hex_message, $pos, 1));
+	//$option_delta = hexdec(substr($hex_message, $pos, 1));
+	// Loop over already added options?
 	while($pos < strlen($hex_message) && $option_number >= $current_number + $option_delta){
-		$extra = 0;
-		if($option_delta == 13){
-			$option_delta = hexdec(substr($hex_message, $pos+2, 2))-13;
-			$extra += 2;
-		}
-		else if($option_delta == 14){
-			$option_delta = hexdec(substr($hex_message, $pos+2, 4))-269;
-			$extra += 4;
-		}
-		$option_length = hexdec(substr($hex_message, $pos+1, 1));
-		if($option_length == 13){
-			$option_length = hexdec(substr($hex_message, $pos+2+$extra, 2))-13;
-			$extra += 2;
-		}
-		else if($option_length == 14){
-			$option_length = hexdec(substr($hex_message, $pos+2+$extra, 4))-269;
-			$extra += 4;
-		}
-		$option_length *= 2;
-		$current_number += $option_delta;
-		$pos += 2 + $extra + $option_length;
-		if($pos < strlen($hex_message)){
-			$option_delta = hexdec(substr($hex_message, $pos, 1));
+		$current_number += hexdec(substr($hex_message, $pos,1));
+		$pos++; // skip option delta nibble
+		if(hexdec(substr($hex_message, $pos,1) == "f")) {
+			$pos++; // skip 0xf nibble of option length
+			$length += 15 + hexdec(substr($hex_message, $pos,1)); // option value is 15 + Length
+			$pos += 2; // skip additional byte for the extended length encoding
+			$pos += 2*$length; // skip option value nibbles
+		} else {
+			$length += hexdec(substr($hex_message, $pos,1));
+			$pos++; // skip nibble of length
+			$pos += 2*$length; // skip option value nibbles
 		}
 	}
-		
+
 	$value_length = strlen($value)/2;
-	
-	$mid = null;
-	// Add Option Delta
-	if($option_number-$current_number > 268){
-		$mid .= "e";
+
+	// Add Option Delta, Length and Value to message
+	while($option_number - $current_number > 15) { // delta > 15, must insert 1 or more fencepost options
+		// Insert (delta,len) for nearest fencepost option
+		$nearest_fencepost_option = (((int)($option_number / 14))+1)*14;
+		$hex_message .= dechex(($nearest_fencepost_option - $current_number)*16 + 0); // Length of fencepost options is always 0
+		$current_number = $nearest_fencepost_option;
 	}
-	else if($option_number-$current_number > 13){		
-		$mid .= "d";
+	// Now the delta to the option is <= 15, check whether option length needs specials treatment first:
+	if($value_length > 270) {
+		echo "Option value length larger than 270 not supported";
+		return;
+	} else if($value_length > 14) {
+		// TODO: check whether these hexadecimal resulting strings 
+		// require padding...
+		$hex_message .= dechex(($option_number - $current_number)*16 + 15);
+		$hex_message .= dechex($value_length - 15);
+	} else {
+		$hex_message .= dechex(($option_number - $current_number)*16 + $value_length);
 	}
-	else{
-		$mid .= dechex($option_number-$current_number);
-	}
-	
-	// Add Option Length
-	if($value_length > 268){
-		$mid .= "e";
-	}
-	else if($value_length > 13){
-		$mid .= "d";
-	}
-	else{
-		$mid .= dechex($value_length);
-	}
-	
-	// Add optional extended Option Delta
-	if($option_number-$current_number > 268){
-		$temp =coap_library_dechex_with_padding($option_number-269-$current_number);
-		str_pad($temp, 4, "0", STR_PAD_LEFT);
-		$mid .= $temp;
-	}
-	else if($option_number-$current_number > 12){
-		$temp =coap_library_dechex_with_padding($option_number-13-$current_number);
-		str_pad($temp, 2, "0", STR_PAD_LEFT);
-		$mid .= $temp;
-	}
-	
-	// Add optional extended Option Length
-	if($value_length > 268){
-		$temp =coap_library_dechex_with_padding($value_length-269);
-		str_pad($temp, 4, "0", STR_PAD_LEFT);
-		$mid .= $temp;
-	}
-	else if($value_length > 12){
-		$temp =coap_library_dechex_with_padding($value_length-13);
-		str_pad($temp, 2, "0", STR_PAD_LEFT);
-		$mid .= $temp;
-	}
-	// Add Option Value
-	$mid .= $value;
-	
-	if($pos >= strlen($hex_message)){
-		$hex_message .= $mid;
-	}
-	else{
-		$start = substr($hex_message, 0, $pos);
-		$end = substr($hex_message, $pos);
-		$hex_message = $start . $mid . $end; // nog rekening houden met eventueel extra option delta veld en extra option length veld
-	}
+	// Finally insert the value of the option:
+	$hex_message .= $value;
 }
 
 // 	Adds a payload to the given message, if not yet present
@@ -403,12 +406,17 @@ function coap_library_add_payload_to_hex_message(&$hex_message, $payload){
 	if(strlen($hex_message) < 8){
 		return null;
 	}
-	if(strpos($hex_message, 'ff', 0)){
+	// CoAP v08:
+	if($payload != '' && $payload != null){
+		$hex_message .= $payload;
+	}
+	// CoAP v12+:
+	/*if(strpos($hex_message, 'ff', 0)){
 		return null;
 	}
 	if($payload != '' && $payload != null){
 		$hex_message .= 'ff' . $payload;
-	}
+	}*/
 }
 
 //	Retrieves the textual representation of the code of the given hexadecimal message
@@ -441,13 +449,17 @@ function coap_library_get_numeric_type_from_hex_message($hex_message){
 	}
 }
 
-//	Retrieves the token length from a given hexadecimal message
+//	Retrieves the token length from a given hexadecimal message (Coap v13+ 
+//	only)
 function coap_library_get_token_length_from_hex_message($hex_message){
 	return hexdec(substr($hex_message, 1, 1));
 }
 
 //	Retrieves the token from a given hexadecimal message
 function coap_library_get_token_from_hex_message($hex_message){
-	$token_length = intval(coap_library_get_token_length_from_hex_message($hex_message));
-	return substr($hex_message, 8, $token_length*2);
+	// COAP v08:
+	return $this->get_option_value_from_hex_message($hex_message, 11);
+	// COAP v13:
+	//$token_length = intval(coap_library_get_token_length_from_hex_message($hex_message));
+	//return substr($hex_message, 8, $token_length*2);
 }
