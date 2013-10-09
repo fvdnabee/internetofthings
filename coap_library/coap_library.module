@@ -346,6 +346,7 @@ function coap_library_get_option_value_from_hex_message($hex_message, $option_nu
 //	Returns null if message is smaller than 4 bytes
 //	IMPORTANT: options MUST be added in order of growing option deltas
 function coap_library_add_option_to_hex_message(&$hex_message, $option_number, $value){
+	//error_log("coap_library_add_option_to_hex_message: adding option with (nr,value) = ($option_number,$value)");
 	if(strlen($hex_message) < 8){ // hex_messageg must be at least 4 bytes long (i.e. the CoAP header)
 		return null;
 	}
@@ -361,15 +362,18 @@ function coap_library_add_option_to_hex_message(&$hex_message, $option_number, $
 	//$option_delta = hexdec(substr($hex_message, $pos, 1));
 	// Loop over already added options?
 	while($pos < strlen($hex_message) && $option_number >= $current_number + $option_delta){
-		$current_number += hexdec(substr($hex_message, $pos,1));
+		$option_delta = hexdec(substr($hex_message, $pos,1));
+		//error_log("coap_library_add_option_to_hex_message: read delta = $option_delta");
+		$current_number += $option_delta;
 		$pos++; // skip option delta nibble
 		if(hexdec(substr($hex_message, $pos,1) == "f")) {
 			$pos++; // skip 0xf nibble of option length
-			$length += 15 + hexdec(substr($hex_message, $pos,1)); // option value is 15 + Length
+			$length = 15 + hexdec(substr($hex_message, $pos,1)); // option value is 15 + Length
 			$pos += 2; // skip additional byte for the extended length encoding
 			$pos += 2*$length; // skip option value nibbles
 		} else {
-			$length += hexdec(substr($hex_message, $pos,1));
+			$length = hexdec(substr($hex_message, $pos,1));
+			//error_log("coap_library_add_option_to_hex_message: read length = $length");
 			$pos++; // skip nibble of length
 			$pos += 2*$length; // skip option value nibbles
 		}
@@ -389,12 +393,10 @@ function coap_library_add_option_to_hex_message(&$hex_message, $option_number, $
 		echo "Option value length larger than 270 not supported";
 		return;
 	} else if($value_length > 14) {
-		// TODO: check whether these hexadecimal resulting strings 
-		// require padding...
-		$hex_message .= dechex(($option_number - $current_number)*16 + 15);
-		$hex_message .= dechex($value_length - 15);
+		$hex_message .= str_pad(dechex(($option_number - $current_number)*16 + 15), 2, "0", STR_PAD_LEFT);
+		$hex_message .= str_pad(dechex($value_length - 15), 2, "0", STR_PAD_LEFT);
 	} else {
-		$hex_message .= dechex(($option_number - $current_number)*16 + $value_length);
+		$hex_message .= str_pad(dechex(($option_number - $current_number)*16 + $value_length), 2, "0", STR_PAD_LEFT);
 	}
 	// Finally insert the value of the option:
 	$hex_message .= $value;
@@ -458,7 +460,7 @@ function coap_library_get_token_length_from_hex_message($hex_message){
 //	Retrieves the token from a given hexadecimal message
 function coap_library_get_token_from_hex_message($hex_message){
 	// COAP v08:
-	return $this->get_option_value_from_hex_message($hex_message, 11);
+	return coap_library_get_option_value_from_hex_message($hex_message, 11);
 	// COAP v13:
 	//$token_length = intval(coap_library_get_token_length_from_hex_message($hex_message));
 	//return substr($hex_message, 8, $token_length*2);

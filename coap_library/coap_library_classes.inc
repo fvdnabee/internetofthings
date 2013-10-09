@@ -132,7 +132,12 @@ class CoAPMessage {
 		$hex .= dechex($this->version*4 + $type_nr);
 
 		// Add Option Count (OC)
-		$hex .= dechex(count($this->options));
+		$option_count = 0;
+		foreach($this->options as $option_nr => $option_value) {
+			$option_segments = explode('/', $option_value); // multiple segments of the same option are separated by a '/'
+			$option_count+= count($option_segments);
+		}
+		$hex .= dechex($option_count);
 
 		// Add message code
 		$hex .= str_pad(dechex($this->code), 2, "0", STR_PAD_LEFT);
@@ -145,9 +150,10 @@ class CoAPMessage {
 		$message_id_string = str_pad($message_id_string, 4, "0", STR_PAD_LEFT);
 		$hex .= $message_id_string;
 		
-		//	Add token to message options for coap 08 (this will 
-		//	override any token already present in the options)
-		add_option(11, $this->token);
+		// Add token to message options for coap 08 (this will 
+		// override any token already present in the options)
+		if(strlen($this->token) > 0)
+			$this->add_option(11, $this->token);
 		
 		//	Add options (incl. Token)
 		ksort($this->options);	//	Order options array by growing option deltas to keep option deltas in the hex message consistent
@@ -182,6 +188,7 @@ class CoAPMessage {
 	 *	Adds an option to the message object with given number and value
 	 */
 	public function add_option($nr, $value){
+		//error_log("Adding option with (nr,value) = ($nr,$value)"); 
 		$this->options[$nr] = $value;
 	}
 	
@@ -212,7 +219,7 @@ class CoAPMessage {
 	 * 	Returns 0 if no max age option is included
 	 */
 	public function get_max_age(){
-		$max_age_hex = $this->get_option_value(14);
+		$max_age_hex = $this->get_option_value(2);
 		if(!isset($max_age_hex) || $max_age_hex == null || !$max_age_hex){
 			return 0;
 		}
@@ -240,7 +247,7 @@ class CoAPMessage {
 		$coap_factory = new CoAPMessageFactory($this->module, $this->ip, $this->resource);
 	
 		//	Determine if request has an observe option
-		$observe = ($this->get_option_value(6) === null) ? 0 : 1;
+		$observe = ($this->get_option_value(10) === null) ? 0 : 1;
 		
 		if($observe){
 			//	Request has an observe option
@@ -347,7 +354,7 @@ class CoAPMessage {
 						//	Resource should still be observed
 						
 						//	Set parameters for reordering and build reordering condition
-						$V2 = hexdec($response_obj->get_option_value(6));
+						$V2 = hexdec($response_obj->get_option_value(10));
 						$T2 = time();
 						$reordering_condition = (($V1 < $V2 && $V2 - $V1 < pow(2, 32)) || ($V1 > $V2 && $V1 - $V2 > pow(2, 32)) || ($T2 > $T1 + 128));
 						
@@ -382,7 +389,7 @@ class CoAPMessage {
 						//	Set variables for reordering
 						$V1 = $V2;
 						$T1 = $T2;
-						$V2 = hexdec($response_obj->get_option_value(6));
+						$V2 = hexdec($response_obj->get_option_value(10));
 						$T2 = time();
 						
 						$response_obj = $coap_factory->create_message_with_given_hex_message(coap_library_string_to_hex_with_padding($response)); //	Put response in CoAPMessage-object
@@ -432,9 +439,9 @@ class CoAPMessage {
 					//	Resource should not be observed
 					fclose($socket); // Close the socket
 					
-					//	Check if the response consists of blocks and get the following blocks if necessary
-					$response_block_value = $response_obj->get_option_value(23);	//	REKENING HOUDEN MET OPTIE 28 ------------------------------------------------------------------------------
-					$request_block_value = $this->get_option_value(23);
+					//	Check if the response consists of blocks (Block2 option?) and get the following blocks if necessary
+					$response_block_value = $response_obj->get_option_value(17);	//	REKENING HOUDEN MET OPTIE 28 ------------------------------------------------------------------------------
+					$request_block_value = $this->get_option_value(17);
 					if($response_block_value != null && $request_block_value == null){
 						//	Response comes in blocks
 						$this->get_next_responses_in_blocks($response_obj);
@@ -500,7 +507,7 @@ class CoAPMessage {
 	 */
 	public function get_content_format(){
 		$format_nr = 0;
-		$format_nr += intval($this->get_option_value(12));
+		$format_nr += intval($this->get_option_value(1));
 		if($format_nr < 0){
 			$format_nr = 0;
 		}
@@ -558,7 +565,7 @@ class CoAPMessage {
 		$current_response = $response_obj;
 		
 		//	Determine if there are still payloads to fetch
-		$block_option_value = $current_response->get_option_value(23);
+		$block_option_value = $current_response->get_option_value(17);
 		switch (strlen($block_option_value)) {
 			case 2:
 				$payloads_left = coap_library_get_bit_from_hex(substr($block_option_value, 1, 1), 3);
@@ -576,7 +583,7 @@ class CoAPMessage {
 		//	Get payloads and append them
 		while($payloads_left){
 			//	Build and send the next request
-			$response_option_value = $current_response->get_option_value(23);
+			$response_option_value = $current_response->get_option_value(17);
 			$option_value_length = strlen($response_option_value);
 			
 			$first_hex_digits = substr($response_option_value, 0, $option_value_length-1);
@@ -589,11 +596,11 @@ class CoAPMessage {
 			if(coap_library_get_bit_from_hex($last_hex_digit,0) == 1) $size += 1;
 			$last_hex_digit = dechex($size);
 			
-			//	Build option 23 value for request
+			//	Build option 17 value for request
 			$request_option_value = '';
 			if($carry) $request_option_value .= '01';
 			$request_option_value .= $first_hex_digits . $last_hex_digit;
-			$this->add_option(23, $request_option_value);
+			$this->add_option(17, $request_option_value);
 			
 			//	Send the request
 			$this->message_id = coap_library_generate_message_id();
@@ -601,7 +608,7 @@ class CoAPMessage {
 			
 			//	Append payload and check if there is a next block
 			if($current_response){
-				$option_value = $current_response->get_option_value(23);
+				$option_value = $current_response->get_option_value(17);
 				if($option_value != null){
 					$payloads_left = coap_library_get_bit_from_hex(substr($option_value,strlen($option_value)-1,1),3);
 					$response_obj->set_payload($response_obj->get_payload() . $current_response->get_payload());
@@ -644,7 +651,7 @@ class CoAPMessage {
 			array_push($hex_paths, coap_library_string_to_hex_with_padding($path));
 		}
 		$option_value_hex = implode("/", $hex_paths);
-		$this->add_option(11, $option_value_hex);
+		$this->add_option(9, $option_value_hex);
 	}
 	
 	/**
@@ -787,7 +794,7 @@ class CoAPMessageFactory{
 		if(isset($uri_path) && $uri_path != ''){
 			$coap_message->add_uri_path($uri_path);
 		}
-		$coap_message->add_option(6, '');
+		$coap_message->add_option(10, '');
 		return $coap_message;
 	}
 	
@@ -822,6 +829,7 @@ class CoAPMessageFactory{
 		$message = new CoAPMessage($this->module, $this->ip, $this->resource, $type, $code, $token_length, $message_id, $token);
 		
 		//	Add options
+		$pos=8; // start after message id
 		if(strlen($hex_message) >= 8){
 		//	Message has a valid header
 			$current_number = 0;
@@ -844,6 +852,7 @@ class CoAPMessageFactory{
 				}
 				//	Add option number and option value to message object if the current option isn't a fencepost option
 				if($current_number % 14 != 0) {
+					//error_log("create_message_with_given_hex_message add_option (nr,value) = ($current_number,".substr($hex_message, $pos, $option_length).")"); 
 					$message->add_option($current_number, substr($hex_message, $pos, $option_length));
 				}
 
