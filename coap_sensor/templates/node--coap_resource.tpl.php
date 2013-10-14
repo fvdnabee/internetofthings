@@ -25,6 +25,7 @@
 			<option class = "option4" value = "41">application/xml</option>
 			<option class = "option5" value = "42">application/octet-stream</option>
 			<option class = "option6" value = "50">application/json</option>
+			<option class = "option7" value = "203">application/rdf+n3</option>
 		</select> <br />
 		<label id = "<?php echo 'lbl_GET_' . $content['field_resource_uri']['#items'][0]['value'] ?>"
 				style="display:inline" >Perform a GET request</label>

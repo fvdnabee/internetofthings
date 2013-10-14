@@ -17,6 +17,7 @@ function coap_resource_insert_response_into_database($response_obj, $uid){
 	$max_age = $response_obj->get_max_age();
 	$value = $response_obj->get_payload_text();
 	$format = $response_obj->get_content_format();
+	error_log("value = " . $value ."\nformat = " . $format);
 	$content_type = $response_obj->get_message_code();
 	if($format == 'text/plain'){
 		$value = coap_resource_get_temperature($value);
@@ -259,11 +260,13 @@ function coap_resource_start_observing($uri){
 		if($result->rowCount() > 0){
 			// resource is observable
 			$message = $coap_factory->create_observe_get_request($resource);
+			$message->add_option(12, '0'); // get plain/text values for observe
 			$message->send_message();
 		}
 		else{
 			// resource is not observable
 			$message = $coap_factory->create_basic_get_request($resource);
+			$message->add_option(12, '0'); // get plain/text values for observe
 			$query = db_select('coap_sensor_interested_user', 'users');
 			$query
 				->fields('users', array('uri', 'observe'))

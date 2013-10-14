@@ -192,6 +192,7 @@ function coap_library_generate_token($token_length){
 	$current_token = dechex($current_token);
 	$token_string = strval($current_token);
 	$token_string = str_pad($token_string, $token_length*2, "0", STR_PAD_LEFT);
+	//error_log("coap_library_generate_token, returning:" . $token_string);
 	return substr($token_string, 0, $token_length*2);
 }
 
@@ -361,7 +362,7 @@ function coap_library_add_option_to_hex_message(&$hex_message, $option_number, $
 	$current_number = 0;
 	//$option_delta = hexdec(substr($hex_message, $pos, 1));
 	// Loop over already added options?
-	while($pos < strlen($hex_message) && $option_number >= $current_number + $option_delta){
+	while($pos < strlen($hex_message) && $option_number >= $current_number){
 		$option_delta = hexdec(substr($hex_message, $pos,1));
 		//error_log("coap_library_add_option_to_hex_message: read delta = $option_delta");
 		$current_number += $option_delta;
@@ -390,7 +391,7 @@ function coap_library_add_option_to_hex_message(&$hex_message, $option_number, $
 	}
 	// Now the delta to the option is <= 15, check whether option length needs specials treatment first:
 	if($value_length > 270) {
-		echo "Option value length larger than 270 not supported";
+		error_log("Option value length larger than 270 not supported");
 		return;
 	} else if($value_length > 14) {
 		$hex_message .= str_pad(dechex(($option_number - $current_number)*16 + 15), 2, "0", STR_PAD_LEFT);
@@ -398,6 +399,7 @@ function coap_library_add_option_to_hex_message(&$hex_message, $option_number, $
 	} else {
 		$hex_message .= str_pad(dechex(($option_number - $current_number)*16 + $value_length), 2, "0", STR_PAD_LEFT);
 	}
+	//error_log("coap_library_add_option_to_hex_message: added option #".$option_number." (delta,length) = (" . ($option_number-$current_number) . ",".$value_length.")");
 	// Finally insert the value of the option:
 	if($value != "0")
 		$hex_message .= $value;

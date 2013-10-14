@@ -70,7 +70,8 @@ class CoAPMessage {
 		41 => 'application/xml',
 		42 => 'application/octet-stream',
 		47 => 'application/exi',
-		50 => 'application/json'
+		50 => 'application/json',
+		203 => 'application/rdf+n3'// application/rdf+n3
 	);
 	
 	//	EXPONENTIAL BACKOFF
@@ -131,6 +132,11 @@ class CoAPMessage {
 		}
 		$hex .= dechex($this->version*4 + $type_nr);
 
+		// Add token to message options for coap 08 (this will 
+		// override any token already present in the options)
+		if(strlen($this->token) > 0)
+			$this->add_option(11, $this->token);
+
 		// Add Option Count (OC)
 		$option_count = 0;
 		foreach($this->options as $option_nr => $option_value) {
@@ -150,11 +156,7 @@ class CoAPMessage {
 		$message_id_string = str_pad($message_id_string, 4, "0", STR_PAD_LEFT);
 		$hex .= $message_id_string;
 		
-		// Add token to message options for coap 08 (this will 
-		// override any token already present in the options)
-		if(strlen($this->token) > 0)
-			$this->add_option(11, $this->token);
-		
+	
 		//	Add options (incl. Token)
 		ksort($this->options);	//	Order options array by growing option deltas to keep option deltas in the hex message consistent
 		foreach($this->options as $option_nr => $option_value){
@@ -303,7 +305,7 @@ class CoAPMessage {
 			if($this->is_confirmable() || $observe){
 				//	Message type = CON or sent message had an observe option
 				if($returnvalue != FALSE){
-					$response = fread($socket, 512); //	Read from UDP-socket
+					$response = fread($socket, 2048); //	Read from UDP-socket
 				}
 				
 				//	Keep resending the packet and multiplying the timeout if something went wrong (exponential backoff)
@@ -321,7 +323,7 @@ class CoAPMessage {
 					$binary_message = pack('H*', $this->get_hex_message());
 					$returnvalue = fwrite($socket, $binary_message); //	Write to socket
 					if($returnvalue != FALSE){
-						$response = fread($socket, 512); //	Read from socket
+						$response = fread($socket, 2048); //	Read from socket
 					}
 				}
 			}
@@ -384,7 +386,7 @@ class CoAPMessage {
 						
 						//	Wait for next notification
 						$response = 'empty';
-						$response = fread($socket, 512); // Read from socket
+						$response = fread($socket, 2048); // Read from socket
 						
 						//	Set variables for reordering
 						$V1 = $V2;
@@ -413,7 +415,7 @@ class CoAPMessage {
 					//	Resource has returned an empty ACK
 					$response = 'empty';
 					stream_set_timeout($socket, 20, 0); //	Timeout for separate response currently set to 20 seconds, but can be chosen
-					$response = fread($socket, 512); // Read from socket
+					$response = fread($socket, 2048); // Read from socket
 					if($response != 'empty' && $response != ''){
 						$response_obj = $coap_factory->create_message_with_given_hex_message(coap_library_string_to_hex_with_padding($response)); //	Put response in CoAPMessage-object
 						
@@ -792,6 +794,7 @@ class CoAPMessageFactory{
 	public function create_observe_get_request($uri_path){
 		$coap_message = $this->create_message_with_header_and_token("CON", "GET", 2);
 		if(isset($uri_path) && $uri_path != ''){
+			$uri_path = str_replace('/', '//', $uri_path);
 			$coap_message->add_uri_path($uri_path);
 		}
 		$coap_message->add_option(10, '');
@@ -921,7 +924,8 @@ class CoAPConstants{
 		41 => 'application/xml',
 		42 => 'application/octet-stream',
 		47 => 'application/exi',
-		50 => 'application/json'
+		50 => 'application/json',
+		203 => 'application/rdf+n3'// application/rdf+n3
 	);
 	
 	public function ack_timeout(){

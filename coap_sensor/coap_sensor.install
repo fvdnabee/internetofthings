@@ -275,7 +275,7 @@ function coap_sensor_schema() {
 				'parsed_value' => array(
 					'description' => 'Opgevraagde waarde',
 					'type' => 'varchar',
-					'length' => '128',
+					'length' => '2048',
 					'description' => 'Value that has been parsed out of the payload of the response, is original response if no value could be parsed',
 					'not null' => FALSE,
 				),
