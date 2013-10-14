@@ -147,7 +147,7 @@ function valueReceived(html){
 				var old_index = i-1;
 				table.find('.row' + i).html(table.find('.row' + old_index).html());
 			}
-			table.find('.row1').html("<td>" + $(this).find("timestamp").text() + "</td><td>" + $(this).find("value").text() + "</td>");
+			table.find('.row1').html("<td>" + $(this).find("timestamp").text() + "</td><td>" + $(this).find("value").html() + "</td>");
 			table.find('.row1').fadeIn('slow');
 		}
 	);

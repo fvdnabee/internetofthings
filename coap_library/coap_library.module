@@ -399,7 +399,8 @@ function coap_library_add_option_to_hex_message(&$hex_message, $option_number, $
 		$hex_message .= str_pad(dechex(($option_number - $current_number)*16 + $value_length), 2, "0", STR_PAD_LEFT);
 	}
 	// Finally insert the value of the option:
-	$hex_message .= $value;
+	if($value != "0")
+		$hex_message .= $value;
 }
 
 // 	Adds a payload to the given message, if not yet present

@@ -18,8 +18,18 @@
 	<div class = 'GET'>
 		<input type = "button" id = "<?php echo "btn_GET_" . $content['field_resource_uri']['#items'][0]['value'] ?>" 
 				class = "REQUEST_BUTTON form-submit" value = "GET" />
+		Accept: <select style = "display:inline" class = 'GET_INPUT' id="<?php echo"input_GET_" . $content['field_resource_uri']['#items'][0]['value']?>">
+			<option class = "option1" value = "" selected = "selected">-----------------------</option>
+			<option class = "option2" value = "0">text/plain</option>
+			<option class = "option3" value = "40">application/link-format</option>
+			<option class = "option4" value = "41">application/xml</option>
+			<option class = "option5" value = "42">application/octet-stream</option>
+			<option class = "option6" value = "50">application/json</option>
+		</select> <br />
 		<label id = "<?php echo 'lbl_GET_' . $content['field_resource_uri']['#items'][0]['value'] ?>"
 				style="display:inline" >Perform a GET request</label>
+
+
 		<img class = "img_status" src = "" style = "display: none" width = "15" height = "15" hspace = "5" />
 	</div>
 	<div class = 'PUT'>

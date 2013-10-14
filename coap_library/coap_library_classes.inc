@@ -507,7 +507,7 @@ class CoAPMessage {
 	 */
 	public function get_content_format(){
 		$format_nr = 0;
-		$format_nr += intval($this->get_option_value(1));
+		$format_nr += intval(hexdec($this->get_option_value(1)));
 		if($format_nr < 0){
 			$format_nr = 0;
 		}

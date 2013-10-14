@@ -118,7 +118,7 @@ function coap_resource_handle_observing_for_uri($uri, $state){
 /**
  * Creates and sends the CoAP message with given method for the given URI.
  */
-function coap_resource_start_request_for_uri($method, $uri, $payload=''){
+function coap_resource_start_request_for_uri($method, $uri, $acceptorpayload=''){
 
 	$uri = str_replace('|', '/', $uri);
 	global $user;
@@ -141,8 +141,14 @@ function coap_resource_start_request_for_uri($method, $uri, $payload=''){
 				$coap_message = $coap_factory->create_basic_delete_request($matches[2]);
 				break;
 		}
-		if($payload != ''){
-			$coap_message->set_payload(coap_library_string_to_hex_with_padding($payload));
+		if($acceptorpayload != ''){
+			if($method == 'GET'){
+				$accept = $acceptorpayload;
+				$coap_message->add_option(12, dechex($accept));
+			} else {
+				$payload = $acceptorpayload;
+				$coap_message->set_payload(coap_library_string_to_hex_with_padding($payload));
+			}
 		}
 		
 		$response_obj = null;
@@ -175,7 +181,7 @@ function coap_resource_start_request_for_uri($method, $uri, $payload=''){
 		}
 		
 		if($response_obj != null){
-			print "<uri>" . $uri . "</uri><method>" . $method . "</method><response>" . $response_obj->get_payload_text() . "</response><code>" . $response_obj->get_numeric_message_code() . "</code>";
+			print "<uri>" . $uri . "</uri><method>" . $method . "</method><response>" . htmlentities($response_obj->get_payload_text()) . "</response><code>" . $response_obj->get_numeric_message_code() . "</code>";
 		}
 	}
 }
@@ -224,7 +230,7 @@ function coap_resource_poll($uri){
 		$timestamp = $record->timestamp;
 		$coap_value = $record->parsed_value;
 		$max_age = $record->max_age;
-		$output .= "<entry><hid>" . $hid . "</hid><value>" . $coap_value . "</value><max_age>" . $max_age . "</max_age><timestamp>" . $timestamp . "</timestamp></entry>";
+		$output .= "<entry><hid>" . $hid . "</hid><value>" . htmlentities($coap_value) . "</value><max_age>" . $max_age . "</max_age><timestamp>" . $timestamp . "</timestamp></entry>";
 	}
 	$output .= "</entrys></poll>";
 	
