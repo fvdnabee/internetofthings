@@ -159,7 +159,10 @@ function coap_resource_start_request_for_uri($method, $uri, $acceptorpayload='')
 			$cache_query = db_select('coap_sensor_value', 'coap_sensor_value');
 			$cache_query
 				->fields('coap_sensor_value', array('uri', 'uid', 'hid', 'original_response', 'max_age', 'timestamp'))
-				->condition('uri', $uri, '=')
+				->condition('uri', $uri, '=');
+			if($acceptorpayload != '') // filter by content-format
+				$cache_query->condition('content_format', CoAPConstants::$format_mapping[$acceptorpayload], '=');
+			$cache_query
 				->condition('uid', $user->uid, '=')
 				->orderBy('hid', 'DESC')
 				->range(0,1);
