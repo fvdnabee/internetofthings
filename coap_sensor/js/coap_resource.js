@@ -269,7 +269,7 @@ function drawChart(uri) {
 
 function getResponse(input){
 	console.log("Response for GET request: " + input);
-	var regex = /<uri>(.*)<\/uri><method>(.*)<\/method><response>(.*)<\/response><code>(.*)<\/code>/;
+	var regex = /<uri>(.*)<\/uri><method>(.*)<\/method><response>([\S\s]*)<\/response><code>(.*)<\/code>/;
 	var matches = regex.exec(input);
 	if(matches){
 		console.log('match');

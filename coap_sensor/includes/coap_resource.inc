@@ -182,7 +182,9 @@ function coap_resource_start_request_for_uri($method, $uri, $acceptorpayload='')
 		}
 		
 		if($response_obj != null){
-			print "<uri>" . $uri . "</uri><method>" . $method . "</method><response>" . htmlentities($response_obj->get_payload_text()) . "</response><code>" . $response_obj->get_numeric_message_code() . "</code>";
+			//$cleaned_response = htmlentities(trim(preg_replace('/\s+/', ' ',$response_obj->get_payload_text()))); // remove any new-lines and encode html-entities (for XML)
+			$cleaned_response = htmlentities($response_obj->get_payload_text()); // encode html-entities (for XML)
+			print "<uri>" . $uri . "</uri><method>" . $method . "</method><response>" .  $cleaned_response . "</response><code>" . $response_obj->get_numeric_message_code() . "</code>";
 		}
 	}
 }
