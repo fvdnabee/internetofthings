@@ -9,6 +9,7 @@ var delete_pending = false;
 var observe_pending = false;
 
 $(document).ready(function() {
+	var basePath = Drupal.settings.basePath;
 	setTimeout(function(){google.load('visualization', '1', {'callback':'', 'packages':['corechart']})}, 20);
 	$('.POLLING_BUTTON').click(
 		function(){
@@ -20,14 +21,14 @@ $(document).ready(function() {
 				console.log('start poll for ' + uri);
 				$.ajax({
 					type: "GET",
-					url: "/coap_resource/poll/" + uri.replace(/\//g, '|'),
+					url: basePath + "coap_resource/poll/" + uri.replace(/\//g, '|'),
 					dataType: "text",
 					success: valueReceived
 				});
 			}, milliseconds);
 			$.ajax({
 				type: "POST",
-				url: "/coap_resource/interval/" + uri.replace(/\//g, '|') + "/" + parseInt($($(this).parent().find('.POLLING_INVOER')[0]).val()),
+				url: basePath + "coap_resource/interval/" + uri.replace(/\//g, '|') + "/" + parseInt($($(this).parent().find('.POLLING_INVOER')[0]).val()),
 				dataType: "text"
 			});
 			
@@ -52,7 +53,7 @@ $(document).ready(function() {
 			$(label_id).fadeIn("slow");
 			$.ajax({
 				type: method,
-				url: "/coap_resource/request/" + method + "/" + uri.replace(/\//g, '|') + "/" + input,
+				url: basePath + "coap_resource/request/" + method + "/" + uri.replace(/\//g, '|') + "/" + input,
 				dataType: "text",
 				success: getResponse
 			});
@@ -83,7 +84,7 @@ $(document).ready(function() {
 				$(this).val('Starting Observe...');
 				$.ajax({
 					type: "GET",
-					url: "/coap_resource/observe/" + uri.replace(/\//g, '|') + "/start",
+					url: basePath + "coap_resource/observe/" + uri.replace(/\//g, '|') + "/start",
 					dataType: "text",
 					success: observeResponse
 				});
@@ -94,7 +95,7 @@ $(document).ready(function() {
 				$(this).val('Start Observing');
 				$.ajax({
 					type: "GET",
-					url: "/coap_resource/observe/" + uri.replace(/\//g, '|') + "/stop"
+					url: basePath + "coap_resource/observe/" + uri.replace(/\//g, '|') + "/stop"
 				});
 			}
 		}
@@ -147,7 +148,7 @@ function valueReceived(html){
 				var old_index = i-1;
 				table.find('.row' + i).html(table.find('.row' + old_index).html());
 			}
-			table.find('.row1').html("<td>" + $(this).find("timestamp").text() + "</td><td>" + $(this).find("value").text() + "</td>");
+			table.find('.row1').html("<td>" + $(this).find("timestamp").text() + "</td><td class=\"coap_value\">" + $(this).find("value").text() + "</td>");
 			table.find('.row1').fadeIn('slow');
 		}
 	);
@@ -227,29 +228,63 @@ function discoverReady(xml){
 function drawChart(uri) {
 	var data_array = [['Nr', 'Value']];
 	
-	var resource_div = '#' + uri;
-	resource_div = resource_div.replace(/\:/g, '\\\:');
-	resource_div = resource_div.replace(/\//g, '\\\/');
-	resource_div = $(resource_div);
+	var resource_div_id = '#' + uri;
+	resource_div_id = resource_div_id.replace(/\:/g, '\\\:');
+	resource_div_id = resource_div_id.replace(/\//g, '\\\/');
+	var resource_div = $(resource_div_id);
+
 	var amount = resource_div.find('.history > .historyselect > option:selected').val();
 	var type = resource_div.find(".graphselect > option:selected").val();
+	var data_min = 0;
+	var data_max = 0;
+
 	if(type == "Pie"){
 		for(var i = amount; i > 0; i--){
 			data_array.push([(amount-i+1).toString(), parseFloat(resource_div.find('.row' + i + ' > .coap_value').html())]);
 		}
-	}
-	else{
+	} else {
 		for(var i = amount; i > 0; i--){
-			data_array.push([amount-i+1, parseFloat(resource_div.find('.row' + i + ' > .coap_value').html())]);
+			var index = amount-i+1;
+			var data = resource_div.find('.row' + i + ' > .coap_value').html();
+			var data_parsed = parseFloat(data);
+
+			data_array.push([index, data_parsed]);
+
+			// Update min/max:
+			if ( i == amount) {
+				data_min = data_parsed;
+				data_max = data_parsed;
+			} else {
+				if (data_parsed < data_min)
+					data_min = data_parsed;
+				if (data_parsed > data_max)
+					data_max = data_parsed;
+			}
 		}
 	}
+
 	var data = google.visualization.arrayToDataTable(data_array);
+
+//    var options = {
+//     title: 'History of fetched values',
+//	  legend: {position: 'top', alignment: 'end'}
+//    };
+	
+	var view_max = data_max + 1;
+	var view_min = 0; // ignore data_min and just always set to zero
 
     var options = {
       title: 'History of fetched values',
-	  legend: {position: 'top', alignment: 'end'}
+			  legend: {position: 'top', alignment: 'end'},
+			  vAxis: { 
+			      title: "Values", 
+			      viewWindowMode:'explicit',
+			      viewWindow:{
+				max:view_max,
+				min:view_min
+			      }
+			    }
     };
-
 	if(type == "Line"){
 		var chart = new google.visualization.LineChart(document.getElementById("div_graphimage_" + uri));
 	}

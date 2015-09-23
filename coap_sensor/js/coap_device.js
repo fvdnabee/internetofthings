@@ -4,10 +4,11 @@ var counter = 0;
 
 Drupal.behaviors.coap_resource = {
 attach:	function(context) {
+	var basePath = Drupal.settings.basePath;
 			setInterval(function(){ //every 2000 milliseconds, discoverReady is called
 				$.ajax({
 					type: "GET",
-					url: "/coap_device/poll/" + $('input[name|="nid"]').attr("value"),
+					url: basePath + "coap_device/poll/" + $('input[name|="nid"]').attr("value"),
 					dataType: "text",
 					success: discoverReady
 				});
