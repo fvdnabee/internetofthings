@@ -64,20 +64,26 @@
 		<img class = "img_status" src = "" style = "display: none" width = "15" height = "15" hspace = "5" />
 		<label id = "<?php echo "lbl_OBSERVE_" . $content['field_resource_uri']['#items'][0]['value'] ?>" style = "text-align:center" >Observe input comes here</label>
 	</div>
+	<div class = "graph" >
+		<h1>Graph</h1>
+		<label style = "display: inline" >Select a type of graph: </label>
+		<select style = "display: inline" class = "graphselect" >
+			<option class = "none" >None</option>
+			<option class = "line" >Line</option>
+			<option class = "pie" >Pie</option>
+			<option class = "column" >Column</option>
+		</select>
+		<div id = "div_graphimage_<?php echo $content['field_resource_uri']['#items'][0]['value']; ?>" class = "graphimage" ></div>
+		<label style = "display: inline" >Minimum: </label><input type = "text" size = "2" id = "input_minimum" style="height: 8px; font-size: 8px;" value = "NA" /> - Min data: <span id="data_minimum"></span></label> (fill in NA to use data min) - View: <span id="view_minimum"></span></br>
+		<label style = "display: inline" >Maximum: </label><input type = "text" size = "2" id = "input_maximum" style="height: 8px; font-size: 8px;" value = "NA" /> - Max data: <span id="data_maximum"></span></label> (fill in NA to use data max) - View: <span id="view_maximum"></span></br>
+	</div>
 	<div class = "history" >
 		<h1>History</h1>
 		<label style = "display:inline" >Select the amount of rows to show: </label>
 		<select style = "display:inline" class = 'historyselect' >
-			<option class = "option1" value = "1" >1</option>
-			<option class = "option2" value = "2" >2</option>
-			<option class = "option3" value = "3" >3</option>
-			<option class = "option4" value = "4" >4</option>
-			<option class = "option5" value = "5" selected = "selected" >5</option>
-			<option class = "option6" value = "6" >6</option>
-			<option class = "option7" value = "7" >7</option>
-			<option class = "option8" value = "8" >8</option>
-			<option class = "option9" value = "9" >9</option>
-			<option class = "option10" value = "10" >10</option>
+			<?php for ($i = 1; $i <= 100; $i++) { ?>
+			<option class = "option<?=$i?>" value = "<?=$i?>"<?php if ($i == 5) echo ' selected="selected"';?>><?=$i?></option>
+			<?php } ?>
 		</select>
 		
 		<table class = "historytable" >
@@ -92,7 +98,7 @@
 						->fields('coap_values', array('timestamp', 'parsed_value'))
 						->condition('uri', $content['field_resource_uri']['#items'][0]['value'], '=')
 						->condition('uid', $user->uid, '=')
-						->range(0, 10)
+						->range(0, 100)
 						->orderBy('hid', 'DESC')
 						->execute();
 					foreach($result as $record){
@@ -101,7 +107,7 @@
 						if($nr_entrys > 5){
 							$output .= " style = 'display: none'";
 						}
-						$output .= " ><td>" . $record->timestamp . "</td><td class = 'coap_value' >" . $record->parsed_value . "</td></tr>";
+						$output .= " ><td>" . $record->timestamp . "</td><td class = 'coap_value' >" . $record->parsed_value . "</td></tr>\n";
 						echo $output;
 					}
 					while($nr_entrys < 5){
@@ -111,16 +117,5 @@
 				?>
 			</tbody>
 		</table>
-	</div>
-	<div class = "graph" >
-		<h1>Graph</h1>
-		<label style = "display: inline" >Select a type of graph: </label>
-		<select style = "display: inline" class = "graphselect" >
-			<option class = "none" >None</option>
-			<option class = "line" >Line</option>
-			<option class = "pie" >Pie</option>
-			<option class = "column" >Column</option>
-		</select>
-		<div id = "div_graphimage_<?php echo $content['field_resource_uri']['#items'][0]['value']; ?>" class = "graphimage" ></div>
 	</div>
 </div>

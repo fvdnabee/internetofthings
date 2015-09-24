@@ -144,7 +144,7 @@ function valueReceived(html){
 			id = id.replace(/\//g, '\\\/');
 			var table = $(id).find(".historytable");
 			table.find('.row1').hide();
-			for(var i = 10; i > 1; i--){
+			for(var i = 100; i > 1; i--){
 				var old_index = i-1;
 				table.find('.row' + i).html(table.find('.row' + old_index).html());
 			}
@@ -262,6 +262,31 @@ function drawChart(uri) {
 			}
 		}
 	}
+	// Update HTML DOM to show new data_min and data_max:
+	$('#data_minimum').text(data_min);
+	$('#data_maximum').text(data_max);
+
+	// Default view min and max are derived from the data:
+	var view_max = data_max;
+	var view_min = data_min;
+
+	// Check if user inserted min/max values that override the min/max value as derived from the data
+	if ($('#input_minimum').val() != "NA") {
+		var parsed_value = parseFloat($('#input_minimum').val());
+		if (!isNaN(parsed_value))
+			view_min = parsed_value;
+	}
+	if ($('#input_maximum').val() != "NA") {
+		var parsed_value = parseFloat($('#input_maximum').val());
+		if (!isNaN(parsed_value))
+			view_max = parsed_value;
+	}
+
+	// Update HTML DOM to show new view_min and view_max:
+	$('#view_minimum').text(view_min);
+	$('#view_maximum').text(view_max);
+
+
 
 	var data = google.visualization.arrayToDataTable(data_array);
 
@@ -270,8 +295,6 @@ function drawChart(uri) {
 //	  legend: {position: 'top', alignment: 'end'}
 //    };
 	
-	var view_max = data_max + 1;
-	var view_min = 0; // ignore data_min and just always set to zero
 
     var options = {
       title: 'History of fetched values',
